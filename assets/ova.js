@@ -115,6 +115,23 @@ OVA.validar = function (cfg) {
     if (!it.solucion) errs.push(n + ': sin explicación ("solucion").');
     if (!it.criterio) errs.push(n + ': sin criterio de aprendizaje.');
   });
+
+  // Las claves no deben concentrarse en una misma posición: el estudiante
+  // aprende el patrón y responde por posición en vez de por razonamiento.
+  if (cfg.items.length >= 4) {
+    var cuenta = {};
+    cfg.items.forEach(function (it) {
+      if (Number.isInteger(it.correcta)) cuenta[it.correcta] = (cuenta[it.correcta] || 0) + 1;
+    });
+    var letras = ['a', 'b', 'c', 'd', 'e', 'f'];
+    Object.keys(cuenta).forEach(function (k) {
+      if (cuenta[k] / cfg.items.length > 0.5) {
+        errs.push(pre + ': ' + cuenta[k] + ' de ' + cfg.items.length +
+          ' respuestas correctas están en la opción ' + letras[k] +
+          '. Reordena las opciones para repartir las claves.');
+      }
+    });
+  }
   return errs;
 };
 
@@ -349,9 +366,41 @@ OVA.punto = function (L, x, y, color, hueco) {
   else { c.fillStyle = color; c.fill(); }
 };
 
-/* ── 9. Arranque ────────────────────────────────────────── */
+/* ── 9. Navegación de guías largas ──────────────────────── */
+function initGuiaNav() {
+  var hdr = document.getElementById('top');
+  function medir() {
+    if (hdr) document.documentElement.style.setProperty('--hdr', hdr.offsetHeight + 'px');
+  }
+  medir();
+  global.addEventListener('resize', medir);
+
+  var nav = document.getElementById('guia-nav');
+  if (!nav) return;
+  var enlaces = [].slice.call(nav.querySelectorAll('a[href^="#"]'));
+  var secciones = enlaces.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+
+  function marcar() {
+    var corte = (hdr ? hdr.offsetHeight : 58) + 80;
+    var activo = 0;
+    secciones.forEach(function (s, i) {
+      if (s && s.getBoundingClientRect().top <= corte) activo = i;
+    });
+    enlaces.forEach(function (a, i) { a.classList.toggle('aqui', i === activo); });
+  }
+  marcar();
+  var tick = false;
+  global.addEventListener('scroll', function () {
+    if (tick) return;
+    tick = true;
+    global.requestAnimationFrame(function () { marcar(); tick = false; });
+  }, { passive: true });
+}
+
+/* ── 10. Arranque ───────────────────────────────────────── */
 function init() {
   initProgramas();
+  initGuiaNav();
   document.querySelectorAll('[data-dark-toggle]').forEach(function (b) {
     b.addEventListener('click', OVA.toggleDark);
     b.textContent = document.body.classList.contains('dark') ? '☀ Modo claro' : '☾ Modo oscuro';

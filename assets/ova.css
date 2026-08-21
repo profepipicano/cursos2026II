@@ -70,6 +70,21 @@ header#top{
   border-radius:6px;cursor:pointer;font-size:.8rem;font-family:inherit;transition:background .2s}
 .btn-top:hover{background:var(--steel-500)}
 
+/* ── Navegación interna de guías largas ─────────────────── */
+#guia-nav{position:sticky;top:var(--hdr,58px);z-index:90;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,50,.06)}
+.guia-nav-inner{max-width:var(--max);margin:0 auto;padding:.45rem 1.2rem;
+  display:flex;gap:.3rem;overflow-x:auto;scrollbar-width:thin}
+.guia-nav-inner a{flex:none;text-decoration:none;color:var(--muted);
+  font-size:.78rem;font-weight:600;padding:.3rem .7rem;border-radius:999px;
+  border:1px solid transparent;white-space:nowrap}
+.guia-nav-inner a:hover{background:var(--surface2);color:var(--text)}
+.guia-nav-inner a.aqui{background:var(--steel-500);color:#fff}
+
+/* Los títulos de sección no quedan tapados al saltar por anclas */
+section[id]{scroll-margin-top:calc(var(--hdr,58px) + 52px)}
+
 /* ── Contenedor ─────────────────────────────────────────── */
 main{max-width:var(--max);margin:0 auto;padding:1.2rem}
 
