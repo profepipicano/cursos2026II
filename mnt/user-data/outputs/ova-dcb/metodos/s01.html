@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S1 · Errores y aproximación — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Métodos Numéricos · Sesión 1</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Sesión 1 · Corte I</div>
+  <h2>Errores y aproximación numérica</h2>
+  <p>Todo método numérico entrega una respuesta equivocada. La pregunta profesional no es
+     si hay error, sino cuánto vale, de dónde viene y cómo controlarlo.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 3–4</span>
+    <span class="chip">2 horas</span>
+    <span class="chip">Práctica de refuerzo al final</span>
+  </div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">1. Por qué existe el error</h3>
+
+  <div class="callout-dark">
+    <h3>El computador no sabe sumar</h3>
+    <p>Un computador guarda los números en una cantidad finita de bits. $1/3$ no cabe, $\pi$ no cabe,
+       y ni siquiera $0{,}1$ cabe exactamente en binario. Toda operación se hace sobre una versión
+       recortada del número real.</p>
+    <p>En 1996 el cohete Ariane 5 se destruyó a los 37 segundos porque un número de 64 bits se
+       convirtió a 16 bits. En 1991 un Patriot falló al interceptar un misil por un error de redondeo
+       acumulado durante 100 horas de reloj. El error numérico no es un detalle académico.</p>
+  </div>
+
+  <div class="sub-title">1.1 Las dos fuentes</div>
+  <table class="tbl">
+    <tr><th>Tipo</th><th>De dónde viene</th><th>Cómo se controla</th></tr>
+    <tr><td><strong>Redondeo</strong></td><td>La máquina representa los números con dígitos finitos</td><td>Más precisión (doble), reordenar operaciones</td></tr>
+    <tr><td><strong>Truncamiento</strong></td><td>El método corta un proceso infinito (una serie, un límite)</td><td>Más términos, paso $h$ más pequeño</td></tr>
+  </table>
+  <div class="nota">
+    <strong>La tensión central del curso:</strong> reducir el truncamiento suele exigir más operaciones,
+    y más operaciones acumulan más redondeo. Existe un $h$ óptimo, y no es «lo más pequeño posible».
+  </div>
+
+  <div class="sub-title">1.2 Cómo se mide</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Error absoluto</div>$$E_a=|\,p - \hat{p}\,|$$</div>
+    <div class="formula"><div class="lbl">Error relativo</div>$$E_r=\dfrac{|\,p-\hat{p}\,|}{|p|}$$</div>
+    <div class="formula"><div class="lbl">Error relativo aproximado</div>$$\varepsilon_a=\left|\dfrac{\hat{p}_n-\hat{p}_{n-1}}{\hat{p}_n}\right|$$</div>
+    <div class="formula"><div class="lbl">Criterio de paro</div>$$\varepsilon_a &lt; \varepsilon_s = (0{,}5\times 10^{2-n})\%$$</div>
+  </div>
+  <p>El error relativo es el que importa: equivocarse en 1 cm midiendo un tornillo es grave;
+     equivocarse en 1 cm midiendo una carretera es irrelevante. Y como en un problema real
+     <strong>no conoces $p$</strong>, en la práctica usas $\varepsilon_a$, que compara dos iteraciones sucesivas.</p>
+
+  <div class="sub-title">1.3 Serie de Taylor: el motor de casi todo</div>
+  <div class="def">
+    $$f(x_{i+1})=f(x_i)+f'(x_i)h+\dfrac{f''(x_i)}{2!}h^2+\cdots+\dfrac{f^{(n)}(x_i)}{n!}h^n+R_n$$
+    con $h=x_{i+1}-x_i$ y residuo $R_n=\dfrac{f^{(n+1)}(\xi)}{(n+1)!}h^{n+1}$.
+  </div>
+  <p>Ese $R_n$ <em>es</em> el error de truncamiento. Como $R_n$ es proporcional a $h^{n+1}$, escribimos
+     $R_n = O(h^{n+1})$: si reduces $h$ a la mitad en un método de segundo orden, el error cae a la cuarta parte.
+     Esta es la razón por la que un método «de orden alto» vale la pena.</p>
+</section>
+
+<section class="card">
+  <h3 class="card-title">2. Ejemplos resueltos</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Error absoluto y relativo</h4>
+    <div class="ejemplo-body">
+      Se aproxima $\pi$ con $22/7$. ¿Qué tan bueno es?
+      <div class="paso"><div class="paso-t">Valores</div>
+        $p=3{,}14159265$ &nbsp;·&nbsp; $\hat{p}=22/7=3{,}14285714$
+      </div>
+      <div class="paso"><div class="paso-t">Errores</div>
+        $E_a=|3{,}14159265-3{,}14285714|=1{,}2645\times10^{-3}$<br>
+        $E_r=\dfrac{1{,}2645\times10^{-3}}{3{,}14159265}=4{,}02\times10^{-4}=0{,}0402\%$
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        El error relativo por debajo de $0{,}05\%$ garantiza al menos 3 cifras significativas correctas.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Truncamiento en la serie de Taylor</h4>
+    <div class="ejemplo-body">
+      Aproxima $e^{0,5}$ con los tres primeros términos de la serie de Maclaurin.
+      <div class="paso"><div class="paso-t">Aproximación</div>
+        $e^{x}\approx 1+x+\dfrac{x^2}{2}$ → $1+0{,}5+0{,}125=1{,}625$
+      </div>
+      <div class="paso"><div class="paso-t">Error</div>
+        Valor exacto: $1{,}6487212707$. &nbsp; $E_a=0{,}0237$, &nbsp; $E_r=1{,}44\%$
+      </div>
+      <div class="paso"><div class="paso-t">Un término más</div>
+        Con $x^3/6$: $1{,}6458333$, y el error cae a $E_r=0{,}176\%$ — casi un factor 8.
+        Compruébalo tú en el visualizador de abajo.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Cancelación catastrófica</h4>
+    <div class="ejemplo-body">
+      Con aritmética de 6 cifras, calcula $\sqrt{9001}-\sqrt{9000}$.
+      <div class="paso"><div class="paso-t">Camino ingenuo</div>
+        $94{,}8736-94{,}8683=0{,}0053$. Las 4 primeras cifras se cancelan: de 6 cifras
+        significativas quedan 2. El resultado es basura numérica.
+      </div>
+      <div class="paso"><div class="paso-t">Camino estable</div>
+        Multiplica por el conjugado:
+        $\dfrac{1}{\sqrt{9001}+\sqrt{9000}}=\dfrac{1}{189{,}742}=0{,}00527033$ — las 6 cifras intactas.
+      </div>
+      <div class="paso"><div class="paso-t">La lección</div>
+        Restar dos números casi iguales destruye precisión. Reformular algebraicamente
+        no cambia las matemáticas, pero sí cambia el resultado del computador.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">3. Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las sesiones.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Una proyección de flujo de caja a 5 años con tasa redondeada al $0{,}01\%$ puede desviarse
+      millones al final del horizonte: el error relativo se compone igual que el interés.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El redondeo a dos decimales en cada línea de una nómina de 5.000 empleados produce
+      descuadres frente al total. Por eso las normas contables fijan <em>dónde</em> se redondea.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      <code>0.1 + 0.2 == 0.3</code> es <code>false</code> en cualquier lenguaje con IEEE 754.
+      Nunca compares flotantes con <code>==</code>: usa $|a-b|&lt;\varepsilon$.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Un ADC de 10 bits sobre 0–5 V tiene resolución de $4{,}9$ mV: ese es el error de
+      cuantización, irreducible por software. Medir mejor exige más bits, no más código.</div>
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">4. Explora</h3>
+
+  <div class="sub-title">4.1 Error de truncamiento en vivo</div>
+  <div class="viz" data-viz="taylor">
+    <div class="viz-controls">
+      <label for="t-fn">Función</label>
+      <select id="t-fn"><option value="exp">eˣ</option><option value="sin">sen x</option><option value="cos">cos x</option></select>
+      <label for="t-n">Grado</label>
+      <input id="t-n" class="grado" type="range" min="0" max="9" value="2">
+      <span class="grado-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="t-x">Evaluar en</label>
+      <input id="t-x" class="punto" type="range" min="-40" max="40" value="15" step="1">
+      <span class="punto-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Fija el grado en 2 y arrastra el punto de evaluación: verás que el error crece rápido al
+    alejarte del origen. Taylor es una aproximación <em>local</em>, y ese es su límite práctico.
+  </p>
+
+  <div class="sub-title">4.2 Bisección: la convergencia se ve</div>
+  <div class="viz" data-viz="biseccion">
+    <div class="viz-controls">
+      <label for="b-fn">Ecuación</label>
+      <select id="b-fn">
+        <option value="a">x³ − x − 2 = 0 en [1, 2]</option>
+        <option value="b">cos x − x = 0 en [0, 1]</option>
+        <option value="c">eˣ − 3x = 0 en [0, 1]</option>
+      </select>
+      <label for="b-it">Iteraciones</label>
+      <input id="b-it" class="iters" type="range" min="1" max="20" value="6">
+      <span class="iters-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="tabla-iter" style="margin-top:.7rem;overflow-x:auto"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Observa la columna $|\varepsilon_a|$: cada iteración gana algo más de <em>media</em> cifra decimal.
+    Bisección nunca falla si hay cambio de signo, pero es lenta. En la sesión 3 verás por qué
+    Newton–Raphson gana el doble de cifras por paso — y cuándo diverge.
+  </p>
+</section>
+
+<section class="card">
+  <h3 class="card-title">5. Práctica de refuerzo</h3>
+  <div id="quiz-mn01"></div>
+</section>
+
+</main>
+
+<footer>
+  Métodos Numéricos · Departamento de Ciencias Básicas · UNIAJC · 2026-2 &nbsp;·&nbsp;
+  <a href="https://openstax.org/books/calculus-volume-2/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2</a> ·
+  <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a>
+</footer>
+
+<script src="../assets/ova.js"></script>
+<script src="../assets/viz-metodos.js"></script>
+<script>
+OVA.quiz({
+  destino: 'quiz-mn01',
+  titulo: 'Errores y aproximación · 6 preguntas',
+  items: [
+    {
+      etiqueta: 'Error relativo', nivel: 1,
+      criterio: 'Calcular el error absoluto y relativo de una aproximación',
+      enunciado: 'Se aproxima $\\pi=3{,}14159265$ con $22/7=3{,}14285714$. El error relativo es aproximadamente:',
+      opciones: ['$1{,}26\\times10^{-3}$', '$4{,}02\\times10^{-4}$', '$4{,}02\\times10^{-2}$', '$1{,}26\\times10^{-1}$'],
+      correcta: 1,
+      pista: 'El error relativo divide el error absoluto entre el valor exacto.',
+      solucion: '$E_a=1{,}2645\\times10^{-3}$ y $E_r=E_a/\\pi=4{,}02\\times10^{-4}$ (o sea $0{,}0402\\%$). ' +
+                'La opción a) es el error <em>absoluto</em>: confundirlos es el error más frecuente del tema.'
+    },
+    {
+      etiqueta: 'Cifras significativas', nivel: 1,
+      criterio: 'Contar cifras significativas en una medición',
+      enunciado: '¿Cuántas cifras significativas tiene el número $0{,}004520$?',
+      opciones: ['$3$', '$4$', '$6$', '$7$'],
+      correcta: 1,
+      pista: 'Los ceros a la izquierda solo ubican la coma; el cero final sí fue medido.',
+      solucion: 'Son 4: los dígitos $4$, $5$, $2$ y el $0$ final. Los ceros iniciales no cuentan porque ' +
+                'solo indican magnitud, pero el cero de la derecha sí, porque comunica precisión.'
+    },
+    {
+      etiqueta: 'Tipos de error', nivel: 2,
+      criterio: 'Distinguir error de redondeo y error de truncamiento',
+      enunciado: 'Aproximar $\\operatorname{sen}(x)$ por $x - \\dfrac{x^3}{6}$ introduce principalmente:',
+      opciones: [
+        'Error de redondeo, por los decimales de la máquina',
+        'Error de truncamiento, por cortar una serie infinita',
+        'Error de medición, propio del instrumento',
+        'Error humano de transcripción'
+      ],
+      correcta: 1,
+      pista: '¿El error viene de cómo guarda los números el computador, o de qué fórmula elegiste?',
+      solucion: 'Es truncamiento: la serie de Maclaurin es infinita y nos quedamos con dos términos. ' +
+                'Existiría incluso con aritmética exacta e infinita, que es justo lo que lo distingue del redondeo.'
+    },
+    {
+      etiqueta: 'Taylor', nivel: 2,
+      criterio: 'Estimar el error de truncamiento de un polinomio de Taylor',
+      enunciado: 'Con $e^{x}\\approx 1+x+\\dfrac{x^2}{2}$ se estima $e^{0,5}$. Sabiendo que $e^{0,5}=1{,}64872$, ' +
+                 'el error absoluto es aproximadamente:',
+      opciones: ['$0{,}0237$', '$0{,}1250$', '$0{,}0029$', '$0{,}6487$'],
+      correcta: 0,
+      pista: 'Evalúa primero el polinomio: $1+0{,}5+0{,}125$.',
+      solucion: 'El polinomio da $1{,}625$, y $|1{,}64872-1{,}625|=0{,}0237$ (un $1{,}44\\%$ relativo). ' +
+                'La opción c) es el error que se obtendría con un término más, no con tres.'
+    },
+    {
+      etiqueta: 'Criterio de paro', nivel: 2,
+      criterio: 'Aplicar el criterio de paro por error relativo aproximado',
+      enunciado: 'En un método iterativo real no conocemos el valor exacto. ¿Con qué criterio decidimos detenernos?',
+      opciones: [
+        'Cuando $E_r$ frente al valor verdadero sea menor que la tolerancia',
+        'Cuando $\\varepsilon_a=\\left|\\dfrac{\\hat{p}_n-\\hat{p}_{n-1}}{\\hat{p}_n}\\right|$ sea menor que la tolerancia',
+        'Al completar un número fijo de iteraciones, siempre 10',
+        'Cuando el error absoluto sea exactamente cero'
+      ],
+      correcta: 1,
+      pista: 'Si conociéramos el valor verdadero, no necesitaríamos el método.',
+      solucion: 'Se usa $\\varepsilon_a$, que compara dos iteraciones sucesivas: es lo único medible. ' +
+                'La opción a) describe algo imposible en la práctica, y d) nunca ocurre en aritmética finita.'
+    },
+    {
+      etiqueta: 'Estabilidad', nivel: 3,
+      criterio: 'Reconocer y evitar la cancelación por resta de números cercanos',
+      enunciado: 'Al calcular $\\sqrt{9001}-\\sqrt{9000}$ con 6 cifras significativas se pierde precisión. ' +
+                 'La forma numéricamente estable de evaluarlo es:',
+      opciones: [
+        'Redondear cada raíz a 3 cifras antes de restar',
+        'Multiplicar y dividir por el conjugado: $\\dfrac{1}{\\sqrt{9001}+\\sqrt{9000}}$',
+        'Elevar toda la expresión al cuadrado',
+        'Usar grados en vez de radianes'
+      ],
+      correcta: 1,
+      pista: 'El problema es la resta. ¿Puedes reescribir la expresión para que no haya ninguna?',
+      solucion: 'Racionalizando se obtiene $\\dfrac{1}{\\sqrt{9001}+\\sqrt{9000}}=0{,}00527033$, ahora con una ' +
+                '<em>suma</em> de números grandes en el denominador y sin cancelación. ' +
+                'Álgebra equivalente, resultados numéricos muy distintos: eso es estabilidad.'
+    }
+  ]
+});
+</script>
+</body>
+</html>

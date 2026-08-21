@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S1 · Vectores y geometría del espacio — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Cálculo Vectorial · Sesión 1</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Sesión 1 · Corte I</div>
+  <h2>Vectores y geometría del espacio</h2>
+  <p>Magnitud, producto punto y producto cruz. Dos productos con significados
+     geométricos opuestos: uno mide alineación, el otro mide perpendicularidad.</p>
+  <div class="chips">
+    <span class="chip">Stewart · Cap. 12</span>
+    <span class="chip">2 horas</span>
+    <span class="chip">Práctica de refuerzo al final</span>
+  </div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">1. Vectores en $\mathbb{R}^2$ y $\mathbb{R}^3$</h3>
+
+  <div class="callout-dark">
+    <h3>Por qué el cálculo cambia de idioma aquí</h3>
+    <p>En Cálculo I todo era $f:\mathbb{R}\to\mathbb{R}$: entra un número, sale un número.
+       A partir de ahora entran y salen <em>vectores</em>, y con eso aparecen preguntas que antes
+       no tenían sentido: ¿en qué <strong>dirección</strong> crece una función? ¿Cuál es el trabajo
+       de una fuerza a lo largo de una curva?</p>
+    <p>El producto punto y el producto cruz son las dos herramientas que responden casi todo lo
+       demás del curso. Vale la pena dominarlas ahora.</p>
+  </div>
+
+  <div class="sub-title">1.1 Magnitud y vector unitario</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Magnitud en $\mathbb{R}^3$</div>$$\|\mathbf{u}\|=\sqrt{u_1^2+u_2^2+u_3^2}$$</div>
+    <div class="formula"><div class="lbl">Vector unitario</div>$$\hat{\mathbf{u}}=\dfrac{\mathbf{u}}{\|\mathbf{u}\|}$$</div>
+    <div class="formula"><div class="lbl">Distancia entre puntos</div>$$d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}$$</div>
+  </div>
+
+  <div class="sub-title">1.2 Producto punto — mide alineación</div>
+  <div class="def">
+    $$\mathbf{u}\cdot\mathbf{v}=u_1v_1+u_2v_2+u_3v_3=\|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta$$
+    El resultado es un <strong>escalar</strong>. Vale cero exactamente cuando los vectores son perpendiculares.
+  </div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Ángulo</div>$$\cos\theta=\dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}$$</div>
+    <div class="formula"><div class="lbl">Proyección vectorial</div>$$\operatorname{proy}_{\mathbf{v}}\mathbf{u}=\dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{v}\|^2}\,\mathbf{v}$$</div>
+    <div class="formula"><div class="lbl">Componente escalar</div>$$\operatorname{comp}_{\mathbf{v}}\mathbf{u}=\dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{v}\|}$$</div>
+    <div class="formula"><div class="lbl">Trabajo</div>$$W=\mathbf{F}\cdot\mathbf{d}$$</div>
+  </div>
+
+  <div class="sub-title">1.3 Producto cruz — mide perpendicularidad</div>
+  <div class="def">
+    $$\mathbf{u}\times\mathbf{v}=\begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\u_1&u_2&u_3\\v_1&v_2&v_3\end{vmatrix}$$
+    El resultado es un <strong>vector</strong> perpendicular a ambos, con
+    $\|\mathbf{u}\times\mathbf{v}\|=\|\mathbf{u}\|\,\|\mathbf{v}\|\operatorname{sen}\theta$.
+  </div>
+  <table class="tbl">
+    <tr><th></th><th>Producto punto</th><th>Producto cruz</th></tr>
+    <tr><td>Resultado</td><td>Escalar</td><td>Vector</td></tr>
+    <tr><td>Vale cero cuando</td><td>Son perpendiculares</td><td>Son paralelos</td></tr>
+    <tr><td>Interpretación</td><td>Proyección, trabajo</td><td>Área, torque, normal a un plano</td></tr>
+    <tr><td>Conmutativo</td><td>Sí</td><td>No: $\mathbf{u}\times\mathbf{v}=-\mathbf{v}\times\mathbf{u}$</td></tr>
+    <tr><td>Existe en</td><td>Cualquier dimensión</td><td>Solo en $\mathbb{R}^3$</td></tr>
+  </table>
+  <div class="nota">
+    <strong>Regla mnemotécnica:</strong> «punto para proyectar, cruz para levantar». El punto aplasta
+    un vector sobre otro; el cruz genera uno nuevo que sale del plano de ambos.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">2. Ejemplos resueltos</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Detectar perpendicularidad</h4>
+    <div class="ejemplo-body">
+      ¿Son perpendiculares $\mathbf{u}=(3,-1,2)$ y $\mathbf{v}=(2,4,-1)$?
+      <div class="paso"><div class="paso-t">Producto punto</div>
+        $\mathbf{u}\cdot\mathbf{v}=(3)(2)+(-1)(4)+(2)(-1)=6-4-2=0$
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        Sí: $\theta=90^\circ$. No hizo falta calcular magnitudes ni el arcocoseno —
+        el signo del producto punto ya carga toda la información angular.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Área de un paralelogramo</h4>
+    <div class="ejemplo-body">
+      Halla el área del paralelogramo generado por $\mathbf{u}=(2,1,0)$ y $\mathbf{v}=(0,1,3)$.
+      <div class="paso"><div class="paso-t">Producto cruz</div>
+        $\mathbf{u}\times\mathbf{v}=\big((1)(3)-(0)(1),\ (0)(0)-(2)(3),\ (2)(1)-(1)(0)\big)=(3,-6,2)$
+      </div>
+      <div class="paso"><div class="paso-t">Magnitud</div>
+        $\|\mathbf{u}\times\mathbf{v}\|=\sqrt{9+36+4}=\sqrt{49}=7$
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        Área $=7$ unidades cuadradas. El área del triángulo sería la mitad: $3{,}5$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Proyección y trabajo</h4>
+    <div class="ejemplo-body">
+      Una fuerza $\mathbf{F}=(4,3)$ N mueve un objeto en la dirección $\mathbf{d}=(5,0)$ m.
+      <div class="paso"><div class="paso-t">Trabajo</div>
+        $W=\mathbf{F}\cdot\mathbf{d}=(4)(5)+(3)(0)=20$ J
+      </div>
+      <div class="paso"><div class="paso-t">Por qué solo cuenta una componente</div>
+        La componente vertical de la fuerza (el $3$) es perpendicular al desplazamiento
+        y no aporta trabajo. El producto punto la descarta automáticamente:
+        $\operatorname{comp}_{\mathbf{d}}\mathbf{F}=20/5=4$ N.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">3. Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las sesiones.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Si $\mathbf{p}=(12000,\,8500,\,3000)$ son precios y $\mathbf{q}=(40,\,25,\,60)$ cantidades,
+      entonces $\mathbf{p}\cdot\mathbf{q}$ es el ingreso total. El producto punto es, literalmente, facturar.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Un vector de tasas por concepto y otro de bases gravables: su producto punto da la
+      retención total. Modelar así evita errores de fila en hojas de cálculo grandes.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La <em>similitud coseno</em> $\cos\theta = \dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}$
+      es la base de los buscadores y recomendadores: dos documentos se parecen si sus vectores apuntan igual.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Potencia instantánea $P=\mathbf{V}\cdot\mathbf{I}$, y el factor de potencia es justamente
+      $\cos\theta$ entre los fasores. Fuerza de Lorentz: $\mathbf{F}=q\,\mathbf{v}\times\mathbf{B}$ — producto cruz puro.</div>
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">4. Explora</h3>
+
+  <div class="sub-title">4.1 Los dos productos, uno al lado del otro</div>
+  <div class="viz" data-viz="vectores">
+    <div class="viz-controls">
+      <label>u =</label>
+      <input class="ux" type="range" min="-6" max="6" value="4" step="1" aria-label="u sub x">
+      <input class="uy" type="range" min="-6" max="6" value="3" step="1" aria-label="u sub y">
+      <label>v =</label>
+      <input class="vx" type="range" min="-6" max="6" value="-2" step="1" aria-label="v sub x">
+      <input class="vy" type="range" min="-6" max="6" value="4" step="1" aria-label="v sub y">
+      <label for="vmodo">Mostrar</label>
+      <select id="vmodo">
+        <option value="suma">Suma u+v</option>
+        <option value="proy">Proyección de u sobre v</option>
+        <option value="area">Área del paralelogramo</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Busca una posición donde $\mathbf{u}\cdot\mathbf{v}=0$ y observa qué le pasa a la proyección:
+    se reduce al vector nulo. Ese es el sentido geométrico de «no hay componente en esa dirección».
+  </p>
+
+  <div class="sub-title">4.2 Adelanto: curvas de nivel y gradiente</div>
+  <div class="viz" data-viz="gradiente">
+    <div class="viz-controls">
+      <label for="g-fn">Superficie</label>
+      <select id="g-fn">
+        <option value="parab">x² + y²</option>
+        <option value="silla">x² − y²</option>
+        <option value="prod">x·y</option>
+        <option value="onda">sen x · cos y</option>
+      </select>
+      <label>Punto</label>
+      <input class="gx" type="range" min="-30" max="30" value="12" aria-label="coordenada x">
+      <input class="gy" type="range" min="-30" max="30" value="8" aria-label="coordenada y">
+      <span class="p-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Mueve el punto por el mapa y fíjate en un solo hecho: la flecha dorada <strong>siempre</strong>
+    corta perpendicularmente a la línea punteada. Ese resultado —el gradiente es normal a la curva de
+    nivel— es el corazón de la sesión sobre derivadas direccionales.
+  </p>
+</section>
+
+<section class="card">
+  <h3 class="card-title">5. Práctica de refuerzo</h3>
+  <div id="quiz-cv01"></div>
+</section>
+
+</main>
+
+<footer>
+  Cálculo Vectorial · Departamento de Ciencias Básicas · UNIAJC · 2026-2 &nbsp;·&nbsp;
+  <a href="https://openstax.org/books/calculus-volume-3/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> ·
+  <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a>
+</footer>
+
+<script src="../assets/ova.js"></script>
+<script src="../assets/viz-vectorial.js"></script>
+<script>
+OVA.quiz({
+  destino: 'quiz-cv01',
+  titulo: 'Vectores · 6 preguntas',
+  items: [
+    {
+      etiqueta: 'Magnitud', nivel: 1,
+      criterio: 'Calcular la magnitud de un vector',
+      enunciado: 'La magnitud del vector $\\mathbf{u}=(2,-3,6)$ es:',
+      opciones: ['$5$', '$7$', '$11$', '$\\sqrt{41}$'],
+      correcta: 1,
+      pista: 'Suma los cuadrados y saca raíz: el signo se pierde al elevar al cuadrado.',
+      solucion: '$\\|\\mathbf{u}\\|=\\sqrt{4+9+36}=\\sqrt{49}=7$. ' +
+                'La opción d) sale de olvidar una de las componentes al sumar.'
+    },
+    {
+      etiqueta: 'Producto punto', nivel: 1,
+      criterio: 'Usar el producto punto para detectar perpendicularidad',
+      enunciado: 'Los vectores $\\mathbf{u}=(3,-1,2)$ y $\\mathbf{v}=(2,4,-1)$ son:',
+      opciones: ['Paralelos', 'Perpendiculares', 'Forman $45^\\circ$', 'Forman $60^\\circ$'],
+      correcta: 1,
+      pista: 'Calcula $\\mathbf{u}\\cdot\\mathbf{v}$ antes de pensar en ángulos.',
+      solucion: '$\\mathbf{u}\\cdot\\mathbf{v}=6-4-2=0$, y como ninguno es el vector nulo, ' +
+                '$\\cos\\theta=0$ y $\\theta=90^\\circ$. Serían paralelos si su producto <em>cruz</em> fuera cero.'
+    },
+    {
+      etiqueta: 'Producto cruz', nivel: 2,
+      criterio: 'Calcular el producto cruz de dos vectores',
+      enunciado: 'Si $\\mathbf{u}=(1,0,0)$ y $\\mathbf{v}=(0,1,0)$, entonces $\\mathbf{u}\\times\\mathbf{v}$ es:',
+      opciones: ['$(0,0,1)$', '$(0,0,-1)$', '$0$', '$(1,1,0)$'],
+      correcta: 0,
+      pista: 'Son $\\mathbf{i}$ y $\\mathbf{j}$. Aplica la regla de la mano derecha.',
+      solucion: '$\\mathbf{i}\\times\\mathbf{j}=\\mathbf{k}=(0,0,1)$. ' +
+                'La opción b) es $\\mathbf{j}\\times\\mathbf{i}$: el producto cruz es anticonmutativo, ' +
+                'y por eso el orden de los factores sí altera el resultado.'
+    },
+    {
+      etiqueta: 'Área', nivel: 2,
+      criterio: 'Interpretar la norma del producto cruz como área',
+      enunciado: 'El área del paralelogramo generado por $\\mathbf{u}=(2,1,0)$ y $\\mathbf{v}=(0,1,3)$ es:',
+      opciones: ['$3{,}5$', '$7$', '$49$', '$14$'],
+      correcta: 1,
+      pista: 'Calcula $\\mathbf{u}\\times\\mathbf{v}$ y luego su magnitud.',
+      solucion: '$\\mathbf{u}\\times\\mathbf{v}=(3,-6,2)$ y $\\|\\mathbf{u}\\times\\mathbf{v}\\|=\\sqrt{49}=7$. ' +
+                'La opción a) es el área del <em>triángulo</em>, que es la mitad.'
+    },
+    {
+      etiqueta: 'Proyección', nivel: 2,
+      criterio: 'Calcular la componente escalar de un vector sobre otro',
+      enunciado: 'La componente escalar de $\\mathbf{u}=(4,3)$ en la dirección de $\\mathbf{v}=(1,0)$ es:',
+      opciones: ['$3$', '$4$', '$5$', '$7$'],
+      correcta: 1,
+      pista: '$\\mathbf{v}$ ya es unitario, así que la componente es simplemente $\\mathbf{u}\\cdot\\mathbf{v}$.',
+      solucion: '$\\operatorname{comp}_{\\mathbf{v}}\\mathbf{u}=\\dfrac{\\mathbf{u}\\cdot\\mathbf{v}}{\\|\\mathbf{v}\\|}=\\dfrac{4}{1}=4$. ' +
+                'La opción c) es $\\|\\mathbf{u}\\|$: la magnitud total, no su sombra sobre el eje x.'
+    },
+    {
+      etiqueta: 'Aplicación', nivel: 3,
+      criterio: 'Aplicar el producto punto al cálculo de trabajo',
+      enunciado: 'Una fuerza $\\mathbf{F}=(6,8)$ N desplaza un objeto $\\mathbf{d}=(10,0)$ m. El trabajo realizado es:',
+      opciones: ['$140$ J', '$60$ J', '$100$ J', '$0$ J'],
+      correcta: 1,
+      pista: 'El trabajo es un producto punto, no un producto de magnitudes.',
+      solucion: '$W=\\mathbf{F}\\cdot\\mathbf{d}=(6)(10)+(8)(0)=60$ J. ' +
+                'La opción c) sale de usar $\\|\\mathbf{F}\\|\\,\\|\\mathbf{d}\\|=100$, es decir de suponer ' +
+                'que la fuerza es paralela al desplazamiento. La componente vertical de $\\mathbf{F}$ no hace trabajo.'
+    }
+  ]
+});
+</script>
+</body>
+</html>
