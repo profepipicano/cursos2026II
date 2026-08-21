@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía 2 · Errores y Taylor — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Métodos Numéricos · Guía 2</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Por qué</a>
+    <a href="#s2">2 · El computador</a>
+    <a href="#s3">3 · Errores</a>
+    <a href="#s4">4 · Propagación</a>
+    <a href="#s5">5 · Métodos iterativos</a>
+    <a href="#s6">6 · Taylor</a>
+    <a href="#s7">7 · Práctica final</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 2 · Corte I</div>
+  <h2>Conceptos básicos, errores y polinomios de Taylor</h2>
+  <p>Todo método numérico entrega una respuesta equivocada. La pregunta profesional no es si hay
+     error, sino cuánto vale, de dónde viene y cómo se controla. Esta guía responde esas tres
+     preguntas y presenta la herramienta de la que saldrán casi todos los métodos del semestre.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 3–4</span>
+    <span class="chip">Burden · Cap. 1</span>
+    <span class="chip">Semana 2</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>Cómo usar esta guía.</strong> Léela en orden. Después de los bloques 3, 4 y 5 hay una
+  comprobación de tres preguntas: resuélvela antes de seguir. Ninguna práctica tiene nota.
+  La sección 6 es la más larga del semestre y vale la pena volver a ella varias veces: Taylor
+  reaparece en diferenciación numérica, en Euler y en Runge-Kutta.
+</div>
+
+<!-- ═══════════ 1 ═══════════ -->
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Por qué existen los métodos numéricos</h3>
+
+  <p>Hasta ahora, cada problema que te pusieron tenía solución exacta. Esa experiencia es engañosa:
+     los problemas de los libros están <em>elegidos</em> para que se puedan resolver a mano.
+     En ingeniería eso casi nunca ocurre.</p>
+
+  <div class="callout-dark">
+    <h3>Cuatro problemas sin salida analítica</h3>
+    <p><strong>1.</strong> $\displaystyle\int e^{-x^2}\,dx$ no tiene primitiva elemental. Está demostrado
+       que no existe, y sin embargo esa integral es la base de toda la estadística.</p>
+    <p><strong>2.</strong> La ecuación $x = \cos x$ tiene una única solución real y ningún despeje
+       algebraico la produce.</p>
+    <p><strong>3.</strong> El teorema de <strong>Abel–Ruffini</strong> (1824) demuestra que desde
+       grado 5 no existe fórmula general por radicales. No es que no la hayamos encontrado: es que
+       se probó que no puede existir.</p>
+    <p><strong>4.</strong> Un sistema lineal de 10.000 incógnitas resuelto por la regla de Cramer
+       exigiría más operaciones que átomos hay en la galaxia. Existe la fórmula, pero es inútil.</p>
+  </div>
+
+  <p>El método numérico hace un trueque: renuncia a la exactitud y a cambio entrega una
+     aproximación <strong>controlada</strong>. La palabra clave es esa. Cualquiera puede dar un
+     número equivocado; lo que convierte esto en ingeniería es poder afirmar
+     <em>«mi respuesta se equivoca en menos de $10^{-6}$»</em> y poder demostrarlo.</p>
+
+  <div class="def">
+    <strong>Las tres preguntas de todo método numérico.</strong> Cada técnica del semestre se juzga
+    con las mismas tres preguntas:
+    <br><br>
+    <strong>1. ¿Converge?</strong> ¿La sucesión que genera se acerca de verdad a la solución, o
+    puede alejarse?<br>
+    <strong>2. ¿Qué tan rápido?</strong> ¿Cuántas operaciones cuesta ganar una cifra más?<br>
+    <strong>3. ¿Cuánto error tiene?</strong> ¿Puedo acotarlo <em>sin conocer</em> la respuesta verdadera?
+  </div>
+
+  <div class="nota">
+    <strong>Esto no es folclore académico.</strong> En 1996 el cohete <strong>Ariane 5</strong> se
+    destruyó a los 37 segundos de vuelo: un número de 64 bits se convirtió a 16 bits y desbordó.
+    Pérdida: 370 millones de dólares. En 1991 una batería <strong>Patriot</strong> falló al
+    interceptar un misil en Dharan; el reloj interno acumulaba un error de redondeo de
+    $10^{-7}$ segundos por pulso, y tras 100 horas encendida la desviación era de 0,34 segundos —
+    unos 600 metros de error de posición. Murieron 28 personas.
+  </div>
+</section>
+
+<!-- ═══════════ 2 ═══════════ -->
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Cómo guarda los números el computador</h3>
+
+  <p>Un computador dispone de una cantidad <strong>finita</strong> de bits por número. Los reales,
+     en cambio, son infinitos y densos: entre dos cualesquiera hay infinitos más. La consecuencia es
+     inevitable: la mayoría de los reales <em>no se pueden representar</em>, y lo que la máquina
+     guarda es el vecino representable más cercano.</p>
+
+  <div class="callout-dark">
+    <h3>El caso de $0{,}1$</h3>
+    <p>En base 10, $0{,}1$ es exacto. En base 2 es periódico:
+       $0{,}1_{10}=0{,}0001100110011\ldots_2$, igual que $1/3$ es periódico en base 10.
+       Como el espacio es finito, hay que cortar.</p>
+    <p>Lo que tu computador guarda realmente cuando escribes <code>0.1</code> es
+       $0{,}1000000000000000055511151231257827\ldots$ Por eso:</p>
+    <p style="font-family:ui-monospace,monospace;font-size:.95rem">
+       0.1 + 0.2 &nbsp;=&nbsp; 0.30000000000000004</p>
+    <p>No es un error del lenguaje ni un defecto de tu máquina: ocurre en Python, en C, en Java, en
+       JavaScript y en Excel, porque todos usan el mismo estándar de punto flotante.</p>
+  </div>
+
+  <div class="sub-title">2.1 Epsilon de máquina</div>
+  <div class="def">
+    El <em>epsilon de máquina</em> $\varepsilon_{\text{máq}}$ es el número positivo más pequeño tal que
+    $$1 + \varepsilon_{\text{máq}} \neq 1$$
+    en la aritmética del computador. Mide la <strong>resolución relativa</strong>: dos números que
+    difieran en menos que eso son indistinguibles para la máquina.
+  </div>
+
+  <table class="tbl">
+    <tr><th>Precisión</th><th>Bits</th><th>$\varepsilon_{\text{máq}}$</th><th>Cifras decimales fiables</th></tr>
+    <tr><td>Simple (<code>float</code>)</td><td>32</td><td>$2^{-23}\approx 1{,}19\times10^{-7}$</td><td>≈ 7</td></tr>
+    <tr><td>Doble (<code>double</code>)</td><td>64</td><td>$2^{-52}\approx 2{,}22\times10^{-16}$</td><td>≈ 16</td></tr>
+  </table>
+
+  <p>Nota que $\varepsilon_{\text{máq}}$ es <strong>relativo</strong>, no absoluto. Cerca de $1$ los
+     números representables están separados por unos $10^{-16}$; cerca de $10^{6}$, por unos
+     $10^{-10}$; y cerca de $10^{-300}$, por cantidades diminutas. La precisión no es una cantidad
+     fija de decimales, sino una cantidad fija de <em>cifras significativas</em>.</p>
+
+  <div class="nota">
+    <strong>Consecuencia práctica para programar.</strong> Nunca compares dos flotantes con
+    <code>==</code>. La comparación correcta es
+    $$|a-b| \lt \text{tol}$$
+    con una tolerancia acorde al problema. Escribir <code>if (x == 0.3)</code> es un error de
+    principiante que puede tardar días en manifestarse.
+  </div>
+
+  <div class="sub-title">2.2 Desbordamiento</div>
+  <p>Además de la precisión limitada hay un rango limitado. Si un cálculo produce un número
+     demasiado grande ocurre <strong>overflow</strong> (la máquina devuelve infinito); si produce uno
+     demasiado pequeño en valor absoluto, ocurre <strong>underflow</strong> y el resultado se
+     redondea a cero. El accidente del Ariane 5 fue exactamente un overflow.</p>
+</section>
+
+<!-- ═══════════ 3 ═══════════ -->
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Errores: definirlos y medirlos</h3>
+
+  <div class="sub-title">3.1 Las dos fuentes</div>
+  <table class="tbl">
+    <tr><th>Tipo</th><th>De dónde viene</th><th>Cómo se reduce</th></tr>
+    <tr><td><strong>Redondeo</strong></td><td>La máquina representa los números con dígitos finitos</td><td>Más precisión, reordenar las operaciones</td></tr>
+    <tr><td><strong>Truncamiento</strong></td><td>El método corta un proceso infinito (una serie, un límite)</td><td>Más términos, paso $h$ más pequeño</td></tr>
+  </table>
+  <div class="nota">
+    <strong>La tensión central del curso.</strong> Reducir el truncamiento casi siempre exige más
+    operaciones, y más operaciones acumulan más redondeo. Existe por tanto un $h$ óptimo, y
+    <em>no es «lo más pequeño posible»</em>. Volveremos a esto en diferenciación numérica.
+  </div>
+
+  <div class="sub-title">3.2 Medir el error</div>
+  <div class="def">
+    Si $p$ es el valor verdadero y $\hat{p}$ la aproximación:
+    $$E_a = |\,p - \hat{p}\,| \qquad\qquad E_r = \frac{|\,p-\hat{p}\,|}{|p|}\quad (p\neq 0)$$
+    El error relativo suele expresarse en porcentaje: $E_r\times 100\,\%$.
+  </div>
+
+  <p>El que importa es el relativo. Equivocarse en 1 cm midiendo un tornillo es un desastre;
+     equivocarse en 1 cm midiendo la vía Cali–Palmira es irrelevante. El error absoluto es idéntico
+     en ambos casos; el relativo los distingue.</p>
+
+  <div class="callout-dark">
+    <h3>El problema que nadie ve venir</h3>
+    <p>Las dos fórmulas anteriores necesitan conocer $p$. Pero si conocieras $p$
+       <strong>no estarías usando un método numérico</strong>. En un problema real esas fórmulas
+       son inservibles.</p>
+    <p>La salida es comparar la iteración actual con la anterior:</p>
+    <p>$$\varepsilon_a = \left|\frac{\hat{p}_n - \hat{p}_{n-1}}{\hat{p}_n}\right|$$</p>
+    <p>Este <em>error relativo aproximado</em> es lo único medible en la práctica, y es el que
+       aparece en todas las tablas de iteraciones del semestre. Que $\varepsilon_a$ sea pequeño
+       significa que el método ya casi no se mueve — lo cual es evidencia fuerte, aunque no
+       demostración, de que estamos cerca de la solución.</p>
+  </div>
+
+  <div class="sub-title">3.3 Cifras significativas y criterio de paro</div>
+  <p>Las cifras significativas de un número son los dígitos que transmiten información real sobre su
+     precisión. Los ceros a la izquierda solo ubican la coma decimal y no cuentan; los ceros a la
+     derecha sí, porque comunican que esa posición fue medida.</p>
+  <table class="tbl">
+    <tr><th>Número</th><th>Cifras significativas</th><th>Por qué</th></tr>
+    <tr><td>$0{,}004520$</td><td>4</td><td>$4$, $5$, $2$ y el $0$ final; los ceros iniciales no cuentan</td></tr>
+    <tr><td>$1{,}200$</td><td>4</td><td>Los ceros finales sí informan precisión</td></tr>
+    <tr><td>$3{,}14\times10^{5}$</td><td>3</td><td>La notación científica elimina toda ambigüedad</td></tr>
+  </table>
+
+  <div class="def">
+    <strong>Criterio de Scarborough.</strong> Para garantizar al menos $n$ cifras significativas
+    correctas, se itera hasta que
+    $$\varepsilon_a \lt \varepsilon_s = \left(0{,}5\times 10^{2-n}\right)\%$$
+    Así, $n=3$ exige $\varepsilon_a \lt 0{,}05\%$ y $n=6$ exige $\varepsilon_a \lt 5\times10^{-5}\%$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Error absoluto, relativo y cifras garantizadas</h4>
+    <div class="ejemplo-body">
+      Se aproxima $\pi = 3{,}14159265$ mediante $22/7$. ¿Qué tan buena es la aproximación?
+      <div class="paso"><div class="paso-t">Valores</div>
+        $p = 3{,}14159265\ldots$ &nbsp;·&nbsp; $\hat{p} = 22/7 = 3{,}14285714\ldots$
+      </div>
+      <div class="paso"><div class="paso-t">Errores</div>
+        $E_a = |3{,}14159265 - 3{,}14285714| = 1{,}2645\times10^{-3}$<br>
+        $E_r = \dfrac{1{,}2645\times10^{-3}}{3{,}14159265} = 4{,}025\times10^{-4} = 0{,}04025\,\%$
+      </div>
+      <div class="paso"><div class="paso-t">¿Cuántas cifras están garantizadas?</div>
+        Buscamos el mayor $n$ con $0{,}04025\% \lt (0{,}5\times10^{2-n})\%$.<br>
+        $n=3$: $0{,}05\%$ ✓ &nbsp;·&nbsp; $n=4$: $0{,}005\%$ ✗<br>
+        Se garantizan <strong>3 cifras significativas</strong>: $3{,}14$. Y en efecto la cuarta ya
+        difiere ($1$ contra $2$).
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Representación y medición del error</h3>
+  <div id="chk1"></div>
+</div>
+
+<!-- ═══════════ 4 ═══════════ -->
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Propagación de errores</h3>
+
+  <p>Un error nunca se queda quieto: entra por un dato y sale amplificado o amortiguado por cada
+     operación. Saber por cuánto se multiplica es lo que permite decidir con cuánta precisión hay que
+     medir la entrada.</p>
+
+  <div class="sub-title">4.1 Reglas básicas</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Suma y resta</div>
+      $$E_a(x\pm y)\ \leq\ E_a(x)+E_a(y)$$
+      <span style="font-size:.82rem">Se suman los errores <strong>absolutos</strong></span></div>
+    <div class="formula"><div class="lbl">Producto y cociente</div>
+      $$E_r(x\cdot y)\ \approx\ E_r(x)+E_r(y)$$
+      <span style="font-size:.82rem">Se suman los errores <strong>relativos</strong></span></div>
+  </div>
+
+  <div class="sub-title">4.2 La regla general: la derivada como factor de amplificación</div>
+  <div class="def">
+    Si $\hat{x}$ aproxima a $x$ con error $E_a(\hat{x})$, entonces
+    $$E_a\big(f(\hat{x})\big)\ \approx\ \big|f'(\hat{x})\big|\cdot E_a(\hat{x})$$
+    La derivada es literalmente el factor por el que se multiplica el error.
+  </div>
+  <p>Esta fórmula no sale de la nada: <strong>es el polinomio de Taylor de primer orden</strong>.
+     Si $f(x)\approx f(\hat{x})+f'(\hat{x})(x-\hat{x})$, entonces
+     $f(x)-f(\hat{x})\approx f'(\hat{x})(x-\hat{x})$, y tomando valor absoluto se obtiene lo anterior.
+     Es la primera de muchas veces en que Taylor aparecerá disfrazado.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Amplificación del error</h4>
+    <div class="ejemplo-body">
+      Se mide el radio de una esfera como $r = 5{,}00\pm 0{,}01$ cm. ¿Con qué error queda el volumen?
+      <div class="paso"><div class="paso-t">Modelo</div>
+        $V(r)=\dfrac{4}{3}\pi r^3$, &nbsp; $V'(r)=4\pi r^2$
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la regla</div>
+        $E_a(V)\approx |4\pi(5)^2|\cdot 0{,}01 = 100\pi\cdot 0{,}01 = 3{,}14\ \text{cm}^3$
+      </div>
+      <div class="paso"><div class="paso-t">Comparar en términos relativos</div>
+        $E_r(r)=\dfrac{0{,}01}{5}=0{,}2\%$ &nbsp; pero &nbsp; $E_r(V)=\dfrac{3{,}14}{523{,}6}=0{,}6\%$
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        El error relativo se <strong>triplicó</strong>. No es casualidad: al elevar al cubo, el error
+        relativo se multiplica por 3. En general, para $f(x)=x^k$ se tiene
+        $E_r(f)\approx |k|\,E_r(x)$. Medir el radio con el doble de precisión es la única forma de
+        mejorar el volumen.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.3 Cancelación catastrófica</div>
+  <div class="callout-dark">
+    <h3>La operación peligrosa es la resta</h3>
+    <p>Cuando se restan dos números casi iguales, las cifras significativas coincidentes se anulan y
+       el resultado queda sostenido solo por las pocas cifras que quedaban al final — las menos
+       fiables. La precisión se desploma en una sola operación.</p>
+    <p>Lo grave es que el error <em>absoluto</em> no crece: crece el <strong>relativo</strong>, que es
+       el que importa. Por eso el desastre pasa desapercibido si uno solo mira la diferencia.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · $\sqrt{9001}-\sqrt{9000}$ con 6 cifras significativas</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Camino ingenuo</div>
+        $\sqrt{9001}\approx 94{,}8736$ &nbsp;·&nbsp; $\sqrt{9000}\approx 94{,}8683$<br>
+        Diferencia: $94{,}8736-94{,}8683 = 0{,}0053$<br>
+        Las cuatro primeras cifras se cancelaron: de 6 cifras significativas quedaron <strong>2</strong>.
+      </div>
+      <div class="paso"><div class="paso-t">Camino estable: racionalizar</div>
+        $$\sqrt{9001}-\sqrt{9000}=\frac{(\sqrt{9001}-\sqrt{9000})(\sqrt{9001}+\sqrt{9000})}{\sqrt{9001}+\sqrt{9000}}=\frac{1}{\sqrt{9001}+\sqrt{9000}}$$
+        $\dfrac{1}{189{,}742} = 0{,}00527031$ — las 6 cifras intactas.
+      </div>
+      <div class="paso"><div class="paso-t">Comparación</div>
+        Valor exacto: $0{,}00527031637\ldots$<br>
+        Error relativo del camino ingenuo: $5{,}6\times10^{-3}$ &nbsp;·&nbsp;
+        del camino estable: $1{,}2\times10^{-6}$. Casi <strong>cuatro órdenes de magnitud</strong>
+        de diferencia, con la misma máquina y la misma fórmula matemática.
+      </div>
+      <div class="paso"><div class="paso-t">La lección</div>
+        Dos expresiones algebraicamente idénticas pueden comportarse de forma radicalmente distinta
+        en aritmética finita. Reformular no cambia las matemáticas, pero sí cambia el resultado.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · La fórmula cuadrática también falla</h4>
+    <div class="ejemplo-body">
+      Resuelve $x^2 + 10000{,}0001\,x + 1 = 0$ con 8 cifras significativas.
+      <div class="paso"><div class="paso-t">El problema</div>
+        Aquí $b^2 \gg 4ac$, así que $\sqrt{b^2-4ac}\approx |b|$. En la raíz
+        $x_1=\dfrac{-b+\sqrt{b^2-4ac}}{2a}$ se restan dos números casi iguales: cancelación.
+      </div>
+      <div class="paso"><div class="paso-t">Reformulación estable</div>
+        Se calcula primero la raíz <em>sin</em> cancelación (la que suma) y la otra se obtiene del
+        producto de raíces $x_1 x_2 = c/a$:
+        $$x_2=\frac{-b-\operatorname{sgn}(b)\sqrt{b^2-4ac}}{2a}, \qquad x_1=\frac{c}{a\,x_2}$$
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        Las raíces exactas son $-10000$ y $-0{,}0001$. El camino ingenuo pierde casi todas las
+        cifras de la raíz pequeña; el estable la recupera completa.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.4 Explora la cancelación</div>
+  <div class="viz" data-viz="cancelacion">
+    <div class="viz-controls">
+      <label for="cn-d">Precisión de la máquina</label>
+      <input id="cn-d" class="cifras" type="range" min="3" max="15" value="6">
+      <span class="cifras-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="cn-x">x =</label>
+      <select id="cn-x" class="xval">
+        <option value="9000">9000</option>
+        <option value="100">100</option>
+        <option value="1000000">1 000 000</option>
+      </select>
+      <span class="x-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Fíjate en la distancia vertical entre las dos curvas: es la cantidad de cifras que la resta
+    destruye. Aumenta $x$ a un millón y la brecha se ensancha, porque los dos radicandos se parecen
+    todavía más entre sí.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Propagación y estabilidad</h3>
+  <div id="chk2"></div>
+</div>
+
+<!-- ═══════════ 5 ═══════════ -->
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Métodos iterativos: la idea</h3>
+
+  <p>Los métodos del semestre se dividen en dos familias, y la diferencia entre ellas es conceptual
+     antes que técnica.</p>
+
+  <table class="tbl">
+    <tr><th></th><th>Métodos directos</th><th>Métodos iterativos</th></tr>
+    <tr><td>Cómo terminan</td><td>En un número finito de pasos conocido de antemano</td><td>Cuando <strong>nosotros</strong> decidimos parar</td></tr>
+    <tr><td>En aritmética exacta</td><td>Darían la respuesta exacta</td><td>Darían una sucesión que se acerca sin llegar</td></tr>
+    <tr><td>Error</td><td>Solo de redondeo</td><td>De redondeo y de truncamiento</td></tr>
+    <tr><td>Ejemplos del curso</td><td>Gauss-Jordan, factorización LU, Cramer</td><td>Jacobi, Gauss-Seidel, bisección, Newton-Raphson</td></tr>
+  </table>
+
+  <div class="def">
+    <strong>Anatomía de un método iterativo.</strong> Todos, sin excepción, tienen estas cuatro piezas:
+    <br><br>
+    <strong>1. Valor inicial</strong> $x_0$ — una conjetura de partida.<br>
+    <strong>2. Regla de recurrencia</strong> $x_{n+1} = g(x_n)$ — cómo se obtiene el siguiente desde el actual.<br>
+    <strong>3. Criterio de paro</strong> — cuándo consideramos suficiente.<br>
+    <strong>4. Resultado</strong> — el último valor calculado, con su error estimado.
+  </div>
+
+  <div class="sub-title">5.1 Un método de hace 3.800 años</div>
+  <p>Los babilonios ya calculaban raíces cuadradas así. Para hallar $\sqrt{a}$: toma una conjetura
+     $x$. Si $x$ fuera exacto, $a/x$ sería igual a $x$. Si $x$ se quedó corto, $a/x$ se pasa; si $x$
+     se pasa, $a/x$ se queda corto. En cualquier caso, <strong>la respuesta está entre los dos</strong>.
+     Así que promédialos y repite:</p>
+  <div class="formula" style="max-width:340px">
+    $$x_{n+1}=\frac{1}{2}\left(x_n+\frac{a}{x_n}\right)$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Herón para $\sqrt{2}$, partiendo de $x_0=1$</h4>
+    <div class="ejemplo-body">
+      <table class="tbl">
+        <tr><th>$n$</th><th>$x_n$</th><th>Error</th><th>Cifras correctas</th></tr>
+        <tr><td>0</td><td>1</td><td>$4{,}1\times10^{-1}$</td><td>0</td></tr>
+        <tr><td>1</td><td>1,5</td><td>$8{,}6\times10^{-2}$</td><td>1</td></tr>
+        <tr><td>2</td><td>1,41666666666667</td><td>$2{,}5\times10^{-3}$</td><td>2</td></tr>
+        <tr><td>3</td><td>1,41421568627451</td><td>$2{,}1\times10^{-6}$</td><td>5</td></tr>
+        <tr><td>4</td><td>1,41421356237469</td><td>$1{,}6\times10^{-12}$</td><td>11</td></tr>
+        <tr><td>5</td><td>1,41421356237310</td><td>$9{,}0\times10^{-25}$</td><td>24</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Lo que hay que ver en esa tabla</div>
+        Las cifras correctas van $0, 1, 2, 5, 11, 24$: <strong>aproximadamente se duplican en cada
+        paso</strong>. A eso se le llama <em>convergencia cuadrática</em>, y es lo mejor que se puede
+        pedir. En la semana 8 verás que Newton-Raphson converge así — y que Herón <em>es</em> Newton
+        aplicado a $x^2-a=0$.
+      </div>
+      <div class="paso"><div class="paso-t">Y lo que no hay que perder de vista</div>
+        Ningún renglón de la tabla es la respuesta exacta. Ni el quinto, ni el quincuagésimo.
+        El método <strong>nunca termina por sí solo</strong>: somos nosotros los que decidimos que
+        24 cifras ya bastan.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.2 Un experimento para hacer ahora mismo</div>
+  <div class="callout-dark">
+    <h3>Toma tu calculadora, ponla en radianes</h3>
+    <p>Escribe cualquier número — el que quieras — y oprime la tecla <strong>cos</strong> unas veinte
+       veces seguidas. Compara con tu compañero de al lado, que partió de otro número.</p>
+    <p>Los dos llegaron a <strong>0,7390851332…</strong></p>
+    <p>Acabas de resolver $x=\cos x$, la ecuación de la §1 que no tiene despeje algebraico, sin más
+       herramienta que una tecla. Eso es un método iterativo de punto fijo, y que el aula entera
+       converja al mismo número desde puntos de partida distintos dice algo profundo: para esta
+       ecuación, la convergencia no depende de acertar con $x_0$.</p>
+    <p>Que eso sea así <em>no siempre</em> ocurre. Con la ecuación $x = e^{-x}$ también funciona;
+       con otras el mismo procedimiento se dispara al infinito. Determinar cuándo converge y cuándo
+       no es exactamente el contenido de la semana 8.</p>
+  </div>
+
+  <div class="sub-title">5.3 Criterios de paro</div>
+  <ul>
+    <li><strong>Por error relativo aproximado:</strong> parar cuando $\varepsilon_a \lt \text{tol}$.
+        Es el criterio estándar y el que usa el criterio de Scarborough.</li>
+    <li><strong>Por residuo:</strong> si buscamos una raíz de $f$, parar cuando $|f(x_n)| \lt \text{tol}$.
+        Cuidado: en funciones muy planas esto puede dar por bueno un punto lejano a la raíz.</li>
+    <li><strong>Por número máximo de iteraciones:</strong> parar tras $N$ pasos, pase lo que pase.</li>
+  </ul>
+  <div class="nota">
+    <strong>El tercer criterio nunca es opcional.</strong> Si el método no converge —y a veces no
+    converge— los dos primeros criterios no se cumplen jamás y el programa entra en un ciclo
+    infinito. Todo código iterativo que escribas este semestre debe tener un tope de iteraciones,
+    y debe avisar si lo alcanzó en vez de devolver un número silenciosamente.
+  </div>
+
+  <div class="sub-title">5.4 Explora la convergencia</div>
+  <div class="viz" data-viz="iteracion">
+    <div class="viz-controls">
+      <label for="it-m">Método</label>
+      <select id="it-m">
+        <option value="heron2">Herón para √2  (x₀ = 1)</option>
+        <option value="heron10">Herón para √10  (x₀ = 3)</option>
+        <option value="coseno">Punto fijo: x = cos x  (x₀ = 1)</option>
+        <option value="expneg">Punto fijo: x = e⁻ˣ  (x₀ = 0,5)</option>
+      </select>
+      <label for="it-n">Iteraciones</label>
+      <input id="it-n" class="iters" type="range" min="1" max="25" value="6">
+      <span class="iters-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="tabla-iter" style="margin-top:.7rem;overflow-x:auto"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Compara la columna «cifras correctas» entre Herón y el punto fijo del coseno. Herón las duplica;
+    el coseno gana más o menos media cifra por paso. Ambos convergen, pero uno cuesta 5 iteraciones
+    y el otro 30 para el mismo resultado. Esa diferencia es lo que llamamos <em>orden de convergencia</em>.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Métodos iterativos</h3>
+  <div id="chk3"></div>
+</div>
+
+<!-- ═══════════ 6 ═══════════ -->
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Polinomios de Taylor</h3>
+
+  <div class="callout-dark">
+    <h3>El computador solo sabe sumar y multiplicar</h3>
+    <p>El procesador de tu máquina tiene circuitos para sumar, restar, multiplicar y dividir.
+       No tiene un circuito para $e^x$, ni para $\operatorname{sen} x$, ni para $\ln x$. Cuando
+       escribes <code>exp(0.5)</code>, algo tiene que <em>fabricar</em> ese número usando solo
+       las cuatro operaciones.</p>
+    <p>Ese algo son los polinomios: las únicas funciones que un computador puede evaluar de forma
+       nativa. Y la herramienta que convierte cualquier función suave en un polinomio es Taylor.</p>
+  </div>
+
+  <div class="sub-title">6.1 Construcción</div>
+  <p>La idea es sencilla: si quiero un polinomio que se parezca a $f$ cerca de un punto $a$, le exijo
+     que <strong>coincida con $f$ en el valor y en las primeras $n$ derivadas</strong> en ese punto.
+     Imponer esas $n+1$ condiciones determina el polinomio de forma única.</p>
+
+  <div class="def">
+    <strong>Polinomio de Taylor de grado $n$ alrededor de $a$:</strong>
+    $$P_n(x)=f(a)+f'(a)(x-a)+\frac{f''(a)}{2!}(x-a)^2+\cdots+\frac{f^{(n)}(a)}{n!}(x-a)^n
+    =\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k$$
+    Cuando $a=0$ se le llama <em>polinomio de Maclaurin</em>.
+  </div>
+
+  <div class="sub-title">6.2 Catálogo (Maclaurin)</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Exponencial</div>$$e^x=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots$$</div>
+    <div class="formula"><div class="lbl">Seno</div>$$\operatorname{sen}x=x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots$$</div>
+    <div class="formula"><div class="lbl">Coseno</div>$$\cos x=1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots$$</div>
+    <div class="formula"><div class="lbl">Geométrica &nbsp;$|x|\lt 1$</div>$$\frac{1}{1-x}=1+x+x^2+x^3+\cdots$$</div>
+    <div class="formula"><div class="lbl">Logaritmo &nbsp;$|x|\lt 1$</div>$$\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots$$</div>
+    <div class="formula"><div class="lbl">Binomial &nbsp;$|x|\lt 1$</div>$$\sqrt{1+x}=1+\frac{x}{2}-\frac{x^2}{8}+\frac{x^3}{16}-\cdots$$</div>
+  </div>
+
+  <div class="sub-title">6.3 El residuo: cuánto error cometemos</div>
+  <div class="def">
+    <strong>Teorema de Taylor con residuo de Lagrange.</strong> Si $f$ tiene $n+1$ derivadas continuas
+    en un intervalo que contiene a $a$ y a $x$, entonces
+    $$f(x)=P_n(x)+R_n(x), \qquad R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}\,(x-a)^{n+1}$$
+    para algún $\xi$ <em>desconocido</em> situado entre $a$ y $x$.
+  </div>
+
+  <p>Léelo con cuidado, porque dice dos cosas a la vez. La primera es magnífica: el error tiene una
+     <strong>fórmula exacta</strong>, no es un misterio. La segunda es molesta: esa fórmula contiene
+     un $\xi$ que el teorema garantiza que existe pero no dice cuál es.</p>
+
+  <div class="sub-title">6.4 De la fórmula exacta a la cota utilizable</div>
+  <p>La salida al problema del $\xi$ desconocido es no intentar hallarlo: basta con acotar la derivada
+     en todo el intervalo posible.</p>
+
+  <div class="def">
+    Si $\big|f^{(n+1)}(t)\big|\leq M$ para todo $t$ entre $a$ y $x$, entonces
+    $$\big|R_n(x)\big| \;\leq\; \frac{M\,|x-a|^{\,n+1}}{(n+1)!}$$
+  </div>
+
+  <div class="nota">
+    <strong>Una cota es una garantía, no una estimación.</strong> El error real casi siempre resulta
+    mucho menor que la cota, y eso no es un defecto del método: es exactamente lo que queremos.
+    Un puente se diseña para soportar mucho más de lo que va a cargar. Si la cota dice
+    $10^{-6}$, el error <em>está</em> por debajo de $10^{-6}$, aunque en realidad sea $10^{-8}$.
+  </div>
+
+  <div class="sub-title">6.5 Por qué el factorial gana siempre</div>
+  <p>En la cota compiten $|x-a|^{n+1}$, que crece con $n$, contra $(n+1)!$, que también crece con $n$.
+     El factorial gana con enorme ventaja: para $|x-a|=2$ y $n=20$, el numerador aporta $2^{21}\approx
+     2\times10^{6}$ mientras el denominador aporta $21!\approx 5\times10^{19}$. Por eso subir el grado
+     funciona — y también por qué la aproximación empeora al alejarse de $a$: hay que subir mucho más
+     el grado para compensar.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Aproximar $e^{0,5}$ y acotar el error</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Con $n=2$</div>
+        $P_2(x)=1+x+\dfrac{x^2}{2}$ &nbsp;⟹&nbsp; $P_2(0{,}5)=1+0{,}5+0{,}125=1{,}625$
+      </div>
+      <div class="paso"><div class="paso-t">Cota del error</div>
+        $f^{(3)}(t)=e^{t}$, creciente, así que en $[0,\;0{,}5]$ vale $M=e^{0,5}\lt 1{,}65$.
+        $$|R_2|\leq \frac{1{,}65\cdot(0{,}5)^3}{3!}=\frac{1{,}65\cdot 0{,}125}{6}=0{,}0344$$
+      </div>
+      <div class="paso"><div class="paso-t">Error real</div>
+        $e^{0,5}=1{,}6487212707$, luego $E_a=0{,}0237$. Efectivamente $0{,}0237 \lt 0{,}0344$:
+        la cota se cumple y sobra un 45 %.
+      </div>
+      <div class="paso"><div class="paso-t">Con un término más</div>
+        $P_3(0{,}5)=1{,}6458333$, con $E_a=0{,}002888$. Añadir un solo término dividió el error
+        entre 8.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · El problema inverso: ¿cuántos términos necesito?</h4>
+    <div class="ejemplo-body">
+      ¿Qué grado $n$ garantiza calcular $e$ con 6 decimales correctos?
+      <div class="paso"><div class="paso-t">Traducir la exigencia</div>
+        «6 decimales correctos» significa error menor que media unidad en el séptimo decimal:
+        $|R_n| \leq 0{,}5\times10^{-6}$.
+      </div>
+      <div class="paso"><div class="paso-t">Plantear la cota</div>
+        Evaluamos en $x=1$ con $a=0$. En $[0,1]$, $f^{(n+1)}(t)=e^t\leq e \lt 3$, así que $M=3$:
+        $$|R_n|\leq\frac{3\cdot 1^{n+1}}{(n+1)!}=\frac{3}{(n+1)!}\leq 0{,}5\times10^{-6}$$
+      </div>
+      <div class="paso"><div class="paso-t">Despejar por tanteo</div>
+        Se necesita $(n+1)!\geq 6\times10^{6}$:<br>
+        $n=9$: $10!=3{.}628{.}800$ ✗ &nbsp;·&nbsp; $n=10$: $11!=39{.}916{.}800$ ✓<br>
+        Basta con <strong>$n=10$</strong>.
+      </div>
+      <div class="paso"><div class="paso-t">Verificación</div>
+        El error real con $n=10$ es $2{,}7\times10^{-8}$, muy por debajo de la cota
+        $7{,}5\times10^{-8}$ — que a su vez está muy por debajo de lo exigido. La cota fue
+        conservadora, como debe ser.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 8 · Atajo para series alternantes</h4>
+    <div class="ejemplo-body">
+      Aproxima $\operatorname{sen}(0{,}1)$ con un solo término y acota el error.
+      <div class="paso"><div class="paso-t">Aproximación</div>
+        $\operatorname{sen}x\approx x$ &nbsp;⟹&nbsp; $\operatorname{sen}(0{,}1)\approx 0{,}1$
+      </div>
+      <div class="paso"><div class="paso-t">Cota alternante</div>
+        En una serie alternante cuyos términos decrecen a cero, el error al truncar es menor que
+        el <strong>primer término omitido</strong>:
+        $$\left|R\right| \lt \frac{(0{,}1)^3}{3!}=1{,}667\times10^{-4}$$
+      </div>
+      <div class="paso"><div class="paso-t">Verificación</div>
+        $\operatorname{sen}(0{,}1)=0{,}0998334166$, y $E_a=1{,}6658\times10^{-4} \lt 1{,}667\times10^{-4}$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Por qué conviene</div>
+        Este atajo evita tener que acotar derivadas de orden alto. Sirve para seno, coseno,
+        $\ln(1+x)$ y cualquier serie que alterne signos con términos decrecientes.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">6.6 La forma que usaremos todo el semestre</div>
+  <p>Escribiendo $x = x_i$ y $x+h = x_{i+1}$, el mismo teorema toma la forma que aparecerá una y otra
+     vez de la semana 12 en adelante:</p>
+  <div class="formula" style="max-width:640px">
+    $$f(x_{i+1})=f(x_i)+f'(x_i)h+\frac{f''(x_i)}{2!}h^2+\cdots+\frac{f^{(n)}(x_i)}{n!}h^n+R_n$$
+  </div>
+  <div class="def">
+    Como $R_n$ es proporcional a $h^{n+1}$, escribimos $R_n=O(h^{n+1})$ y decimos que el método es
+    <strong>de orden $n$</strong>. La lectura práctica: <em>si el método es de orden $n$ y reduzco
+    $h$ a la mitad, el error se divide entre $2^{n}$</em>.
+  </div>
+  <p>Un método de orden 1 mejora al doble cuando parto $h$ por la mitad; uno de orden 2, cuatro veces;
+     uno de orden 4 —como Runge-Kutta clásico— dieciséis veces. Ese es todo el argumento a favor de
+     los métodos de orden alto, y lo verás cuantificado en las semanas 12, 13 y 14.</p>
+
+  <div class="sub-title">6.7 Explora el polinomio y su error</div>
+  <div class="viz" data-viz="taylor">
+    <div class="viz-controls">
+      <label for="t-fn">Función</label>
+      <select id="t-fn"><option value="exp">eˣ</option><option value="sin">sen x</option><option value="cos">cos x</option></select>
+      <label for="t-n">Grado</label>
+      <input id="t-n" class="grado" type="range" min="0" max="9" value="2">
+      <span class="grado-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="t-x">Evaluar en</label>
+      <input id="t-x" class="punto" type="range" min="-40" max="40" value="15">
+      <span class="punto-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Fija el grado en 2 y arrastra el punto de evaluación hacia los extremos: el error crece muy
+    rápido. Taylor es una aproximación <strong>local</strong>, y esa es su limitación práctica.
+  </p>
+
+  <div class="sub-title">6.8 La cota frente al error real</div>
+  <div class="viz" data-viz="cota-taylor">
+    <div class="viz-controls">
+      <label for="ct-fn">Función</label>
+      <select id="ct-fn"><option value="exp">eˣ</option><option value="sin">sen x</option><option value="cos">cos x</option></select>
+      <label for="ct-n">Grado</label>
+      <input id="ct-n" class="grado" type="range" min="0" max="8" value="2">
+      <span class="grado-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="ct-r">Intervalo</label>
+      <input id="ct-r" class="radio" type="range" min="5" max="30" value="15">
+      <span class="radio-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La curva dorada nunca cae por debajo de la roja: eso es lo que significa que sea una cota.
+    La franja entre ambas es el margen de seguridad que estás pagando por no conocer $\xi$.
+    Sube el grado y observa que las dos se aplastan contra el eje: el factorial ganándole a la potencia.
+  </p>
+</section>
+
+<!-- ═══════════ Programa ═══════════ -->
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Una proyección de flujo de caja a 5 años con la tasa redondeada al $0{,}01\%$ puede desviarse
+      millones al final del horizonte: el error relativo se compone igual que el interés. Y el cálculo
+      de la TIR es un método <em>iterativo</em> — Excel la obtiene por aproximaciones sucesivas y por eso
+      a veces devuelve <code>#¡NUM!</code>: no convergió.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Redondear a dos decimales en cada línea de una nómina de 5.000 empleados produce descuadres
+      frente al total: es propagación de error de redondeo, y por eso las normas fijan
+      <em>dónde</em> se redondea. La fórmula del valor presente de una anualidad con tasa pequeña
+      sufre cancelación: $(1+i)^{-n}-1$ resta números casi iguales cuando $i\to 0$.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      <code>0.1 + 0.2 == 0.3</code> es <code>false</code> en cualquier lenguaje con IEEE 754.
+      Nunca compares flotantes con <code>==</code>. Para dinero no uses <code>float</code>: usa
+      enteros de centavos o tipos decimales. Y todo bucle iterativo necesita un
+      <code>max_iter</code>, o tendrás un servicio colgado en producción.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Un ADC de 10 bits sobre 0–5 V tiene resolución de $4{,}9$ mV: ese error de cuantización es
+      irreducible por software, igual que $\varepsilon_{\text{máq}}$. Y la linealización de un diodo
+      o de un transistor en torno a su punto de operación <em>es</em> un polinomio de Taylor de primer
+      orden: el modelo de pequeña señal sale directamente de §6.</div>
+  </div>
+</section>
+
+<!-- ═══════════ 7 ═══════════ -->
+<section class="card" id="s7">
+  <h3 class="card-title">7 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Un método numérico cambia exactitud por una aproximación <strong>controlada</strong>: lo profesional es el control, no la aproximación.</li>
+    <li>$\varepsilon_{\text{máq}}$ mide la resolución <strong>relativa</strong> de la máquina: $\approx 2{,}2\times10^{-16}$ en doble precisión.</li>
+    <li>El error relativo es el que importa. Y como no conoces $p$, en la práctica usas $\varepsilon_a$ entre iteraciones sucesivas.</li>
+    <li>Redondeo y truncamiento tiran en sentidos opuestos: existe un $h$ óptimo que no es el más pequeño.</li>
+    <li>La derivada es el factor de amplificación del error: $E_a(f(\hat{x}))\approx|f'(\hat{x})|E_a(\hat{x})$.</li>
+    <li><strong>Restar números casi iguales destruye cifras significativas.</strong> Reformula antes de calcular.</li>
+    <li>Un método iterativo nunca termina solo: siempre necesita criterio de paro y tope de iteraciones.</li>
+    <li>$|R_n|\leq \dfrac{M|x-a|^{n+1}}{(n+1)!}$ es una <strong>garantía</strong>, no una estimación: el error real será menor.</li>
+    <li>$R_n=O(h^{n+1})$: en un método de orden $n$, partir $h$ por la mitad divide el error entre $2^n$.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  Métodos Numéricos · Departamento de Ciencias Básicas · UNIAJC · 2026-2 &nbsp;·&nbsp;
+  <a href="https://openstax.org/books/calculus-volume-2/pages/6-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Series</a> ·
+  <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> ·
+  <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a>
+</footer>
+
+<script src="../assets/ova.js"></script>
+<script src="../assets/viz-metodos.js"></script>
+<script>
+/* ── Comprobación 1 · Representación y error ────────────── */
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Representación y medición del error · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Error relativo', nivel: 1,
+      criterio: 'Distinguir y calcular el error absoluto y el relativo (§3.2)',
+      enunciado: 'Se aproxima $\\pi=3{,}14159265$ con $22/7=3{,}14285714$. El error <strong>relativo</strong> es aproximadamente:',
+      opciones: ['$1{,}26\\times10^{-3}$', '$4{,}02\\times10^{-4}$', '$4{,}02\\times10^{-2}$', '$3{,}14\\times10^{-3}$'],
+      correcta: 1,
+      pista: 'El relativo divide el absoluto entre el valor verdadero.',
+      solucion: '$E_a=1{,}2645\\times10^{-3}$, y $E_r=E_a/\\pi=4{,}02\\times10^{-4}$, o sea $0{,}0402\\,\\%$. ' +
+                'La opción a) es el error <em>absoluto</em>: confundir los dos es el tropiezo más común del tema, ' +
+                'y es justamente el que impide comparar la calidad de aproximaciones de escalas distintas.'
+    },
+    {
+      etiqueta: 'Epsilon de máquina', nivel: 2,
+      criterio: 'Interpretar el significado del epsilon de máquina (§2.1)',
+      enunciado: 'El epsilon de máquina en doble precisión vale $\\approx 2{,}2\\times10^{-16}$. Eso significa que:',
+      opciones: [
+        'Ningún número menor que $2{,}2\\times10^{-16}$ puede representarse',
+        'Todo cálculo tiene un error absoluto de $2{,}2\\times10^{-16}$',
+        'Es el menor $\\varepsilon$ tal que $1+\\varepsilon$ se distingue de $1$ en la máquina',
+        'La máquina garantiza 16 decimales exactos en cualquier operación'
+      ],
+      correcta: 2,
+      pista: 'Fíjate en que la definición se enuncia siempre alrededor del número $1$.',
+      solucion: 'Es la definición exacta: mide la <strong>resolución relativa</strong>. ' +
+                'La opción a) es falsa —$10^{-300}$ se representa perfectamente, porque el límite inferior lo fija ' +
+                'el exponente, no $\\varepsilon$—. La b) confunde relativo con absoluto: cerca de $10^{6}$ la ' +
+                'separación entre representables es de unos $10^{-10}$, no de $10^{-16}$. ' +
+                'Y la d) es falsa porque los errores se acumulan al encadenar operaciones.'
+    },
+    {
+      etiqueta: 'Cifras significativas', nivel: 1,
+      criterio: 'Contar cifras significativas (§3.3)',
+      enunciado: '¿Cuántas cifras significativas tiene $0{,}004520$?',
+      opciones: ['$6$', '$3$', '$7$', '$4$'],
+      correcta: 3,
+      pista: 'Los ceros de la izquierda solo ubican la coma; el cero final sí fue medido.',
+      solucion: 'Son cuatro: $4$, $5$, $2$ y el $0$ final. Los ceros iniciales no cuentan porque solo indican ' +
+                'magnitud, pero el cero de la derecha sí, porque comunica precisión: escribir $0{,}00452$ ' +
+                'afirmaría menos de lo que se midió.'
+    }
+  ]
+});
+
+/* ── Comprobación 2 · Propagación y estabilidad ─────────── */
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Propagación y estabilidad · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Propagación', nivel: 2,
+      criterio: 'Aplicar la derivada como factor de amplificación del error (§4.2)',
+      enunciado: 'Se mide $r=5{,}00\\pm0{,}01$ cm y se calcula $V=\\tfrac{4}{3}\\pi r^{3}$. ' +
+                 'El error absoluto del volumen es aproximadamente:',
+      opciones: ['$0{,}01\\ \\text{cm}^3$', '$0{,}52\\ \\text{cm}^3$', '$3{,}14\\ \\text{cm}^3$', '$12{,}6\\ \\text{cm}^3$'],
+      correcta: 2,
+      pista: 'Usa $E_a(V)\\approx|V\'(r)|\\,E_a(r)$ con $V\'(r)=4\\pi r^{2}$.',
+      solucion: '$V\'(5)=4\\pi(25)=100\\pi\\approx 314$, luego $E_a(V)\\approx 314\\times0{,}01=3{,}14\\ \\text{cm}^3$. ' +
+                'En términos relativos el error pasó de $0{,}2\\,\\%$ a $0{,}6\\,\\%$: se triplicó, porque al elevar ' +
+                'al cubo el error relativo se multiplica por $3$. La opción a) supone, erróneamente, que el error ' +
+                'se transmite sin amplificarse.'
+    },
+    {
+      etiqueta: 'Cancelación', nivel: 3,
+      criterio: 'Reconocer y evitar la cancelación catastrófica (§4.3)',
+      enunciado: 'Al calcular $\\sqrt{9001}-\\sqrt{9000}$ con 6 cifras significativas se pierde precisión. ' +
+                 'La forma numéricamente estable es:',
+      opciones: [
+        'Redondear cada raíz a 3 cifras antes de restar',
+        'Elevar toda la expresión al cuadrado',
+        'Calcular las raíces en simple precisión',
+        'Multiplicar y dividir por el conjugado: $\\dfrac{1}{\\sqrt{9001}+\\sqrt{9000}}$'
+      ],
+      correcta: 3,
+      pista: 'El problema es la resta. ¿Puedes reescribir la expresión para que no aparezca ninguna?',
+      solucion: 'Racionalizando se obtiene $\\dfrac{1}{\\sqrt{9001}+\\sqrt{9000}}=0{,}00527031$, con una ' +
+                '<em>suma</em> en el denominador y sin cancelación: el error relativo cae de $5{,}6\\times10^{-3}$ ' +
+                'a $1{,}2\\times10^{-6}$. Las opciones a) y c) empeoran el problema al reducir la precisión, y la b) ' +
+                'no elimina la resta, solo la disfraza.'
+    },
+    {
+      etiqueta: 'Tipos de error', nivel: 2,
+      criterio: 'Distinguir error de redondeo y de truncamiento (§3.1)',
+      enunciado: 'Aproximar $\\operatorname{sen}x$ por $x-\\dfrac{x^{3}}{6}$ introduce principalmente:',
+      opciones: [
+        'Error de truncamiento, por cortar una serie infinita',
+        'Error de redondeo, por los decimales de la máquina',
+        'Error de medición, propio del instrumento',
+        'Error de desbordamiento'
+      ],
+      correcta: 0,
+      pista: '¿El error viene de cómo guarda los números el computador, o de qué fórmula elegiste?',
+      solucion: 'Es truncamiento: la serie de Maclaurin del seno es infinita y nos quedamos con dos términos. ' +
+                'Lo que lo distingue del redondeo es decisivo: este error <strong>existiría igual en una máquina ' +
+                'de precisión infinita</strong>, porque proviene del método y no de la aritmética.'
+    }
+  ]
+});
+
+/* ── Comprobación 3 · Métodos iterativos ────────────────── */
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Métodos iterativos · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Directo vs iterativo', nivel: 1,
+      criterio: 'Distinguir un método directo de uno iterativo (§5)',
+      enunciado: '¿Qué caracteriza a un método <strong>iterativo</strong> frente a uno directo?',
+      opciones: [
+        'Que siempre es más rápido que el directo',
+        'Que genera una sucesión de aproximaciones y se detiene por un criterio que fijamos nosotros',
+        'Que no comete errores de redondeo',
+        'Que solo sirve para ecuaciones no lineales'
+      ],
+      correcta: 1,
+      pista: 'Piensa en cómo <em>termina</em> cada uno.',
+      solucion: 'Un método directo termina en un número finito de pasos conocido de antemano; uno iterativo ' +
+                'produce una sucesión que se acerca sin llegar, y somos nosotros quienes decidimos cuándo parar. ' +
+                'La opción c) es falsa: el iterativo sufre redondeo <em>y además</em> truncamiento. ' +
+                'Y la d) es falsa: Jacobi y Gauss-Seidel son iterativos y resuelven sistemas lineales.'
+    },
+    {
+      etiqueta: 'Criterio de paro', nivel: 2,
+      criterio: 'Justificar el uso de un tope de iteraciones (§5.3)',
+      enunciado: 'Un programa itera hasta que $\\varepsilon_a \\lt 10^{-8}$. ¿Por qué debe incluir <strong>además</strong> un número máximo de iteraciones?',
+      opciones: [
+        'Para ahorrar memoria',
+        'Porque el criterio de $\\varepsilon_a$ es matemáticamente incorrecto',
+        'Porque si el método no converge, la condición no se cumple nunca y el programa queda en ciclo infinito',
+        'Porque después de 100 iteraciones el redondeo hace inútil el resultado'
+      ],
+      correcta: 2,
+      pista: '¿Qué pasa si la sucesión se aleja de la solución en vez de acercarse?',
+      solucion: 'La convergencia no está garantizada para toda función y todo valor inicial. Sin tope, un método ' +
+                'divergente deja el programa colgado. Y el tope debe además <strong>avisar</strong> que se alcanzó, ' +
+                'en vez de devolver un número silenciosamente: un resultado no convergido que parece válido es ' +
+                'peor que un error explícito.'
+    },
+    {
+      etiqueta: 'Orden de convergencia', nivel: 3,
+      criterio: 'Leer el orden de convergencia en una tabla de iteraciones (§5.1)',
+      enunciado: 'En Herón para $\\sqrt{2}$ los errores sucesivos son $8{,}6\\times10^{-2}$, ' +
+                 '$2{,}5\\times10^{-3}$, $2{,}1\\times10^{-6}$, $1{,}6\\times10^{-12}$. Esto indica que:',
+      opciones: [
+        'El método diverge',
+        'Cada iteración duplica aproximadamente las cifras correctas: convergencia cuadrática',
+        'Cada iteración gana exactamente una cifra: convergencia lineal',
+        'El método ya alcanzó la respuesta exacta'
+      ],
+      correcta: 1,
+      pista: 'Cuenta los ceros de cada error: 1, 2, 5, 11. ¿Qué le pasa a esa secuencia?',
+      solucion: 'Las cifras correctas van $1, 2, 5, 11$: aproximadamente se duplican en cada paso, que es la firma ' +
+                'de la convergencia cuadrática. La opción d) es tentadora pero falsa: $1{,}6\\times10^{-12}$ es ' +
+                'pequeñísimo, pero <strong>no es cero</strong>, y ninguna iteración lo hará cero. ' +
+                'Compáralo con el punto fijo del coseno, que gana menos de una cifra por paso.'
+    }
+  ]
+});
+
+/* ── Práctica final ─────────────────────────────────────── */
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Motivación', nivel: 1,
+      criterio: 'Justificar la necesidad de los métodos numéricos (§1)',
+      enunciado: '¿Por qué no existe una fórmula general por radicales para resolver $x^{5}-x-1=0$?',
+      opciones: [
+        'Porque todavía no se ha descubierto',
+        'Porque la ecuación no tiene soluciones reales',
+        'Porque el teorema de Abel–Ruffini demuestra que no puede existir para grado $\\geq 5$',
+        'Porque solo se puede resolver con números complejos'
+      ],
+      correcta: 2,
+      pista: 'La respuesta no es histórica, es un teorema.',
+      solucion: 'Abel y Ruffini <strong>demostraron</strong> que ninguna fórmula por radicales puede existir para ' +
+                'grado 5 o superior. No es una laguna del conocimiento: es una imposibilidad probada, y por eso ' +
+                'el método numérico no es un atajo sino la única vía. La opción b) además es falsa: esta ecuación ' +
+                'sí tiene una raíz real, cerca de $1{,}1673$.'
+    },
+    {
+      etiqueta: 'Punto flotante', nivel: 2,
+      criterio: 'Aplicar la comparación correcta entre números flotantes (§2.1)',
+      enunciado: 'En cualquier lenguaje con IEEE 754, <code>0.1 + 0.2 == 0.3</code> devuelve <code>false</code>. La forma correcta de comparar es:',
+      opciones: [
+        'Redondear ambos a 2 decimales y comparar con <code>==</code>',
+        'Verificar que $|a-b| \\lt \\text{tol}$ con una tolerancia adecuada',
+        'Convertir ambos a texto y comparar las cadenas',
+        'Usar precisión simple en lugar de doble'
+      ],
+      correcta: 1,
+      pista: 'El problema no es el lenguaje: es que $0{,}1$ no existe exactamente en binario.',
+      solucion: 'La comparación por tolerancia es la única robusta. La opción a) traslada el problema al ' +
+                'redondeo sin resolverlo y falla en otros casos; la c) es frágil y lenta; y la d) <em>empeora</em> ' +
+                'las cosas, porque simple precisión tiene un $\\varepsilon_{\\text{máq}}$ nueve órdenes de ' +
+                'magnitud mayor.'
+    },
+    {
+      etiqueta: 'Criterio de paro', nivel: 2,
+      criterio: 'Aplicar el criterio de Scarborough (§3.3)',
+      enunciado: 'Para garantizar 4 cifras significativas correctas, el criterio de Scarborough exige detenerse cuando:',
+      opciones: [
+        '$\\varepsilon_a \\lt 0{,}5\\,\\%$',
+        '$\\varepsilon_a \\lt 0{,}05\\,\\%$',
+        '$\\varepsilon_a \\lt 0{,}005\\,\\%$',
+        '$\\varepsilon_a \\lt 0{,}0005\\,\\%$'
+      ],
+      correcta: 2,
+      pista: 'Sustituye $n=4$ en $\\varepsilon_s=(0{,}5\\times10^{2-n})\\%$.',
+      solucion: '$\\varepsilon_s=(0{,}5\\times10^{2-4})\\%=(0{,}5\\times10^{-2})\\%=0{,}005\\,\\%$. ' +
+                'Las opciones a) y b) corresponden a 2 y 3 cifras: cada cifra adicional exige una tolerancia ' +
+                'diez veces más estricta.'
+    },
+    {
+      etiqueta: 'Propagación', nivel: 3,
+      criterio: 'Relacionar el error relativo de una potencia con el de su base (§4.2)',
+      enunciado: 'Si $x$ se conoce con un error relativo del $1\\,\\%$, ¿con qué error relativo queda $x^{4}$?',
+      opciones: ['$1\\,\\%$', '$0{,}25\\,\\%$', '$16\\,\\%$', '$4\\,\\%$'],
+      correcta: 3,
+      pista: 'Para $f(x)=x^{k}$ se cumple $E_r(f)\\approx|k|\\,E_r(x)$.',
+      solucion: 'Con $f(x)=x^4$: $E_r(f)\\approx 4\\times1\\,\\% = 4\\,\\%$. ' +
+                'Sale de la regla general: $E_a(f)\\approx|4x^{3}|E_a(x)$, y al dividir entre $|x^4|$ queda ' +
+                '$4\\,E_a(x)/|x|$. La opción c) confunde el <em>exponente</em> con el factor: el error no se ' +
+                'eleva a la cuarta, se multiplica por cuatro.'
+    },
+    {
+      etiqueta: 'Taylor', nivel: 2,
+      criterio: 'Evaluar un polinomio de Taylor y su error (§6.1)',
+      enunciado: 'Con $e^{x}\\approx 1+x+\\dfrac{x^{2}}{2}$ se estima $e^{0,5}$. Sabiendo que $e^{0,5}=1{,}64872$, el error absoluto es:',
+      opciones: ['$0{,}1250$', '$0{,}0029$', '$0{,}0237$', '$0{,}6487$'],
+      correcta: 2,
+      pista: 'Evalúa primero el polinomio: $1+0{,}5+0{,}125$.',
+      solucion: 'El polinomio da $1{,}625$, y $|1{,}64872-1{,}625|=0{,}0237$, un $1{,}44\\,\\%$ relativo. ' +
+                'La opción b) es el error que se obtiene con <em>un término más</em> ($P_3$): añadir el término ' +
+                'cúbico divide el error entre ocho.'
+    },
+    {
+      etiqueta: 'Cota de error', nivel: 3,
+      criterio: 'Interpretar correctamente una cota de error (§6.4)',
+      enunciado: 'La cota de Lagrange para cierta aproximación da $|R_n|\\leq 3\\times10^{-5}$, y el error real resulta ser $4\\times10^{-7}$. Esto significa que:',
+      opciones: [
+        'La cota está mal calculada: debería coincidir con el error real',
+        'Todo es correcto: la cota es una garantía superior, y el error real suele ser bastante menor',
+        'El polinomio tiene un grado innecesariamente alto',
+        'El error real está mal calculado'
+      ],
+      correcta: 1,
+      pista: 'Piensa en para qué sirve una cota cuando no conocemos el valor exacto.',
+      solucion: 'Una cota <strong>garantiza</strong> que el error no supera cierto valor; no lo estima. ' +
+                'Es normal y deseable que sobre margen, porque acotamos $f^{(n+1)}$ por su máximo en todo el ' +
+                'intervalo cuando en realidad $\\xi$ está en un solo punto. Es el mismo principio con que se ' +
+                'diseña un puente: se calcula para mucho más de lo que soportará.'
+    },
+    {
+      etiqueta: 'Orden del método', nivel: 3,
+      criterio: 'Interpretar la notación $O(h^{n})$ (§6.6)',
+      enunciado: 'Un método tiene error de truncamiento $O(h^{2})$. Si reduzco $h$ a la mitad, el error:',
+      opciones: [
+        'Se reduce a la mitad',
+        'Se reduce a la cuarta parte',
+        'Se reduce a la octava parte',
+        'No cambia'
+      ],
+      correcta: 1,
+      pista: 'Si $E \\approx C\\,h^{2}$, sustituye $h$ por $h/2$.',
+      solucion: '$E(h/2)\\approx C(h/2)^{2}=\\dfrac{C h^{2}}{4}=\\dfrac{E(h)}{4}$. En general, un método de ' +
+                'orden $n$ divide el error entre $2^{n}$ al partir $h$ por la mitad. Ese es todo el argumento ' +
+                'a favor de los métodos de orden alto, y por eso Runge-Kutta de orden 4 mejora dieciséis veces.'
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Reconocer el compromiso entre redondeo y truncamiento (§3.1)',
+      enunciado: 'Al reducir el paso $h$ en un método numérico, el error de truncamiento disminuye. ¿Por qué no conviene tomar $h$ tan pequeño como se pueda?',
+      opciones: [
+        'Porque el error de truncamiento vuelve a crecer',
+        'Porque los computadores no admiten números muy pequeños',
+        'Porque hacen falta más operaciones y el redondeo acumulado termina dominando',
+        'Porque el método deja de converger'
+      ],
+      correcta: 2,
+      pista: 'Los dos tipos de error de §3.1 tiran en sentidos opuestos.',
+      solucion: 'Bajar $h$ reduce el truncamiento pero exige más operaciones, y cada una añade redondeo. ' +
+                'Existe por tanto un $h$ <strong>óptimo</strong> donde la suma de ambos errores es mínima, y ' +
+                'no es el más pequeño posible. Lo cuantificarás en diferenciación numérica, donde una diferencia ' +
+                'central con $h$ demasiado pequeño empeora visiblemente el resultado.'
+    }
+  ]
+});
+</script>
+</body>
+</html>
