@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía 1 · Funciones reales — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Cálculo · Guía 1</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Función real</a>
+    <a href="#s2">2 · Dominio y rango</a>
+    <a href="#s3">3 · Gráfica</a>
+    <a href="#s4">4 · Álgebra</a>
+    <a href="#s5">5 · Composición</a>
+    <a href="#s6">6 · Transformaciones</a>
+    <a href="#s7">7 · Inyectiva y sobreyectiva</a>
+    <a href="#s8">8 · Función inversa</a>
+    <a href="#s9">9 · Práctica final</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 1 · Corte I</div>
+  <h2>Funciones reales de variable real</h2>
+  <p>Todo el cálculo diferencial es el estudio de cómo cambian las funciones. Antes de preguntar
+     cómo cambia algo hay que tener perfectamente claro qué es ese algo, cuál es su dominio y
+     qué forma tiene su gráfica. Esta guía construye esa base.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. P · Stewart · Cap. 1</span>
+    <span class="chip">Sesiones 1–2</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>Cómo usar esta guía.</strong> Léela en orden. Después de los bloques 3, 5 y 6 hay una
+  comprobación de tres preguntas: resuélvela antes de seguir. Si fallas alguna, vuelve a la sección
+  correspondiente antes de avanzar — los temas de aquí en adelante se apoyan unos en otros.
+  Ninguna práctica tiene nota.
+</div>
+
+<!-- ═══════════ 1 ═══════════ -->
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Qué es una función real de variable real</h3>
+
+  <div class="def">
+    <strong>Definición.</strong> Una <em>función real de variable real</em> es una regla $f$ que
+    asigna a cada número $x$ de un conjunto $D \subseteq \mathbb{R}$ <strong>uno y solo un</strong>
+    número real, denotado $f(x)$. Se escribe
+    $$f : D \longrightarrow \mathbb{R}, \qquad x \longmapsto f(x)$$
+    A $D$ se le llama <strong>dominio</strong>; a $x$, <em>variable independiente</em>;
+    a $y = f(x)$, <em>variable dependiente</em>.
+  </div>
+
+  <p>Dos palabras cargan todo el peso de la definición: <strong>cada</strong> y <strong>una sola</strong>.
+     «Cada» exige que ningún elemento del dominio quede sin imagen. «Una sola» exige que ninguno
+     tenga dos. Si falla cualquiera de las dos, no es función.</p>
+
+  <div class="callout-dark">
+    <h3>El malentendido más común del tema</h3>
+    <p>Que dos entradas distintas compartan la misma salida <strong>sí está permitido</strong>.
+       En $f(x)=x^2$ tenemos $f(-3)=f(3)=9$, y $f$ es una función perfectamente válida.</p>
+    <p>Lo prohibido es lo contrario: que una entrada tenga dos salidas. Por eso
+       $y = \pm\sqrt{x}$ <em>no</em> define una función: a $x=4$ le correspondería $2$ y $-2$ a la vez.
+       En cambio $y = \sqrt{x}$ sí lo es, porque el símbolo $\sqrt{\ }$ denota por convención
+       únicamente la raíz no negativa.</p>
+  </div>
+
+  <div class="sub-title">1.1 Evaluar una función</div>
+  <p>Evaluar es sustituir. La notación $f(\square)$ significa «reemplaza cada $x$ por $\square$»,
+     sea $\square$ un número, otra letra o una expresión completa.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Evaluación en expresiones</h4>
+    <div class="ejemplo-body">
+      Sea $f(x)=x^2-3x$. Calcula $f(2)$, $f(a+1)$ y $\dfrac{f(x+h)-f(x)}{h}$.
+      <div class="paso"><div class="paso-t">$f(2)$</div>
+        $f(2)=(2)^2-3(2)=4-6=-2$
+      </div>
+      <div class="paso"><div class="paso-t">$f(a+1)$</div>
+        $f(a+1)=(a+1)^2-3(a+1)=a^2+2a+1-3a-3=a^2-a-2$
+      </div>
+      <div class="paso"><div class="paso-t">Cociente incremental</div>
+        $f(x+h)=(x+h)^2-3(x+h)=x^2+2xh+h^2-3x-3h$<br>
+        $f(x+h)-f(x)=2xh+h^2-3h=h(2x+h-3)$<br>
+        $$\frac{f(x+h)-f(x)}{h}=2x+h-3 \qquad (h\neq 0)$$
+      </div>
+      <div class="paso"><div class="paso-t">Por qué importa</div>
+        Esa última expresión es el <em>cociente incremental</em>. Cuando en la sesión 4 hagas
+        $h\to 0$ obtendrás $2x-3$, que es la derivada de $f$. Todo el cálculo diferencial nace
+        de saber evaluar bien.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">1.2 Funciones definidas por tramos</div>
+  <p>Una función puede darse con reglas distintas en zonas distintas del dominio. Sigue siendo
+     <em>una sola</em> función, siempre que los tramos no se solapen dando dos valores.</p>
+  <div class="formula" style="max-width:520px">
+    $$f(x)=\begin{cases} x+2, & x \lt 1 \\[2pt] 4, & x = 1 \\[2pt] x^2, & x \gt 1 \end{cases}$$
+  </div>
+  <p>Aquí $f(0)=2$ (primer tramo), $f(1)=4$ (segundo) y $f(3)=9$ (tercero).
+     Observa que los tres tramos cubren $\mathbb{R}$ sin traslaparse: eso es lo que hay que verificar
+     siempre en una función a trozos.</p>
+</section>
+
+<!-- ═══════════ 2 ═══════════ -->
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Dominio y rango</h3>
+
+  <div class="def">
+    <strong>Dominio natural.</strong> Cuando una función se da solo por su fórmula, su dominio se
+    entiende como el conjunto más grande de reales donde la expresión produce un número real:
+    $$\operatorname{Dom}(f)=\{x\in\mathbb{R} \mid f(x) \in \mathbb{R}\}$$
+    <strong>Rango o imagen.</strong> El conjunto de valores que la función efectivamente alcanza:
+    $$\operatorname{Ran}(f)=\{\,f(x) \mid x\in \operatorname{Dom}(f)\,\}$$
+  </div>
+
+  <div class="sub-title">2.1 Las tres restricciones</div>
+  <p>En este curso, el dominio natural se determina buscando qué prohíbe la fórmula.
+     Solo hay tres prohibiciones:</p>
+  <table class="tbl">
+    <tr><th>Si aparece…</th><th>Se exige…</th><th>Ejemplo</th></tr>
+    <tr><td>Un denominador $q(x)$</td><td>$q(x)\neq 0$</td><td>$\dfrac{1}{x-3}$ → $x\neq 3$</td></tr>
+    <tr><td>Una raíz de índice <strong>par</strong>, $\sqrt[2n]{r(x)}$</td><td>$r(x)\geq 0$</td><td>$\sqrt{x-3}$ → $x\geq 3$</td></tr>
+    <tr><td>Un logaritmo $\ln(u(x))$</td><td>$u(x) \gt 0$</td><td>$\ln(x-3)$ → $x \gt 3$</td></tr>
+  </table>
+  <div class="nota">
+    <strong>Nota sobre las raíces impares:</strong> $\sqrt[3]{x}$ no impone restricción alguna.
+    $\sqrt[3]{-8}=-2$ es un número real perfectamente legítimo. La prohibición solo afecta a
+    índices pares.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Dominio con dos restricciones simultáneas</h4>
+    <div class="ejemplo-body">
+      Halla el dominio de $f(x)=\dfrac{\sqrt{x+2}}{x-3}$.
+      <div class="paso"><div class="paso-t">Restricción de la raíz</div>
+        $x+2\geq 0 \Rightarrow x\geq -2$, es decir $[-2,+\infty)$.
+      </div>
+      <div class="paso"><div class="paso-t">Restricción del denominador</div>
+        $x-3\neq 0 \Rightarrow x\neq 3$.
+      </div>
+      <div class="paso"><div class="paso-t">Intersecar ambas</div>
+        Las condiciones se cumplen <em>a la vez</em>, así que se intersecan, no se unen:
+        $$\operatorname{Dom}(f)=[-2,\,3)\cup(3,+\infty)$$
+      </div>
+      <div class="paso"><div class="paso-t">Error frecuente</div>
+        Responder $[-2,+\infty)$ olvidando el denominador, o responder
+        $[-2,3)$ creyendo que el $3$ corta el intervalo por la derecha. El $3$ solo se
+        <em>perfora</em>: la función existe perfectamente en $x=100$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Cuando el radicando es cuadrático</h4>
+    <div class="ejemplo-body">
+      Halla el dominio de $g(x)=\sqrt{9-x^2}$.
+      <div class="paso"><div class="paso-t">Plantear la desigualdad</div>
+        $9-x^2\geq 0 \iff x^2\leq 9 \iff |x|\leq 3$
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        $$\operatorname{Dom}(g)=[-3,\,3]$$
+      </div>
+      <div class="paso"><div class="paso-t">La trampa del signo</div>
+        Al resolver $x^2\leq 9$ es tentador «sacar raíz» y escribir $x\leq 3$, olvidando la parte
+        negativa. La respuesta $(-\infty,-3]\cup[3,+\infty)$ corresponde a $x^2\geq 9$, que es
+        justo lo contrario. Ante la duda, prueba un valor: $x=0$ da $\sqrt{9}=3$, así que $0$
+        <em>debe</em> estar en el dominio.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.2 Hallar el rango</div>
+  <p>El rango suele ser más difícil que el dominio porque no hay una lista de reglas. Tres estrategias
+     que cubren casi todos los casos de este curso:</p>
+  <ul>
+    <li><strong>Desde una expresión acotada.</strong> Si sabes que $x^2\geq 0$, entonces
+        $f(x)=x^2-4\geq -4$, luego $\operatorname{Ran}(f)=[-4,+\infty)$. Igual con $|x|\geq 0$ y $\sqrt{u}\geq 0$.</li>
+    <li><strong>Desde el vértice.</strong> Para $f(x)=ax^2+bx+c$, el vértice está en $x=-\dfrac{b}{2a}$.
+        Si $a \gt 0$ el rango es $[f(x_v),+\infty)$; si $a \lt 0$, es $(-\infty,f(x_v)]$.</li>
+    <li><strong>Despejando $x$.</strong> Escribe $y=f(x)$, despeja $x$ en términos de $y$, y averigua
+        para qué valores de $y$ ese despeje tiene sentido. Esos $y$ forman el rango.</li>
+  </ul>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Rango despejando</h4>
+    <div class="ejemplo-body">
+      Halla el rango de $f(x)=\dfrac{x}{x+1}$.
+      <div class="paso"><div class="paso-t">Igualar y despejar</div>
+        $y=\dfrac{x}{x+1} \Rightarrow y(x+1)=x \Rightarrow yx+y=x \Rightarrow y = x(1-y) \Rightarrow x=\dfrac{y}{1-y}$
+      </div>
+      <div class="paso"><div class="paso-t">¿Cuándo falla el despeje?</div>
+        Solo cuando $1-y=0$, es decir $y=1$. Para cualquier otro $y$ existe un $x$ que lo produce.
+        $$\operatorname{Ran}(f)=\mathbb{R}\setminus\{1\}$$
+      </div>
+      <div class="paso"><div class="paso-t">Interpretación</div>
+        El valor $1$ nunca se alcanza, pero la función se le acerca tanto como se quiera cuando
+        $x$ crece. En la Guía 3 le pondrás nombre: $y=1$ es una <em>asíntota horizontal</em>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 3 ═══════════ -->
+<section class="card" id="s3">
+  <h3 class="card-title">3 · La gráfica de una función</h3>
+
+  <div class="def">
+    <strong>Definición.</strong> La <em>gráfica</em> de $f$ es el conjunto de puntos del plano
+    $$G(f)=\{\,(x,\,f(x)) \mid x\in\operatorname{Dom}(f)\,\}$$
+    Es decir: la gráfica no «representa» a la función, la gráfica <strong>es</strong> la función,
+    escrita en lenguaje geométrico.
+  </div>
+
+  <div class="sub-title">3.1 Prueba de la recta vertical</div>
+  <p>Una curva en el plano es la gráfica de una función <strong>si y solo si</strong> ninguna recta
+     vertical la corta en más de un punto. Es la traducción geométrica exacta de «una sola imagen
+     por cada $x$».</p>
+  <p>Por eso la circunferencia $x^2+y^2=4$ no es la gráfica de ninguna función: la recta $x=0$ la corta
+     en $(0,2)$ y $(0,-2)$. Sí lo son sus dos mitades por separado: $y=\sqrt{4-x^2}$ y $y=-\sqrt{4-x^2}$.</p>
+
+  <div class="sub-title">3.2 Catálogo básico</div>
+  <p>Estas ocho formas deberías reconocerlas de memoria. Todo lo demás en el curso son
+     transformaciones o combinaciones de ellas.</p>
+  <table class="tbl">
+    <tr><th>Función</th><th>Forma</th><th>Dominio</th><th>Rango</th></tr>
+    <tr><td>$f(x)=mx+b$</td><td>Recta</td><td>$\mathbb{R}$</td><td>$\mathbb{R}$ si $m\neq 0$</td></tr>
+    <tr><td>$f(x)=x^2$</td><td>Parábola</td><td>$\mathbb{R}$</td><td>$[0,+\infty)$</td></tr>
+    <tr><td>$f(x)=x^3$</td><td>Cúbica creciente</td><td>$\mathbb{R}$</td><td>$\mathbb{R}$</td></tr>
+    <tr><td>$f(x)=|x|$</td><td>V con vértice en el origen</td><td>$\mathbb{R}$</td><td>$[0,+\infty)$</td></tr>
+    <tr><td>$f(x)=\sqrt{x}$</td><td>Media parábola acostada</td><td>$[0,+\infty)$</td><td>$[0,+\infty)$</td></tr>
+    <tr><td>$f(x)=\dfrac{1}{x}$</td><td>Hipérbola en dos ramas</td><td>$\mathbb{R}\setminus\{0\}$</td><td>$\mathbb{R}\setminus\{0\}$</td></tr>
+    <tr><td>$f(x)=a^x,\ a \gt 1$</td><td>Exponencial creciente</td><td>$\mathbb{R}$</td><td>$(0,+\infty)$</td></tr>
+    <tr><td>$f(x)=\ln x$</td><td>Logarítmica</td><td>$(0,+\infty)$</td><td>$\mathbb{R}$</td></tr>
+  </table>
+
+  <div class="sub-title">3.3 Cómo graficar, paso a paso</div>
+  <p>Tabular veinte puntos al azar es lento y engaña. Este procedimiento da una gráfica correcta
+     con cinco o seis puntos bien elegidos:</p>
+  <ol>
+    <li><strong>Dominio.</strong> Marca en el eje $x$ lo que queda excluido: son las zonas prohibidas.</li>
+    <li><strong>Cortes con los ejes.</strong> Con el eje $y$: evalúa $f(0)$ (a lo sumo hay uno).
+        Con el eje $x$: resuelve $f(x)=0$.</li>
+    <li><strong>Puntos clave según el tipo.</strong> Vértice si es cuadrática; extremo del intervalo
+        si hay raíz; valores excluidos si es racional.</li>
+    <li><strong>Signo.</strong> Los cortes y los puntos excluidos parten el dominio en intervalos.
+        En cada uno, evalúa un valor cualquiera: te dice si la curva va por encima o por debajo del eje.</li>
+    <li><strong>Comportamiento en los extremos.</strong> ¿Qué pasa cuando $x$ se hace muy grande
+        o muy pequeño? ¿Y al acercarse a un punto excluido?</li>
+    <li><strong>Traza</strong> uniendo con curva suave, respetando lo anterior.</li>
+  </ol>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Graficar $f(x)=\dfrac{x-1}{x+2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">1. Dominio</div>
+        $x+2\neq 0 \Rightarrow \operatorname{Dom}(f)=\mathbb{R}\setminus\{-2\}$. La recta $x=-2$ queda prohibida.
+      </div>
+      <div class="paso"><div class="paso-t">2. Cortes</div>
+        Con el eje $y$: $f(0)=\dfrac{-1}{2}=-0{,}5$ → punto $(0,\,-0{,}5)$.<br>
+        Con el eje $x$: $\dfrac{x-1}{x+2}=0 \Rightarrow x-1=0 \Rightarrow x=1$ → punto $(1,\,0)$.
+      </div>
+      <div class="paso"><div class="paso-t">3. Signo</div>
+        Los puntos $-2$ y $1$ dividen la recta en tres intervalos:<br>
+        $x=-3$: $\dfrac{-4}{-1}=4 \gt 0$ &nbsp;·&nbsp; $x=0$: $-0{,}5 \lt 0$ &nbsp;·&nbsp; $x=2$: $\dfrac{1}{4} \gt 0$
+      </div>
+      <div class="paso"><div class="paso-t">4. Extremos</div>
+        Cuando $|x|$ crece, $\dfrac{x-1}{x+2}$ se acerca a $1$ (los términos constantes pesan cada vez menos).<br>
+        Cuando $x\to -2$, el denominador se hace diminuto y el cociente se dispara: la curva sube o baja
+        pegada a la recta $x=-2$.
+      </div>
+      <div class="paso"><div class="paso-t">5. Trazo</div>
+        Dos ramas: una a la izquierda de $x=-2$ y otra a la derecha, cada una acercándose a $y=1$
+        por los lados y a $x=-2$ por el centro. Verifícalo con el explorador de abajo.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.4 Explora</div>
+  <div class="viz" data-viz="explorador">
+    <div class="viz-controls">
+      <label for="fn-sel">Función</label>
+      <select id="fn-sel">
+        <option value="quad">x² − 4</option>
+        <option value="cub">x³ − 3x</option>
+        <option value="rat">1/(x−1)</option>
+        <option value="sqrt">√(x+4)</option>
+        <option value="abs">|x − 2|</option>
+        <option value="sin">sen(x)</option>
+      </select>
+      <label for="fn-x">Mover x</label>
+      <input id="fn-x" type="range" min="-60" max="60" value="10">
+      <span class="x-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Elige $1/(x-1)$ y lleva el deslizador hasta $x=1$: el punto desaparece y el lector te lo dice.
+    Esa es la traducción visual de «$1$ no pertenece al dominio».
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Dominio, rango y gráfica</h3>
+  <div id="chk1"></div>
+</div>
+
+<!-- ═══════════ 4 ═══════════ -->
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Álgebra de funciones</h3>
+
+  <div class="def">
+    Dadas $f$ y $g$, se definen punto a punto:
+    $$(f\pm g)(x)=f(x)\pm g(x), \qquad (f\cdot g)(x)=f(x)\,g(x), \qquad \left(\frac{f}{g}\right)(x)=\frac{f(x)}{g(x)}$$
+    En los tres primeros casos el dominio es
+    $\operatorname{Dom}(f)\cap\operatorname{Dom}(g)$; en el cociente, además, hay que excluir los
+    $x$ donde $g(x)=0$.
+  </div>
+
+  <p>La regla es puro sentido común: para poder sumar $f(x)+g(x)$ hacen falta <em>ambos</em> valores,
+     así que $x$ debe estar en los dos dominios a la vez. De ahí la intersección.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Operaciones y sus dominios</h4>
+    <div class="ejemplo-body">
+      Sean $f(x)=\sqrt{x-1}$ y $g(x)=x^2-9$.
+      <div class="paso"><div class="paso-t">Dominios individuales</div>
+        $\operatorname{Dom}(f)=[1,+\infty)$ &nbsp;·&nbsp; $\operatorname{Dom}(g)=\mathbb{R}$
+      </div>
+      <div class="paso"><div class="paso-t">Suma y producto</div>
+        $(f+g)(x)=\sqrt{x-1}+x^2-9$ &nbsp;·&nbsp; $(f\cdot g)(x)=(x^2-9)\sqrt{x-1}$<br>
+        Dominio de ambas: $[1,+\infty)\cap\mathbb{R}=[1,+\infty)$.
+      </div>
+      <div class="paso"><div class="paso-t">Cociente $f/g$</div>
+        $\left(\dfrac{f}{g}\right)(x)=\dfrac{\sqrt{x-1}}{x^2-9}$. Ahora hay que excluir los ceros de $g$:
+        $x^2-9=0 \Rightarrow x=\pm 3$. Pero $-3$ ya estaba fuera de $[1,+\infty)$, así que solo
+        el $3$ marca la diferencia:
+        $$\operatorname{Dom}\!\left(\tfrac{f}{g}\right)=[1,\,3)\cup(3,+\infty)$$
+      </div>
+      <div class="paso"><div class="paso-t">Cociente $g/f$</div>
+        $\left(\dfrac{g}{f}\right)(x)=\dfrac{x^2-9}{\sqrt{x-1}}$. El cero de $f$ está en $x=1$,
+        que sí pertenecía al dominio, así que hay que quitarlo:
+        $\operatorname{Dom}\!\left(\tfrac{g}{f}\right)=(1,+\infty)$. Nota que
+        $f/g$ y $g/f$ tienen dominios distintos.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 5 ═══════════ -->
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Composición de funciones</h3>
+
+  <div class="def">
+    <strong>Definición.</strong> La <em>composición</em> de $f$ con $g$ es
+    $$(f\circ g)(x)=f\big(g(x)\big)$$
+    y su dominio es
+    $$\operatorname{Dom}(f\circ g)=\{\,x\in\operatorname{Dom}(g)\ :\ g(x)\in\operatorname{Dom}(f)\,\}$$
+  </div>
+
+  <p>Componer es encadenar: la salida de $g$ se convierte en la entrada de $f$. Por eso el orden
+     de lectura es de adentro hacia afuera, aunque se escriba al revés.</p>
+
+  <div class="callout-dark">
+    <h3>Las dos condiciones del dominio</h3>
+    <p>La definición del dominio de $f\circ g$ pide <strong>dos cosas</strong>, y casi todo el mundo
+       olvida la segunda: que $x$ sirva para $g$, y que <em>el resultado</em> $g(x)$ sirva para $f$.</p>
+    <p>Un ejemplo lo deja claro: con $f(u)=\sqrt{u}$ y $g(x)=x^2-9$, el número $x=1$ está en
+       $\operatorname{Dom}(g)$ sin problema, pero $g(1)=-8$ y $\sqrt{-8}$ no existe. Así que
+       $1$ <strong>no</strong> está en el dominio de $f\circ g$.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · El dominio que la fórmula esconde</h4>
+    <div class="ejemplo-body">
+      Sean $f(u)=\sqrt{u}$ y $g(x)=x^2-9$. Halla $f\circ g$ y $g\circ f$ con sus dominios.
+      <div class="paso"><div class="paso-t">$f\circ g$</div>
+        $(f\circ g)(x)=\sqrt{x^2-9}$. Se exige $x^2-9\geq 0$, es decir $|x|\geq 3$:
+        $$\operatorname{Dom}(f\circ g)=(-\infty,-3]\cup[3,+\infty)$$
+      </div>
+      <div class="paso"><div class="paso-t">$g\circ f$</div>
+        $(g\circ f)(x)=(\sqrt{x})^2-9$, que se <em>simplifica</em> a $x-9$.
+      </div>
+      <div class="paso"><div class="paso-t">La trampa</div>
+        La expresión $x-9$ existe para todo real, pero eso no significa que
+        $\operatorname{Dom}(g\circ f)=\mathbb{R}$. Hay que partir de $\operatorname{Dom}(f)=[0,+\infty)$:
+        $$\operatorname{Dom}(g\circ f)=[0,+\infty)$$
+        <strong>El dominio se determina antes de simplificar, nunca después.</strong> Simplificar
+        borra la huella de la restricción, pero la restricción sigue ahí.
+      </div>
+      <div class="paso"><div class="paso-t">Además</div>
+        $f\circ g \neq g\circ f$: ni las fórmulas ni los dominios coinciden. La composición
+        <strong>no es conmutativa</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Descomponer una función</div>
+  <p>La operación inversa —ver una función compuesta como cadena de funciones simples— es la que
+     te permitirá aplicar la regla de la cadena en la Guía 4. La estrategia: <em>lo que está dentro
+     del paréntesis, de la raíz o del exponente es $g$; lo que se le hace por fuera es $f$</em>.</p>
+  <table class="tbl">
+    <tr><th>$h(x)$</th><th>$g$ (interna)</th><th>$f$ (externa)</th></tr>
+    <tr><td>$(3x+1)^5$</td><td>$g(x)=3x+1$</td><td>$f(u)=u^5$</td></tr>
+    <tr><td>$\sqrt{x^2+4}$</td><td>$g(x)=x^2+4$</td><td>$f(u)=\sqrt{u}$</td></tr>
+    <tr><td>$\dfrac{1}{\operatorname{sen} x}$</td><td>$g(x)=\operatorname{sen} x$</td><td>$f(u)=\dfrac{1}{u}$</td></tr>
+    <tr><td>$e^{-x^2}$</td><td>$g(x)=-x^2$</td><td>$f(u)=e^{u}$</td></tr>
+  </table>
+  <p style="font-size:.86rem;color:var(--muted)">La descomposición no es única —siempre puedes
+     partirla en tres o más pasos— pero conviene la más natural.</p>
+
+  <div class="sub-title">5.2 Explora la cadena</div>
+  <div class="viz" data-viz="composicion">
+    <div class="viz-controls">
+      <label for="cx">x =</label>
+      <input id="cx" class="comp-x" type="number" value="3" step="0.5"
+             style="width:80px;padding:.4rem;border-radius:6px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit">
+      <label for="cg">primero g</label>
+      <select id="cg" class="comp-g">
+        <option value="sq">g(x) = x²</option>
+        <option value="p1">g(x) = x + 1</option>
+        <option value="m2">g(x) = 2x</option>
+      </select>
+      <label for="cf">luego f</label>
+      <select id="cf" class="comp-f">
+        <option value="raiz">f(u) = √u</option>
+        <option value="p3">f(u) = u + 3</option>
+        <option value="inv">f(u) = 1/u</option>
+      </select>
+    </div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Pon $g(x)=2x$ con $f(u)=\sqrt{u}$ y prueba $x=-1$: $g$ acepta el valor sin queja, pero $f$ no.
+    Ahí ves en vivo la segunda condición del dominio.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Álgebra y composición</h3>
+  <div id="chk2"></div>
+</div>
+
+<!-- ═══════════ 6 ═══════════ -->
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Transformaciones de gráficas</h3>
+
+  <p>Conociendo la gráfica de $f$, se obtienen infinitas gráficas nuevas sin tabular un solo punto.
+     Todas responden a la forma general</p>
+  <div class="formula" style="max-width:420px">$$y = a\,f(x-h)+k$$</div>
+
+  <table class="tbl">
+    <tr><th>Cambio</th><th>Efecto geométrico</th><th>Dirección</th></tr>
+    <tr><td>$f(x)+k$, &nbsp;$k \gt 0$</td><td>Traslación vertical</td><td>$k$ hacia arriba</td></tr>
+    <tr><td>$f(x)-k$, &nbsp;$k \gt 0$</td><td>Traslación vertical</td><td>$k$ hacia abajo</td></tr>
+    <tr><td>$f(x-h)$, &nbsp;$h \gt 0$</td><td>Traslación horizontal</td><td>$h$ a la <strong>derecha</strong></td></tr>
+    <tr><td>$f(x+h)$, &nbsp;$h \gt 0$</td><td>Traslación horizontal</td><td>$h$ a la <strong>izquierda</strong></td></tr>
+    <tr><td>$-f(x)$</td><td>Reflexión</td><td>Respecto al eje $x$</td></tr>
+    <tr><td>$f(-x)$</td><td>Reflexión</td><td>Respecto al eje $y$</td></tr>
+    <tr><td>$a\,f(x)$, &nbsp;$a \gt 1$</td><td>Estiramiento vertical</td><td>Factor $a$</td></tr>
+    <tr><td>$a\,f(x)$, &nbsp;$0 \lt a \lt 1$</td><td>Compresión vertical</td><td>Factor $a$</td></tr>
+  </table>
+
+  <div class="callout-dark">
+    <h3>Por qué $f(x-2)$ mueve a la derecha</h3>
+    <p>Es el punto que más confunde, y tiene una explicación de una línea. La gráfica de $f$ pasa
+       por $(0, f(0))$. ¿Dónde pasa la nueva gráfica $y=f(x-2)$ por ese mismo valor $f(0)$?
+       Cuando $x-2=0$, es decir cuando $x=2$.</p>
+    <p>El punto que estaba en $x=0$ ahora está en $x=2$: se movió <strong>dos a la derecha</strong>,
+       aunque la fórmula diga «menos dos». La razón de fondo es que $x$ está <em>dentro</em> de la
+       función, así que hay que compensar el cambio para obtener el mismo resultado.</p>
+    <p><strong>Regla:</strong> lo que afecta a $y$ (fuera de $f$) hace lo que parece;
+       lo que afecta a $x$ (dentro de $f$) hace lo contrario.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 8 · Leer una transformación compuesta</h4>
+    <div class="ejemplo-body">
+      Describe $g(x)=-2\sqrt{x+3}+1$ partiendo de $f(x)=\sqrt{x}$.
+      <div class="paso"><div class="paso-t">Identificar los parámetros</div>
+        Comparando con $a\,f(x-h)+k$: &nbsp; $a=-2$, &nbsp; $h=-3$, &nbsp; $k=1$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar en orden</div>
+        1. $x+3$ → traslación de <strong>3 a la izquierda</strong> (dentro: efecto contrario).<br>
+        2. $\times 2$ → estiramiento vertical de factor 2.<br>
+        3. Signo menos → reflexión respecto al eje $x$.<br>
+        4. $+1$ → traslación de 1 hacia arriba.
+      </div>
+      <div class="paso"><div class="paso-t">Rastrear un punto</div>
+        El origen $(0,0)$ de $\sqrt{x}$ viaja así: $(0,0)\to(-3,0)\to(-3,0)\to(-3,0)\to(-3,1)$.
+        El extremo de la nueva curva está en $(-3,\,1)$.
+      </div>
+      <div class="paso"><div class="paso-t">Dominio y rango</div>
+        $\operatorname{Dom}(g)=[-3,+\infty)$ (la raíz se corrió con la gráfica).
+        Como la curva se refleja hacia abajo desde $y=1$: $\operatorname{Ran}(g)=(-\infty,\,1]$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">6.1 Explora las transformaciones</div>
+  <div class="viz" data-viz="transformaciones">
+    <div class="viz-controls">
+      <label for="tr-base">Función base</label>
+      <select id="tr-base">
+        <option value="cuad">x²</option>
+        <option value="abs">|x|</option>
+        <option value="raiz">√x</option>
+        <option value="cub">x³</option>
+        <option value="sen">sen x</option>
+      </select>
+      <label for="tr-a">a</label>
+      <input id="tr-a" class="par-a" type="range" min="-30" max="30" value="10">
+      <span class="a-v" style="font-family:ui-monospace,monospace;font-size:.82rem"></span>
+      <label for="tr-h">h</label>
+      <input id="tr-h" class="par-h" type="range" min="-50" max="50" value="0">
+      <span class="h-v" style="font-family:ui-monospace,monospace;font-size:.82rem"></span>
+      <label for="tr-k">k</label>
+      <input id="tr-k" class="par-k" type="range" min="-40" max="40" value="0">
+      <span class="k-v" style="font-family:ui-monospace,monospace;font-size:.82rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Deja $a=1$ y $k=0$, y mueve solo $h$ hacia valores positivos: verás la curva dorada irse a la
+    <strong>derecha</strong> mientras la fórmula del lector muestra un signo menos. Compruébalo
+    hasta que deje de sorprenderte.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Transformaciones</h3>
+  <div id="chk3"></div>
+</div>
+
+<!-- ═══════════ 7 ═══════════ -->
+<section class="card" id="s7">
+  <h3 class="card-title">7 · Inyectividad y sobreyectividad</h3>
+
+  <p>Hasta aquí hemos mirado a la función «hacia adelante»: entra $x$, sale $f(x)$. Ahora la miramos
+     al revés, y aparecen dos preguntas independientes: ¿puede repetirse una salida? ¿se alcanzan
+     todas las salidas posibles?</p>
+
+  <div class="def">
+    Sea $f: A \to B$.
+    <br><br>
+    <strong>Inyectiva</strong> (uno a uno): entradas distintas dan salidas distintas.
+    $$f(x_1)=f(x_2) \;\Longrightarrow\; x_1=x_2$$
+    <strong>Sobreyectiva</strong> (sobre): todo elemento del codominio se alcanza.
+    $$\operatorname{Ran}(f)=B$$
+    <strong>Biyectiva</strong>: inyectiva y sobreyectiva a la vez.
+  </div>
+
+  <div class="sub-title">7.1 Prueba de la recta horizontal</div>
+  <p>Así como la recta vertical decide si una curva es función, la <strong>recta horizontal</strong>
+     decide si esa función es inyectiva: $f$ es inyectiva si y solo si ninguna recta horizontal
+     corta su gráfica en más de un punto.</p>
+  <p>Con esa herramienta, $f(x)=x^3$ es inyectiva (cada altura se alcanza una sola vez) y
+     $f(x)=x^2$ no lo es (la recta $y=4$ la corta en $x=-2$ y $x=2$).</p>
+
+  <div class="sub-title">7.2 La sobreyectividad depende del codominio</div>
+  <div class="callout-dark">
+    <h3>Una función no es sobreyectiva «en sí misma»</h3>
+    <p>La inyectividad se decide mirando solo la regla. La sobreyectividad, en cambio, depende de
+       <strong>qué codominio se declaró</strong>. La misma fórmula cambia de respuesta:</p>
+    <p>$f:\mathbb{R}\to\mathbb{R}$, $f(x)=x^2$ &nbsp;→&nbsp; <strong>no</strong> es sobreyectiva,
+       porque $\operatorname{Ran}(f)=[0,+\infty)\neq\mathbb{R}$: ningún $x$ da $-1$.<br>
+       $f:\mathbb{R}\to[0,+\infty)$, $f(x)=x^2$ &nbsp;→&nbsp; <strong>sí</strong> es sobreyectiva,
+       con la misma fórmula.</p>
+    <p>Por eso, cuando una pregunta te dé solo la fórmula sin especificar el codominio, no puede
+       responderse sobre sobreyectividad. Y por eso siempre se escribe $f: A\to B$ completo.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 9 · Demostrar inyectividad algebraicamente</h4>
+    <div class="ejemplo-body">
+      Demuestra que $f(x)=\dfrac{2x-1}{x+3}$ es inyectiva en su dominio.
+      <div class="paso"><div class="paso-t">Suponer imágenes iguales</div>
+        Sea $f(x_1)=f(x_2)$, es decir $\dfrac{2x_1-1}{x_1+3}=\dfrac{2x_2-1}{x_2+3}$.
+      </div>
+      <div class="paso"><div class="paso-t">Multiplicar en cruz y expandir</div>
+        $(2x_1-1)(x_2+3)=(2x_2-1)(x_1+3)$<br>
+        $2x_1x_2+6x_1-x_2-3=2x_1x_2+6x_2-x_1-3$
+      </div>
+      <div class="paso"><div class="paso-t">Cancelar y despejar</div>
+        $6x_1-x_2=6x_2-x_1 \Rightarrow 7x_1=7x_2 \Rightarrow x_1=x_2$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        Es inyectiva. La estructura de esta demostración —suponer $f(x_1)=f(x_2)$ y llegar a
+        $x_1=x_2$— sirve para cualquier función; memoriza el esquema, no el ejemplo.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 10 · Demostrar que NO es inyectiva</h4>
+    <div class="ejemplo-body">
+      Muestra que $f(x)=x^2-4x$ no es inyectiva en $\mathbb{R}$.
+      <div class="paso"><div class="paso-t">Basta un contraejemplo</div>
+        $f(0)=0$ y $f(4)=16-16=0$. Dos entradas distintas, la misma salida.
+      </div>
+      <div class="paso"><div class="paso-t">Diferencia de método</div>
+        Para <em>probar</em> inyectividad hay que argumentar sobre todos los pares posibles.
+        Para <em>refutarla</em> basta exhibir un solo par. Buscar contraejemplos es siempre más
+        barato: hazlo primero.
+      </div>
+      <div class="paso"><div class="paso-t">Cómo repararlo</div>
+        El vértice está en $x=2$. Restringiendo el dominio a $[2,+\infty)$, la función pasa a ser
+        creciente y por tanto inyectiva. Esta idea —restringir para ganar inyectividad— es
+        exactamente la que hace posible definir $\arcsin$ y $\arccos$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 8 ═══════════ -->
+<section class="card" id="s8">
+  <h3 class="card-title">8 · Función inversa</h3>
+
+  <div class="def">
+    Si $f: A\to B$ es <strong>biyectiva</strong>, existe una única función $f^{-1}: B\to A$ tal que
+    $$f^{-1}\big(f(x)\big)=x \ \ \forall x\in A, \qquad f\big(f^{-1}(y)\big)=y \ \ \forall y\in B$$
+    Además $\operatorname{Dom}(f^{-1})=\operatorname{Ran}(f)$ y
+    $\operatorname{Ran}(f^{-1})=\operatorname{Dom}(f)$: la inversa intercambia dominio y rango.
+  </div>
+
+  <div class="nota">
+    <strong>Aviso de notación:</strong> $f^{-1}$ significa «función inversa», <em>no</em>
+    $\dfrac{1}{f}$. Son cosas distintas: si $f(x)=2x+3$, entonces $f^{-1}(x)=\dfrac{x-3}{2}$,
+    mientras que $\dfrac{1}{f(x)}=\dfrac{1}{2x+3}$.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Entonces, ¿basta con que sea inyectiva?</h3>
+    <p>En §7.2 vimos que la sobreyectividad depende del codominio que se declare. Eso deja una
+       pregunta abierta: si la definición exige que $f$ sea <em>biyectiva</em>, ¿hay que verificar
+       las dos propiedades cada vez?</p>
+    <p>En la práctica no, y la razón es un convenio: cuando una función se da solo por su fórmula,
+       <strong>se toma como codominio su propio rango</strong>. Con esa elección la sobreyectividad
+       se cumple automáticamente, y lo único que queda por verificar es la inyectividad.</p>
+    <p>Por eso el procedimiento de abajo arranca comprobando que $f$ sea inyectiva: la
+       sobreyectividad ya viene garantizada por el paso 5, donde declaramos
+       $\operatorname{Dom}(f^{-1})=\operatorname{Ran}(f)$. Si en cambio el codominio viene impuesto
+       por el enunciado y es mayor que el rango, entonces $f$ no es sobreyectiva y no admite inversa
+       sobre ese codominio.</p>
+  </div>
+
+  <div class="sub-title">8.1 Cómo hallarla</div>
+  <ol>
+    <li>Verifica que $f$ sea inyectiva (recta horizontal o demostración algebraica).
+        Si no lo es, restringe el dominio.</li>
+    <li>Escribe $y=f(x)$.</li>
+    <li>Despeja $x$ en términos de $y$.</li>
+    <li>Intercambia los nombres: donde quede $y$, escribe $x$. Eso da $f^{-1}(x)$.</li>
+    <li>Determina el dominio de $f^{-1}$, que es el rango de $f$.</li>
+  </ol>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 11 · Inversa con dominio restringido</h4>
+    <div class="ejemplo-body">
+      Halla la inversa de $f(x)=x^2-2$ definida en $[0,+\infty)$.
+      <div class="paso"><div class="paso-t">1. Inyectividad</div>
+        En $[0,+\infty)$ la parábola solo tiene su rama derecha, que es creciente: es inyectiva.
+        (En todo $\mathbb{R}$ no lo sería, y por eso se restringió.)
+      </div>
+      <div class="paso"><div class="paso-t">2–3. Despejar</div>
+        $y=x^2-2 \Rightarrow x^2=y+2 \Rightarrow x=\pm\sqrt{y+2}$.<br>
+        Como $x\geq 0$ por la restricción, se toma <strong>solo el signo positivo</strong>:
+        $x=\sqrt{y+2}$.
+      </div>
+      <div class="paso"><div class="paso-t">4. Intercambiar nombres</div>
+        $$f^{-1}(x)=\sqrt{x+2}$$
+      </div>
+      <div class="paso"><div class="paso-t">5. Dominio</div>
+        $\operatorname{Ran}(f)=[-2,+\infty)$, luego $\operatorname{Dom}(f^{-1})=[-2,+\infty)$,
+        que coincide con lo que exige la raíz. Buena señal de que todo cuadra.
+      </div>
+      <div class="paso"><div class="paso-t">Verificación</div>
+        $f^{-1}(f(3))=f^{-1}(7)=\sqrt{9}=3$ ✓ &nbsp;·&nbsp; $f(f^{-1}(2))=f(2)=2$ ✓
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">8.2 La gráfica de la inversa</div>
+  <p>Si $(a,b)$ pertenece a la gráfica de $f$, entonces $(b,a)$ pertenece a la de $f^{-1}$.
+     Intercambiar coordenadas es geométricamente una <strong>reflexión respecto a la recta
+     $y=x$</strong>. Por eso las gráficas de $f$ y $f^{-1}$ son siempre simétricas respecto a esa recta.</p>
+  <p>Y de aquí sale una comprobación visual muy útil: si al reflejar la gráfica de $f$ en $y=x$ el
+     resultado no pasa la prueba de la recta vertical, es que $f$ no era inyectiva y su «inversa»
+     no es función.</p>
+
+  <div class="sub-title">8.3 Explora inyectividad e inversa</div>
+  <div class="viz" data-viz="inversa">
+    <div class="viz-controls">
+      <label for="inv-f">Función</label>
+      <select id="inv-f">
+        <option value="lineal">f(x) = 2x + 3</option>
+        <option value="cubica">f(x) = x³/4</option>
+        <option value="cuad">f(x) = x² − 2 &nbsp;(todo ℝ)</option>
+        <option value="cuadR">f(x) = x² − 2 &nbsp;(x ≥ 0)</option>
+        <option value="expo">f(x) = e^0,7x − 2</option>
+      </select>
+      <label for="inv-y">Recta horizontal</label>
+      <input id="inv-y" class="recta" type="range" min="-50" max="50" value="20">
+      <span class="y-v" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Elige $x^2-2$ en todo $\mathbb{R}$ y desliza la recta horizontal por encima de $y=-2$:
+    el contador marca <strong>2 cortes</strong>, y verás que la curva verde reflejada se dobla
+    sobre sí misma — no es función. Cambia a la versión restringida a $x\geq 0$ y el problema
+    desaparece. Eso es exactamente lo que hicimos en el Ejemplo 11.
+  </p>
+</section>
+
+<!-- ═══════════ Programa ═══════════ -->
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Con costo $C(x)=1{.}500{.}000+3{.}500x$ e ingreso $I(x)=8{.}000x$, la utilidad es la
+      <em>resta de funciones</em> $U=I-C$. El dominio real no es $\mathbb{R}$ sino $x\in\mathbb{N}$:
+      el contexto siempre restringe el dominio matemático.
+      La función de demanda $p(q)$ suele ser inyectiva y decreciente, por eso puede invertirse
+      para obtener $q(p)$.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La depreciación en línea recta $D(t)=V_0-\dfrac{V_0-V_r}{n}t$ es una función lineal con dominio
+      restringido a $[0,n]$: fuera de ese intervalo la fórmula pierde sentido contable.
+      Al ser inyectiva, puede invertirse para responder «¿en qué año el activo valdrá $X$?».</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Una función en programación es exactamente esto: entrada única, salida determinista.
+      La <em>composición</em> es encadenar funciones, $h = f \circ g$, la base de la programación
+      funcional. Y una función <em>hash</em> ideal sería inyectiva: cuando no lo es, dos entradas
+      distintas producen el mismo hash y a eso se le llama colisión.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      $R(T)=R_0(1+\alpha T)$ es lineal e inyectiva, y por eso un termistor sirve para <em>medir</em>:
+      se invierte la relación para obtener $T$ a partir de $R$. Si la respuesta del sensor no fuera
+      inyectiva, una misma lectura correspondería a dos temperaturas y el instrumento sería inútil.</div>
+  </div>
+</section>
+
+<!-- ═══════════ 9 ═══════════ -->
+<section class="card" id="s9">
+  <h3 class="card-title">9 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Una función asigna a cada entrada <strong>exactamente una</strong> salida. Repetir salidas está permitido; repetir entradas no.</li>
+    <li>El dominio natural se halla buscando tres prohibiciones: denominador cero, radicando par negativo, argumento de logaritmo no positivo.</li>
+    <li>En la gráfica: recta <strong>vertical</strong> decide si es función; recta <strong>horizontal</strong> decide si es inyectiva.</li>
+    <li>En sumas, productos y cocientes el dominio es la <strong>intersección</strong>, quitando los ceros del denominador.</li>
+    <li>$\operatorname{Dom}(f\circ g)$ pide dos condiciones, y el dominio se determina <strong>antes</strong> de simplificar.</li>
+    <li>Lo que afecta a $y$ hace lo que parece; lo que afecta a $x$ hace lo contrario.</li>
+    <li>La sobreyectividad depende del codominio declarado; la inyectividad no.</li>
+    <li>$f^{-1}$ existe si $f$ es biyectiva, intercambia dominio con rango, y su gráfica es la reflexión de $f$ en $y=x$.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  Cálculo · Departamento de Ciencias Básicas · UNIAJC · 2026-2 &nbsp;·&nbsp;
+  <a href="https://openstax.org/books/precalculus-2e/pages/1-introduction-to-functions" target="_blank" rel="noopener">OpenStax Precálculo</a> ·
+  <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> ·
+  <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a>
+</footer>
+
+<script src="../assets/ova.js"></script>
+<script src="../assets/viz-calculo.js"></script>
+
+<script>
+/* ── Comprobación 1 ─────────────────────────────────────── */
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Dominio, rango y gráfica · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Dominio', nivel: 2,
+      criterio: 'Hallar el dominio con varias restricciones simultáneas (§2)',
+      enunciado: 'El dominio de $f(x)=\\dfrac{\\sqrt{x+2}}{x-3}$ es:',
+      opciones: [
+        '$[-2,+\\infty)$',
+        '$(-\\infty,3)\\cup(3,+\\infty)$',
+        '$[-2,\\,3)\\cup(3,+\\infty)$',
+        '$[-2,\\,3)$'
+      ],
+      correcta: 2,
+      pista: 'Hay dos restricciones: la raíz y el denominador. Deben cumplirse a la vez.',
+      solucion: 'La raíz exige $x\\geq-2$ y el denominador exige $x\\neq 3$. Al intersecar ambas condiciones: ' +
+                '$[-2,3)\\cup(3,+\\infty)$. La opción a) olvida el denominador; la d) cree que el $3$ ' +
+                'corta el intervalo, cuando solo lo perfora — la función sí existe en $x=100$.'
+    },
+    {
+      etiqueta: 'Gráfica', nivel: 1,
+      criterio: 'Aplicar la prueba de la recta vertical (§3.1)',
+      enunciado: '¿Cuál de estas ecuaciones <strong>no</strong> define $y$ como función de $x$?',
+      opciones: ['$y=x^2-4$', '$y=|x|$', '$y=\\sqrt{x}$', '$x^2+y^2=4$'],
+      correcta: 3,
+      pista: 'Dibuja mentalmente cada curva y pásale una recta vertical.',
+      solucion: 'La circunferencia $x^2+y^2=4$ falla: la recta $x=0$ la corta en $(0,2)$ y $(0,-2)$, ' +
+                'dos imágenes para la misma entrada. Sus mitades $y=\\sqrt{4-x^2}$ y $y=-\\sqrt{4-x^2}$ ' +
+                'sí son funciones por separado.'
+    },
+    {
+      etiqueta: 'Rango', nivel: 2,
+      criterio: 'Determinar el rango de una función cuadrática (§2.2)',
+      enunciado: 'El rango de $f(x)=-x^2+5$ es:',
+      opciones: ['$(-\\infty,\\,5]$', '$[5,+\\infty)$', '$\\mathbb{R}$', '$[0,\\,5]$'],
+      correcta: 0,
+      pista: 'La parábola abre hacia abajo. ¿El vértice es el punto más alto o el más bajo?',
+      solucion: 'Como $x^2\\geq 0$, se tiene $-x^2\\leq 0$ y por tanto $-x^2+5\\leq 5$. ' +
+                'El máximo $5$ se alcanza en $x=0$ y desde ahí la curva baja indefinidamente: ' +
+                '$\\operatorname{Ran}(f)=(-\\infty,5]$. La opción b) sería el rango si la parábola abriera hacia arriba.'
+    }
+  ]
+});
+
+/* ── Comprobación 2 ─────────────────────────────────────── */
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Álgebra y composición · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Cociente', nivel: 2,
+      criterio: 'Determinar el dominio de un cociente de funciones (§4)',
+      enunciado: 'Si $f(x)=x+1$ y $g(x)=x^2-4$, el dominio de $\\left(\\dfrac{f}{g}\\right)(x)$ es:',
+      opciones: [
+        '$\\mathbb{R}\\setminus\\{-2,\\,2\\}$',
+        '$\\mathbb{R}$',
+        '$\\mathbb{R}\\setminus\\{-1\\}$',
+        '$\\mathbb{R}\\setminus\\{4\\}$'
+      ],
+      correcta: 0,
+      pista: 'Ambos dominios son $\\mathbb{R}$; lo único que hay que quitar son los ceros del denominador.',
+      solucion: 'La intersección de dominios es $\\mathbb{R}$, y se excluyen los ceros de $g$: ' +
+                '$x^2-4=0 \\Rightarrow x=\\pm 2$. La opción c) quita el cero del <em>numerador</em>, ' +
+                'que no causa ningún problema: ahí la función simplemente vale $0$.'
+    },
+    {
+      etiqueta: 'Composición', nivel: 3,
+      criterio: 'Determinar el dominio de una composición (§5)',
+      enunciado: 'Con $f(u)=\\sqrt{u}$ y $g(x)=x^2-9$, el dominio de $(f\\circ g)(x)$ es:',
+      opciones: [
+        '$\\mathbb{R}$',
+        '$[3,+\\infty)$',
+        '$[-3,\\,3]$',
+        '$(-\\infty,-3]\\cup[3,+\\infty)$'
+      ],
+      correcta: 3,
+      pista: 'No basta con que $x$ sirva para $g$: el resultado $g(x)$ tiene que servir para $f$.',
+      solucion: '$(f\\circ g)(x)=\\sqrt{x^2-9}$, y se exige $x^2-9\\geq 0$, es decir $|x|\\geq 3$: ' +
+                '$(-\\infty,-3]\\cup[3,+\\infty)$. La opción c) resuelve la desigualdad al revés, y ' +
+                'la a) olvida por completo la segunda condición del dominio.'
+    },
+    {
+      etiqueta: 'Descomposición', nivel: 2,
+      criterio: 'Descomponer una función como composición de dos funciones (§5.1)',
+      enunciado: 'La función $h(x)=(3x+1)^5$ puede escribirse como $(f\\circ g)(x)$ con:',
+      opciones: [
+        '$g(x)=x^5$ y $f(u)=3u+1$',
+        '$g(x)=3x$ y $f(u)=u^5+1$',
+        '$g(x)=3x+1$ y $f(u)=u^5$',
+        '$g(x)=5x$ y $f(u)=3u+1$'
+      ],
+      correcta: 2,
+      pista: 'Lo que está dentro del paréntesis es la función interna $g$.',
+      solucion: 'Con $g(x)=3x+1$ y $f(u)=u^5$ se obtiene $f(g(x))=(3x+1)^5$. ' +
+                'La opción a) invierte el orden y produce $3x^5+1$, que es otra función. ' +
+                'Saber descomponer así es lo que te permitirá aplicar la regla de la cadena.'
+    }
+  ]
+});
+
+/* ── Comprobación 3 ─────────────────────────────────────── */
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Transformaciones · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Traslación', nivel: 1,
+      criterio: 'Identificar traslaciones horizontales y verticales (§6)',
+      enunciado: 'La gráfica de $y=f(x-4)+1$ se obtiene de la de $y=f(x)$ mediante:',
+      opciones: [
+        '4 unidades a la izquierda y 1 hacia arriba',
+        '4 unidades a la derecha y 1 hacia abajo',
+        '4 unidades a la derecha y 1 hacia arriba',
+        '1 unidad a la derecha y 4 hacia arriba'
+      ],
+      correcta: 2,
+      pista: 'Lo que está dentro de $f$ actúa al revés de lo que parece; lo que está fuera, como parece.',
+      solucion: '$x-4$ dentro de la función traslada 4 a la <strong>derecha</strong>: el punto que ' +
+                'estaba en $x=0$ ahora aparece cuando $x-4=0$, o sea en $x=4$. El $+1$ está fuera y ' +
+                'sube la gráfica 1 unidad, tal como parece.'
+    },
+    {
+      etiqueta: 'Reflexión', nivel: 1,
+      criterio: 'Distinguir las dos reflexiones (§6)',
+      enunciado: 'La gráfica de $y=-f(x)$ es la de $y=f(x)$ reflejada respecto a:',
+      opciones: ['El eje $x$', 'El eje $y$', 'La recta $y=x$', 'El origen'],
+      correcta: 0,
+      pista: 'El signo menos afecta a la salida, no a la entrada.',
+      solucion: 'El menos está <em>fuera</em> de $f$, así que cambia el signo de cada $y$: ' +
+                'el punto $(a,b)$ pasa a $(a,-b)$, que es una reflexión en el eje $x$. ' +
+                'La reflexión en el eje $y$ sería $y=f(-x)$, con el menos dentro.'
+    },
+    {
+      etiqueta: 'Composición de transformaciones', nivel: 2,
+      criterio: 'Leer una transformación compuesta y ubicar el vértice (§6)',
+      enunciado: 'Partiendo de $f(x)=x^2$, el vértice de $g(x)=(x+2)^2-3$ está en:',
+      opciones: ['$(2,\\,-3)$', '$(-2,\\,3)$', '$(2,\\,3)$', '$(-2,\\,-3)$'],
+      correcta: 3,
+      pista: 'El vértice de $x^2$ está en el origen. ¿A dónde lo llevan las dos transformaciones?',
+      solucion: '$x+2$ traslada 2 a la <strong>izquierda</strong> y el $-3$ baja 3 unidades, así que ' +
+                'el vértice $(0,0)$ viaja hasta $(-2,-3)$. La opción a) es el error clásico de leer ' +
+                '$x+2$ como «dos a la derecha».'
+    }
+  ]
+});
+
+/* ── Práctica final ─────────────────────────────────────── */
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Dominio', nivel: 2,
+      criterio: 'Hallar el dominio cuando la raíz está en el denominador (§2.1)',
+      enunciado: 'El dominio de $f(x)=\\dfrac{1}{\\sqrt{4-x}}$ es:',
+      opciones: ['$x\\leq 4$', '$x\\geq 4$', '$x \\lt 4$', '$x\\neq 4$'],
+      correcta: 2,
+      pista: 'Aquí actúan dos restricciones sobre la misma expresión: la raíz y el denominador.',
+      solucion: 'La raíz exige $4-x\\geq 0$, pero al estar en el denominador tampoco puede valer cero, ' +
+                'así que la desigualdad se vuelve estricta: $4-x \\gt 0$, es decir $x \\lt 4$. ' +
+                'La opción a) sería correcta solo si la raíz <em>no</em> estuviera dividiendo.'
+    },
+    {
+      etiqueta: 'Rango', nivel: 2,
+      criterio: 'Determinar el rango de una función con valor absoluto (§2.2)',
+      enunciado: 'El rango de $f(x)=|x-2|+1$ es:',
+      opciones: ['$[0,+\\infty)$', '$[2,+\\infty)$', '$\\mathbb{R}$', '$[1,+\\infty)$'],
+      correcta: 3,
+      pista: '¿Cuál es el valor más pequeño que puede tomar $|x-2|$, y dónde lo toma?',
+      solucion: 'Como $|x-2|\\geq 0$, el mínimo de $f$ es $0+1=1$, alcanzado en $x=2$. ' +
+                'Desde ahí la V crece sin cota: $\\operatorname{Ran}(f)=[1,+\\infty)$. ' +
+                'La opción b) confunde el valor del vértice en $y$ con su posición en $x$.'
+    },
+    {
+      etiqueta: 'Composición', nivel: 3,
+      criterio: 'Reconocer que el dominio se determina antes de simplificar (§5)',
+      enunciado: 'Con $f(x)=\\sqrt{x}$ y $g(x)=x^2-9$, se tiene $(g\\circ f)(x)=x-9$. Su dominio es:',
+      opciones: ['$[0,+\\infty)$', '$\\mathbb{R}$', '$[9,+\\infty)$', '$(-\\infty,-3]\\cup[3,+\\infty)$'],
+      correcta: 0,
+      pista: 'La expresión simplificada existe en todo $\\mathbb{R}$, pero ¿de dónde partió la cadena?',
+      solucion: 'La primera función que actúa es $f$, con $\\operatorname{Dom}(f)=[0,+\\infty)$: ' +
+                'si $x$ no sirve para $f$, la cadena ni siquiera arranca. Aunque $x-9$ exista para todo real, ' +
+                '$\\operatorname{Dom}(g\\circ f)=[0,+\\infty)$. Simplificar borra la huella de la restricción, ' +
+                'pero no la elimina.'
+    },
+    {
+      etiqueta: 'Transformaciones', nivel: 2,
+      criterio: 'Leer transformaciones con reflexión y estiramiento (§6)',
+      enunciado: 'Partiendo de $f(x)=\\sqrt{x}$, el punto extremo de $g(x)=-2\\sqrt{x+3}+1$ está en:',
+      opciones: ['$(3,\\,1)$', '$(-3,\\,1)$', '$(-3,\\,-1)$', '$(3,\\,-1)$'],
+      correcta: 1,
+      pista: 'El extremo de $\\sqrt{x}$ es el origen. Ni el estiramiento ni la reflexión mueven un punto que está a la altura $0$.',
+      solucion: '$x+3$ lleva el origen a $x=-3$; el factor $-2$ no mueve ese punto porque su altura es $0$; ' +
+                'y el $+1$ lo sube a $y=1$. El extremo queda en $(-3,1)$, y desde ahí la curva baja: ' +
+                '$\\operatorname{Ran}(g)=(-\\infty,1]$.'
+    },
+    {
+      etiqueta: 'Inyectividad', nivel: 2,
+      criterio: 'Identificar funciones inyectivas con la recta horizontal (§7.1)',
+      enunciado: '¿Cuál de estas funciones es inyectiva en todo $\\mathbb{R}$?',
+      opciones: ['$f(x)=x^2$', '$f(x)=|x|$', '$f(x)=x^2-4$', '$f(x)=x^3$'],
+      correcta: 3,
+      pista: 'Pásale una recta horizontal a cada gráfica y cuenta los cortes.',
+      solucion: 'Solo $x^3$ es siempre creciente, y por tanto cada altura se alcanza una única vez. ' +
+                'Las otras tres son simétricas respecto al eje $y$, así que $f(-a)=f(a)$: ' +
+                'toda función par deja de ser inyectiva apenas su dominio incluya ambos signos.'
+    },
+    {
+      etiqueta: 'Sobreyectividad', nivel: 3,
+      criterio: 'Reconocer que la sobreyectividad depende del codominio (§7.2)',
+      enunciado: 'La función $f:\\mathbb{R}\\to\\mathbb{R}$ dada por $f(x)=x^2$ <strong>no</strong> es sobreyectiva porque:',
+      opciones: [
+        'Hay dos entradas con la misma salida',
+        'No está definida para $x$ negativo',
+        'Su rango es $[0,+\\infty)$ y no cubre todo el codominio $\\mathbb{R}$',
+        'Su gráfica no pasa la prueba de la recta vertical'
+      ],
+      correcta: 2,
+      pista: 'Sobreyectiva significa que todo elemento del codominio se alcanza. ¿Existe algún $x$ con $f(x)=-1$?',
+      solucion: 'Ningún real elevado al cuadrado da un número negativo, así que $\\operatorname{Ran}(f)=[0,+\\infty)\\neq\\mathbb{R}$. ' +
+                'La opción a) describe la falta de <em>inyectividad</em>, que es una propiedad distinta e independiente. ' +
+                'Nota que si se declarara $f:\\mathbb{R}\\to[0,+\\infty)$, la misma fórmula <em>sí</em> sería sobreyectiva.'
+    },
+    {
+      etiqueta: 'Inversa', nivel: 2,
+      criterio: 'Calcular la inversa de una función lineal (§8.1)',
+      enunciado: 'Si $f(x)=2x+3$, entonces $f^{-1}(x)$ es:',
+      opciones: [
+        '$\\dfrac{x-3}{2}$',
+        '$\\dfrac{1}{2x+3}$',
+        '$2x-3$',
+        '$\\dfrac{x+3}{2}$'
+      ],
+      correcta: 0,
+      pista: 'Escribe $y=2x+3$, despeja $x$ y luego cambia los nombres de las variables.',
+      solucion: '$y=2x+3 \\Rightarrow x=\\dfrac{y-3}{2}$, y al renombrar: $f^{-1}(x)=\\dfrac{x-3}{2}$. ' +
+                'Verificación: $f^{-1}(f(1))=f^{-1}(5)=1$. ' +
+                'La opción b) es $\\dfrac{1}{f(x)}$, que <strong>no</strong> es la inversa: es el error de notación más común del tema.'
+    },
+    {
+      etiqueta: 'Inversa', nivel: 3,
+      criterio: 'Relacionar dominio y rango entre una función y su inversa (§8)',
+      enunciado: 'Sea $f:[1,+\\infty)\\to[0,+\\infty)$ con $f(x)=\\sqrt{x-1}$. El dominio de $f^{-1}$ es:',
+      opciones: ['$[1,+\\infty)$', '$[0,+\\infty)$', '$\\mathbb{R}$', '$[-1,+\\infty)$'],
+      correcta: 1,
+      pista: 'La inversa intercambia dominio y rango. ¿Cuál era el rango de $f$?',
+      solucion: '$\\operatorname{Dom}(f^{-1})=\\operatorname{Ran}(f)=[0,+\\infty)$. ' +
+                'Comprobación: despejando, $f^{-1}(x)=x^2+1$, y su rango es $[1,+\\infty)$, que era el ' +
+                'dominio de $f$ — todo intercambiado, como debe ser. La opción a) es justamente el ' +
+                '<em>rango</em> de $f^{-1}$, no su dominio.'
+    }
+  ]
+});
+</script>
+</body>
+</html>
