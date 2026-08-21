@@ -147,6 +147,133 @@ OVA.viz.registrar('tangente', function (host) {
     'la tangente es horizontal (f′(0) = 0).';
 });
 
+/* ── Transformaciones de gráficas ───────────────────────── */
+var BASES = {
+  cuad: { f: function (x) { return x * x; },       n: 'x²' },
+  abs:  { f: function (x) { return Math.abs(x); }, n: '|x|' },
+  raiz: { f: function (x) { return x >= 0 ? Math.sqrt(x) : NaN; }, n: '√x' },
+  cub:  { f: function (x) { return x * x * x; },   n: 'x³' },
+  sen:  { f: function (x) { return Math.sin(x); }, n: 'sen x' }
+};
+
+OVA.viz.registrar('transformaciones', function (host) {
+  var base = BASES[ctrl(host, 'select').value] || BASES.cuad;
+  var a = parseFloat(ctrl(host, '.par-a').value) / 10;
+  var h = parseFloat(ctrl(host, '.par-h').value) / 10;
+  var k = parseFloat(ctrl(host, '.par-k').value) / 10;
+  ctrl(host, '.a-v').textContent = 'a = ' + a.toFixed(1);
+  ctrl(host, '.h-v').textContent = 'h = ' + h.toFixed(1);
+  ctrl(host, '.k-v').textContent = 'k = ' + k.toFixed(1);
+
+  var L = OVA.lienzo(ctrl(host, 'canvas'), { sx: 38, sy: 30 });
+  OVA.ejes(L);
+
+  // Original punteada
+  var c = L.ctx;
+  c.setLineDash([5, 5]);
+  OVA.curva(L, base.f, 'rgba(128,150,175,.85)', 2);
+  c.setLineDash([]);
+  // Transformada
+  OVA.curva(L, function (x) { return a * base.f(x - h) + k; }, ORO, 3);
+
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText('- - -  y = ' + base.n, 10, 18);
+  c.fillStyle = ORO;
+  c.fillText('———  y = a·f(x−h)+k', 10, 34);
+
+  var partes = [];
+  if (a < 0) partes.push('reflexión respecto al eje x');
+  if (Math.abs(a) > 1) partes.push('estiramiento vertical de factor ' + Math.abs(a).toFixed(1));
+  if (Math.abs(a) < 1 && a !== 0) partes.push('compresión vertical de factor ' + Math.abs(a).toFixed(1));
+  if (h > 0) partes.push(h.toFixed(1) + ' unidades a la <strong>derecha</strong>');
+  if (h < 0) partes.push(Math.abs(h).toFixed(1) + ' unidades a la <strong>izquierda</strong>');
+  if (k > 0) partes.push(k.toFixed(1) + ' unidades hacia <strong>arriba</strong>');
+  if (k < 0) partes.push(Math.abs(k).toFixed(1) + ' unidades hacia <strong>abajo</strong>');
+
+  ctrl(host, '.viz-readout').innerHTML =
+    'y = ' + (a === 1 ? '' : a.toFixed(1) + '·') + 'f(x' +
+      (h === 0 ? '' : (h > 0 ? ' − ' + h.toFixed(1) : ' + ' + Math.abs(h).toFixed(1))) + ')' +
+      (k === 0 ? '' : (k > 0 ? ' + ' + k.toFixed(1) : ' − ' + Math.abs(k).toFixed(1))) + '<br>' +
+    (partes.length ? 'Transformaciones aplicadas: ' + partes.join(', ') + '.'
+                   : 'Sin transformación: la curva dorada coincide con la original.');
+});
+
+/* ── Función inversa y prueba de la recta horizontal ────── */
+var INV = {
+  lineal: { f: function (x) { return 2 * x + 3; }, n: 'f(x) = 2x + 3', inv: 'f⁻¹(x) = (x − 3)/2', d: [-6, 6] },
+  cubica: { f: function (x) { return x * x * x / 4; }, n: 'f(x) = x³/4', inv: 'f⁻¹(x) = ∛(4x)', d: [-4, 4] },
+  cuad:   { f: function (x) { return x * x - 2; }, n: 'f(x) = x² − 2  (en todo ℝ)', inv: 'no existe: f no es inyectiva', d: [-4, 4] },
+  cuadR:  { f: function (x) { return x >= 0 ? x * x - 2 : NaN; }, n: 'f(x) = x² − 2  restringida a x ≥ 0', inv: 'f⁻¹(x) = √(x + 2)', d: [0, 4] },
+  expo:   { f: function (x) { return Math.exp(x * 0.7) - 2; }, n: 'f(x) = e^{0,7x} − 2', inv: 'f⁻¹(x) = (1/0,7)·ln(x + 2)', d: [-5, 3] }
+};
+
+OVA.viz.registrar('inversa', function (host) {
+  var cfg = INV[ctrl(host, 'select').value] || INV.lineal;
+  var yc = parseFloat(ctrl(host, '.recta').value) / 10;
+  ctrl(host, '.y-v').textContent = 'y = ' + yc.toFixed(1);
+
+  var L = OVA.lienzo(ctrl(host, 'canvas'), { sx: 36, sy: 36 });
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // Eje de simetría y = x
+  c.strokeStyle = 'rgba(128,150,175,.8)'; c.lineWidth = 1.5; c.setLineDash([5, 5]);
+  c.beginPath();
+  c.moveTo(L.px(-12), L.py(-12)); c.lineTo(L.px(12), L.py(12)); c.stroke();
+  c.setLineDash([]);
+  c.fillStyle = 'rgba(128,150,175,1)'; c.font = '11px ui-monospace,monospace';
+  c.fillText('y = x', L.px(3.4), L.py(3.0));
+
+  // f
+  OVA.curva(L, cfg.f, AZUL, 3);
+
+  // f⁻¹ como reflexión: se dibuja el punto (f(x), x)
+  var cortes = 0, prev = null;
+  c.strokeStyle = VERDE; c.lineWidth = 3; c.beginPath();
+  var arranco = false;
+  for (var x = cfg.d[0]; x <= cfg.d[1]; x += 0.02) {
+    var y = cfg.f(x);
+    if (!isFinite(y)) { arranco = false; prev = null; continue; }
+    var pxv = L.px(y), pyv = L.py(x);
+    if (pxv < -30 || pxv > L.w + 30 || pyv < -30 || pyv > L.h + 30) { arranco = false; }
+    else if (!arranco) { c.moveTo(pxv, pyv); arranco = true; }
+    else c.lineTo(pxv, pyv);
+    // conteo de cortes con la recta horizontal
+    if (prev !== null && ((prev - yc) * (y - yc) < 0 || y === yc)) cortes++;
+    prev = y;
+  }
+  c.stroke();
+
+  // Recta horizontal de prueba
+  c.strokeStyle = cortes > 1 ? ROJO : ORO; c.lineWidth = 2; c.setLineDash([7, 4]);
+  c.beginPath(); c.moveTo(0, L.py(yc)); c.lineTo(L.w, L.py(yc)); c.stroke();
+  c.setLineDash([]);
+
+  c.fillStyle = AZUL; c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText('———  f', 10, 18);
+  c.fillStyle = VERDE;
+  c.fillText('———  reflexión de f en y = x', 10, 34);
+
+  var veredicto;
+  if (cortes > 1) {
+    veredicto = 'Más de un corte ⇒ <strong>f no es inyectiva aquí</strong>, y por eso su reflexión ' +
+                'no pasa la prueba de la recta vertical: no es función.';
+  } else if (cortes === 1) {
+    veredicto = 'Un solo corte a esta altura. Recorre toda la gráfica con el deslizador antes de ' +
+                'concluir: basta <em>una</em> altura con dos cortes para que f deje de ser inyectiva.';
+  } else {
+    veredicto = 'A esta altura la recta no toca la gráfica: ese valor no pertenece al rango de f. ' +
+                'Eso no dice nada sobre la inyectividad — sigue deslizando.';
+  }
+
+  ctrl(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong><br>' +
+    'La recta y = ' + yc.toFixed(1) + ' corta la gráfica de f en <strong style="color:' +
+      (cortes > 1 ? '#f0a58a' : '#7fd4a4') + '">' + cortes + '</strong> punto' + (cortes === 1 ? '' : 's') + '. ' +
+    veredicto +
+    '<br><span style="color:#8fb4d9">Inversa: ' + cfg.inv + '</span>';
+});
+
 /* ── Enlazar controles: cualquier cambio redibuja ───────── */
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[data-viz]').forEach(function (host) {
