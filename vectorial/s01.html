@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S1 · Vectores y geometría del espacio — Cálculo Vectorial · UNIAJC</title>
+<title>Guía 1 · Cónicas — Cálculo Vectorial · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -19,7 +19,7 @@ window.MathJax = {
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Sesión 1</h1>
+      <h1>Cálculo Vectorial · Guía 1</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -29,275 +29,728 @@ window.MathJax = {
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Qué son</a>
+    <a href="#s2">2 · Las cuatro curvas</a>
+    <a href="#s3">3 · Excentricidad</a>
+    <a href="#s4">4 · Forma general</a>
+    <a href="#s5">5 · Hacia el curso</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
 
 <div class="hero">
-  <div class="eyebrow">Sesión 1 · Corte I</div>
-  <h2>Vectores y geometría del espacio</h2>
-  <p>Magnitud, producto punto y producto cruz. Dos productos con significados
-     geométricos opuestos: uno mide alineación, el otro mide perpendicularidad.</p>
+  <div class="eyebrow">Guía de estudio 1 · Corte I</div>
+  <h2>Cónicas en coordenadas cartesianas</h2>
+  <p>Circunferencia, parábola, elipse e hipérbola parecen cuatro curvas distintas. Son una sola
+     familia, y un único número las separa. Entender eso ahora hará que las semanas de coordenadas
+     polares, funciones vectoriales y superficies cuádricas se sientan como continuaciones naturales.</p>
   <div class="chips">
-    <span class="chip">Stewart · Cap. 12</span>
-    <span class="chip">2 horas</span>
-    <span class="chip">Práctica de refuerzo al final</span>
+    <span class="chip">Stewart · Cap. 10</span>
+    <span class="chip">Larson · Cap. 10</span>
+    <span class="chip">Semana 1</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
   </div>
 </div>
 
-<section class="card">
-  <h3 class="card-title">1. Vectores en $\mathbb{R}^2$ y $\mathbb{R}^3$</h3>
+<div class="nota">
+  <strong>Cómo usar esta guía.</strong> Léela en orden. Después de los bloques 2, 3 y 4 hay una
+  comprobación de tres preguntas: resuélvela antes de seguir. Ninguna práctica tiene nota.
+</div>
+
+<!-- ═══════════ 1 ═══════════ -->
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Qué son las cónicas y de dónde salen</h3>
 
   <div class="callout-dark">
-    <h3>Por qué el cálculo cambia de idioma aquí</h3>
-    <p>En Cálculo I todo era $f:\mathbb{R}\to\mathbb{R}$: entra un número, sale un número.
-       A partir de ahora entran y salen <em>vectores</em>, y con eso aparecen preguntas que antes
-       no tenían sentido: ¿en qué <strong>dirección</strong> crece una función? ¿Cuál es el trabajo
-       de una fuerza a lo largo de una curva?</p>
-    <p>El producto punto y el producto cruz son las dos herramientas que responden casi todo lo
-       demás del curso. Vale la pena dominarlas ahora.</p>
+    <h3>Dos mil años antes de tener una aplicación</h3>
+    <p><strong>Apolonio de Perge</strong> escribió su tratado <em>Cónicas</em> hacia el año 200 a.C.
+       Estudió estas curvas como pura geometría: cortes de un cono con un plano. Les puso los nombres
+       que todavía usamos —elipse, parábola, hipérbola— y no tenían ninguna utilidad práctica.</p>
+    <p>Dieciocho siglos después, en 1609, <strong>Kepler</strong> descubrió que los planetas describen
+       elipses. <strong>Galileo</strong> mostró que un proyectil traza una parábola. Hoy las antenas
+       satelitales son paraboloides y el GPS resuelve hipérbolas.</p>
+    <p>Es uno de los casos más citados de matemática que esperó dos milenios a que el mundo la
+       necesitara.</p>
   </div>
 
-  <div class="sub-title">1.1 Magnitud y vector unitario</div>
-  <div class="formulas">
-    <div class="formula"><div class="lbl">Magnitud en $\mathbb{R}^3$</div>$$\|\mathbf{u}\|=\sqrt{u_1^2+u_2^2+u_3^2}$$</div>
-    <div class="formula"><div class="lbl">Vector unitario</div>$$\hat{\mathbf{u}}=\dfrac{\mathbf{u}}{\|\mathbf{u}\|}$$</div>
-    <div class="formula"><div class="lbl">Distancia entre puntos</div>$$d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}$$</div>
-  </div>
-
-  <div class="sub-title">1.2 Producto punto — mide alineación</div>
-  <div class="def">
-    $$\mathbf{u}\cdot\mathbf{v}=u_1v_1+u_2v_2+u_3v_3=\|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta$$
-    El resultado es un <strong>escalar</strong>. Vale cero exactamente cuando los vectores son perpendiculares.
-  </div>
-  <div class="formulas">
-    <div class="formula"><div class="lbl">Ángulo</div>$$\cos\theta=\dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}$$</div>
-    <div class="formula"><div class="lbl">Proyección vectorial</div>$$\operatorname{proy}_{\mathbf{v}}\mathbf{u}=\dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{v}\|^2}\,\mathbf{v}$$</div>
-    <div class="formula"><div class="lbl">Componente escalar</div>$$\operatorname{comp}_{\mathbf{v}}\mathbf{u}=\dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{v}\|}$$</div>
-    <div class="formula"><div class="lbl">Trabajo</div>$$W=\mathbf{F}\cdot\mathbf{d}$$</div>
-  </div>
-
-  <div class="sub-title">1.3 Producto cruz — mide perpendicularidad</div>
-  <div class="def">
-    $$\mathbf{u}\times\mathbf{v}=\begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\u_1&u_2&u_3\\v_1&v_2&v_3\end{vmatrix}$$
-    El resultado es un <strong>vector</strong> perpendicular a ambos, con
-    $\|\mathbf{u}\times\mathbf{v}\|=\|\mathbf{u}\|\,\|\mathbf{v}\|\operatorname{sen}\theta$.
-  </div>
+  <div class="sub-title">1.1 Como secciones de un cono</div>
+  <p>Toma un cono doble —dos conos unidos por el vértice— y córtalo con un plano. Según la
+     inclinación del plano obtienes una curva distinta:</p>
   <table class="tbl">
-    <tr><th></th><th>Producto punto</th><th>Producto cruz</th></tr>
-    <tr><td>Resultado</td><td>Escalar</td><td>Vector</td></tr>
-    <tr><td>Vale cero cuando</td><td>Son perpendiculares</td><td>Son paralelos</td></tr>
-    <tr><td>Interpretación</td><td>Proyección, trabajo</td><td>Área, torque, normal a un plano</td></tr>
-    <tr><td>Conmutativo</td><td>Sí</td><td>No: $\mathbf{u}\times\mathbf{v}=-\mathbf{v}\times\mathbf{u}$</td></tr>
-    <tr><td>Existe en</td><td>Cualquier dimensión</td><td>Solo en $\mathbb{R}^3$</td></tr>
+    <tr><th>Inclinación del plano</th><th>Curva</th></tr>
+    <tr><td>Perpendicular al eje</td><td>Circunferencia</td></tr>
+    <tr><td>Inclinado, pero menos que la generatriz</td><td>Elipse</td></tr>
+    <tr><td>Paralelo a la generatriz</td><td>Parábola</td></tr>
+    <tr><td>Corta ambas hojas del cono</td><td>Hipérbola</td></tr>
   </table>
+  <p>Esta definición es visual y explica el nombre «cónicas», pero no sirve para calcular.
+     Necesitamos una caracterización en el plano.</p>
+
+  <div class="sub-title">1.2 Como lugar geométrico</div>
+  <p>La segunda vía define cada curva por una condición sobre distancias:</p>
+  <table class="tbl">
+    <tr><th>Curva</th><th>Condición</th></tr>
+    <tr><td>Circunferencia</td><td>Distancia a un punto fijo constante</td></tr>
+    <tr><td>Parábola</td><td>Distancia a un punto = distancia a una recta</td></tr>
+    <tr><td>Elipse</td><td><strong>Suma</strong> de distancias a dos puntos constante</td></tr>
+    <tr><td>Hipérbola</td><td><strong>Diferencia</strong> de distancias a dos puntos constante</td></tr>
+  </table>
+  <p>Funciona, pero deja la impresión de cuatro definiciones sin relación entre sí. Y no la hay:
+     existe una tercera vía que las unifica en una sola frase.</p>
+
+  <div class="sub-title">1.3 La definición que las une: foco y directriz</div>
+  <div class="def">
+    Dados un punto $F$ (<em>foco</em>), una recta $\ell$ que no lo contiene (<em>directriz</em>)
+    y un número $e \gt 0$ (<em>excentricidad</em>), la cónica es el conjunto de puntos $P$ del plano
+    tales que
+    $$\frac{\operatorname{dist}(P,F)}{\operatorname{dist}(P,\ell)} = e$$
+    Una sola condición. El valor de $e$ decide cuál de las cuatro curvas resulta.
+  </div>
+  <p>Volveremos sobre esto en la §3, que es el corazón de la guía. Primero conviene tener a mano las
+     ecuaciones de cada curva por separado.</p>
+</section>
+
+<!-- ═══════════ 2 ═══════════ -->
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Las cuatro curvas y sus ecuaciones</h3>
+
+  <div class="sub-title">2.1 Circunferencia</div>
+  <div class="def">
+    Centro $(h,k)$ y radio $r$:
+    $$(x-h)^2+(y-k)^2=r^2$$
+  </div>
+
+  <div class="sub-title">2.2 Parábola</div>
+  <div class="def">
+    Vértice $(h,k)$, con $p$ la distancia del vértice al foco:
+    $$(x-h)^2=4p(y-k) \quad\text{(abre vertical)} \qquad (y-k)^2=4p(x-h) \quad\text{(abre horizontal)}$$
+    Si $p \gt 0$ abre hacia arriba (o hacia la derecha); si $p \lt 0$, al contrario.
+    Foco: $(h,\,k+p)$. Directriz: $y=k-p$.
+  </div>
   <div class="nota">
-    <strong>Regla mnemotécnica:</strong> «punto para proyectar, cruz para levantar». El punto aplasta
-    un vector sobre otro; el cruz genera uno nuevo que sale del plano de ambos.
+    <strong>Cómo saber hacia dónde abre.</strong> La variable que aparece <em>elevada al cuadrado</em>
+    es la del eje perpendicular al de apertura. En $(x-h)^2=4p(y-k)$ el cuadrado está en $x$, así que
+    la parábola abre verticalmente. Es un truco que ahorra mucha confusión.
+  </div>
+
+  <div class="sub-title">2.3 Elipse</div>
+  <div class="def">
+    Centro $(h,k)$, semieje mayor $a$ y semieje menor $b$, con $a \gt b$.
+    Hay <strong>dos orientaciones</strong> según dónde quede $a^2$:
+    $$\underbrace{\frac{(x-h)^2}{a^2}+\frac{(y-k)^2}{b^2}=1}_{\text{eje mayor horizontal}}
+      \qquad\qquad
+      \underbrace{\frac{(x-h)^2}{b^2}+\frac{(y-k)^2}{a^2}=1}_{\text{eje mayor vertical}}$$
+    En ambos casos $\boxed{c^2=a^2-b^2}$. Los focos están sobre el eje mayor a distancia $c$ del
+    centro, y los vértices a distancia $a$.
+  </div>
+  <p style="font-size:.88rem;color:var(--muted)">
+    Por convención $a$ siempre denota el semieje <em>mayor</em>, así que $a^2$ es siempre el
+    denominador más grande. Lo que cambia entre las dos formas es bajo qué variable aparece: eso
+    es lo que decide la orientación.
+  </p>
+
+  <div class="sub-title">2.4 Hipérbola</div>
+  <div class="def">
+    Centro $(h,k)$. También hay <strong>dos orientaciones</strong>, y aquí las decide el signo,
+    no el tamaño:
+    $$\underbrace{\frac{(x-h)^2}{a^2}-\frac{(y-k)^2}{b^2}=1}_{\text{eje transverso horizontal}}
+      \qquad\qquad
+      \underbrace{\frac{(y-k)^2}{a^2}-\frac{(x-h)^2}{b^2}=1}_{\text{eje transverso vertical}}$$
+    En ambos casos $\boxed{c^2=a^2+b^2}$, y $a$ es el denominador del término <strong>positivo</strong>.
+    Los focos están a distancia $c$ del centro, <em>más lejos</em> que los vértices.
+    <br><br>
+    Asíntotas: pendiente $\pm\dfrac{b}{a}$ si el eje transverso es horizontal, y
+    $\pm\dfrac{a}{b}$ si es vertical.
+  </div>
+  <div class="nota">
+    <strong>No memorices la pendiente de las asíntotas.</strong> Iguala la ecuación a $0$ en lugar
+    de a $1$ y despeja $y$: sale siempre la pendiente correcta, en cualquier orientación y sin
+    riesgo de invertir la fracción.
+  </div>
+
+  <div class="callout-dark">
+    <h3>El error de signo que comete todo el mundo</h3>
+    <p>En la elipse $c^2=a^2-b^2$; en la hipérbola $c^2=a^2+b^2$. Memorizar los dos signos por
+       separado es la receta para confundirlos en el examen. Hay una razón geométrica que los hace
+       imposibles de olvidar:</p>
+    <p>En la <strong>elipse</strong> los focos están <em>dentro</em> de la curva, más cerca del centro
+       que los vértices. Entonces $c \lt a$, y para que eso ocurra hay que <em>restar</em>.</p>
+    <p>En la <strong>hipérbola</strong> los focos están <em>fuera</em>, más allá de los vértices.
+       Entonces $c \gt a$, y para que eso ocurra hay que <em>sumar</em>.</p>
+    <p>La pregunta correcta no es «¿qué signo lleva?», sino «¿el foco está dentro o fuera?».</p>
+  </div>
+
+  <div class="sub-title">2.5 Cómo distinguir $a$ de $b$</div>
+  <p>Otra fuente clásica de errores. Las reglas son distintas en cada curva:</p>
+  <ul>
+    <li><strong>Elipse:</strong> $a^2$ es siempre el <em>mayor</em> de los dos denominadores, y el
+        eje mayor va en la dirección de esa variable. Si el denominador grande está bajo $y$, la
+        elipse es vertical; si está bajo $x$, horizontal.</li>
+    <li><strong>Hipérbola:</strong> $a$ es el denominador del término <em>positivo</em>, sin importar
+        si es mayor o menor. El eje transverso va en esa dirección.</li>
+  </ul>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Leer una elipse</h4>
+    <div class="ejemplo-body">
+      Analiza $\dfrac{(x-2)^2}{9}+\dfrac{(y+1)^2}{25}=1$.
+      <div class="paso"><div class="paso-t">Centro</div>
+        $(h,k)=(2,-1)$. Cuidado con los signos: $(y+1)^2=(y-(-1))^2$.
+      </div>
+      <div class="paso"><div class="paso-t">Ejes</div>
+        El denominador mayor es $25$ y está bajo $y$, así que $a^2=25 \Rightarrow a=5$ y el eje mayor
+        es <strong>vertical</strong>. Entonces $b^2=9 \Rightarrow b=3$.
+      </div>
+      <div class="paso"><div class="paso-t">Focos</div>
+        $c^2=25-9=16 \Rightarrow c=4$. Como el eje mayor es vertical, los focos son
+        $(2,\,-1\pm 4)$, es decir $(2,3)$ y $(2,-5)$.
+      </div>
+      <div class="paso"><div class="paso-t">Excentricidad</div>
+        $e=c/a=4/5=0{,}8$. Cercana a 1: es una elipse bastante alargada.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Leer una hipérbola</h4>
+    <div class="ejemplo-body">
+      Analiza $\dfrac{(y+2)^2}{16}-\dfrac{(x-1)^2}{9}=1$.
+      <div class="paso"><div class="paso-t">Orientación</div>
+        El término <em>positivo</em> es el de $y$, así que el eje transverso es <strong>vertical</strong>
+        y la hipérbola abre hacia arriba y hacia abajo. Aquí $a^2=16$ aunque también sea el mayor —
+        pero eso es casualidad, no la regla.
+      </div>
+      <div class="paso"><div class="paso-t">Elementos</div>
+        Centro $(1,-2)$, $a=4$, $b=3$, y $c^2=16+9=25 \Rightarrow c=5$.<br>
+        Vértices: $(1,\,-2\pm 4)$. Focos: $(1,\,-2\pm 5)$ — más lejos, como debe ser.
+      </div>
+      <div class="paso"><div class="paso-t">Asíntotas</div>
+        Con eje transverso vertical la pendiente es $\pm a/b$, no $\pm b/a$:
+        $y+2=\pm\dfrac{4}{3}(x-1)$.
+      </div>
+      <div class="paso"><div class="paso-t">Cómo no equivocarse con las asíntotas</div>
+        En vez de memorizar la fracción, iguala la ecuación a cero:
+        $\dfrac{(y+2)^2}{16}-\dfrac{(x-1)^2}{9}=0$ y despeja. Sale siempre la pendiente correcta,
+        en cualquier orientación.
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="card">
-  <h3 class="card-title">2. Ejemplos resueltos</h3>
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Ecuaciones y elementos</h3>
+  <div id="chk1"></div>
+</div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 1 · Detectar perpendicularidad</h4>
-    <div class="ejemplo-body">
-      ¿Son perpendiculares $\mathbf{u}=(3,-1,2)$ y $\mathbf{v}=(2,4,-1)$?
-      <div class="paso"><div class="paso-t">Producto punto</div>
-        $\mathbf{u}\cdot\mathbf{v}=(3)(2)+(-1)(4)+(2)(-1)=6-4-2=0$
-      </div>
-      <div class="paso"><div class="paso-t">Conclusión</div>
-        Sí: $\theta=90^\circ$. No hizo falta calcular magnitudes ni el arcocoseno —
-        el signo del producto punto ya carga toda la información angular.
-      </div>
-    </div>
+<!-- ═══════════ 3 ═══════════ -->
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Excentricidad: el número que las clasifica</h3>
+
+  <p>Volvamos a la definición unificada de §1.3. Fijemos un foco $F$ y una directriz $\ell$, y
+     preguntemos qué curva aparece según el valor de $e$.</p>
+
+  <div class="def">
+    $$e=\frac{\operatorname{dist}(P,F)}{\operatorname{dist}(P,\ell)}$$
+    <table class="tbl" style="margin:.6rem 0 0">
+      <tr><th>Valor de $e$</th><th>Curva</th><th>Lectura</th></tr>
+      <tr><td>$e=0$</td><td>Circunferencia</td><td>La directriz se fue al infinito</td></tr>
+      <tr><td>$0 \lt e \lt 1$</td><td>Elipse</td><td>Más cerca del foco que de la directriz</td></tr>
+      <tr><td>$e=1$</td><td>Parábola</td><td>Equidistante de ambos</td></tr>
+      <tr><td>$e \gt 1$</td><td>Hipérbola</td><td>Más cerca de la directriz que del foco</td></tr>
+    </table>
   </div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 2 · Área de un paralelogramo</h4>
-    <div class="ejemplo-body">
-      Halla el área del paralelogramo generado por $\mathbf{u}=(2,1,0)$ y $\mathbf{v}=(0,1,3)$.
-      <div class="paso"><div class="paso-t">Producto cruz</div>
-        $\mathbf{u}\times\mathbf{v}=\big((1)(3)-(0)(1),\ (0)(0)-(2)(3),\ (2)(1)-(1)(0)\big)=(3,-6,2)$
-      </div>
-      <div class="paso"><div class="paso-t">Magnitud</div>
-        $\|\mathbf{u}\times\mathbf{v}\|=\sqrt{9+36+4}=\sqrt{49}=7$
-      </div>
-      <div class="paso"><div class="paso-t">Resultado</div>
-        Área $=7$ unidades cuadradas. El área del triángulo sería la mitad: $3{,}5$.
-      </div>
-    </div>
+  <p>Para la elipse y la hipérbola hay además una fórmula directa que ya usamos en los ejemplos:
+     $e=c/a$. Es consistente con lo anterior: en la elipse $c \lt a$ da $e \lt 1$, y en la hipérbola
+     $c \gt a$ da $e \gt 1$. El signo del recuadro de §2.4 y el valor de $e$ dicen lo mismo dos veces.</p>
+
+  <div class="nota">
+    <strong>Qué significa geométricamente.</strong> La excentricidad mide cuánto se aparta la curva
+    de ser redonda. Una elipse con $e=0{,}1$ es casi una circunferencia; con $e=0{,}9$ es muy
+    alargada. La órbita de la Tierra tiene $e\approx 0{,}017$ —prácticamente circular, por eso las
+    estaciones no se deben a la distancia al Sol— mientras que el cometa Halley tiene
+    $e\approx 0{,}967$.
   </div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 3 · Proyección y trabajo</h4>
-    <div class="ejemplo-body">
-      Una fuerza $\mathbf{F}=(4,3)$ N mueve un objeto en la dirección $\mathbf{d}=(5,0)$ m.
-      <div class="paso"><div class="paso-t">Trabajo</div>
-        $W=\mathbf{F}\cdot\mathbf{d}=(4)(5)+(3)(0)=20$ J
-      </div>
-      <div class="paso"><div class="paso-t">Por qué solo cuenta una componente</div>
-        La componente vertical de la fuerza (el $3$) es perpendicular al desplazamiento
-        y no aporta trabajo. El producto punto la descarta automáticamente:
-        $\operatorname{comp}_{\mathbf{d}}\mathbf{F}=20/5=4$ N.
-      </div>
+  <div class="sub-title">3.1 Explora: una sola familia</div>
+  <div class="viz" data-viz="conicas">
+    <div class="viz-controls">
+      <label for="cn-e">Excentricidad</label>
+      <input id="cn-e" class="exc" type="range" min="0" max="200" value="60">
+      <span class="exc-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="cn-p">Mover P</label>
+      <input id="cn-p" class="punto" type="range" min="0" max="359" value="50">
     </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Arrastra el deslizador de $e$ <strong>lentamente</strong> desde 0 hasta 2 y observa que la curva
+    nunca salta: se deforma de forma continua de circunferencia a elipse, luego a parábola justo en
+    $e=1$, y después se abre en hipérbola. El foco rojo no se mueve nunca.
+  </p>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Ahora fija cualquier excentricidad y mueve el punto $P$: verás que $|PF|$ y la distancia a la
+    directriz cambian las dos, pero su cociente permanece clavado en $e$. Esa constancia
+    <em>es</em> la definición.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Excentricidad</h3>
+  <div id="chk2"></div>
+</div>
+
+<!-- ═══════════ 4 ═══════════ -->
+<section class="card" id="s4">
+  <h3 class="card-title">4 · De la forma general a la canónica</h3>
+
+  <p>En la práctica las cónicas rara vez aparecen en forma canónica. Lo habitual es encontrarlas así:</p>
+  <div class="formula" style="max-width:460px">$$Ax^2+Cy^2+Dx+Ey+F=0$$</div>
+  <p>El trabajo consiste en devolverlas a su forma canónica mediante <strong>completación de
+     cuadrados</strong>, y de paso identificar de qué curva se trata.</p>
+
+  <div class="sub-title">4.1 Clasificación rápida</div>
+  <p>Antes de completar nada, el producto $A\cdot C$ ya dice cuál es la curva:</p>
+  <table class="tbl">
+    <tr><th>Condición</th><th>Cónica</th></tr>
+    <tr><td>$A=C$ &nbsp;(y ambos no nulos)</td><td>Circunferencia</td></tr>
+    <tr><td>$A\cdot C \gt 0$, con $A\neq C$</td><td>Elipse</td></tr>
+    <tr><td>$A\cdot C \lt 0$</td><td>Hipérbola</td></tr>
+    <tr><td>$A\cdot C = 0$ &nbsp;(uno de los dos es cero)</td><td>Parábola</td></tr>
+  </table>
+  <p style="font-size:.88rem">Si además hubiera un término mixto $Bxy$, la clasificación se hace con
+     el <strong>discriminante</strong> $B^2-4AC$: negativo da elipse, cero parábola, positivo
+     hipérbola. Ese caso corresponde a cónicas rotadas y lo verás con más detalle más adelante.</p>
+
+  <div class="sub-title">4.2 El procedimiento</div>
+  <ol>
+    <li>Agrupar los términos de $x$ por un lado y los de $y$ por otro; pasar la constante a la derecha.</li>
+    <li>Factorizar el coeficiente de cada cuadrado <em>fuera</em> del paréntesis.</li>
+    <li>Completar el cuadrado dentro de cada paréntesis: sumar y restar $(\text{mitad del coeficiente lineal})^2$.</li>
+    <li><strong>Multiplicar</strong> lo que sale del paréntesis por el coeficiente factorizado antes de pasarlo al otro lado.</li>
+    <li>Dividir todo entre el término independiente para dejar un $1$ a la derecha.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>El paso 4 es donde se pierde la mitad del curso</h3>
+    <p>Al escribir $4(x^2-4x) = 4[(x-2)^2-4]$, lo que hay que pasar al otro lado no es $-4$ sino
+       $4\times(-4)=-16$. El coeficiente que factorizaste <em>multiplica</em> a lo que sale.</p>
+    <p>Y con coeficientes negativos hay que redoblar el cuidado: en $-16(y^2+4y) = -16[(y+2)^2-4]$,
+       ese término aporta $-16\times(-4)=+64$ al lado izquierdo, de modo que pasa <strong>restando</strong>
+       al derecho.</p>
+    <p>Truco de verificación: al terminar, expande mentalmente el resultado y comprueba que recuperas
+       la ecuación original. Cuesta veinte segundos y detecta el error casi siempre.</p>
+  </div>
+
+  <div class="sub-title">4.3 Casos degenerados</div>
+  <p>No toda ecuación de segundo grado representa una cónica de verdad. Cuando el lado derecho
+     resulta ser $0$ o negativo aparecen los casos degenerados:</p>
+  <table class="tbl">
+    <tr><th>Resultado</th><th>Qué representa</th></tr>
+    <tr><td>$(x-h)^2+(y-k)^2=0$</td><td>Un único punto: $(h,k)$</td></tr>
+    <tr><td>$(x-h)^2+(y-k)^2 \lt 0$</td><td>Conjunto vacío: ningún punto real</td></tr>
+    <tr><td>$(x-h)^2-(y-k)^2=0$</td><td>Dos rectas que se cortan</td></tr>
+  </table>
+  <p style="font-size:.88rem">Estos son los cortes del cono que pasan exactamente por el vértice:
+     un punto, una recta o un par de rectas. La geometría y el álgebra vuelven a coincidir.</p>
+
+  <div class="sub-title">4.4 Explora: completa el cuadrado paso a paso</div>
+  <div class="viz" data-viz="completar">
+    <div class="viz-controls">
+      <label for="cq-eq">Ecuación</label>
+      <select id="cq-eq">
+        <option value="circ">x² + y² − 6x + 4y − 12 = 0</option>
+        <option value="para">x² − 8x − 4y + 4 = 0</option>
+        <option value="elip">4x² + 9y² − 16x + 18y − 11 = 0</option>
+        <option value="hip">9x² − 16y² − 18x − 64y − 199 = 0</option>
+        <option value="punto">x² + y² − 4x + 6y + 13 = 0</option>
+        <option value="vacio">x² + y² + 2x + 2y + 3 = 0</option>
+      </select>
+      <label for="cq-p">Avanzar</label>
+      <input id="cq-p" class="paso" type="range" min="1" max="6" value="1">
+      <span class="paso-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="pasos" style="margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Prueba las dos últimas opciones: son los casos degenerados. En una la curva se reduce a un punto
+    y en la otra desaparece del todo. Que el álgebra funcione perfectamente y aun así no haya curva
+    es un buen recordatorio de que hay que interpretar el resultado, no solo calcularlo.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Forma general y clasificación</h3>
+  <div id="chk3"></div>
+</div>
+
+<!-- ═══════════ 5 ═══════════ -->
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Por qué esto abre el curso</h3>
+
+  <p>Las cónicas no son un tema aislado de repaso: reaparecen cuatro veces en el semestre, cada vez
+     en un lenguaje distinto.</p>
+
+  <table class="tbl">
+    <tr><th>Semana</th><th>Tema</th><th>Cómo vuelven las cónicas</th></tr>
+    <tr><td>2</td><td>Paramétricas y polares</td><td>La forma polar $r=\dfrac{ed}{1\pm e\cos\theta}$ describe las cuatro con una sola ecuación — literalmente la del visualizador de §3</td></tr>
+    <tr><td>3</td><td>Funciones vectoriales</td><td>Un móvil con $\mathbf{r}(t)=\langle a\cos t,\; b\,\operatorname{sen} t\rangle$ recorre una elipse; las órbitas son cónicas</td></tr>
+    <tr><td>4</td><td>Longitud de arco y curvatura</td><td>La curvatura de una parábola y de una elipse son ejercicios estándar del tema</td></tr>
+    <tr><td>6 en adelante</td><td>Superficies cuádricas</td><td>Las <strong>curvas de nivel</strong> de un paraboloide son circunferencias; las de un paraboloide hiperbólico, hipérbolas</td></tr>
+  </table>
+
+  <div class="callout-dark">
+    <h3>El puente hacia las tres dimensiones</h3>
+    <p>Una superficie cuádrica como $z=x^2+y^2$ es difícil de imaginar de golpe. Pero si fijas
+       $z=4$ obtienes $x^2+y^2=4$: una circunferencia de radio 2. Con $z=9$, radio 3.</p>
+    <p>La superficie es una <em>pila de cónicas</em>. Y esa es la técnica estándar para dibujar
+       cualquier cuádrica: cortarla con planos y reconocer la cónica que aparece en cada corte.</p>
+    <p>Por eso la semana 1 es esta. Si reconoces cónicas con soltura en el plano, las superficies de
+       la semana 6 dejan de ser un problema de imaginación y pasan a ser uno de reconocimiento.</p>
   </div>
 </section>
 
+<!-- ═══════════ Programa ═══════════ -->
 <section class="card">
-  <h3 class="card-title">3. Según tu programa</h3>
+  <h3 class="card-title">Según tu programa</h3>
   <div class="carrera">
     <h4>Selecciona tu programa académico</h4>
-    <p class="hint">Se guarda en este navegador y se aplica a todas las sesiones.</p>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      Si $\mathbf{p}=(12000,\,8500,\,3000)$ son precios y $\mathbf{q}=(40,\,25,\,60)$ cantidades,
-      entonces $\mathbf{p}\cdot\mathbf{q}$ es el ingreso total. El producto punto es, literalmente, facturar.</div>
+      Una función de utilidad cuadrática $U(x)=-ax^2+bx-c$ es una parábola que abre hacia abajo:
+      el <em>vértice</em> es el nivel de producción que maximiza la utilidad, y los cortes con el eje
+      $x$ son los dos puntos de equilibrio. Completar el cuadrado es exactamente el método para
+      hallar ese vértice sin derivar.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      Un vector de tasas por concepto y otro de bases gravables: su producto punto da la
-      retención total. Modelar así evita errores de fila en hojas de cálculo grandes.</div>
+      En análisis de costo-volumen-utilidad, cuando el costo unitario varía con el volumen, la
+      función de utilidad deja de ser lineal y se vuelve parabólica. Identificar el vértice y las
+      raíces da el rango de producción rentable y el punto de utilidad máxima.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      La <em>similitud coseno</em> $\cos\theta = \dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}$
-      es la base de los buscadores y recomendadores: dos documentos se parecen si sus vectores apuntan igual.</div>
+      Las cónicas son primitivas gráficas: el algoritmo de punto medio para elipses (variante del de
+      Bresenham) las dibuja usando solo aritmética entera. En modelado 3D, las curvas de Bézier
+      cuadráticas son arcos de parábola, y una NURBS representa arcos de circunferencia exactos.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      Potencia instantánea $P=\mathbf{V}\cdot\mathbf{I}$, y el factor de potencia es justamente
-      $\cos\theta$ entre los fasores. Fuerza de Lorentz: $\mathbf{F}=q\,\mathbf{v}\times\mathbf{B}$ — producto cruz puro.</div>
+      La <em>propiedad reflectiva</em> de la parábola —toda señal paralela al eje se concentra en el
+      foco— es la razón de ser de las antenas satelitales y de los reflectores. Y la navegación
+      hiperbólica (LORAN, y el principio detrás del GPS) ubica un receptor midiendo
+      <em>diferencias</em> de tiempo de llegada: cada diferencia constante define una hipérbola, y la
+      posición es su intersección.</div>
   </div>
 </section>
 
-<section class="card">
-  <h3 class="card-title">4. Explora</h3>
-
-  <div class="sub-title">4.1 Los dos productos, uno al lado del otro</div>
-  <div class="viz" data-viz="vectores">
-    <div class="viz-controls">
-      <label>u =</label>
-      <input class="ux" type="range" min="-6" max="6" value="4" step="1" aria-label="u sub x">
-      <input class="uy" type="range" min="-6" max="6" value="3" step="1" aria-label="u sub y">
-      <label>v =</label>
-      <input class="vx" type="range" min="-6" max="6" value="-2" step="1" aria-label="v sub x">
-      <input class="vy" type="range" min="-6" max="6" value="4" step="1" aria-label="v sub y">
-      <label for="vmodo">Mostrar</label>
-      <select id="vmodo">
-        <option value="suma">Suma u+v</option>
-        <option value="proy">Proyección de u sobre v</option>
-        <option value="area">Área del paralelogramo</option>
-      </select>
-    </div>
-    <canvas></canvas>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    Busca una posición donde $\mathbf{u}\cdot\mathbf{v}=0$ y observa qué le pasa a la proyección:
-    se reduce al vector nulo. Ese es el sentido geométrico de «no hay componente en esa dirección».
-  </p>
-
-  <div class="sub-title">4.2 Adelanto: curvas de nivel y gradiente</div>
-  <div class="viz" data-viz="gradiente">
-    <div class="viz-controls">
-      <label for="g-fn">Superficie</label>
-      <select id="g-fn">
-        <option value="parab">x² + y²</option>
-        <option value="silla">x² − y²</option>
-        <option value="prod">x·y</option>
-        <option value="onda">sen x · cos y</option>
-      </select>
-      <label>Punto</label>
-      <input class="gx" type="range" min="-30" max="30" value="12" aria-label="coordenada x">
-      <input class="gy" type="range" min="-30" max="30" value="8" aria-label="coordenada y">
-      <span class="p-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
-    </div>
-    <canvas></canvas>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    Mueve el punto por el mapa y fíjate en un solo hecho: la flecha dorada <strong>siempre</strong>
-    corta perpendicularmente a la línea punteada. Ese resultado —el gradiente es normal a la curva de
-    nivel— es el corazón de la sesión sobre derivadas direccionales.
-  </p>
+<!-- ═══════════ 6 ═══════════ -->
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
 </section>
 
 <section class="card">
-  <h3 class="card-title">5. Práctica de refuerzo</h3>
-  <div id="quiz-cv01"></div>
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Las cuatro cónicas son <strong>una sola familia</strong>: $\operatorname{dist}(P,F)/\operatorname{dist}(P,\ell)=e$, y solo cambia $e$.</li>
+    <li>$e=0$ circunferencia · $0 \lt e \lt 1$ elipse · $e=1$ parábola · $e \gt 1$ hipérbola.</li>
+    <li>Elipse $c^2=a^2-b^2$ porque el foco está <em>dentro</em>; hipérbola $c^2=a^2+b^2$ porque está <em>fuera</em>.</li>
+    <li>En la elipse, $a$ es el denominador mayor. En la hipérbola, el del término <strong>positivo</strong>.</li>
+    <li>La variable elevada al cuadrado en una parábola indica el eje <em>perpendicular</em> a la apertura.</li>
+    <li>Asíntotas de la hipérbola: iguala la ecuación a $0$ y despeja. Nunca falla la orientación.</li>
+    <li>Clasificación rápida: $A=C$ circunferencia · $AC \gt 0$ elipse · $AC \lt 0$ hipérbola · $AC=0$ parábola.</li>
+    <li>Al completar el cuadrado, lo que sale del paréntesis va <strong>multiplicado</strong> por el coeficiente factorizado.</li>
+    <li>Si el lado derecho queda $0$ o negativo, la cónica es degenerada: un punto, dos rectas o nada.</li>
+  </ul>
 </section>
 
 </main>
 
 <footer>
   Cálculo Vectorial · Departamento de Ciencias Básicas · UNIAJC · 2026-2 &nbsp;·&nbsp;
-  <a href="https://openstax.org/books/calculus-volume-3/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> ·
-  <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a>
+  <a href="https://openstax.org/books/calculus-volume-2/pages/7-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cónicas</a> ·
+  <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> ·
+  <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a>
 </footer>
 
 <script src="../assets/ova.js"></script>
 <script src="../assets/viz-vectorial.js"></script>
 <script>
+/* ── Comprobación 1 · Ecuaciones y elementos ────────────── */
 OVA.quiz({
-  destino: 'quiz-cv01',
-  titulo: 'Vectores · 6 preguntas',
+  destino: 'chk1',
+  titulo: 'Ecuaciones y elementos · 3 preguntas',
   items: [
     {
-      etiqueta: 'Magnitud', nivel: 1,
-      criterio: 'Calcular la magnitud de un vector',
-      enunciado: 'La magnitud del vector $\\mathbf{u}=(2,-3,6)$ es:',
-      opciones: ['$5$', '$7$', '$11$', '$\\sqrt{41}$'],
+      etiqueta: 'Elipse', nivel: 2,
+      criterio: 'Identificar centro, semiejes y focos de una elipse (§2.3)',
+      enunciado: 'Para la elipse $\\dfrac{(x-2)^2}{9}+\\dfrac{(y+1)^2}{25}=1$, los focos son:',
+      opciones: ['$(2\\pm 4,\\,-1)$', '$(2,\\,-1\\pm 4)$', '$(2,\\,-1\\pm\\sqrt{34})$', '$(2\\pm 5,\\,-1)$'],
       correcta: 1,
-      pista: 'Suma los cuadrados y saca raíz: el signo se pierde al elevar al cuadrado.',
-      solucion: '$\\|\\mathbf{u}\\|=\\sqrt{4+9+36}=\\sqrt{49}=7$. ' +
-                'La opción d) sale de olvidar una de las componentes al sumar.'
+      pista: '¿Bajo cuál variable está el denominador mayor? Ahí va el eje mayor.',
+      solucion: 'El denominador mayor es $25$ y está bajo $y$, así que $a=5$ y el eje mayor es ' +
+                '<strong>vertical</strong>: los focos se desplazan en $y$. Con $c^2=25-9=16$ queda $c=4$, ' +
+                'y los focos son $(2,3)$ y $(2,-5)$. La opción a) los pone en horizontal; la c) usa ' +
+                '$c^2=a^2+b^2$, que es la fórmula de la <em>hipérbola</em>.'
     },
     {
-      etiqueta: 'Producto punto', nivel: 1,
-      criterio: 'Usar el producto punto para detectar perpendicularidad',
-      enunciado: 'Los vectores $\\mathbf{u}=(3,-1,2)$ y $\\mathbf{v}=(2,4,-1)$ son:',
-      opciones: ['Paralelos', 'Perpendiculares', 'Forman $45^\\circ$', 'Forman $60^\\circ$'],
-      correcta: 1,
-      pista: 'Calcula $\\mathbf{u}\\cdot\\mathbf{v}$ antes de pensar en ángulos.',
-      solucion: '$\\mathbf{u}\\cdot\\mathbf{v}=6-4-2=0$, y como ninguno es el vector nulo, ' +
-                '$\\cos\\theta=0$ y $\\theta=90^\\circ$. Serían paralelos si su producto <em>cruz</em> fuera cero.'
+      etiqueta: 'Hipérbola', nivel: 3,
+      criterio: 'Hallar las asíntotas con la orientación correcta (§2.4)',
+      enunciado: 'Las asíntotas de $\\dfrac{(y+2)^2}{16}-\\dfrac{(x-1)^2}{9}=1$ son:',
+      opciones: [
+        '$y+2=\\pm\\dfrac{3}{4}(x-1)$',
+        '$y-2=\\pm\\dfrac{4}{3}(x+1)$',
+        '$y+2=\\pm\\dfrac{4}{3}(x-1)$',
+        '$y+2=\\pm\\dfrac{16}{9}(x-1)$'
+      ],
+      correcta: 2,
+      pista: 'Iguala la ecuación a cero y despeja $y$: sale la pendiente correcta sin memorizar nada.',
+      solucion: 'Aquí el término positivo es el de $y$, así que el eje transverso es vertical y la ' +
+                'pendiente es $\\pm a/b=\\pm 4/3$, no $\\pm b/a$. La opción a) aplica la fórmula de la ' +
+                'hipérbola horizontal; la d) olvida sacar las raíces de los denominadores. ' +
+                'Igualar a cero y despejar evita las cuatro trampas de una vez.'
     },
     {
-      etiqueta: 'Producto cruz', nivel: 2,
-      criterio: 'Calcular el producto cruz de dos vectores',
-      enunciado: 'Si $\\mathbf{u}=(1,0,0)$ y $\\mathbf{v}=(0,1,0)$, entonces $\\mathbf{u}\\times\\mathbf{v}$ es:',
-      opciones: ['$(0,0,1)$', '$(0,0,-1)$', '$0$', '$(1,1,0)$'],
+      etiqueta: 'Parábola', nivel: 1,
+      criterio: 'Determinar vértice, foco y directriz de una parábola (§2.2)',
+      enunciado: 'Para la parábola $(x-4)^2=4(y+3)$, el foco y la directriz son:',
+      opciones: [
+        'Foco $(5,-3)$, directriz $x=3$',
+        'Foco $(4,-4)$, directriz $y=-2$',
+        'Foco $(4,-3)$, directriz $y=-3$',
+        'Foco $(4,-2)$, directriz $y=-4$'
+      ],
+      correcta: 3,
+      pista: 'El cuadrado está en $x$, así que la parábola abre verticalmente. Compara con $(x-h)^2=4p(y-k)$.',
+      solucion: 'El vértice es $(4,-3)$ y $4p=4$, luego $p=1$. Como $p \\gt 0$ abre hacia arriba: ' +
+                'el foco está una unidad <em>encima</em> del vértice, en $(4,-2)$, y la directriz una ' +
+                'unidad <em>debajo</em>, en $y=-4$. La opción b) invierte foco y directriz; la a) supone ' +
+                'apertura horizontal.'
+    }
+  ]
+});
+
+/* ── Comprobación 2 · Excentricidad ─────────────────────── */
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Excentricidad · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Clasificación', nivel: 1,
+      criterio: 'Clasificar una cónica por su excentricidad (§3)',
+      enunciado: 'Una cónica cumple $\\dfrac{\\operatorname{dist}(P,F)}{\\operatorname{dist}(P,\\ell)}=1{,}4$ para todos sus puntos. Es una:',
+      opciones: ['Elipse', 'Hipérbola', 'Parábola', 'Circunferencia'],
+      correcta: 1,
+      pista: 'Compara ese cociente con 1.',
+      solucion: 'Como $e=1{,}4 \\gt 1$, es una hipérbola: cada punto está más cerca de la directriz que ' +
+                'del foco. Con $e \\lt 1$ sería elipse, con $e=1$ parábola. La circunferencia corresponde a ' +
+                '$e=0$, donde la directriz se ha ido al infinito.'
+    },
+    {
+      etiqueta: 'Cálculo de e', nivel: 2,
+      criterio: 'Calcular la excentricidad a partir de a y b (§3)',
+      enunciado: 'Una elipse tiene semieje mayor $a=13$ y semieje menor $b=5$. Su excentricidad es:',
+      opciones: ['$\\dfrac{5}{13}$', '$\\dfrac{13}{12}$', '$\\dfrac{12}{13}$', '$\\dfrac{5}{12}$'],
+      correcta: 2,
+      pista: 'Primero halla $c$ con la fórmula de la elipse, y luego usa $e=c/a$.',
+      solucion: '$c^2=169-25=144$, luego $c=12$ y $e=c/a=12/13\\approx 0{,}92$. Al estar tan cerca de 1, ' +
+                'la elipse es muy alargada. La opción b) invierte el cociente y daría $e \\gt 1$, ' +
+                'imposible en una elipse: ese solo hecho basta para descartarla sin calcular.'
+    },
+    {
+      etiqueta: 'Interpretación', nivel: 3,
+      criterio: 'Interpretar geométricamente el valor de la excentricidad (§3)',
+      enunciado: 'La órbita de la Tierra tiene $e\\approx 0{,}017$ y la del cometa Halley $e\\approx 0{,}967$. Esto significa que:',
+      opciones: [
+        'La órbita de la Tierra es casi circular y la del Halley muy alargada',
+        'La Tierra está mucho más lejos del Sol que el Halley',
+        'La órbita del Halley es una hipérbola',
+        'La Tierra recorre su órbita mucho más despacio'
+      ],
       correcta: 0,
-      pista: 'Son $\\mathbf{i}$ y $\\mathbf{j}$. Aplica la regla de la mano derecha.',
-      solucion: '$\\mathbf{i}\\times\\mathbf{j}=\\mathbf{k}=(0,0,1)$. ' +
-                'La opción b) es $\\mathbf{j}\\times\\mathbf{i}$: el producto cruz es anticonmutativo, ' +
-                'y por eso el orden de los factores sí altera el resultado.'
+      pista: '¿Qué mide $e$: el tamaño de la órbita o su forma?',
+      solucion: 'La excentricidad mide <strong>forma</strong>, no tamaño: cuánto se aparta la elipse de ' +
+                'ser redonda. Con $e\\approx 0{,}017$ la órbita terrestre es prácticamente circular — por eso ' +
+                'las estaciones no se deben a la distancia al Sol. La opción c) es falsa porque ' +
+                '$0{,}967 \\lt 1$: sigue siendo elipse, muy alargada pero cerrada.'
+    }
+  ]
+});
+
+/* ── Comprobación 3 · Forma general ─────────────────────── */
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Forma general y clasificación · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Clasificación rápida', nivel: 1,
+      criterio: 'Clasificar una cónica por el signo de A·C (§4.1)',
+      enunciado: 'Sin completar cuadrados, ¿qué cónica representa $5x^2-2y^2+8x-6y+1=0$?',
+      opciones: ['Elipse', 'Parábola', 'Hipérbola', 'Circunferencia'],
+      correcta: 2,
+      pista: 'Mira solo el producto de los coeficientes de $x^2$ y $y^2$.',
+      solucion: '$A\\cdot C = (5)(-2) = -10 \\lt 0$, así que es una hipérbola. El criterio es inmediato: ' +
+                'signos <em>opuestos</em> en los cuadrados dan hipérbola; iguales dan elipse (o ' +
+                'circunferencia si además $A=C$); y si uno de los dos falta, parábola.'
     },
     {
-      etiqueta: 'Área', nivel: 2,
-      criterio: 'Interpretar la norma del producto cruz como área',
-      enunciado: 'El área del paralelogramo generado por $\\mathbf{u}=(2,1,0)$ y $\\mathbf{v}=(0,1,3)$ es:',
-      opciones: ['$3{,}5$', '$7$', '$49$', '$14$'],
+      etiqueta: 'Completación', nivel: 3,
+      criterio: 'Completar el cuadrado con coeficiente factorizado (§4.2)',
+      enunciado: 'Al reescribir $4x^2-16x$ completando el cuadrado se obtiene:',
+      opciones: ['$4(x-2)^2-4$', '$4(x-2)^2-16$', '$(2x-4)^2-4$', '$4(x-4)^2-16$'],
       correcta: 1,
-      pista: 'Calcula $\\mathbf{u}\\times\\mathbf{v}$ y luego su magnitud.',
-      solucion: '$\\mathbf{u}\\times\\mathbf{v}=(3,-6,2)$ y $\\|\\mathbf{u}\\times\\mathbf{v}\\|=\\sqrt{49}=7$. ' +
-                'La opción a) es el área del <em>triángulo</em>, que es la mitad.'
+      pista: 'Factoriza el 4 primero: $4(x^2-4x)$. Lo que sale del paréntesis, ¿va multiplicado por qué?',
+      solucion: '$4(x^2-4x)=4[(x-2)^2-4]=4(x-2)^2-16$. El término que sale del paréntesis queda ' +
+                '<strong>multiplicado por el coeficiente factorizado</strong>. La opción a) es el error ' +
+                'más frecuente del tema: olvidar esa multiplicación y arrastrar $-4$ en lugar de $-16$, ' +
+                'lo que descuadra toda la ecuación.'
     },
     {
-      etiqueta: 'Proyección', nivel: 2,
-      criterio: 'Calcular la componente escalar de un vector sobre otro',
-      enunciado: 'La componente escalar de $\\mathbf{u}=(4,3)$ en la dirección de $\\mathbf{v}=(1,0)$ es:',
-      opciones: ['$3$', '$4$', '$5$', '$7$'],
-      correcta: 1,
-      pista: '$\\mathbf{v}$ ya es unitario, así que la componente es simplemente $\\mathbf{u}\\cdot\\mathbf{v}$.',
-      solucion: '$\\operatorname{comp}_{\\mathbf{v}}\\mathbf{u}=\\dfrac{\\mathbf{u}\\cdot\\mathbf{v}}{\\|\\mathbf{v}\\|}=\\dfrac{4}{1}=4$. ' +
-                'La opción c) es $\\|\\mathbf{u}\\|$: la magnitud total, no su sombra sobre el eje x.'
+      etiqueta: 'Degenerados', nivel: 2,
+      criterio: 'Reconocer un caso degenerado (§4.3)',
+      enunciado: 'Al completar cuadrados, una ecuación se reduce a $(x-2)^2+(y+3)^2=0$. Su gráfica es:',
+      opciones: [
+        'Una circunferencia de radio 0 que no existe',
+        'Dos rectas que se cortan',
+        'El conjunto vacío',
+        'Un único punto: $(2,-3)$'
+      ],
+      correcta: 3,
+      pista: '¿Cuándo una suma de dos cuadrados puede valer cero?',
+      solucion: 'Una suma de cuadrados vale cero solo si ambos son cero: $x=2$ y $y=-3$. La gráfica es ' +
+                'el punto $(2,-3)$. Sería el conjunto vacío si el lado derecho fuera <em>negativo</em>. ' +
+                'Geométricamente corresponde a cortar el cono justo por su vértice con un plano ' +
+                'perpendicular al eje.'
+    }
+  ]
+});
+
+/* ── Práctica final ─────────────────────────────────────── */
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Circunferencia', nivel: 1,
+      criterio: 'Pasar de la forma general a la canónica (§4.2)',
+      enunciado: 'La ecuación $x^2+y^2-6x+4y-12=0$ representa una circunferencia de:',
+      opciones: [
+        'Centro $(3,-2)$ y radio $5$',
+        'Centro $(-3,2)$ y radio $5$',
+        'Centro $(3,-2)$ y radio $12$',
+        'Centro $(6,-4)$ y radio $\\sqrt{12}$'
+      ],
+      correcta: 0,
+      pista: 'Completa el cuadrado en ambas variables y recuerda que el radio es la raíz del lado derecho.',
+      solucion: '$(x-3)^2+(y+2)^2=12+9+4=25$, luego el centro es $(3,-2)$ y $r=\\sqrt{25}=5$. ' +
+                'La opción b) invierte los signos del centro: en $(x-3)^2$ el centro es $+3$, no $-3$. ' +
+                'La c) confunde el lado derecho con el radio sin sacar la raíz.'
     },
     {
-      etiqueta: 'Aplicación', nivel: 3,
-      criterio: 'Aplicar el producto punto al cálculo de trabajo',
-      enunciado: 'Una fuerza $\\mathbf{F}=(6,8)$ N desplaza un objeto $\\mathbf{d}=(10,0)$ m. El trabajo realizado es:',
-      opciones: ['$140$ J', '$60$ J', '$100$ J', '$0$ J'],
+      etiqueta: 'Elipse', nivel: 2,
+      criterio: 'Determinar los elementos de una elipse en forma canónica (§2.3)',
+      enunciado: 'Para $4x^2+9y^2=36$, la distancia entre los focos es:',
+      opciones: ['$\\sqrt{5}$', '$2\\sqrt{5}$', '$\\sqrt{13}$', '$5$'],
       correcta: 1,
-      pista: 'El trabajo es un producto punto, no un producto de magnitudes.',
-      solucion: '$W=\\mathbf{F}\\cdot\\mathbf{d}=(6)(10)+(8)(0)=60$ J. ' +
-                'La opción c) sale de usar $\\|\\mathbf{F}\\|\\,\\|\\mathbf{d}\\|=100$, es decir de suponer ' +
-                'que la fuerza es paralela al desplazamiento. La componente vertical de $\\mathbf{F}$ no hace trabajo.'
+      pista: 'Divide todo entre 36 para llegar a la forma canónica, y no olvides que te piden la distancia entre <em>ambos</em> focos.',
+      solucion: 'Dividiendo: $\\dfrac{x^2}{9}+\\dfrac{y^2}{4}=1$, con $a=3$ y $b=2$. Entonces ' +
+                '$c=\\sqrt{9-4}=\\sqrt5$, y como hay <strong>dos</strong> focos simétricos respecto al centro, ' +
+                'la distancia entre ellos es $2c=2\\sqrt5$. La opción a) es el error de responder $c$ ' +
+                'en lugar de $2c$; la c) usa la fórmula de la hipérbola.'
+    },
+    {
+      etiqueta: 'Parábola', nivel: 2,
+      criterio: 'Hallar foco y directriz de una parábola horizontal (§2.2)',
+      enunciado: 'La parábola $y^2=8x$ tiene foco y directriz:',
+      opciones: [
+        'Foco $(0,2)$, directriz $y=-2$',
+        'Foco $(4,0)$, directriz $x=-4$',
+        'Foco $(2,0)$, directriz $x=-2$',
+        'Foco $(8,0)$, directriz $x=-8$'
+      ],
+      correcta: 2,
+      pista: 'Compara con $(y-k)^2=4p(x-h)$: el cuadrado está en $y$, así que abre horizontalmente.',
+      solucion: 'De $4p=8$ se obtiene $p=2$. El vértice está en el origen y la parábola abre hacia la ' +
+                'derecha, así que el foco es $(2,0)$ y la directriz $x=-2$. La opción b) confunde $4p$ ' +
+                'con $2p$; la d) toma directamente el coeficiente $8$ como si fuera $p$.'
+    },
+    {
+      etiqueta: 'Hipérbola', nivel: 2,
+      criterio: 'Relacionar a, b y c en una hipérbola (§2.4)',
+      enunciado: 'Una hipérbola tiene $a=4$ y $b=3$. Su excentricidad es:',
+      opciones: ['$\\dfrac{4}{5}$', '$\\dfrac{\\sqrt7}{4}$', '$\\dfrac{3}{4}$', '$\\dfrac{5}{4}$'],
+      correcta: 3,
+      pista: 'En la hipérbola los focos están <em>fuera</em>, así que $c \\gt a$. ¿Qué signo lleva la fórmula?',
+      solucion: '$c^2=a^2+b^2=16+9=25$, luego $c=5$ y $e=c/a=5/4=1{,}25$. Toda hipérbola tiene ' +
+                '$e \\gt 1$, así que las opciones a) y c) se descartan de inmediato sin calcular nada. ' +
+                'La b) aplica $c^2=a^2-b^2$, que es la fórmula de la <em>elipse</em>.'
+    },
+    {
+      etiqueta: 'Excentricidad', nivel: 2,
+      criterio: 'Asociar excentricidad y tipo de cónica (§3)',
+      enunciado: '¿Qué ocurre con la curva a medida que la excentricidad crece desde $0{,}2$ hasta $0{,}9$?',
+      opciones: [
+        'Pasa de ser una elipse a ser una hipérbola',
+        'Sigue siendo una elipse, cada vez más alargada',
+        'Se convierte en una parábola',
+        'Sigue siendo una elipse, cada vez más circular'
+      ],
+      correcta: 1,
+      pista: 'Todos esos valores están entre 0 y 1.',
+      solucion: 'Mientras $0 \\lt e \\lt 1$ la curva es una elipse. Al acercarse $e$ a 1 la elipse se ' +
+                'alarga cada vez más; al acercarse a 0 tiende a la circunferencia. Solo en $e=1$ exacto ' +
+                'se vuelve parábola, y para $e \\gt 1$ hipérbola. Compruébalo en el visualizador de §3.'
+    },
+    {
+      etiqueta: 'Clasificación', nivel: 2,
+      criterio: 'Clasificar por el criterio A·C (§4.1)',
+      enunciado: '¿Cuál de estas ecuaciones representa una parábola?',
+      opciones: [
+        '$3x^2+3y^2-12=0$',
+        '$2x^2-5y^2+x=0$',
+        '$3y^2-12x+6y=0$',
+        '$2x^2+7y^2-14=0$'
+      ],
+      correcta: 2,
+      pista: 'La parábola es la única que tiene un solo término cuadrático.',
+      solucion: 'En c) falta el término $x^2$, así que $A=0$ y $A\\cdot C=0$: es una parábola. ' +
+                'La a) tiene $A=C=3$ (circunferencia), la b) tiene $A\\cdot C=-10 \\lt 0$ (hipérbola) y ' +
+                'la d) tiene $A\\cdot C=14 \\gt 0$ con $A\\neq C$ (elipse).'
+    },
+    {
+      etiqueta: 'Completación', nivel: 3,
+      criterio: 'Completar el cuadrado con coeficiente negativo (§4.2)',
+      enunciado: 'Al completar el cuadrado en $-16y^2-64y$ se obtiene:',
+      opciones: ['$-16(y+2)^2-64$', '$-16(y+2)^2+64$', '$-16(y+2)^2-4$', '$-16(y-2)^2+64$'],
+      correcta: 1,
+      pista: 'Factoriza: $-16(y^2+4y)$. Ahora el $-16$ multiplica también al término que sale.',
+      solucion: '$-16(y^2+4y)=-16[(y+2)^2-4]=-16(y+2)^2+64$. El signo negativo del coeficiente convierte ' +
+                'el $-4$ interno en un $+64$ externo, y ese doble cambio de signo es donde se pierde ' +
+                'casi todo el mundo. La opción a) conserva el signo del término interno; la c) olvida ' +
+                'multiplicar por el coeficiente.'
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Relacionar las cónicas con las superficies cuádricas (§5)',
+      enunciado: 'Al cortar la superficie $z=x^2+y^2$ con el plano horizontal $z=9$, la curva que aparece es:',
+      opciones: [
+        'Una parábola de vértice en el origen',
+        'Una hipérbola de asíntotas $y=\\pm x$',
+        'Una elipse de semiejes 9 y 3',
+        'Una circunferencia de radio 3'
+      ],
+      correcta: 3,
+      pista: 'Sustituye $z=9$ en la ecuación y mira qué queda en el plano $xy$.',
+      solucion: 'Sustituyendo: $x^2+y^2=9$, una circunferencia de radio $3$. Cortar una superficie con ' +
+                'planos y reconocer la cónica resultante es <strong>la</strong> técnica para dibujar ' +
+                'cuádricas, y es exactamente lo que harás desde la semana 6. La opción a) confunde el ' +
+                'corte horizontal con el vertical: si cortaras con $y=0$ sí obtendrías la parábola $z=x^2$.'
     }
   ]
 });
