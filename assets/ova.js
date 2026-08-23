@@ -282,10 +282,30 @@ OVA.quiz = function (cfg) {
 var REG = {};
 OVA.viz = {
   registrar: function (nombre, fn) { REG[nombre] = fn; },
+  registrados: function () { return Object.keys(REG); },
   redibujar: function () {
     document.querySelectorAll('[data-viz]').forEach(function (host) {
-      var fn = REG[host.dataset.viz];
-      if (fn) try { fn(host); } catch (e) { console.error('viz ' + host.dataset.viz, e); }
+      var nombre = host.dataset.viz;
+      var out = host.querySelector('.viz-readout');
+      var fn = REG[nombre];
+
+      // Fallo ruidoso: si el visualizador no está registrado, el lector lo dice.
+      // Antes esto no hacía nada y el canvas quedaba en blanco sin explicación.
+      if (!fn) {
+        var msg = 'No se cargó el visualizador «' + nombre + '». ' +
+          'Comprueba que el archivo <code>assets/viz-*.js</code> correspondiente esté subido y ' +
+          'actualizado, y recarga la página con <strong>Ctrl+F5</strong> para saltarte la caché.';
+        if (out) out.innerHTML = '⚠ ' + msg;
+        console.error('OVA · visualizador no registrado: "' + nombre + '". Registrados: [' +
+                      Object.keys(REG).join(', ') + ']');
+        return;
+      }
+      try {
+        fn(host);
+      } catch (err) {
+        if (out) out.innerHTML = '⚠ Error al dibujar «' + nombre + '»: ' + err.message;
+        console.error('OVA · error en el visualizador "' + nombre + '":', err);
+      }
     });
   }
 };
