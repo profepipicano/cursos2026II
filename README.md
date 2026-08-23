@@ -139,3 +139,38 @@ señalará la línea exacta.
 - **El contenido son datos, no HTML.** El motor genera los `id` de cada pregunta, así que
   no puede desincronizarse el identificador que busca el calificador con el que existe
   en la página — que fue el fallo que inutilizó seis de las ocho actividades del OVA anterior.
+
+---
+
+## 7. Si un gráfico sale en blanco
+
+Es casi siempre un problema de archivos, no de código. El síntoma clásico es un recuadro vacío
+con proporción 2:1 y la barra oscura de abajo sin texto: eso significa que el canvas se quedó en
+su tamaño por defecto (300×150) porque **el visualizador nunca se ejecutó**.
+
+Desde la versión actual, el propio lector te dice qué pasa. Si ves un aviso que empieza con ⚠,
+sigue estos pasos en orden:
+
+1. **Comprueba que el archivo esté subido.** Cada curso necesita el suyo:
+   `assets/viz-calculo.js`, `viz-metodos.js`, `viz-vectorial.js`, `viz-edo.js`.
+   En GitHub, entra a la carpeta `assets/` y verifica que estén los seis archivos.
+2. **Comprueba que sea la versión nueva.** Ábrelo en GitHub y mira la fecha del último commit.
+   Si subiste una versión anterior, vuelve a subirlo — GitHub te preguntará si quieres reemplazarlo.
+3. **Salta la caché del navegador** con `Ctrl+F5` (o `Cmd+Shift+R` en Mac). GitHub Pages guarda
+   los archivos en caché unos minutos y el navegador aún más.
+4. **Mira la consola.** F12 → pestaña *Console*. Si dice `visualizador no registrado: "X"`,
+   falta o está desactualizado el `viz-*.js` de ese curso, y te lista los que sí cargaron.
+
+### Control de versiones de los assets
+
+Todas las páginas enlazan los archivos con un sufijo de versión:
+
+```html
+<link rel="stylesheet" href="../assets/ova.css?v=20260823a">
+<script src="../assets/viz-vectorial.js?v=20260823a"></script>
+```
+
+Ese `?v=` obliga al navegador a descargar el archivo de nuevo en lugar de usar el que tiene
+guardado. **Cada vez que modifiques algo dentro de `assets/`, cambia ese número en todas las
+páginas** (por ejemplo a `20260901a`). Si no lo haces, tus estudiantes podrían seguir viendo la
+versión vieja durante horas.
