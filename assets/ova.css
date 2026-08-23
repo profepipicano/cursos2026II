@@ -237,6 +237,26 @@ body.dark .tile .t{color:var(--steel-300)}
 .tile .d{font-size:.82rem;color:var(--muted)}
 .tile[aria-disabled=true]{opacity:.5;pointer-events:none;border-left-color:var(--muted)}
 
+/* Semanas de evaluación y de cierre: hitos del calendario, no guías pendientes */
+.tile.eval,.tile.cierre{opacity:1;border-style:dashed;border-width:1px 1px 1px 4px;background:transparent}
+.tile.eval{border-left-color:var(--gold-500)}
+.tile.eval .n,.tile.eval .t{color:var(--gold-600)}
+body.dark .tile.eval .n,body.dark .tile.eval .t{color:var(--gold-400)}
+.tile.cierre{border-left-color:var(--muted)}
+.tile.cierre .n,.tile.cierre .t{color:var(--muted)}
+
+/* Etiqueta de estado dentro de la ficha */
+.tile .estado{display:inline-block;font-size:.66rem;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;padding:.12rem .5rem;border-radius:999px;margin-top:.5rem}
+.tile .estado.lista{background:var(--ok-100);color:var(--ok-600)}
+.tile .estado.pend{background:var(--surface2);color:var(--muted)}
+.tile .estado.ev{background:var(--gold-100);color:var(--gold-600)}
+body.dark .tile .estado.ev{background:rgba(198,143,46,.2);color:var(--gold-400)}
+
+/* Encabezado de corte */
+.corte-head{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+.corte-head .semanas{font-size:.78rem;color:var(--muted);font-weight:600}
+
 footer{max-width:var(--max);margin:0 auto;padding:1.5rem 1.2rem 2.5rem;
   color:var(--muted);font-size:.78rem;border-top:1px solid var(--border);margin-top:1.5rem}
 
