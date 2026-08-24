@@ -260,6 +260,36 @@ body.dark .tile .estado.ev{background:rgba(198,143,46,.2);color:var(--gold-400)}
 footer{max-width:var(--max);margin:0 auto;padding:1.5rem 1.2rem 2.5rem;
   color:var(--muted);font-size:.78rem;border-top:1px solid var(--border);margin-top:1.5rem}
 
+/* ── Créditos ───────────────────────────────────────────── */
+.creditos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:1.2rem;margin-bottom:1.1rem}
+.creditos strong{color:var(--text);font-size:.86rem}
+body.dark .creditos strong{color:var(--steel-300)}
+.creditos .rol{font-style:italic}
+.cred-lic{display:flex;flex-direction:column;gap:.35rem}
+.cred-lic .sello{display:inline-block;border:1px solid var(--border);border-radius:6px;
+  padding:.25rem .6rem;font-weight:700;letter-spacing:.04em;font-size:.72rem;
+  color:var(--text);width:fit-content}
+body.dark .cred-lic .sello{color:var(--steel-300)}
+.cred-pie{border-top:1px solid var(--border);padding-top:.8rem;
+  display:flex;flex-wrap:wrap;gap:.4rem 1rem;justify-content:space-between}
+
+/* Pie compacto de índices y guías */
+.cred-compacto{display:flex;flex-wrap:wrap;gap:.35rem 1rem;justify-content:space-between;
+  align-items:baseline}
+.cred-compacto .recursos{flex-basis:100%;margin-bottom:.6rem}
+
+/* Enlace de contacto: el href lo construye el JS desde partes separadas,
+   para que la dirección no aparezca completa en el código fuente. */
+.enlace-correo{color:var(--steel-500);cursor:pointer;text-decoration:underline}
+.enlace-correo:hover{color:var(--navy-700)}
+body.dark .enlace-correo{color:var(--steel-300)}
+body.dark .enlace-correo:hover{color:#fff}
+
+@media (max-width:600px){
+  .cred-pie,.cred-compacto{flex-direction:column;gap:.3rem}
+}
+
 @media (max-width:600px){
   main{padding:.8rem}
   .card{padding:1rem}

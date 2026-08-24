@@ -418,10 +418,29 @@ function initGuiaNav() {
   }, { passive: true });
 }
 
-/* ── 10. Arranque ───────────────────────────────────────── */
+/* ── 10. Enlaces de contacto ────────────────────────────────
+   La dirección no se escribe en el HTML: se guarda partida en
+   dos atributos y se recompone aquí. Los rastreadores de spam
+   que leen el código fuente no encuentran una dirección válida. */
+function initContacto() {
+  var titulo = document.querySelector('#top .top-titles h1');
+  var pagina = (titulo ? titulo.textContent : document.title).trim();
+  document.querySelectorAll('.enlace-correo[data-u]').forEach(function (a) {
+    var u = a.getAttribute('data-u'), d = a.getAttribute('data-d');
+    if (!u || !d) return;
+    var asunto = (a.getAttribute('data-asunto') || 'OVA') + ' — ' + pagina;
+    a.setAttribute('href', 'mailto:' + u + String.fromCharCode(64) + d +
+                   '?subject=' + encodeURIComponent(asunto));
+    a.removeAttribute('data-u');
+    a.removeAttribute('data-d');
+  });
+}
+
+/* ── 11. Arranque ───────────────────────────────────────── */
 function init() {
   initProgramas();
   initGuiaNav();
+  initContacto();
   document.querySelectorAll('[data-dark-toggle]').forEach(function (b) {
     b.addEventListener('click', OVA.toggleDark);
     b.textContent = document.body.classList.contains('dark') ? '☀ Modo claro' : '☾ Modo oscuro';
