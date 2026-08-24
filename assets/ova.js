@@ -118,14 +118,15 @@ OVA.validar = function (cfg) {
 
   // Las claves no deben concentrarse en una misma posición: el estudiante
   // aprende el patrón y responde por posición en vez de por razonamiento.
-  if (cfg.items.length >= 4) {
+  var letras = ['a', 'b', 'c', 'd', 'e', 'f'];
+  if (cfg.items.length >= 3) {
     var cuenta = {};
     cfg.items.forEach(function (it) {
       if (Number.isInteger(it.correcta)) cuenta[it.correcta] = (cuenta[it.correcta] || 0) + 1;
     });
-    var letras = ['a', 'b', 'c', 'd', 'e', 'f'];
     Object.keys(cuenta).forEach(function (k) {
-      if (cuenta[k] / cfg.items.length > 0.5) {
+      var todas = cuenta[k] === cfg.items.length;
+      if (todas || (cfg.items.length >= 4 && cuenta[k] / cfg.items.length > 0.5)) {
         errs.push(pre + ': ' + cuenta[k] + ' de ' + cfg.items.length +
           ' respuestas correctas están en la opción ' + letras[k] +
           '. Reordena las opciones para repartir las claves.');

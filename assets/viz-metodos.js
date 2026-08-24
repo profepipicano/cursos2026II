@@ -5,6 +5,8 @@
    iteracion     §5  convergencia de una sucesión iterativa
    taylor        §6  polinomio de Taylor y su error
    cota-taylor   §6.5 error real frente a la cota de Lagrange
+   sustitucion   S01 §2  sustitución hacia atrás
+   riemann       S01 §4  sumas de Riemann y convergencia
    biseccion     (semana 8 · métodos cerrados)
    ══════════════════════════════════════════════════════════ */
 (function () {
@@ -319,6 +321,162 @@ OVA.viz.registrar('biseccion', function (host) {
     'Raíz aproximada tras ' + iters + ' iteraciones: <strong>' + u.m.toFixed(8) + '</strong><br>' +
     'Amplitud del intervalo: <strong>' + Math.abs(u.b - u.a).toExponential(3) + '</strong> ' +
     '(se divide exactamente a la mitad cada paso: convergencia lineal).';
+});
+
+/* ══════ S01 · Sustitución hacia atrás en un sistema triangular ══════ */
+var TRI = {
+  a: { n: '3×3', M: [[3,2,-1],[0,4,3],[0,0,2]], b: [3,10,4],
+       v: ['x','y','z'], sol: [1,1,2] },
+  b: { n: '3×3', M: [[2,3,-1],[0,-1,4],[0,0,3]], b: [5,10,9],
+       v: ['x','y','z'], sol: [1,2,3] },
+  c: { n: '4×4', M: [[1,2,-1,1],[0,3,1,-2],[0,0,2,4],[0,0,0,5]], b: [7,1,14,15],
+       v: ['x₁','x₂','x₃','x₄'], sol: [1,2,1,3] }
+};
+
+OVA.viz.registrar('sustitucion', function (host) {
+  var cfg = TRI[q(host, 'select').value] || TRI.a;
+  var n = cfg.M.length;
+  var sl = q(host, '.paso');
+  sl.max = n;
+  var paso = Math.min(parseInt(sl.value, 10), n);
+  q(host, '.paso-val').textContent = paso + ' de ' + n + ' incógnitas';
+
+  // resolver de abajo hacia arriba
+  var xs = new Array(n).fill(null), detalle = [];
+  for (var s = 0; s < paso; s++) {
+    var i = n - 1 - s, suma = 0, terminos = [];
+    for (var j = i + 1; j < n; j++) {
+      if (cfg.M[i][j] !== 0) {
+        suma += cfg.M[i][j] * xs[j];
+        terminos.push('(' + cfg.M[i][j] + ')(' + xs[j] + ')');
+      }
+    }
+    xs[i] = (cfg.b[i] - suma) / cfg.M[i][i];
+    detalle.push({
+      i: i, v: cfg.v[i], coef: cfg.M[i][i], rhs: cfg.b[i],
+      terminos: terminos, suma: suma, val: xs[i]
+    });
+  }
+
+  // matriz aumentada
+  var t = '<table class="tbl" style="margin:0;font-size:.85rem;text-align:center"><tr>';
+  cfg.v.forEach(function (v) { t += '<th style="text-align:center">' + v + '</th>'; });
+  t += '<th style="text-align:center">=</th></tr>';
+  for (var r = 0; r < n; r++) {
+    var resuelta = xs[r] !== null;
+    t += '<tr>';
+    for (var c2 = 0; c2 < n; c2++) {
+      var val = cfg.M[r][c2];
+      var estilo = val === 0 ? 'color:var(--muted);opacity:.45' :
+                   (r === c2 ? 'font-weight:800;color:var(--gold-600)' : '');
+      t += '<td style="text-align:center;' + estilo +
+           (resuelta ? ';background:rgba(28,122,76,.14)' : '') + '">' + val + '</td>';
+    }
+    t += '<td style="text-align:center;font-weight:700' +
+         (resuelta ? ';background:rgba(28,122,76,.14)' : '') + '">' + cfg.b[r] + '</td></tr>';
+  }
+  q(host, '.matriz').innerHTML = t + '</table>';
+
+  // pasos aritméticos
+  var h = '';
+  detalle.forEach(function (d, idx) {
+    var expr = d.terminos.length
+      ? d.coef + '·' + d.v + ' + ' + d.terminos.join(' + ') + ' = ' + d.rhs
+      : d.coef + '·' + d.v + ' = ' + d.rhs;
+    h += '<div class="paso"><div class="paso-t">Fila ' + (d.i + 1) + ' — despejar ' + d.v + '</div>' +
+         '<span style="font-family:ui-monospace,monospace">' + expr + '</span><br>' +
+         '<span style="font-family:ui-monospace,monospace">' + d.v + ' = (' + d.rhs +
+         (d.suma ? ' − ' + d.suma : '') + ') / ' + d.coef +
+         ' = <strong>' + (Math.round(d.val * 1e6) / 1e6) + '</strong></span></div>';
+  });
+  q(host, '.pasos').innerHTML = h || '<p style="color:var(--muted);font-size:.88rem">' +
+    'Avanza el deslizador. Se empieza por la <strong>última</strong> fila, que tiene una sola incógnita.</p>';
+
+  var listo = paso >= n;
+  q(host, '.viz-readout').innerHTML =
+    (listo
+      ? '<strong style="color:#7fd4a4">Solución: ' +
+        cfg.v.map(function (v, i) { return v + ' = ' + xs[i]; }).join(', ') + '</strong><br>'
+      : 'Resueltas ' + paso + ' de ' + n + ' incógnitas.<br>') +
+    '<span style="color:#8fb4d9">La forma triangular es lo que hace posible este proceso: la última ' +
+    'fila tiene una sola incógnita, y cada valor hallado alimenta la fila de arriba. ' +
+    'Llevar un sistema cualquiera a esta forma es el trabajo de la eliminación de Gauss (semana 3).</span>';
+});
+
+/* ══════ S01 · Sumas de Riemann ══════ */
+var RIEM = {
+  cuad: { f: function (x) { return x * x; }, a: 0, b: 2, exacto: 8 / 3, n: 'f(x) = x²',
+          prim: 'x³/3' },
+  seno: { f: Math.sin, a: 0, b: Math.PI, exacto: 2, n: 'f(x) = sen x', prim: '−cos x' },
+  inv:  { f: function (x) { return 1 / x; }, a: 1, b: 3, exacto: Math.log(3), n: 'f(x) = 1/x',
+          prim: 'ln x' },
+  gauss:{ f: function (x) { return Math.exp(-x * x); }, a: 0, b: 2, exacto: 0.8820813908,
+          n: 'f(x) = e^(−x²)', prim: 'no existe en forma elemental' }
+};
+
+OVA.viz.registrar('riemann', function (host) {
+  var cfg = RIEM[q(host, '.fn').value] || RIEM.cuad;
+  var N = parseInt(q(host, '.n').value, 10);
+  var modo = q(host, '.modo').value;
+  q(host, '.n-val').textContent = 'n = ' + N;
+
+  var A = cfg.a, B = cfg.b, dx = (B - A) / N;
+  var suma = 0, rects = [];
+  for (var i = 0; i < N; i++) {
+    var xi = A + i * dx, xf = xi + dx, alt, alt2 = null;
+    if (modo === 'izq') alt = cfg.f(xi);
+    else if (modo === 'der') alt = cfg.f(xf);
+    else if (modo === 'med') alt = cfg.f((xi + xf) / 2);
+    else { alt = cfg.f(xi); alt2 = cfg.f(xf); }
+    suma += (alt2 === null ? alt : (alt + alt2) / 2) * dx;
+    rects.push([xi, xf, alt, alt2]);
+  }
+
+  var L = OVA.lienzo(host.querySelector('canvas'), { alto: 260 });
+  var c = L.ctx, mI = 44, mA = 18, mB = 30, mD = 14;
+  var W = L.w - mI - mD, H = L.h - mA - mB;
+  var ys = [0]; for (var s = 0; s <= 200; s++) ys.push(cfg.f(A + (B - A) * s / 200));
+  var hi = Math.max.apply(null, ys) * 1.12, lo = Math.min(0, Math.min.apply(null, ys));
+  var PX = function (v) { return mI + (v - A) / (B - A) * W; };
+  var PY = function (v) { return mA + (hi - v) / (hi - lo) * H; };
+
+  // rectángulos / trapecios
+  rects.forEach(function (r) {
+    c.fillStyle = 'rgba(58,110,165,.28)';
+    c.strokeStyle = 'rgba(58,110,165,.85)'; c.lineWidth = 1;
+    c.beginPath();
+    c.moveTo(PX(r[0]), PY(0)); c.lineTo(PX(r[0]), PY(r[2]));
+    c.lineTo(PX(r[1]), PY(r[3] === null ? r[2] : r[3]));
+    c.lineTo(PX(r[1]), PY(0)); c.closePath();
+    c.fill(); c.stroke();
+  });
+
+  // curva
+  c.strokeStyle = '#c68f2e'; c.lineWidth = 3; c.beginPath();
+  for (var p = 0; p <= 400; p++) {
+    var xv = A + (B - A) * p / 400;
+    p ? c.lineTo(PX(xv), PY(cfg.f(xv))) : c.moveTo(PX(xv), PY(cfg.f(xv)));
+  }
+  c.stroke();
+
+  // ejes
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mI, mA); c.lineTo(mI, PY(0)); c.lineTo(mI + W, PY(0)); c.stroke();
+  c.fillStyle = OVA.color('cv-text'); c.font = '10px ui-monospace,monospace';
+  c.fillText(A.toFixed(1), mI - 6, L.h - 12);
+  c.fillText(B.toFixed(1), mI + W - 10, L.h - 12);
+  c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, mI + 8, mA + 12);
+
+  var err = Math.abs(suma - cfg.exacto);
+  q(host, '.viz-readout').innerHTML =
+    'Aproximación con ' + N + ' subintervalos: <strong>' + suma.toFixed(8) + '</strong><br>' +
+    'Valor exacto: <strong>' + cfg.exacto.toFixed(8) + '</strong> &nbsp;·&nbsp; primitiva: ' +
+      cfg.prim + '<br>' +
+    'Error absoluto: <strong style="color:#f0a58a">' + err.toExponential(3) + '</strong><br>' +
+    '<span style="color:#8fb4d9">Sube n y observa cómo cae el error. El trapecio y el punto medio ' +
+    'convergen mucho más rápido que los extremos: eso es exactamente lo que formalizarás en la ' +
+    'semana 12.</span>';
 });
 
 document.addEventListener('DOMContentLoaded', function () {
