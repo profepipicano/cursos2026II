@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S1 · Errores y aproximación — Métodos Numéricos · UNIAJC</title>
+<title>Guía 1 · Repaso de prerrequisitos — Métodos Numéricos · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css">
+<link rel="stylesheet" href="../assets/ova.css?v=20260823a">
 </head>
 <body>
 
@@ -19,7 +19,7 @@ window.MathJax = {
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Sesión 1</h1>
+      <h1>Métodos Numéricos · Guía 1</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -29,287 +29,695 @@ window.MathJax = {
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Raíces</a>
+    <a href="#s2">2 · Sistemas lineales</a>
+    <a href="#s3">3 · Derivación</a>
+    <a href="#s4">4 · Integración</a>
+    <a href="#s5">5 · Ecuaciones diferenciales</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
 
 <div class="hero">
-  <div class="eyebrow">Sesión 1 · Corte I</div>
-  <h2>Errores y aproximación numérica</h2>
-  <p>Todo método numérico entrega una respuesta equivocada. La pregunta profesional no es
-     si hay error, sino cuánto vale, de dónde viene y cómo controlarlo.</p>
+  <div class="eyebrow">Guía de estudio 1 · Corte I</div>
+  <h2>Repaso de prerrequisitos</h2>
+  <p>Cinco temas que ya viste en cursos anteriores y que este semestre vas a usar de otra manera.
+     No los repasamos «en general»: cada uno se revisa desde la pregunta concreta que Métodos
+     Numéricos le va a hacer, y desde el punto exacto donde el método exacto deja de servir.</p>
   <div class="chips">
-    <span class="chip">Chapra · Cap. 3–4</span>
-    <span class="chip">2 horas</span>
-    <span class="chip">Práctica de refuerzo al final</span>
+    <span class="chip">Chapra · Cap. 1</span>
+    <span class="chip">Semana 1</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
   </div>
 </div>
 
 <section class="card">
-  <h3 class="card-title">1. Por qué existe el error</h3>
-
-  <div class="callout-dark">
-    <h3>El computador no sabe sumar</h3>
-    <p>Un computador guarda los números en una cantidad finita de bits. $1/3$ no cabe, $\pi$ no cabe,
-       y ni siquiera $0{,}1$ cabe exactamente en binario. Toda operación se hace sobre una versión
-       recortada del número real.</p>
-    <p>En 1996 el cohete Ariane 5 se destruyó a los 37 segundos porque un número de 64 bits se
-       convirtió a 16 bits. En 1991 un Patriot falló al interceptar un misil por un error de redondeo
-       acumulado durante 100 horas de reloj. El error numérico no es un detalle académico.</p>
-  </div>
-
-  <div class="sub-title">1.1 Las dos fuentes</div>
+  <h3 class="card-title">Mapa del repaso</h3>
+  <p>Antes de empezar, conviene saber para qué sirve cada bloque. Esta tabla es también el índice
+     del semestre:</p>
   <table class="tbl">
-    <tr><th>Tipo</th><th>De dónde viene</th><th>Cómo se controla</th></tr>
-    <tr><td><strong>Redondeo</strong></td><td>La máquina representa los números con dígitos finitos</td><td>Más precisión (doble), reordenar operaciones</td></tr>
-    <tr><td><strong>Truncamiento</strong></td><td>El método corta un proceso infinito (una serie, un límite)</td><td>Más términos, paso $h$ más pequeño</td></tr>
+    <tr><th>Repasas…</th><th>Porque en la semana…</th><th>Vas a…</th></tr>
+    <tr><td>Raíces de polinomios</td><td>8 y 9</td><td>Hallar raíces que <em>no</em> se pueden factorizar</td></tr>
+    <tr><td>Sistemas lineales</td><td>3, 4, 6 y 7</td><td>Resolver sistemas enormes de forma eficiente</td></tr>
+    <tr><td>Derivación</td><td>8 y 12</td><td>Usar la tangente como aproximación y derivar sin fórmula</td></tr>
+    <tr><td>Integración</td><td>12</td><td>Integrar funciones que no tienen primitiva</td></tr>
+    <tr><td>Ecuaciones diferenciales</td><td>13 y 14</td><td>Resolver EDO que no admiten solución analítica</td></tr>
   </table>
   <div class="nota">
-    <strong>La tensión central del curso:</strong> reducir el truncamiento suele exigir más operaciones,
-    y más operaciones acumulan más redondeo. Existe un $h$ óptimo, y no es «lo más pequeño posible».
+    <strong>El hilo conductor.</strong> Cada sección termina en el mismo punto: <em>hasta aquí llega
+    el método exacto, y aquí es donde entra el numérico</em>. Si sales de esta guía entendiendo
+    dónde está esa frontera en cada tema, la sesión cumplió su objetivo.
   </div>
+</section>
 
-  <div class="sub-title">1.2 Cómo se mide</div>
-  <div class="formulas">
-    <div class="formula"><div class="lbl">Error absoluto</div>$$E_a=|\,p - \hat{p}\,|$$</div>
-    <div class="formula"><div class="lbl">Error relativo</div>$$E_r=\dfrac{|\,p-\hat{p}\,|}{|p|}$$</div>
-    <div class="formula"><div class="lbl">Error relativo aproximado</div>$$\varepsilon_a=\left|\dfrac{\hat{p}_n-\hat{p}_{n-1}}{\hat{p}_n}\right|$$</div>
-    <div class="formula"><div class="lbl">Criterio de paro</div>$$\varepsilon_a &lt; \varepsilon_s = (0{,}5\times 10^{2-n})\%$$</div>
-  </div>
-  <p>El error relativo es el que importa: equivocarse en 1 cm midiendo un tornillo es grave;
-     equivocarse en 1 cm midiendo una carretera es irrelevante. Y como en un problema real
-     <strong>no conoces $p$</strong>, en la práctica usas $\varepsilon_a$, que compara dos iteraciones sucesivas.</p>
+<!-- ═══════════ 1 ═══════════ -->
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Raíces de polinomios</h3>
 
-  <div class="sub-title">1.3 Serie de Taylor: el motor de casi todo</div>
+  <div class="sub-title">1.1 Las dos herramientas exactas</div>
   <div class="def">
-    $$f(x_{i+1})=f(x_i)+f'(x_i)h+\dfrac{f''(x_i)}{2!}h^2+\cdots+\dfrac{f^{(n)}(x_i)}{n!}h^n+R_n$$
-    con $h=x_{i+1}-x_i$ y residuo $R_n=\dfrac{f^{(n+1)}(\xi)}{(n+1)!}h^{n+1}$.
+    <strong>Teorema del residuo.</strong> El residuo de dividir $p(x)$ entre $(x-r)$ es exactamente
+    $p(r)$.
+    <br><br>
+    <strong>Teorema del factor.</strong> En consecuencia, $r$ es raíz de $p$ si y solo si $(x-r)$
+    divide a $p(x)$ sin residuo.
   </div>
-  <p>Ese $R_n$ <em>es</em> el error de truncamiento. Como $R_n$ es proporcional a $h^{n+1}$, escribimos
-     $R_n = O(h^{n+1})$: si reduces $h$ a la mitad en un método de segundo orden, el error cae a la cuarta parte.
-     Esta es la razón por la que un método «de orden alto» vale la pena.</p>
-</section>
+  <p>El segundo es corolario del primero, y juntos convierten «buscar raíces» en «buscar factores».
+     La división sintética es el procedimiento rápido para hacerlo.</p>
 
-<section class="card">
-  <h3 class="card-title">2. Ejemplos resueltos</h3>
+  <div class="def">
+    <strong>Teorema de las raíces racionales.</strong> Si $p(x)=a_nx^n+\cdots+a_0$ tiene
+    coeficientes enteros, toda raíz racional tiene la forma $\dfrac{p}{q}$ con $p$ divisor de $a_0$
+    y $q$ divisor de $a_n$.
+  </div>
+  <p>Esto reduce la búsqueda de infinitos candidatos a una lista finita. Es la razón por la que los
+     ejercicios de clase «salen».</p>
 
   <div class="ejemplo">
-    <h4>Ejemplo 1 · Error absoluto y relativo</h4>
+    <h4>Ejemplo 1 · Factorización completa</h4>
     <div class="ejemplo-body">
-      Se aproxima $\pi$ con $22/7$. ¿Qué tan bueno es?
-      <div class="paso"><div class="paso-t">Valores</div>
-        $p=3{,}14159265$ &nbsp;·&nbsp; $\hat{p}=22/7=3{,}14285714$
+      Halla las raíces de $p(x)=2x^3-3x^2-11x+6$.
+      <div class="paso"><div class="paso-t">1. Candidatos racionales</div>
+        Divisores de $a_0=6$: $\pm1,\pm2,\pm3,\pm6$. Divisores de $a_n=2$: $\pm1,\pm2$.<br>
+        Candidatos: $\pm1,\pm2,\pm3,\pm6,\pm\tfrac12,\pm\tfrac32$.
       </div>
-      <div class="paso"><div class="paso-t">Errores</div>
-        $E_a=|3{,}14159265-3{,}14285714|=1{,}2645\times10^{-3}$<br>
-        $E_r=\dfrac{1{,}2645\times10^{-3}}{3{,}14159265}=4{,}02\times10^{-4}=0{,}0402\%$
+      <div class="paso"><div class="paso-t">2. Probar</div>
+        $p(3)=54-27-33+6=0$ ✓ &nbsp; Entonces $(x-3)$ es factor.
       </div>
-      <div class="paso"><div class="paso-t">Lectura</div>
-        El error relativo por debajo de $0{,}05\%$ garantiza al menos 3 cifras significativas correctas.
+      <div class="paso"><div class="paso-t">3. Dividir</div>
+        $2x^3-3x^2-11x+6 = (x-3)(2x^2+3x-2)$
+      </div>
+      <div class="paso"><div class="paso-t">4. Factorizar el cociente</div>
+        $2x^2+3x-2=(2x-1)(x+2)$, de donde las raíces son
+        $$x=3,\qquad x=\tfrac12,\qquad x=-2$$
       </div>
     </div>
   </div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 2 · Truncamiento en la serie de Taylor</h4>
-    <div class="ejemplo-body">
-      Aproxima $e^{0,5}$ con los tres primeros términos de la serie de Maclaurin.
-      <div class="paso"><div class="paso-t">Aproximación</div>
-        $e^{x}\approx 1+x+\dfrac{x^2}{2}$ → $1+0{,}5+0{,}125=1{,}625$
-      </div>
-      <div class="paso"><div class="paso-t">Error</div>
-        Valor exacto: $1{,}6487212707$. &nbsp; $E_a=0{,}0237$, &nbsp; $E_r=1{,}44\%$
-      </div>
-      <div class="paso"><div class="paso-t">Un término más</div>
-        Con $x^3/6$: $1{,}6458333$, y el error cae a $E_r=0{,}176\%$ — casi un factor 8.
-        Compruébalo tú en el visualizador de abajo.
-      </div>
-    </div>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 3 · Cancelación catastrófica</h4>
-    <div class="ejemplo-body">
-      Con aritmética de 6 cifras, calcula $\sqrt{9001}-\sqrt{9000}$.
-      <div class="paso"><div class="paso-t">Camino ingenuo</div>
-        $94{,}8736-94{,}8683=0{,}0053$. Las 4 primeras cifras se cancelan: de 6 cifras
-        significativas quedan 2. El resultado es basura numérica.
-      </div>
-      <div class="paso"><div class="paso-t">Camino estable</div>
-        Multiplica por el conjugado:
-        $\dfrac{1}{\sqrt{9001}+\sqrt{9000}}=\dfrac{1}{189{,}742}=0{,}00527033$ — las 6 cifras intactas.
-      </div>
-      <div class="paso"><div class="paso-t">La lección</div>
-        Restar dos números casi iguales destruye precisión. Reformular algebraicamente
-        no cambia las matemáticas, pero sí cambia el resultado del computador.
-      </div>
-    </div>
+  <div class="callout-dark">
+    <h3>Donde el método exacto se acaba</h3>
+    <p>Toma ahora $p(x)=x^5-x-1$. El teorema de las raíces racionales solo admite $\pm1$ como
+       candidatos, y ninguno funciona: $p(1)=-1$, $p(-1)=-1$. No hay raíces racionales.</p>
+    <p>Tampoco hay fórmula: el teorema de <strong>Abel–Ruffini</strong> (1824) demuestra que desde
+       grado 5 no existe expresión general por radicales. No es una laguna del conocimiento — es una
+       imposibilidad probada.</p>
+    <p>Y sin embargo la gráfica cruza el eje. La raíz existe y vale $1{,}167304\ldots$
+       ¿De dónde salió ese número? De un método numérico. Es lo que harás en la <strong>semana 8</strong>
+       con bisección, secante y Newton-Raphson.</p>
   </div>
 </section>
 
+<!-- ═══════════ 2 ═══════════ -->
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Sistemas de ecuaciones lineales</h3>
+
+  <div class="sub-title">2.1 Notación matricial</div>
+  <p>Un sistema de $n$ ecuaciones con $n$ incógnitas se escribe $A\mathbf{x}=\mathbf{b}$, y se
+     manipula sobre la <em>matriz aumentada</em> $[A\,|\,\mathbf{b}]$. Las tres operaciones
+     elementales de fila no alteran la solución:</p>
+  <ul>
+    <li>Intercambiar dos filas.</li>
+    <li>Multiplicar una fila por un escalar no nulo.</li>
+    <li>Sumar a una fila un múltiplo de otra.</li>
+  </ul>
+
+  <div class="sub-title">2.2 Eliminación y sustitución hacia atrás</div>
+  <p>La estrategia tiene dos fases: <strong>eliminar</strong> hasta dejar la matriz triangular
+     superior, y luego <strong>sustituir hacia atrás</strong> desde la última fila, que tiene una
+     sola incógnita.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Eliminación de Gauss</h4>
+    <div class="ejemplo-body">
+      Resuelve $\;2x+y-z=8,\quad -3x-y+2z=-11,\quad -2x+y+2z=-3$.
+      <div class="paso"><div class="paso-t">Matriz aumentada</div>
+        $$\left[\begin{array}{rrr|r}2&1&-1&8\\-3&-1&2&-11\\-2&1&2&-3\end{array}\right]$$
+      </div>
+      <div class="paso"><div class="paso-t">Eliminar la primera columna</div>
+        $F_2 \to F_2+\tfrac32 F_1$ &nbsp;y&nbsp; $F_3 \to F_3+F_1$:
+        $$\left[\begin{array}{rrr|r}2&1&-1&8\\0&\tfrac12&\tfrac12&1\\0&2&1&5\end{array}\right]$$
+      </div>
+      <div class="paso"><div class="paso-t">Eliminar la segunda columna</div>
+        $F_3 \to F_3-4F_2$:
+        $$\left[\begin{array}{rrr|r}2&1&-1&8\\0&\tfrac12&\tfrac12&1\\0&0&-1&1\end{array}\right]$$
+      </div>
+      <div class="paso"><div class="paso-t">Sustitución hacia atrás</div>
+        $-z=1 \Rightarrow z=-1$<br>
+        $\tfrac12 y+\tfrac12(-1)=1 \Rightarrow y=3$<br>
+        $2x+3-(-1)=8 \Rightarrow x=2$<br>
+        Solución: $(2,\,3,\,-1)$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.3 Los tres desenlaces posibles</div>
+  <table class="tbl">
+    <tr><th>Al triangular aparece…</th><th>Significa</th><th>Determinante</th></tr>
+    <tr><td>Todos los pivotes no nulos</td><td>Solución única</td><td>$\det A \neq 0$</td></tr>
+    <tr><td>Una fila $[\,0\ 0\ 0\,|\,0\,]$</td><td>Infinitas soluciones</td><td>$\det A = 0$</td></tr>
+    <tr><td>Una fila $[\,0\ 0\ 0\,|\,c\,]$ con $c\neq 0$</td><td>Sin solución</td><td>$\det A = 0$</td></tr>
+  </table>
+
+  <div class="callout-dark">
+    <h3>Cramer es correcto y a la vez inservible</h3>
+    <p>La regla de Cramer da la solución exacta con determinantes. Es un teorema impecable. Pero el
+       costo crece como el <strong>factorial</strong> del tamaño.</p>
+    <p>Para $n=20$: Cramer necesitaría del orden de $10^{21}$ operaciones — miles de años en
+       cualquier computador. La eliminación de Gauss necesita unas $n^3/3 \approx 2\,700$: milisegundos.</p>
+    <p>Que una fórmula sea correcta no la hace utilizable. Distinguir <em>correcto</em> de
+       <em>eficiente</em> es una de las lecciones centrales del curso, y por eso las semanas 3, 4 y 7
+       se dedican a métodos que Cramer ya «resolvía» en teoría.</p>
+  </div>
+
+  <div class="sub-title">2.4 Explora la sustitución hacia atrás</div>
+  <div class="viz" data-viz="sustitucion">
+    <div class="viz-controls">
+      <label for="ss-sis">Sistema triangular</label>
+      <select id="ss-sis">
+        <option value="a">3×3 &nbsp;(A)</option>
+        <option value="b">3×3 &nbsp;(B)</option>
+        <option value="c">4×4</option>
+      </select>
+      <label for="ss-p">Resolver</label>
+      <input id="ss-p" class="paso" type="range" min="0" max="4" value="0">
+      <span class="paso-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="matriz" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <div class="pasos" style="margin-bottom:.8rem"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Fíjate en que el proceso empieza por la <strong>última</strong> fila y sube. Cada valor hallado
+    se sustituye en la fila superior, que entonces vuelve a tener una sola incógnita. Toda la
+    eficiencia de Gauss depende de llegar a esta forma.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Raíces y sistemas</h3>
+  <div id="chk1"></div>
+</div>
+
+<!-- ═══════════ 3 ═══════════ -->
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Derivación</h3>
+
+  <div class="sub-title">3.1 La definición, que aquí sí importa</div>
+  <div class="def">
+    $$f'(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}$$
+  </div>
+  <p>En Cálculo esta definición se usa dos clases y luego se abandona por las reglas. En Métodos
+     Numéricos vuelve al centro: como el computador no puede tomar el límite, se queda con el
+     cociente para un $h$ pequeño pero finito. Eso <em>es</em> la diferenciación numérica de la
+     semana 12, y su error sale directamente del residuo de Taylor.</p>
+
+  <div class="sub-title">3.2 Reglas básicas</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Potencia</div>$$(x^n)'=nx^{n-1}$$</div>
+    <div class="formula"><div class="lbl">Producto</div>$$(fg)'=f'g+fg'$$</div>
+    <div class="formula"><div class="lbl">Cociente</div>$$\left(\frac{f}{g}\right)'=\frac{f'g-fg'}{g^2}$$</div>
+    <div class="formula"><div class="lbl">Cadena</div>$$\big(f(g(x))\big)'=f'(g(x))\,g'(x)$$</div>
+    <div class="formula"><div class="lbl">Exponencial</div>$$(e^{x})'=e^{x},\qquad (a^{x})'=a^{x}\ln a$$</div>
+    <div class="formula"><div class="lbl">Logaritmo</div>$$(\ln x)'=\frac{1}{x}$$</div>
+  </div>
+
+  <div class="sub-title">3.3 La recta tangente</div>
+  <div class="def">
+    La recta tangente a $f$ en $x=a$ es
+    $$y=f(a)+f'(a)(x-a)$$
+    y es la mejor aproximación lineal de $f$ cerca de $a$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · La tangente que ya es un método numérico</h4>
+    <div class="ejemplo-body">
+      Sea $f(x)=x^3-x-2$, que tiene una raíz real cerca de $1{,}5$. Traza la tangente en $x=2$ y
+      mira dónde corta el eje $x$.
+      <div class="paso"><div class="paso-t">1. Evaluar</div>
+        $f(2)=8-2-2=4$ &nbsp;·&nbsp; $f'(x)=3x^2-1$, luego $f'(2)=11$
+      </div>
+      <div class="paso"><div class="paso-t">2. Recta tangente</div>
+        $y=4+11(x-2)$
+      </div>
+      <div class="paso"><div class="paso-t">3. ¿Dónde corta el eje $x$?</div>
+        $0=4+11(x-2) \Rightarrow x=2-\dfrac{4}{11}=\dfrac{18}{11}=1{,}636364$
+      </div>
+      <div class="paso"><div class="paso-t">4. Lo que acabas de hacer</div>
+        Partiste de $2$ y llegaste a $1{,}6364$. La raíz verdadera es $1{,}521380$: te acercaste
+        bastante. Y la operación que hiciste fue
+        $$x_1=x_0-\frac{f(x_0)}{f'(x_0)}$$
+        que es exactamente <strong>un paso del método de Newton-Raphson</strong>. Repitiendo el
+        proceso desde $1{,}6364$ te acercarías mucho más. Eso es la semana 8, y ya sabes de dónde sale.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 4 ═══════════ -->
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Integración</h3>
+
+  <div class="sub-title">4.1 Lo esencial</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Potencia</div>$$\int x^n dx=\frac{x^{n+1}}{n+1}+C,\ n\neq-1$$</div>
+    <div class="formula"><div class="lbl">Caso $n=-1$</div>$$\int \frac{dx}{x}=\ln|x|+C$$</div>
+    <div class="formula"><div class="lbl">Sustitución</div>$$\int f(g(x))g'(x)dx=\int f(u)du$$</div>
+    <div class="formula"><div class="lbl">Por partes</div>$$\int u\,dv=uv-\int v\,du$$</div>
+    <div class="formula"><div class="lbl">Teorema fundamental</div>$$\int_a^b f(x)dx=F(b)-F(a)$$</div>
+  </div>
+
+  <div class="sub-title">4.2 La integral definida como área</div>
+  <p>Antes del teorema fundamental, la integral definida se define como límite de sumas de áreas de
+     rectángulos:</p>
+  <div class="formula" style="max-width:520px">
+    $$\int_a^b f(x)\,dx=\lim_{n\to\infty}\sum_{i=1}^{n} f(x_i^*)\,\Delta x,
+      \qquad \Delta x=\frac{b-a}{n}$$
+  </div>
+  <p>En Cálculo esta definición se abandona apenas aparece el teorema fundamental. Aquí es al
+     revés: <strong>la suma finita es el método</strong>. Quedarse en $n=10$ en vez de tomar el
+     límite es precisamente la regla del trapecio de la semana 12.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Cuatro rectángulos contra el valor exacto</h4>
+    <div class="ejemplo-body">
+      Aproxima $\displaystyle\int_0^2 x^2\,dx$ con $n=4$ y compara.
+      <div class="paso"><div class="paso-t">Valor exacto</div>
+        $\displaystyle\int_0^2 x^2dx=\left.\frac{x^3}{3}\right|_0^2=\frac{8}{3}=2{,}666667$
+      </div>
+      <div class="paso"><div class="paso-t">Con $\Delta x = 0{,}5$</div>
+        <table class="tbl" style="margin:.4rem 0">
+          <tr><th>Regla</th><th>Aproximación</th><th>Error</th></tr>
+          <tr><td>Extremo izquierdo</td><td>$7/4=1{,}7500$</td><td>$0{,}9167$</td></tr>
+          <tr><td>Extremo derecho</td><td>$15/4=3{,}7500$</td><td>$1{,}0833$</td></tr>
+          <tr><td>Trapecio</td><td>$11/4=2{,}7500$</td><td>$0{,}0833$</td></tr>
+          <tr><td>Punto medio</td><td>$21/8=2{,}6250$</td><td>$0{,}0417$</td></tr>
+        </table>
+      </div>
+      <div class="paso"><div class="paso-t">Lo que hay que notar</div>
+        Los dos extremos se equivocan más de un 30 %, uno por debajo y otro por encima. Su
+        <em>promedio</em> —el trapecio— reduce el error diez veces, porque los dos errores tienen
+        signos opuestos y se cancelan parcialmente. Y el punto medio, con el mismo trabajo, lo
+        reduce a la mitad del trapecio.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>Donde el método exacto se acaba</h3>
+    <p>El teorema fundamental exige conocer una primitiva $F$. Pero
+       $\displaystyle\int e^{-x^2}dx$ <strong>no tiene primitiva elemental</strong>: está demostrado
+       que no puede escribirse con funciones elementales.</p>
+    <p>Y esa integral es el corazón de la distribución normal, o sea de toda la estadística
+       aplicada. El valor de $\int_0^2 e^{-x^2}dx = 0{,}88208139\ldots$ existe y se usa todos los
+       días — calculado numéricamente. Es la <strong>semana 12</strong>.</p>
+  </div>
+
+  <div class="sub-title">4.3 Explora las sumas de Riemann</div>
+  <div class="viz" data-viz="riemann">
+    <div class="viz-controls">
+      <label for="ri-f">Función</label>
+      <select id="ri-f" class="fn">
+        <option value="cuad">x² en [0, 2]</option>
+        <option value="seno">sen x en [0, π]</option>
+        <option value="inv">1/x en [1, 3]</option>
+        <option value="gauss">e^(−x²) en [0, 2] &nbsp;(sin primitiva)</option>
+      </select>
+      <label for="ri-m">Regla</label>
+      <select id="ri-m" class="modo">
+        <option value="izq">Extremo izquierdo</option>
+        <option value="der">Extremo derecho</option>
+        <option value="med">Punto medio</option>
+        <option value="trap">Trapecio</option>
+      </select>
+      <label for="ri-n">Subintervalos</label>
+      <input id="ri-n" class="n" type="range" min="1" max="60" value="4">
+      <span class="n-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Compara «extremo izquierdo» con «trapecio» a igual $n$: el error cae en un factor de diez o más
+    sin ningún trabajo adicional. Y prueba $e^{-x^2}$, la única del menú sin primitiva: el método
+    numérico funciona exactamente igual, porque nunca necesitó la primitiva.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Derivación e integración</h3>
+  <div id="chk2"></div>
+</div>
+
+<!-- ═══════════ 5 ═══════════ -->
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Ecuaciones diferenciales</h3>
+
+  <div class="def">
+    Una <em>ecuación diferencial ordinaria</em> relaciona una función desconocida con sus derivadas.
+    Su <strong>orden</strong> es el de la derivada más alta. Resolverla significa hallar la
+    <em>función</em>, no un número.
+  </div>
+
+  <div class="sub-title">5.1 Lo mínimo que hay que recordar</div>
+  <ul>
+    <li><strong>Solución general:</strong> contiene constantes arbitrarias y describe una familia
+        infinita de funciones.</li>
+    <li><strong>Problema de valor inicial:</strong> la EDO más una condición $y(x_0)=y_0$, que fija
+        las constantes y selecciona una única solución.</li>
+    <li><strong>Variables separables:</strong> si $\dfrac{dy}{dx}=g(x)h(y)$, se separa e integra:
+        $\displaystyle\int\frac{dy}{h(y)}=\int g(x)\,dx$.</li>
+    <li><strong>Verificación:</strong> siempre puedes comprobar una solución sustituyéndola en la
+        ecuación. Cuesta quince segundos.</li>
+  </ul>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Un problema de valor inicial</h4>
+    <div class="ejemplo-body">
+      Resuelve $\dfrac{dy}{dx}=2x$ con $y(0)=1$.
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $y=\displaystyle\int 2x\,dx = x^2+C$ &nbsp;— la solución general, una parábola por cada $C$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la condición inicial</div>
+        $y(0)=0+C=1 \Rightarrow C=1$, luego $y=x^2+1$.
+      </div>
+      <div class="paso"><div class="paso-t">Verificar</div>
+        $\dfrac{d}{dx}(x^2+1)=2x$ ✓ &nbsp; y $y(0)=1$ ✓
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Crecimiento exponencial por separación</h4>
+    <div class="ejemplo-body">
+      Resuelve $\dfrac{dy}{dt}=ky$ con $y(0)=y_0$.
+      <div class="paso"><div class="paso-t">Separar</div>
+        $\dfrac{dy}{y}=k\,dt$ &nbsp;(válido mientras $y\neq 0$)
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $\ln|y|=kt+C_1 \Rightarrow y=Ce^{kt}$
+      </div>
+      <div class="paso"><div class="paso-t">Condición inicial</div>
+        $y(0)=C=y_0$, luego $y=y_0e^{kt}$. Es el modelo de crecimiento poblacional, interés
+        compuesto continuo y decaimiento radiactivo (con $k \lt 0$).
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>Donde el método exacto se acaba</h3>
+    <p>Los ejemplos anteriores salen porque están elegidos para salir. La inmensa mayoría de las EDO
+       que aparecen en ingeniería <strong>no tienen solución en forma cerrada</strong>. Basta con
+       cambiar $y'=y$ por $y'=\operatorname{sen}(xy)$ para quedarse sin herramientas analíticas.</p>
+    <p>Pero la solución existe, y se puede calcular punto a punto avanzando en pequeños pasos $h$
+       con la información que da la propia ecuación: la pendiente. Eso es el método de
+       <strong>Euler</strong> (semana 13) y su refinamiento, <strong>Runge-Kutta</strong>
+       (semana 14). Y el error de ambos sale, otra vez, del residuo de Taylor.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Ecuaciones diferenciales</h3>
+  <div id="chk3"></div>
+</div>
+
+<!-- ═══════════ Programa ═══════════ -->
 <section class="card">
-  <h3 class="card-title">3. Según tu programa</h3>
+  <h3 class="card-title">Según tu programa</h3>
   <div class="carrera">
     <h4>Selecciona tu programa académico</h4>
-    <p class="hint">Se guarda en este navegador y se aplica a todas las sesiones.</p>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      Una proyección de flujo de caja a 5 años con tasa redondeada al $0{,}01\%$ puede desviarse
-      millones al final del horizonte: el error relativo se compone igual que el interés.</div>
+      Calcular la TIR de un proyecto significa resolver
+      $\sum \frac{F_t}{(1+i)^t}=0$ para $i$: un polinomio de grado igual al número de periodos, sin
+      fórmula desde grado 5. Por eso Excel la obtiene iterando, y por eso a veces devuelve
+      <code>#¡NUM!</code>: no convergió.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      El redondeo a dos decimales en cada línea de una nómina de 5.000 empleados produce
-      descuadres frente al total. Por eso las normas contables fijan <em>dónde</em> se redondea.</div>
+      Despejar la tasa en una anualidad —$P = A\frac{1-(1+i)^{-n}}{i}$— es imposible
+      analíticamente: $i$ aparece dentro y fuera del exponente. Las tablas financieras de antes eran
+      resultados numéricos precalculados.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      <code>0.1 + 0.2 == 0.3</code> es <code>false</code> en cualquier lenguaje con IEEE 754.
-      Nunca compares flotantes con <code>==</code>: usa $|a-b|&lt;\varepsilon$.</div>
+      Resolver $A\mathbf{x}=\mathbf{b}$ con $n$ grande es el núcleo de casi todo: renderizado 3D,
+      simulación física, entrenamiento de modelos. Un sistema de $10^4$ incógnitas es rutinario, y
+      ahí la diferencia entre $O(n^3)$ y $O(n!)$ decide si el programa termina o no.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      Un ADC de 10 bits sobre 0–5 V tiene resolución de $4{,}9$ mV: ese es el error de
-      cuantización, irreducible por software. Medir mejor exige más bits, no más código.</div>
+      El punto de operación de un circuito con diodos exige resolver
+      $I_S(e^{V/V_T}-1)=\frac{V_{cc}-V}{R}$, con la incógnita dentro de una exponencial: no hay
+      despeje. SPICE lo resuelve con Newton-Raphson en cada punto de la simulación.</div>
   </div>
 </section>
 
-<section class="card">
-  <h3 class="card-title">4. Explora</h3>
-
-  <div class="sub-title">4.1 Error de truncamiento en vivo</div>
-  <div class="viz" data-viz="taylor">
-    <div class="viz-controls">
-      <label for="t-fn">Función</label>
-      <select id="t-fn"><option value="exp">eˣ</option><option value="sin">sen x</option><option value="cos">cos x</option></select>
-      <label for="t-n">Grado</label>
-      <input id="t-n" class="grado" type="range" min="0" max="9" value="2">
-      <span class="grado-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
-      <label for="t-x">Evaluar en</label>
-      <input id="t-x" class="punto" type="range" min="-40" max="40" value="15" step="1">
-      <span class="punto-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
-    </div>
-    <canvas></canvas>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    Fija el grado en 2 y arrastra el punto de evaluación: verás que el error crece rápido al
-    alejarte del origen. Taylor es una aproximación <em>local</em>, y ese es su límite práctico.
-  </p>
-
-  <div class="sub-title">4.2 Bisección: la convergencia se ve</div>
-  <div class="viz" data-viz="biseccion">
-    <div class="viz-controls">
-      <label for="b-fn">Ecuación</label>
-      <select id="b-fn">
-        <option value="a">x³ − x − 2 = 0 en [1, 2]</option>
-        <option value="b">cos x − x = 0 en [0, 1]</option>
-        <option value="c">eˣ − 3x = 0 en [0, 1]</option>
-      </select>
-      <label for="b-it">Iteraciones</label>
-      <input id="b-it" class="iters" type="range" min="1" max="20" value="6">
-      <span class="iters-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
-    </div>
-    <canvas></canvas>
-    <div class="tabla-iter" style="margin-top:.7rem;overflow-x:auto"></div>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    Observa la columna $|\varepsilon_a|$: cada iteración gana algo más de <em>media</em> cifra decimal.
-    Bisección nunca falla si hay cambio de signo, pero es lenta. En la sesión 3 verás por qué
-    Newton–Raphson gana el doble de cifras por paso — y cuándo diverge.
-  </p>
+<!-- ═══════════ 6 ═══════════ -->
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren los cinco bloques. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
 </section>
 
 <section class="card">
-  <h3 class="card-title">5. Práctica de refuerzo</h3>
-  <div id="quiz-mn01"></div>
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>El teorema del factor convierte «buscar raíces» en «buscar factores», pero solo funciona con raíces racionales.</li>
+    <li>Desde grado 5 no existe fórmula por radicales (Abel–Ruffini): no es una laguna, es un teorema.</li>
+    <li>Eliminar hasta forma triangular y sustituir hacia atrás: esa es toda la estrategia de Gauss.</li>
+    <li>Cramer es <strong>correcto</strong> pero no <strong>eficiente</strong>. Distinguir ambas cosas es central en este curso.</li>
+    <li>La recta tangente $y=f(a)+f'(a)(x-a)$ cortando el eje <em>es</em> un paso de Newton-Raphson.</li>
+    <li>La integral definida es un límite de sumas de rectángulos; quedarse en la suma finita es el método numérico.</li>
+    <li>El promedio de los extremos (trapecio) cancela parte del error porque los dos se equivocan en sentidos opuestos.</li>
+    <li>$\int e^{-x^2}dx$ no tiene primitiva elemental, y el método numérico no la necesita.</li>
+    <li>Una EDO se resuelve hallando una <em>función</em>; la condición inicial elige un miembro de la familia.</li>
+  </ul>
 </section>
 
 </main>
 
 <footer>
   Métodos Numéricos · Departamento de Ciencias Básicas · UNIAJC · 2026-2 &nbsp;·&nbsp;
-  <a href="https://openstax.org/books/calculus-volume-2/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2</a> ·
+  <a href="https://openstax.org/books/calculus-volume-1/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus</a> ·
   <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a>
 </footer>
 
-<script src="../assets/ova.js"></script>
-<script src="../assets/viz-metodos.js"></script>
+<script src="../assets/ova.js?v=20260823a"></script>
+<script src="../assets/viz-metodos.js?v=20260823a"></script>
 <script>
 OVA.quiz({
-  destino: 'quiz-mn01',
-  titulo: 'Errores y aproximación · 6 preguntas',
+  destino: 'chk1',
+  titulo: 'Raíces y sistemas · 3 preguntas',
   items: [
     {
-      etiqueta: 'Error relativo', nivel: 1,
-      criterio: 'Calcular el error absoluto y relativo de una aproximación',
-      enunciado: 'Se aproxima $\\pi=3{,}14159265$ con $22/7=3{,}14285714$. El error relativo es aproximadamente:',
-      opciones: ['$1{,}26\\times10^{-3}$', '$4{,}02\\times10^{-4}$', '$4{,}02\\times10^{-2}$', '$1{,}26\\times10^{-1}$'],
+      etiqueta: 'Teorema del residuo', nivel: 1,
+      criterio: 'Aplicar el teorema del residuo y del factor (§1.1)',
+      enunciado: 'Al dividir $p(x)=2x^3-3x^2-11x+6$ entre $(x-2)$, el residuo es:',
+      opciones: ['$0$', '$-12$', '$6$', '$12$'],
       correcta: 1,
-      pista: 'El error relativo divide el error absoluto entre el valor exacto.',
-      solucion: '$E_a=1{,}2645\\times10^{-3}$ y $E_r=E_a/\\pi=4{,}02\\times10^{-4}$ (o sea $0{,}0402\\%$). ' +
-                'La opción a) es el error <em>absoluto</em>: confundirlos es el error más frecuente del tema.'
+      pista: 'El teorema del residuo dice que basta con evaluar $p(2)$.',
+      solucion: '$p(2)=16-12-22+6=-12$. Como el residuo no es cero, $(x-2)$ <strong>no</strong> es factor y $2$ no es raíz. Evaluar es mucho más rápido que dividir: ese es todo el valor del teorema.'
     },
     {
-      etiqueta: 'Cifras significativas', nivel: 1,
-      criterio: 'Contar cifras significativas en una medición',
-      enunciado: '¿Cuántas cifras significativas tiene el número $0{,}004520$?',
-      opciones: ['$3$', '$4$', '$6$', '$7$'],
-      correcta: 1,
-      pista: 'Los ceros a la izquierda solo ubican la coma; el cero final sí fue medido.',
-      solucion: 'Son 4: los dígitos $4$, $5$, $2$ y el $0$ final. Los ceros iniciales no cuentan porque ' +
-                'solo indican magnitud, pero el cero de la derecha sí, porque comunica precisión.'
+      etiqueta: 'Raíces racionales', nivel: 2,
+      criterio: 'Aplicar el teorema de las raíces racionales (§1.1)',
+      enunciado: 'Para $p(x)=2x^3-3x^2-11x+6$, ¿cuál de estos números <strong>no</strong> es candidato a raíz racional?',
+      opciones: ['$\\tfrac{1}{2}$', '$-2$', '$\\tfrac{2}{3}$', '$6$'],
+      correcta: 2,
+      pista: 'El numerador debe dividir a $6$ y el denominador a $2$.',
+      solucion: 'Los candidatos son $\\pm1,\\pm2,\\pm3,\\pm6,\\pm\\tfrac12,\\pm\\tfrac32$. El número $\\tfrac23$ tiene denominador $3$, que no divide al coeficiente principal $2$: queda descartado sin necesidad de evaluarlo. Las otras tres sí son candidatas, y de hecho $\\tfrac12$, $-2$ son raíces.'
     },
     {
-      etiqueta: 'Tipos de error', nivel: 2,
-      criterio: 'Distinguir error de redondeo y error de truncamiento',
-      enunciado: 'Aproximar $\\operatorname{sen}(x)$ por $x - \\dfrac{x^3}{6}$ introduce principalmente:',
-      opciones: [
-        'Error de redondeo, por los decimales de la máquina',
-        'Error de truncamiento, por cortar una serie infinita',
-        'Error de medición, propio del instrumento',
-        'Error humano de transcripción'
-      ],
-      correcta: 1,
-      pista: '¿El error viene de cómo guarda los números el computador, o de qué fórmula elegiste?',
-      solucion: 'Es truncamiento: la serie de Maclaurin es infinita y nos quedamos con dos términos. ' +
-                'Existiría incluso con aritmética exacta e infinita, que es justo lo que lo distingue del redondeo.'
-    },
+      etiqueta: 'Sustitución hacia atrás', nivel: 2,
+      criterio: 'Resolver un sistema triangular por sustitución hacia atrás (§2.2)',
+      enunciado: 'En el sistema triangular $3x+2y-z=3$, $\\;4y+3z=10$, $\\;2z=4$, el valor de $y$ es:',
+      opciones: ['$2$', '$4$', '$\\tfrac{5}{2}$', '$1$'],
+      correcta: 3,
+      pista: 'Empieza por la última fila, que tiene una sola incógnita.',
+      solucion: 'De $2z=4$ sale $z=2$. Sustituyendo en la segunda: $4y+6=10 \\Rightarrow y=1$. La opción c) es el error de despejar $y$ de $4y=10$ ignorando el término en $z$: la sustitución hacia atrás exige usar el valor ya hallado.'
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Derivación e integración · 3 preguntas',
+  items: [
     {
-      etiqueta: 'Taylor', nivel: 2,
-      criterio: 'Estimar el error de truncamiento de un polinomio de Taylor',
-      enunciado: 'Con $e^{x}\\approx 1+x+\\dfrac{x^2}{2}$ se estima $e^{0,5}$. Sabiendo que $e^{0,5}=1{,}64872$, ' +
-                 'el error absoluto es aproximadamente:',
-      opciones: ['$0{,}0237$', '$0{,}1250$', '$0{,}0029$', '$0{,}6487$'],
+      etiqueta: 'Recta tangente', nivel: 2,
+      criterio: 'Hallar la recta tangente y su corte con el eje x (§3.3)',
+      enunciado: 'Para $f(x)=x^3-x-2$, la tangente en $x=2$ corta el eje $x$ en:',
+      opciones: ['$\\tfrac{18}{11}\\approx 1{,}636$', '$2$', '$\\tfrac{4}{11}\\approx 0{,}364$', '$\\tfrac{22}{11}=2$'],
       correcta: 0,
-      pista: 'Evalúa primero el polinomio: $1+0{,}5+0{,}125$.',
-      solucion: 'El polinomio da $1{,}625$, y $|1{,}64872-1{,}625|=0{,}0237$ (un $1{,}44\\%$ relativo). ' +
-                'La opción c) es el error que se obtendría con un término más, no con tres.'
+      pista: 'Calcula $f(2)$ y $f\'(2)$, escribe la recta y hazla igual a cero.',
+      solucion: '$f(2)=4$ y $f\'(2)=11$, así que la tangente es $y=4+11(x-2)$. Igualando a cero: $x=2-\\tfrac{4}{11}=\\tfrac{18}{11}$. Esa operación es exactamente $x_1=x_0-\\tfrac{f(x_0)}{f\'(x_0)}$, un paso de Newton-Raphson. La opción c) responde el <em>desplazamiento</em>, no la posición final.'
     },
     {
-      etiqueta: 'Criterio de paro', nivel: 2,
-      criterio: 'Aplicar el criterio de paro por error relativo aproximado',
-      enunciado: 'En un método iterativo real no conocemos el valor exacto. ¿Con qué criterio decidimos detenernos?',
+      etiqueta: 'Sumas de Riemann', nivel: 2,
+      criterio: 'Calcular una suma de Riemann y compararla con el valor exacto (§4.2)',
+      enunciado: 'Aproximando $\\int_0^2 x^2dx$ con $n=4$ y extremos derechos se obtiene $3{,}75$, mientras el valor exacto es $8/3\\approx 2{,}667$. La regla del trapecio con el mismo $n$ da $2{,}75$. ¿Por qué mejora tanto?',
       opciones: [
-        'Cuando $E_r$ frente al valor verdadero sea menor que la tolerancia',
-        'Cuando $\\varepsilon_a=\\left|\\dfrac{\\hat{p}_n-\\hat{p}_{n-1}}{\\hat{p}_n}\\right|$ sea menor que la tolerancia',
-        'Al completar un número fijo de iteraciones, siempre 10',
-        'Cuando el error absoluto sea exactamente cero'
+        'Porque usa el doble de subintervalos',
+        'Porque promedia dos aproximaciones que se equivocan en sentidos opuestos',
+        'Porque el trapecio siempre da el valor exacto',
+        'Porque evita el error de redondeo'
       ],
       correcta: 1,
-      pista: 'Si conociéramos el valor verdadero, no necesitaríamos el método.',
-      solucion: 'Se usa $\\varepsilon_a$, que compara dos iteraciones sucesivas: es lo único medible. ' +
-                'La opción a) describe algo imposible en la práctica, y d) nunca ocurre en aritmética finita.'
+      pista: 'El extremo izquierdo da $1{,}75$ y el derecho $3{,}75$. ¿Qué es $2{,}75$ respecto de esos dos?',
+      solucion: 'El extremo izquierdo subestima ($1{,}75$) y el derecho sobreestima ($3{,}75$) porque la función es creciente. Su promedio, $2{,}75$, es la regla del trapecio, y los dos errores se cancelan parcialmente. La opción c) es falsa: el trapecio sigue teniendo error, solo que mucho menor.'
     },
     {
-      etiqueta: 'Estabilidad', nivel: 3,
-      criterio: 'Reconocer y evitar la cancelación por resta de números cercanos',
-      enunciado: 'Al calcular $\\sqrt{9001}-\\sqrt{9000}$ con 6 cifras significativas se pierde precisión. ' +
-                 'La forma numéricamente estable de evaluarlo es:',
+      etiqueta: 'Límites del método exacto', nivel: 3,
+      criterio: 'Reconocer una integral sin primitiva elemental (§4.2)',
+      enunciado: '¿Por qué $\\int_0^2 e^{-x^2}dx$ debe calcularse numéricamente?',
       opciones: [
-        'Redondear cada raíz a 3 cifras antes de restar',
-        'Multiplicar y dividir por el conjugado: $\\dfrac{1}{\\sqrt{9001}+\\sqrt{9000}}$',
-        'Elevar toda la expresión al cuadrado',
-        'Usar grados en vez de radianes'
+        'Porque la función no es continua en ese intervalo',
+        'Porque la integral es divergente',
+        'Porque $e^{-x^2}$ no tiene primitiva elemental',
+        'Porque el intervalo es demasiado largo'
+      ],
+      correcta: 2,
+      pista: 'El teorema fundamental exige conocer una primitiva $F$. ¿Existe aquí?',
+      solucion: 'Está demostrado que $e^{-x^2}$ no admite primitiva expresable con funciones elementales, así que el teorema fundamental no puede aplicarse. La integral existe perfectamente y vale $0{,}88208139\\ldots$; simplemente hay que obtenerla por métodos numéricos. La opción a) es falsa: la función es continua y acotada en todo $\\mathbb{R}$.'
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Ecuaciones diferenciales · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Valor inicial', nivel: 1,
+      criterio: 'Resolver un problema de valor inicial sencillo (§5.1)',
+      enunciado: 'La solución de $\\dfrac{dy}{dx}=2x$ con $y(0)=1$ es:',
+      opciones: ['$y=2x+1$', '$y=x^2$', '$y=x^2+1$', '$y=x^2+C$'],
+      correcta: 2,
+      pista: 'Integra y luego usa la condición inicial para hallar la constante.',
+      solucion: 'Integrando: $y=x^2+C$. Con $y(0)=C=1$ queda $y=x^2+1$. La opción d) es la solución <em>general</em>: describe infinitas curvas y no responde el problema, que pedía la particular.'
+    },
+    {
+      etiqueta: 'Separables', nivel: 2,
+      criterio: 'Resolver una EDO separable de crecimiento (§5.1)',
+      enunciado: 'La solución general de $\\dfrac{dy}{dt}=ky$ es:',
+      opciones: ['$y=kt+C$', '$y=Ce^{kt}$', '$y=\\tfrac{k}{2}t^2+C$', '$y=C\\ln(kt)$'],
+      correcta: 1,
+      pista: 'Separa como $\\dfrac{dy}{y}=k\\,dt$ e integra ambos lados.',
+      solucion: '$\\ln|y|=kt+C_1$, y al exponenciar $y=Ce^{kt}$. Es el modelo de crecimiento poblacional e interés compuesto continuo, y con $k \\lt 0$ el de decaimiento radiactivo. La opción c) resolvería $y\'=kt$, que es otra ecuación: ahí la derivada depende de $t$, no de $y$.'
+    },
+    {
+      etiqueta: 'Límites del método exacto', nivel: 3,
+      criterio: 'Reconocer cuándo hace falta un método numérico para una EDO (§5)',
+      enunciado: 'La EDO $y\'=\\operatorname{sen}(xy)$ con $y(0)=1$ no tiene solución en forma cerrada. ¿Qué se puede hacer?',
+      opciones: [
+        'Concluir que el problema no tiene solución',
+        'Linealizar hasta que sea separable y aceptar el resultado como exacto',
+        'Avanzar en pasos pequeños usando la pendiente que da la propia ecuación',
+        'Cambiar la condición inicial hasta que salga'
+      ],
+      correcta: 2,
+      pista: 'La ecuación, aunque no se pueda integrar, sí dice cuánto vale $y\'$ en cada punto.',
+      solucion: 'La solución existe (el teorema de existencia lo garantiza), simplemente no es expresable con funciones elementales. Pero la ecuación entrega la pendiente en cada punto, y con eso se puede avanzar paso a paso: eso es el método de Euler (semana 13) y Runge-Kutta (semana 14). La opción b) confunde una aproximación con el valor exacto.'
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Factorización', nivel: 2,
+      criterio: 'Factorizar completamente un polinomio cúbico (§1.1)',
+      enunciado: 'Sabiendo que $x=3$ es raíz de $p(x)=2x^3-3x^2-11x+6$, las otras dos raíces son:',
+      opciones: ['$1$ y $-6$', '$\\tfrac12$ y $-2$', '$-\\tfrac12$ y $2$', '$2$ y $-3$'],
+      correcta: 1,
+      pista: 'Divide entre $(x-3)$ y factoriza el cociente cuadrático.',
+      solucion: 'Dividiendo: $p(x)=(x-3)(2x^2+3x-2)=(x-3)(2x-1)(x+2)$, de donde las raíces restantes son $\\tfrac12$ y $-2$. La opción c) invierte ambos signos, que es el error típico al leer los factores $(2x-1)$ y $(x+2)$.'
+    },
+    {
+      etiqueta: 'Abel–Ruffini', nivel: 2,
+      criterio: 'Justificar por qué hace falta un método numérico para hallar raíces (§1)',
+      enunciado: 'El polinomio $x^5-x-1$ tiene una raíz real cerca de $1{,}167$. ¿Por qué no se obtiene con una fórmula?',
+      opciones: [
+        'Porque la raíz es irracional y ninguna fórmula da irracionales',
+        'Porque el teorema de Abel–Ruffini demuestra que no existe fórmula por radicales desde grado 5',
+        'Porque el polinomio tiene coeficientes demasiado pequeños',
+        'Porque aún no se ha descubierto esa fórmula'
       ],
       correcta: 1,
-      pista: 'El problema es la resta. ¿Puedes reescribir la expresión para que no haya ninguna?',
-      solucion: 'Racionalizando se obtiene $\\dfrac{1}{\\sqrt{9001}+\\sqrt{9000}}=0{,}00527033$, ahora con una ' +
-                '<em>suma</em> de números grandes en el denominador y sin cancelación. ' +
-                'Álgebra equivalente, resultados numéricos muy distintos: eso es estabilidad.'
+      pista: 'La respuesta es un teorema, no una limitación histórica.',
+      solucion: 'Abel y Ruffini <strong>demostraron</strong> la imposibilidad para grado 5 o superior. La opción a) es falsa: la fórmula cuadrática produce irracionales sin problema, como $\\sqrt2$. Y la d) es el malentendido que este curso corrige: no es que falte encontrarla, es que no puede existir.'
+    },
+    {
+      etiqueta: 'Sistemas lineales', nivel: 2,
+      criterio: 'Interpretar el resultado de la eliminación de Gauss (§2.3)',
+      enunciado: 'Al triangular un sistema $3\\times3$ aparece la fila $[\\,0\\ \\ 0\\ \\ 0\\ |\\ 5\\,]$. Esto significa que el sistema:',
+      opciones: [
+        'Tiene infinitas soluciones',
+        'Tiene solución única con $z=5$',
+        'Necesita más eliminación',
+        'No tiene solución'
+      ],
+      correcta: 3,
+      pista: 'Traduce esa fila de vuelta a una ecuación: ¿qué dice?',
+      solucion: 'Esa fila afirma $0x+0y+0z=5$, es decir $0=5$: una contradicción. El sistema es <strong>incompatible</strong>. La opción a) correspondería a $[\\,0\\ 0\\ 0\\,|\\,0\\,]$, que no aporta información y deja un parámetro libre. Distinguir esos dos casos es lo que hace la eliminación.'
+    },
+    {
+      etiqueta: 'Eficiencia', nivel: 3,
+      criterio: 'Distinguir corrección de eficiencia en un algoritmo (§2.3)',
+      enunciado: 'La regla de Cramer da la solución exacta de cualquier sistema con $\\det A\\neq 0$. ¿Por qué no se usa en la práctica?',
+      opciones: [
+        'Porque su costo crece de forma factorial y es inviable para $n$ grande',
+        'Porque solo funciona para sistemas de $2\\times2$',
+        'Porque introduce más error de redondeo que Gauss',
+        'Porque requiere que la matriz sea simétrica'
+      ],
+      correcta: 0,
+      pista: 'Compara el número de operaciones de Cramer con las $n^3/3$ de Gauss para $n=20$.',
+      solucion: 'Cramer es matemáticamente impecable pero computacionalmente inviable: para $n=20$ exigiría del orden de $10^{21}$ operaciones frente a unas $2\\,700$ de Gauss. Ser <em>correcto</em> no es lo mismo que ser <em>utilizable</em>, y esa distinción atraviesa todo el curso.'
+    },
+    {
+      etiqueta: 'Derivación', nivel: 2,
+      criterio: 'Aplicar la regla de la cadena (§3.2)',
+      enunciado: 'La derivada de $f(x)=e^{-x^2}$ es:',
+      opciones: ['$e^{-x^2}$', '$-2xe^{-x^2}$', '$-2x$', '$-x^2e^{-x^2-1}$'],
+      correcta: 1,
+      pista: 'Es una composición: derivada de la externa por derivada de la interna.',
+      solucion: 'Con la regla de la cadena: $f\'(x)=e^{-x^2}\\cdot(-2x)=-2xe^{-x^2}$. La opción a) olvida por completo la función interna. Nota que esta función <em>sí</em> se deriva sin problema, aunque no se pueda integrar: derivar es mecánico, integrar no.'
+    },
+    {
+      etiqueta: 'Integración', nivel: 2,
+      criterio: 'Calcular una integral definida con el teorema fundamental (§4.1)',
+      enunciado: 'El valor de $\\int_1^3 \\dfrac{dx}{x}$ es:',
+      opciones: ['$\\tfrac{1}{3}-1$', '$\\ln 3 \\approx 1{,}0986$', '$2$', '$\\ln 2 \\approx 0{,}6931$'],
+      correcta: 1,
+      pista: 'La primitiva de $1/x$ no es una potencia: es el caso excepcional de la regla.',
+      solucion: '$\\int_1^3 \\tfrac{dx}{x}=\\ln 3-\\ln 1=\\ln 3\\approx 1{,}0986$. La opción a) evalúa el <em>integrando</em> $1/x$ en los extremos ($\\tfrac13-1$) en vez de una primitiva: confunde $f(b)-f(a)$ con $F(b)-F(a)$. La d) es $\\ln 3 - \\ln 1$ mal calculado como $\\ln(3-1)$: el logaritmo de una diferencia no es la diferencia de logaritmos.'
+    },
+    {
+      etiqueta: 'EDO', nivel: 2,
+      criterio: 'Verificar una solución de una EDO por sustitución (§5.1)',
+      enunciado: '¿Cuál función satisface $y\'=3y$ con $y(0)=2$?',
+      opciones: ['$y=2e^{3x}$', '$y=3e^{2x}$', '$y=2+3x$', '$y=e^{3x}$'],
+      correcta: 0,
+      pista: 'Deriva cada candidata, sustituye en la ecuación y comprueba también la condición inicial.',
+      solucion: 'Si $y=2e^{3x}$ entonces $y\'=6e^{3x}=3(2e^{3x})=3y$ ✓, y además $y(0)=2$ ✓. La opción d) cumple la EDO pero da $y(0)=1$: falla la condición inicial. La b) da $y\'=6e^{2x}$, que no es $3y=9e^{2x}$. Verificar ambas cosas es indispensable.'
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Identificar dónde termina el método exacto en cada tema (§1–§5)',
+      enunciado: '¿Qué tienen en común $x^5-x-1=0$, &nbsp;$\\int e^{-x^2}dx$ &nbsp;y&nbsp; $y\'=\\operatorname{sen}(xy)$?',
+      opciones: [
+        'Que ninguno tiene solución',
+        'Que los tres son problemas mal planteados',
+        'Que la solución existe pero no se puede escribir con funciones elementales',
+        'Que los tres se resuelven con la misma fórmula'
+      ],
+      correcta: 2,
+      pista: '¿El problema es que no haya respuesta, o que no se pueda escribir?',
+      solucion: 'En los tres casos la solución <strong>existe</strong> y está perfectamente determinada; lo que no existe es una expresión elemental que la represente. Esa distinción entre <em>existir</em> y <em>ser expresable</em> es la que justifica todo el curso: el método numérico no inventa una solución, calcula la que ya está ahí.'
     }
   ]
 });
