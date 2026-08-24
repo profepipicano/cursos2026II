@@ -166,11 +166,50 @@ sigue estos pasos en orden:
 Todas las páginas enlazan los archivos con un sufijo de versión:
 
 ```html
-<link rel="stylesheet" href="../assets/ova.css?v=20260823a">
-<script src="../assets/viz-vectorial.js?v=20260823a"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260823b">
+<script src="../assets/viz-vectorial.js?v=20260823b"></script>
 ```
 
 Ese `?v=` obliga al navegador a descargar el archivo de nuevo en lugar de usar el que tiene
 guardado. **Cada vez que modifiques algo dentro de `assets/`, cambia ese número en todas las
 páginas** (por ejemplo a `20260901a`). Si no lo haces, tus estudiantes podrían seguir viendo la
 versión vieja durante horas.
+
+---
+
+## 8. Créditos, licencia y contacto
+
+El pie de página se genera desde dos plantillas que viven en el HTML:
+
+- **`index.html`** lleva el bloque completo: institución, departamento, autoría, licencia
+  y fecha de última actualización.
+- **El resto de páginas** lleva una versión compacta de dos líneas que enlaza a la portada.
+
+### La dirección de correo no está en el código
+
+El enlace «Reportar un error» **no contiene la dirección escrita**. Se guarda partida en dos
+atributos y `assets/ova.js` la recompone al cargar la página:
+
+```html
+<a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co"
+   data-asunto="OVA — Reporte">Reportar un error</a>
+```
+
+Los rastreadores de spam que leen el código fuente no encuentran una dirección válida, pero
+para el estudiante el enlace funciona con normalidad. El asunto se completa automáticamente
+con el nombre de la página desde la que se escribe, así que sabrás de inmediato a qué guía
+se refiere el reporte.
+
+**Si cambias de correo**, busca `data-u` y `data-d` en los 10 archivos HTML y actualízalos.
+
+### Licencia
+
+El material se publica bajo **CC BY-NC-SA 4.0**: cualquiera puede copiarlo y adaptarlo citando
+la fuente, sin uso comercial, y compartiendo las obras derivadas con la misma licencia.
+Si tu institución fija una política distinta, cambia el bloque `.cred-lic` de `index.html`
+y la mención del pie compacto.
+
+### Fecha de actualización
+
+Está escrita a mano en el pie de `index.html`. Conviene actualizarla cada vez que publiques
+una guía nueva: al estudiante le indica si lo que está viendo es lo más reciente.
