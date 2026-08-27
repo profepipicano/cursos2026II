@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 2 · Concepto y cálculo de límites — Cálculo · UNIAJC</title>
+<title>Guía 2 · Concepto y cálculo de límites — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <link rel="stylesheet" href="../assets/ova.css?v=20260827a">
 </head>
 <body>
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 2</h1>
+      <h1>Cálculo · Guía 2</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,721 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · La idea</a>
+    <a href="#s2">2 · Laterales</a>
+    <a href="#s3">3 · Propiedades</a>
+    <a href="#s4">4 · Técnicas 0/0</a>
+    <a href="#s5">5 · Trigonométricos</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 2 · Concepto y cálculo de límites</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 2 · Corte I</div>
+  <h2>Concepto y cálculo de límites</h2>
+  <p>El límite es la idea que separa el álgebra del cálculo. Responde una pregunta que el álgebra
+     no sabe formular: <em>¿hacia qué valor se dirige una función cuando su entrada se acerca a un
+     punto, aunque en ese punto no pase nada?</em></p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 1</span>
+    <span class="chip">Stewart · Cap. 2.1–2.3</span>
+    <span class="chip">Semana 2</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 1 viste que $x=-2$ queda fuera del dominio de
+  $\dfrac{x+2}{x^{2}-x-6}$ aunque el factor se cancele, y que el explorador dejaba un hueco en
+  $x=1$ para $\dfrac{1}{x-1}$. Esta guía trata exactamente de esos huecos.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · La idea de límite</h3>
+
+  <div class="callout-dark">
+    <h3>Una pregunta que el álgebra no sabe hacer</h3>
+    <p>Considera $f(x)=\dfrac{x^{2}-4}{x-2}$. En $x=2$ el denominador se anula: la función
+       <strong>no está definida</strong> ahí. Punto. El álgebra no tiene más que decir.</p>
+    <p>Pero pregunta otra cosa: ¿qué le pasa a $f(x)$ cuando $x$ se <em>acerca</em> a 2 sin llegar?</p>
+    <p style="font-family:ui-monospace,monospace;font-size:.9rem">
+      f(1,9) = 3,9 &nbsp;·&nbsp; f(1,99) = 3,99 &nbsp;·&nbsp; f(2,01) = 4,01 &nbsp;·&nbsp; f(2,1) = 4,1</p>
+    <p>Los valores se apiñan alrededor de <strong>4</strong> por los dos lados. Eso es el límite, y
+       existe aunque $f(2)$ no exista. La pregunta cambió de «cuánto vale ahí» a «hacia dónde se
+       dirige», y esa mudanza es el nacimiento del cálculo.</p>
+  </div>
+
+  <div class="def">
+    <strong>Definición intuitiva.</strong> Se escribe
+    $$\lim_{x\to a}f(x)=L$$
+    si $f(x)$ se acerca tanto como se quiera a $L$ al tomar $x$ suficientemente cerca de $a$,
+    <strong>pero distinto de $a$</strong>.
+  </div>
+
+  <div class="sub-title">1.1 Tres advertencias que evitan casi todos los errores</div>
+  <ul>
+    <li><strong>El valor $f(a)$ es irrelevante.</strong> El límite mira los alrededores, nunca el
+        punto. $f(a)$ puede no existir, o existir y valer otra cosa: el límite no cambia.</li>
+    <li><strong>El límite puede no existir</strong> aunque la función esté perfectamente definida
+        en $a$, como verás en la §2.</li>
+    <li><strong>Una tabla sugiere, no demuestra.</strong> Es evidencia numérica útil, pero solo el
+        álgebra prueba el resultado. En la §5 verás una función cuya tabla engaña.</li>
+  </ul>
+
+  <div class="sub-title">1.2 Por qué importa</div>
+  <p>Las dos aplicaciones fundadoras del cálculo son límites disfrazados:</p>
+  <table class="tbl">
+    <tr><th>Problema</th><th>Se resuelve con</th><th>Verás en</th></tr>
+    <tr><td>Pendiente de la recta tangente</td><td>$\displaystyle\lim_{h\to0}\frac{f(a+h)-f(a)}{h}$</td><td>Guía 4</td></tr>
+    <tr><td>Velocidad instantánea</td><td>El mismo límite, con $f$ la posición</td><td>Guía 4</td></tr>
+    <tr><td>Área bajo una curva</td><td>Límite de sumas de rectángulos</td><td>Guía 13</td></tr>
+  </table>
+  <p>Nota que el cociente incremental del Ejemplo 1 de la Guía 1 tiene la forma $0/0$ en $h=0$:
+     ese es exactamente el tipo de límite que aprenderás a resolver en la §4.</p>
+
+  <div class="sub-title">1.3 Explora el acercamiento</div>
+  <div class="viz" data-viz="limite">
+    <div class="viz-controls">
+      <label for="lm-f">Función</label>
+      <select id="lm-f">
+        <option value="fac">(x²−4)/(x−2) &nbsp;en x→2</option>
+        <option value="cub">(x²−9)/(x−3) &nbsp;en x→3</option>
+        <option value="sinc">sen(x)/x &nbsp;en x→0</option>
+      </select>
+      <label for="lm-d">Acercamiento δ</label>
+      <input id="lm-d" type="range" min="5" max="150" value="80">
+      <span class="d-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Reduce $\delta$ y observa que los valores por la izquierda y por la derecha convergen al mismo
+    número $L$. El círculo hueco marca que la función no está definida ahí — y aun así el límite
+    existe.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Límites laterales</h3>
+
+  <div class="def">
+    $$\lim_{x\to a^{-}}f(x)=L_1 \quad\text{(por la izquierda)}\qquad
+      \lim_{x\to a^{+}}f(x)=L_2 \quad\text{(por la derecha)}$$
+    <strong>Teorema.</strong> $\displaystyle\lim_{x\to a}f(x)=L$ existe <strong>si y solo si</strong>
+    ambos laterales existen y son iguales a $L$.
+  </div>
+
+  <p>Este teorema es la herramienta principal para <em>demostrar que un límite no existe</em>:
+     basta exhibir dos laterales distintos.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Un límite que no existe</h4>
+    <div class="ejemplo-body">
+      Estudia $\displaystyle\lim_{x\to0}\frac{|x|}{x}$.
+      <div class="paso"><div class="paso-t">Quitar el valor absoluto</div>
+        Para $x \gt 0$: $|x|=x$, luego $\dfrac{|x|}{x}=1$.<br>
+        Para $x \lt 0$: $|x|=-x$, luego $\dfrac{|x|}{x}=-1$.
+      </div>
+      <div class="paso"><div class="paso-t">Laterales</div>
+        $\displaystyle\lim_{x\to0^{-}}\frac{|x|}{x}=-1$ &nbsp;·&nbsp;
+        $\displaystyle\lim_{x\to0^{+}}\frac{|x|}{x}=1$
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        Son distintos, así que <strong>el límite no existe</strong>. La función salta de $-1$ a $1$
+        al cruzar el origen, y no hay ningún número al que se aproxime por ambos lados.
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · El límite existe pero $f(a)$ es otro valor</h4>
+    <div class="ejemplo-body">
+      Sea $f(x)=\begin{cases}x+1, & x \lt 2\\ 5, & x=2\\ x^{2}-1, & x \gt 2\end{cases}$
+      <div class="paso"><div class="paso-t">Lateral por la izquierda</div>
+        Se usa la regla de $x \lt 2$: $\displaystyle\lim_{x\to2^{-}}(x+1)=3$
+      </div>
+      <div class="paso"><div class="paso-t">Lateral por la derecha</div>
+        Se usa la regla de $x \gt 2$: $\displaystyle\lim_{x\to2^{+}}(x^{2}-1)=4-1=3$
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        Coinciden, así que $\displaystyle\lim_{x\to2}f(x)=3$.<br>
+        Pero $f(2)=5$. <strong>El límite vale 3 y la función vale 5</strong>: son preguntas
+        distintas, y confundirlas es el error número uno del tema.
+      </div>
+      <div class="paso"><div class="paso-t">Adelanto</div>
+        Que el límite exista pero no coincida con $f(2)$ es precisamente una <em>discontinuidad
+        evitable</em>. La Guía 3 le pondrá nombre y la reparará redefiniendo $f(2)=3$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.1 Explora los laterales</div>
+  <div class="viz" data-viz="laterales">
+    <div class="viz-controls">
+      <label for="lt-f">Función</label>
+      <select id="lt-f">
+        <option value="abs">|x|/x &nbsp;en x→0</option>
+        <option value="trozo">a trozos &nbsp;en x→2</option>
+        <option value="raiz">(x²−4)/(x−2) &nbsp;en x→2</option>
+        <option value="inf">1/(x−2) &nbsp;en x→2</option>
+      </select>
+      <label for="lt-c">Acercamiento</label>
+      <input id="lt-c" class="cerca" type="range" min="1" max="6" value="2">
+      <span class="cerca-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="tabla" style="margin-top:.7rem;overflow-x:auto"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Los círculos huecos marcan dónde la rama no llega, y el punto dorado dónde está realmente
+    definida la función. En la opción «a trozos» verás el punto dorado en $y=5$ mientras las dos
+    ramas apuntan a $y=3$: la imagen exacta del Ejemplo 2.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Concepto y laterales</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Propiedades y sustitución directa</h3>
+
+  <div class="def">
+    Si $\displaystyle\lim_{x\to a}f(x)=L$ y $\displaystyle\lim_{x\to a}g(x)=M$, entonces:
+    <div class="formulas" style="margin-top:.6rem">
+      <div class="formula"><div class="lbl">Suma</div>$\lim (f\pm g)=L\pm M$</div>
+      <div class="formula"><div class="lbl">Producto</div>$\lim (f\cdot g)=L\cdot M$</div>
+      <div class="formula"><div class="lbl">Cociente</div>$\lim \dfrac{f}{g}=\dfrac{L}{M}$, si $M\neq0$</div>
+      <div class="formula"><div class="lbl">Constante</div>$\lim (c\,f)=c\,L$</div>
+      <div class="formula"><div class="lbl">Potencia</div>$\lim f^{\,n}=L^{n}$</div>
+      <div class="formula"><div class="lbl">Raíz</div>$\lim \sqrt[n]{f}=\sqrt[n]{L}$, si existe</div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 Sustitución directa</div>
+  <p>De esas propiedades se deduce algo muy cómodo: para <strong>polinomios</strong> y para
+     <strong>funciones racionales cuyo denominador no se anula</strong> en $a$, el límite se calcula
+     simplemente evaluando:</p>
+  <div class="formula" style="max-width:400px">$$\lim_{x\to a}p(x)=p(a)$$</div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Cuando sustituir basta</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Polinomio</div>
+        $\displaystyle\lim_{x\to3}(2x^{2}-5x+1)=2(9)-15+1=\mathbf{4}$
+      </div>
+      <div class="paso"><div class="paso-t">Racional con denominador no nulo</div>
+        $\displaystyle\lim_{x\to1}\frac{x^{2}+3}{x+4}=\frac{1+3}{1+4}=\mathbf{\frac{4}{5}}$
+      </div>
+      <div class="paso"><div class="paso-t">La razón de fondo</div>
+        Sustituir funciona porque esas funciones son <em>continuas</em>. La Guía 3 hará explícita
+        esa conexión: la sustitución directa es la definición misma de continuidad, leída al revés.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>Sustituye siempre primero</h3>
+    <p>Ante cualquier límite, el primer movimiento es <strong>sustituir</strong>. Solo hay tres
+       desenlaces:</p>
+    <p><strong>Sale un número.</strong> Ya está: ese es el límite.<br>
+       <strong>Sale $\dfrac{c}{0}$ con $c\neq0$.</strong> El límite es infinito o no existe — tema
+       de la Guía 3.<br>
+       <strong>Sale $\dfrac{0}{0}$.</strong> Es una <em>forma indeterminada</em>: hay que trabajar,
+       y de eso trata la §4.</p>
+    <p>Empezar a factorizar sin haber sustituido es perder el tiempo la mayoría de las veces.</p>
+  </div>
+
+  <div class="nota">
+    <strong>Qué significa «indeterminada».</strong> $\dfrac{0}{0}$ no es un número ni un error: es
+    un aviso de que <em>la sustitución no decide</em>. Distintas funciones con esa forma dan
+    resultados distintos — $\dfrac{x^{2}}{x}\to 0$, $\dfrac{x}{x}\to 1$, $\dfrac{x}{x^{2}}\to\infty$
+    — y por eso hace falta transformar la expresión antes de concluir.
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Técnicas algebraicas para la forma 0/0</h3>
+
+  <p>Todas las técnicas comparten la misma estrategia: <strong>reescribir la función para eliminar
+     el factor que se anula</strong>, obteniendo una expresión que sí admita sustitución directa.
+     Lo que las diferencia es cómo se logra esa reescritura.</p>
+
+  <div class="sub-title">4.1 Factorización</div>
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Cancelar el factor problemático</h4>
+    <div class="ejemplo-body">
+      Calcula $\displaystyle\lim_{x\to3}\frac{x^{2}-9}{x^{2}-x-6}$.
+      <div class="paso"><div class="paso-t">1. Sustituir</div>
+        $\dfrac{9-9}{9-3-6}=\dfrac{0}{0}$: indeterminada, hay que trabajar.
+      </div>
+      <div class="paso"><div class="paso-t">2. Factorizar</div>
+        $x^{2}-9=(x-3)(x+3)$ &nbsp;·&nbsp; $x^{2}-x-6=(x-3)(x+2)$
+      </div>
+      <div class="paso"><div class="paso-t">3. Cancelar</div>
+        $$\frac{(x-3)(x+3)}{(x-3)(x+2)}=\frac{x+3}{x+2}\qquad (x\neq3)$$
+        La cancelación es legítima porque en el límite $x$ se acerca a 3 <em>sin ser</em> 3, así que
+        el factor $(x-3)$ nunca es cero.
+      </div>
+      <div class="paso"><div class="paso-t">4. Sustituir ahora sí</div>
+        $\dfrac{3+3}{3+2}=\dfrac{6}{5}=\mathbf{1{,}2}$
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.2 Racionalización</div>
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Multiplicar por el conjugado</h4>
+    <div class="ejemplo-body">
+      Calcula $\displaystyle\lim_{x\to0}\frac{\sqrt{x+1}-1}{x}$.
+      <div class="paso"><div class="paso-t">1. Sustituir</div>
+        $\dfrac{1-1}{0}=\dfrac{0}{0}$. Y aquí no hay nada que factorizar.
+      </div>
+      <div class="paso"><div class="paso-t">2. Multiplicar arriba y abajo por el conjugado</div>
+        $$\frac{\sqrt{x+1}-1}{x}\cdot\frac{\sqrt{x+1}+1}{\sqrt{x+1}+1}
+          =\frac{(x+1)-1}{x\left(\sqrt{x+1}+1\right)}=\frac{x}{x\left(\sqrt{x+1}+1\right)}$$
+      </div>
+      <div class="paso"><div class="paso-t">3. Cancelar y sustituir</div>
+        $\dfrac{1}{\sqrt{x+1}+1}\;\longrightarrow\;\dfrac{1}{1+1}=\mathbf{\dfrac{1}{2}}$
+      </div>
+      <div class="paso"><div class="paso-t">La lógica del truco</div>
+        El conjugado convierte la resta de raíces en una diferencia de cuadrados, y así el factor
+        que se anulaba pasa al denominador donde se puede cancelar. Es la misma reescritura que en
+        Métodos Numéricos evita la cancelación catastrófica — allá por precisión, aquí por álgebra.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.3 Fracciones complejas</div>
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Simplificar antes de sustituir</h4>
+    <div class="ejemplo-body">
+      Calcula $\displaystyle\lim_{x\to0}\frac{\dfrac{1}{x+2}-\dfrac{1}{2}}{x}$.
+      <div class="paso"><div class="paso-t">1. Combinar el numerador</div>
+        $\dfrac{1}{x+2}-\dfrac{1}{2}=\dfrac{2-(x+2)}{2(x+2)}=\dfrac{-x}{2(x+2)}$
+      </div>
+      <div class="paso"><div class="paso-t">2. Dividir entre $x$</div>
+        $$\frac{-x}{2(x+2)}\cdot\frac{1}{x}=\frac{-1}{2(x+2)}$$
+      </div>
+      <div class="paso"><div class="paso-t">3. Sustituir</div>
+        $\dfrac{-1}{2(0+2)}=\mathbf{-\dfrac{1}{4}}$
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.4 Explora las técnicas numéricamente</div>
+  <div class="viz" data-viz="tabla-limite">
+    <div class="viz-controls">
+      <label for="tb-f">Límite</label>
+      <select id="tb-f">
+        <option value="fact">(x²−9)/(x²−x−6) en x→3</option>
+        <option value="racio">(√(x+1)−1)/x en x→0</option>
+        <option value="compl">[1/(x+2)−1/2]/x en x→0</option>
+        <option value="senc">sen(x)/x en x→0</option>
+        <option value="cos2">(1−cos x)/x² en x→0</option>
+        <option value="osc">sen(1/x) en x→0 &nbsp;(no existe)</option>
+      </select>
+      <label for="tb-n">Acercamiento</label>
+      <input id="tb-n" class="filas" type="range" min="2" max="7" value="4">
+      <span class="filas-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="tabla" style="margin-bottom:.8rem;overflow-x:auto"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Compara el valor al que converge la tabla con el resultado algebraico: deben coincidir.
+    Y prueba la última opción, $\operatorname{sen}(1/x)$: la tabla nunca se asienta. Es el ejemplo
+    de por qué una tabla sugiere pero no demuestra.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Técnicas algebraicas</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Límites trigonométricos y el emparedado</h3>
+
+  <div class="def">
+    <strong>Los dos límites fundamentales:</strong>
+    $$\lim_{x\to0}\frac{\operatorname{sen}x}{x}=1 \qquad\qquad
+      \lim_{x\to0}\frac{1-\cos x}{x}=0$$
+    con $x$ en <strong>radianes</strong>. De ellos se deducen casi todos los demás.
+  </div>
+
+  <div class="nota">
+    <strong>Los radianes no son opcional.</strong> Si $x$ estuviera en grados,
+    $\displaystyle\lim_{x\to0}\frac{\operatorname{sen}x}{x}=\frac{\pi}{180}\approx0{,}01745$ en
+    lugar de 1. Toda la maquinaria del cálculo con funciones trigonométricas —incluida la derivada
+    $(\operatorname{sen}x)'=\cos x$— depende de que el ángulo se mida en radianes.
+  </div>
+
+  <div class="sub-title">5.1 Cómo usarlos</div>
+  <p>La estrategia es siempre la misma: <strong>hacer que el argumento del seno y el denominador
+     sean idénticos</strong>, multiplicando y dividiendo por lo que haga falta.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · Ajustar el argumento</h4>
+    <div class="ejemplo-body">
+      Calcula $\displaystyle\lim_{x\to0}\frac{\operatorname{sen}3x}{x}$.
+      <div class="paso"><div class="paso-t">El problema</div>
+        Arriba hay $3x$ y abajo $x$: no encajan, así que no se puede aplicar la fórmula todavía.
+      </div>
+      <div class="paso"><div class="paso-t">Multiplicar y dividir por 3</div>
+        $$\frac{\operatorname{sen}3x}{x}=3\cdot\frac{\operatorname{sen}3x}{3x}$$
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la fórmula</div>
+        Con $u=3x$, cuando $x\to0$ también $u\to0$, así que
+        $\dfrac{\operatorname{sen}u}{u}\to1$ y el límite vale $3\cdot1=\mathbf{3}$.
+      </div>
+      <div class="paso"><div class="paso-t">Regla general</div>
+        $\displaystyle\lim_{x\to0}\frac{\operatorname{sen}(kx)}{x}=k$. Verifícalo con $k=1$:
+        recuperas el límite fundamental.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 8 · Un límite que sale del segundo fundamental</h4>
+    <div class="ejemplo-body">
+      Calcula $\displaystyle\lim_{x\to0}\frac{1-\cos x}{x^{2}}$.
+      <div class="paso"><div class="paso-t">Multiplicar por el conjugado</div>
+        $$\frac{1-\cos x}{x^{2}}\cdot\frac{1+\cos x}{1+\cos x}
+          =\frac{1-\cos^{2}x}{x^{2}(1+\cos x)}=\frac{\operatorname{sen}^{2}x}{x^{2}(1+\cos x)}$$
+      </div>
+      <div class="paso"><div class="paso-t">Separar</div>
+        $$\left(\frac{\operatorname{sen}x}{x}\right)^{2}\cdot\frac{1}{1+\cos x}
+          \;\longrightarrow\; 1^{2}\cdot\frac{1}{1+1}=\mathbf{\frac{1}{2}}$$
+      </div>
+      <div class="paso"><div class="paso-t">Comentario</div>
+        Nota que $\dfrac{1-\cos x}{x}\to 0$ pero $\dfrac{1-\cos x}{x^{2}}\to\dfrac12$. El numerador
+        se anula «como $x^{2}$», no como $x$, y por eso el exponente del denominador cambia por
+        completo la respuesta.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.2 Teorema del emparedado</div>
+  <div class="def">
+    Si $g(x)\leq f(x)\leq h(x)$ cerca de $a$ y
+    $\displaystyle\lim_{x\to a}g(x)=\lim_{x\to a}h(x)=L$, entonces
+    $$\lim_{x\to a}f(x)=L$$
+  </div>
+  <p>Sirve cuando la función es demasiado irregular para atacarla de frente, pero puede
+     <em>atraparse</em> entre dos funciones dóciles.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 9 · Domar una oscilación salvaje</h4>
+    <div class="ejemplo-body">
+      Calcula $\displaystyle\lim_{x\to0}x^{2}\operatorname{sen}\!\left(\frac{1}{x}\right)$.
+      <div class="paso"><div class="paso-t">El problema</div>
+        Cuando $x\to0$, el argumento $1/x$ se dispara y $\operatorname{sen}(1/x)$ oscila
+        infinitas veces entre $-1$ y $1$. Ese factor <strong>no tiene límite</strong>.
+      </div>
+      <div class="paso"><div class="paso-t">Acotar</div>
+        Pero $-1\leq\operatorname{sen}(1/x)\leq1$ siempre, y multiplicando por $x^{2}\geq0$:
+        $$-x^{2}\leq x^{2}\operatorname{sen}\!\left(\frac{1}{x}\right)\leq x^{2}$$
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar el teorema</div>
+        Ambas cotas tienden a $0$, así que el límite es $\mathbf{0}$.
+      </div>
+      <div class="paso"><div class="paso-t">La idea</div>
+        La oscilación no se detiene nunca, pero su amplitud $x^{2}$ se aplasta contra cero.
+        Un producto puede tener límite aunque uno de sus factores no lo tenga — siempre que el
+        otro lo aplaste.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Trigonométricos y emparedado</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El costo medio $\bar{C}(x)=\dfrac{C(x)}{x}$ no está definido en $x=0$, pero su límite cuando
+      $x\to0^{+}$ dice qué pasa con la producción de la primera unidad. Y con
+      $C(x)=900\,000+4\,500x$, el límite cuando $x\to\infty$ vale $4\,500$: el costo fijo se diluye
+      y solo queda el variable. Volverás a ese cálculo en la Guía 3.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El interés compuesto continuo es literalmente un límite:
+      $\displaystyle\lim_{n\to\infty}\left(1+\frac{r}{n}\right)^{n}=e^{r}$, donde $n$ es el número
+      de capitalizaciones por año. Capitalizar «continuamente» significa tomar ese límite, y de ahí
+      sale la fórmula $A=Pe^{rt}$.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La notación $O(n)$ del análisis de algoritmos es un límite al infinito: decir que un método es
+      $O(n^{2})$ afirma algo sobre $\displaystyle\lim_{n\to\infty}\frac{T(n)}{n^{2}}$. Y la forma
+      $0/0$ aparece al medir tasas: divisiones entre cero que hay que resolver antes de que el
+      programa las encuentre.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La corriente instantánea $i=\displaystyle\lim_{\Delta t\to0}\frac{\Delta q}{\Delta t}$ es un
+      límite de la forma $0/0$: carga que tiende a cero dividida entre tiempo que tiende a cero.
+      Toda magnitud «instantánea» de la física es un límite de ese tipo.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>El límite mira los <strong>alrededores</strong> de $a$, nunca el punto: $f(a)$ es irrelevante.</li>
+    <li>$\displaystyle\lim_{x\to a}f=L$ <strong>si y solo si</strong> ambos laterales existen y valen $L$.</li>
+    <li>Dos laterales distintos es la forma estándar de <em>demostrar</em> que un límite no existe.</li>
+    <li><strong>Sustituye siempre primero.</strong> Si sale un número, terminaste.</li>
+    <li>$\dfrac{0}{0}$ es <em>indeterminada</em>: no es un error, es un aviso de que hay que reescribir.</li>
+    <li>Factorizar, racionalizar y simplificar buscan lo mismo: <strong>cancelar el factor que se anula</strong>.</li>
+    <li>La cancelación es legítima porque $x\to a$ significa $x\neq a$.</li>
+    <li>$\dfrac{\operatorname{sen}x}{x}\to1$ y $\dfrac{1-\cos x}{x}\to0$, con $x$ en <strong>radianes</strong>.</li>
+    <li>Una tabla <strong>sugiere</strong> el límite; solo el álgebra lo demuestra.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/2-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1 · Límites</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
+
 <script src="../assets/ova.js?v=20260827a"></script>
+<script src="../assets/viz-calculo.js?v=20260827a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Concepto y laterales · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'La idea', nivel: 1,
+      criterio: 'Distinguir el límite del valor de la función (§1.1)',
+      enunciado: "Si $f(x)=\\dfrac{x^{2}-4}{x-2}$, ¿cuánto vale $\\displaystyle\\lim_{x\\to2}f(x)$?",
+      opciones: ['No existe, porque $f(2)$ no está definida', '$4$', '$0$', '$\\dfrac{0}{0}$'],
+      correcta: 1,
+      pista: 'El límite mira los alrededores de 2, no el punto 2.',
+      solucion: "Los valores se apiñan alrededor de 4: $f(1{,}99)=3{,}99$ y $f(2{,}01)=4{,}01$. Que $f(2)$ no exista es <strong>irrelevante</strong> para el límite — esa es exactamente la idea que hace posible el cálculo. La opción d) confunde el resultado con la forma indeterminada que aparece al sustituir."
+    },
+    {
+      etiqueta: 'Laterales', nivel: 2,
+      criterio: 'Aplicar el teorema de los límites laterales (§2)',
+      enunciado: "Para $f(x)=\\dfrac{|x|}{x}$, se tiene $\\displaystyle\\lim_{x\\to0^{-}}f=-1$ y $\\displaystyle\\lim_{x\\to0^{+}}f=1$. Entonces $\\displaystyle\\lim_{x\\to0}f(x)$:",
+      opciones: ['Vale $0$, el promedio', 'Vale $1$', 'No existe', 'Vale $-1$'],
+      correcta: 2,
+      pista: 'El teorema exige que los dos laterales sean <em>iguales</em>.',
+      solucion: "El límite existe si y solo si ambos laterales existen y <strong>coinciden</strong>. Aquí valen $-1$ y $1$, así que no existe. La opción a) es un error frecuente: el límite no promedia los laterales, simplemente no hay ningún número al que la función se aproxime por ambos lados."
+    },
+    {
+      etiqueta: 'A trozos', nivel: 2,
+      criterio: 'Calcular laterales de una función definida por tramos (§2)',
+      enunciado: "Sea $f(x)=\\begin{cases}x+1,& x \\lt 2\\\\ 5,& x=2\\\\ x^{2}-1,& x \\gt 2\\end{cases}$. Entonces $\\displaystyle\\lim_{x\\to2}f(x)$ vale:",
+      opciones: ['$5$', 'No existe', '$4$', '$3$'],
+      correcta: 3,
+      pista: 'Calcula los dos laterales con la rama que corresponda a cada lado, e ignora la regla de $x=2$.',
+      solucion: "Por la izquierda $x+1\\to3$; por la derecha $x^{2}-1\\to3$. Coinciden, así que el límite vale <strong>3</strong>. La opción a) es la trampa central del tema: $f(2)=5$ es el <em>valor</em> de la función, no su límite. En la Guía 3 esto se llamará discontinuidad evitable."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Técnicas algebraicas · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Factorización', nivel: 2,
+      criterio: 'Resolver una indeterminación por factorización (§4.1)',
+      enunciado: "$\\displaystyle\\lim_{x\\to3}\\frac{x^{2}-9}{x^{2}-x-6}$ vale:",
+      opciones: ['$\\dfrac{6}{5}$', '$6$', '$0$', 'No existe'],
+      correcta: 0,
+      pista: 'Factoriza los dos: $x^{2}-x-6=(x-3)(x+2)$.',
+      solucion: "$\\dfrac{(x-3)(x+3)}{(x-3)(x+2)}=\\dfrac{x+3}{x+2}\\to\\dfrac{6}{5}$. La opción b) sale de factorizar mal el denominador como $(x-3)(x-2)$, que daría $\\dfrac{6}{1}=6$: conviene expandir mentalmente para comprobar la factorización antes de cancelar."
+    },
+    {
+      etiqueta: 'Racionalización', nivel: 3,
+      criterio: 'Resolver una indeterminación con radicales (§4.2)',
+      enunciado: "$\\displaystyle\\lim_{x\\to0}\\frac{\\sqrt{x+1}-1}{x}$ vale:",
+      opciones: ['$0$', '$1$', '$\\dfrac{1}{2}$', 'No existe'],
+      correcta: 2,
+      pista: 'Multiplica arriba y abajo por el conjugado $\\sqrt{x+1}+1$.',
+      solucion: "El conjugado convierte el numerador en $(x+1)-1=x$, y tras cancelar queda $\\dfrac{1}{\\sqrt{x+1}+1}\\to\\dfrac{1}{2}$. La opción a) sale de sustituir solo en el numerador y olvidar que el denominador también tiende a cero: en una forma $0/0$ no se puede evaluar por partes."
+    },
+    {
+      etiqueta: 'Estrategia', nivel: 2,
+      criterio: 'Interpretar la forma indeterminada 0/0 (§3.1)',
+      enunciado: 'Al sustituir en un límite se obtiene $\\dfrac{0}{0}$. Esto significa que:',
+      opciones: [
+        'El límite vale $0$',
+        'El límite no existe',
+        'Hubo un error de cálculo',
+        'La sustitución no decide: hay que reescribir la expresión'
+      ],
+      correcta: 3,
+      pista: '$\\dfrac{x^{2}}{x}$, $\\dfrac{x}{x}$ y $\\dfrac{x}{x^{2}}$ dan todas $0/0$ en $x=0$. ¿Tienen el mismo límite?',
+      solucion: "$\\dfrac{0}{0}$ es una <strong>forma indeterminada</strong>: no es un valor ni un error, es un aviso. Las tres funciones de la pista dan $0/0$ y sus límites son $0$, $1$ e $\\infty$ respectivamente. Por eso hace falta factorizar, racionalizar o simplificar antes de concluir."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Trigonométricos y emparedado · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Ajustar el argumento', nivel: 2,
+      criterio: 'Aplicar el límite trigonométrico fundamental (§5.1)',
+      enunciado: "$\\displaystyle\\lim_{x\\to0}\\frac{\\operatorname{sen}5x}{x}$ vale:",
+      opciones: ['$1$', '$5$', '$0$', '$\\dfrac{1}{5}$'],
+      correcta: 1,
+      pista: 'Multiplica y divide por 5 para que el argumento del seno coincida con el denominador.',
+      solucion: "$\\dfrac{\\operatorname{sen}5x}{x}=5\\cdot\\dfrac{\\operatorname{sen}5x}{5x}\\to5\\cdot1=5$. En general $\\displaystyle\\lim_{x\\to0}\\frac{\\operatorname{sen}(kx)}{x}=k$. La opción a) aplica la fórmula sin comprobar que los argumentos encajen, que es el descuido más común."
+    },
+    {
+      etiqueta: 'Coseno', nivel: 3,
+      criterio: 'Distinguir los límites del coseno según la potencia (§5.1)',
+      enunciado: "Sabiendo que $\\displaystyle\\lim_{x\\to0}\\frac{1-\\cos x}{x}=0$, ¿cuánto vale $\\displaystyle\\lim_{x\\to0}\\frac{1-\\cos x}{x^{2}}$?",
+      opciones: ['También $0$', '$\\dfrac{1}{2}$', '$1$', 'No existe'],
+      correcta: 1,
+      pista: 'Multiplica por el conjugado $1+\\cos x$ y usa la identidad $1-\\cos^{2}x=\\operatorname{sen}^{2}x$.',
+      solucion: "Se obtiene $\\left(\\dfrac{\\operatorname{sen}x}{x}\\right)^{2}\\cdot\\dfrac{1}{1+\\cos x}\\to1\\cdot\\dfrac{1}{2}=\\dfrac12$. El numerador se anula «como $x^{2}$», no como $x$: por eso al dividir entre $x$ da 0 pero entre $x^{2}$ da un valor finito no nulo. Cambiar el exponente cambia la respuesta por completo."
+    },
+    {
+      etiqueta: 'Emparedado', nivel: 3,
+      criterio: 'Aplicar el teorema del emparedado (§5.2)',
+      enunciado: "$\\displaystyle\\lim_{x\\to0}x^{2}\\operatorname{sen}\\!\\left(\\frac{1}{x}\\right)$ vale:",
+      opciones: [
+        'No existe, porque $\\operatorname{sen}(1/x)$ oscila sin límite',
+        '$1$',
+        '$0$',
+        'No existe, porque $1/x$ se dispara'
+      ],
+      correcta: 2,
+      pista: 'Acota: $-x^{2}\\leq x^{2}\\operatorname{sen}(1/x)\\leq x^{2}$.',
+      solucion: "Aunque $\\operatorname{sen}(1/x)$ oscila infinitas veces y no tiene límite, está <strong>acotado</strong> entre $-1$ y $1$. Al multiplicar por $x^{2}$, que tiende a cero, la amplitud de la oscilación se aplasta y el producto tiende a 0. Un producto puede tener límite aunque uno de sus factores no lo tenga, siempre que el otro lo aplaste."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Sustitución', nivel: 1,
+      criterio: 'Aplicar sustitución directa cuando procede (§3.1)',
+      enunciado: "$\\displaystyle\\lim_{x\\to3}\\left(2x^{2}-5x+1\\right)$ vale:",
+      opciones: ['$4$', '$0$', '$18$', 'No existe'],
+      correcta: 0,
+      pista: 'Es un polinomio: sustituye directamente.',
+      solucion: "$2(9)-5(3)+1=18-15+1=4$. Los polinomios son continuos en todo $\\mathbb{R}$, así que el límite coincide con el valor. La opción c) olvida los dos últimos términos. Sustituir siempre debe ser el primer movimiento ante cualquier límite."
+    },
+    {
+      etiqueta: 'Laterales', nivel: 2,
+      criterio: 'Reconocer cuándo un límite no existe (§2)',
+      enunciado: '¿Cuál es la forma estándar de <strong>demostrar</strong> que un límite no existe?',
+      opciones: [
+        'Comprobar que $f(a)$ no está definida',
+        'Mostrar que los dos laterales existen pero son distintos',
+        'Sustituir y obtener $0/0$',
+        'Construir una tabla que no converja'
+      ],
+      correcta: 1,
+      pista: 'El teorema de los laterales es una equivalencia: sirve en las dos direcciones.',
+      solucion: "Dos laterales distintos contradicen el teorema y prueban la no existencia. La opción a) es falsa —$\\dfrac{x^{2}-4}{x-2}$ no está definida en 2 y aun así tiene límite—, la c) solo indica que hay que trabajar más, y la d) es evidencia numérica que sugiere pero no demuestra."
+    },
+    {
+      etiqueta: 'Fracción compleja', nivel: 3,
+      criterio: 'Simplificar una fracción compleja antes de sustituir (§4.3)',
+      enunciado: "$\\displaystyle\\lim_{x\\to0}\\frac{\\dfrac{1}{x+2}-\\dfrac{1}{2}}{x}$ vale:",
+      opciones: ['$\\dfrac{1}{4}$', '$0$', '$-\\dfrac{1}{4}$', 'No existe'],
+      correcta: 2,
+      pista: 'Combina primero el numerador en una sola fracción.',
+      solucion: "El numerador es $\\dfrac{2-(x+2)}{2(x+2)}=\\dfrac{-x}{2(x+2)}$, y al dividir entre $x$ queda $\\dfrac{-1}{2(x+2)}\\to-\\dfrac14$. La opción a) pierde el signo al restar: el $-x$ del numerador es lo que arrastra el signo negativo hasta el final."
+    },
+    {
+      etiqueta: 'Trigonométrico', nivel: 2,
+      criterio: 'Ajustar numerador y denominador en un límite trigonométrico (§5.1)',
+      enunciado: "$\\displaystyle\\lim_{x\\to0}\\frac{\\operatorname{sen}3x}{2x}$ vale:",
+      opciones: ['$\\dfrac{2}{3}$', '$1$', '$\\dfrac{3}{2}$', '$\\dfrac{1}{2}$'],
+      correcta: 2,
+      pista: 'Escríbelo como $\\dfrac{3}{2}\\cdot\\dfrac{\\operatorname{sen}3x}{3x}$.',
+      solucion: "$\\dfrac{\\operatorname{sen}3x}{2x}=\\dfrac{3}{2}\\cdot\\dfrac{\\operatorname{sen}3x}{3x}\\to\\dfrac32\\cdot1=\\dfrac32$. La opción a) invierte la fracción, que es el error típico cuando se ajustan dos coeficientes a la vez: conviene reescribir explícitamente antes de aplicar la fórmula."
+    },
+    {
+      etiqueta: 'Radianes', nivel: 3,
+      criterio: 'Reconocer la importancia de la unidad angular (§5)',
+      enunciado: "El límite $\\displaystyle\\lim_{x\\to0}\\frac{\\operatorname{sen}x}{x}=1$ exige que $x$ esté en radianes. Si estuviera en grados, el límite valdría:",
+      opciones: [
+        'También $1$',
+        '$\\dfrac{\\pi}{180}\\approx0{,}01745$',
+        '$180$',
+        'No existiría'
+      ],
+      correcta: 1,
+      pista: 'Un grado equivale a $\\pi/180$ radianes: el cambio de unidad introduce ese factor.',
+      solucion: "Al convertir, $\\operatorname{sen}(x°)=\\operatorname{sen}\\!\\left(\\frac{\\pi x}{180}\\right)$, y el límite pasa a valer $\\frac{\\pi}{180}\\approx0{,}01745$. Por eso todo el cálculo con funciones trigonométricas —incluida la fórmula $(\\operatorname{sen}x)'=\\cos x$— se hace en radianes: en grados aparecerían factores $\\pi/180$ por todas partes."
+    },
+    {
+      etiqueta: 'Cancelación', nivel: 3,
+      criterio: 'Justificar por qué se puede cancelar el factor problemático (§4.1)',
+      enunciado: "Al calcular $\\displaystyle\\lim_{x\\to3}\\frac{(x-3)(x+3)}{(x-3)(x+2)}$ se cancela el factor $(x-3)$. ¿Por qué es legítimo, si en $x=3$ vale cero?",
+      opciones: [
+        'Porque el límite ignora los denominadores',
+        'Porque cero entre cero da uno',
+        'Porque en el límite $x$ se acerca a 3 pero nunca <em>es</em> 3, así que el factor nunca vale cero',
+        'No es legítimo: hay que usar otro método'
+      ],
+      correcta: 2,
+      pista: 'Vuelve a la definición: «$x$ suficientemente cerca de $a$, <strong>pero distinto de $a$</strong>».',
+      solucion: "La definición de límite excluye explícitamente $x=a$, así que en todo el proceso $x-3\\neq0$ y la cancelación es válida. Esto es lo que hace que la técnica funcione, y también la razón de que la función simplificada y la original tengan el mismo límite aunque sean funciones distintas: difieren solo en el punto $x=3$."
+    },
+    {
+      etiqueta: 'Tablas', nivel: 3,
+      criterio: 'Reconocer los límites de la evidencia numérica (§1.1)',
+      enunciado: '¿Por qué una tabla de valores no basta para demostrar un límite?',
+      opciones: [
+        'Porque las calculadoras redondean',
+        'Porque solo muestra un número finito de puntos, y funciones como $\\operatorname{sen}(1/x)$ pueden engañar',
+        'Porque las tablas solo sirven para funciones continuas',
+        'Sí basta, si se usan suficientes decimales'
+      ],
+      correcta: 1,
+      pista: 'Piensa en una función que oscile cada vez más rápido cerca del punto.',
+      solucion: "Una tabla examina finitos puntos, y entre ellos puede pasar cualquier cosa. Con $\\operatorname{sen}(1/x)$ en $x\\to0$ es posible elegir valores que sugieran un límite inexistente. La evidencia numérica es útil para <em>orientarse</em> y para <em>verificar</em> un resultado algebraico, pero la demostración es siempre algebraica."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 2,
+      criterio: 'Relacionar el límite con la derivada (§1.2)',
+      enunciado: "En la Guía 1 obtuviste $\\dfrac{f(x+h)-f(x)}{h}=2x+h-3$ para $f(x)=x^{2}-3x$. ¿Qué se obtiene al tomar $\\displaystyle\\lim_{h\\to0}$?",
+      opciones: ['$0$', '$2x-3$', '$x^{2}-3x$', 'Una forma indeterminada sin salida'],
+      correcta: 1,
+      pista: 'Ya está simplificado: sustituye $h=0$.',
+      solucion: "$\\displaystyle\\lim_{h\\to0}(2x+h-3)=2x-3$, que es la <strong>derivada</strong> de $f$. Antes de simplificar, ese cociente tenía la forma $0/0$; la cancelación algebraica de la Guía 1 es exactamente la técnica de la §4 de esta guía. Todo el cálculo diferencial de la Guía 4 sale de resolver ese límite."
+    }
+  ]
+});
+</script>
 </body>
 </html>

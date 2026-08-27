@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 3 · Continuidad y asíntotas — Cálculo · UNIAJC</title>
+<title>Guía 3 · Continuidad y asíntotas — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <link rel="stylesheet" href="../assets/ova.css?v=20260827a">
 </head>
 <body>
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 3</h1>
+      <h1>Cálculo · Guía 3</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,696 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Continuidad en un punto</a>
+    <a href="#s2">2 · Tipos de discontinuidad</a>
+    <a href="#s3">3 · En un intervalo · TVI</a>
+    <a href="#s4">4 · Asíntotas verticales</a>
+    <a href="#s5">5 · Asíntotas horizontales</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 3 · Continuidad y asíntotas</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 3 · Corte I</div>
+  <h2>Continuidad y asíntotas</h2>
+  <p>La continuidad es lo que ocurre cuando el límite y el valor de la función coinciden.
+     Suena modesto, pero de ahí salen los teoremas más potentes del cálculo — y el criterio que
+     permite decir cuándo se puede sustituir sin más.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 1.4–1.5, 3.5</span>
+    <span class="chip">Stewart · Cap. 2.5–2.6</span>
+    <span class="chip">Semana 3</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 2, el Ejemplo 2 tenía límite 3 y $f(2)=5$, y el
+  Ejemplo 1 tenía laterales distintos. Esta guía le pone nombre a cada situación y la clasifica.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Continuidad en un punto</h3>
+
+  <div class="def">
+    Una función $f$ es <strong>continua en $x=a$</strong> si se cumplen las <strong>tres</strong>
+    condiciones:
+    <br><br>
+    <strong>1.</strong> $f(a)$ está definida.<br>
+    <strong>2.</strong> $\displaystyle\lim_{x\to a}f(x)$ existe.<br>
+    <strong>3.</strong> $\displaystyle\lim_{x\to a}f(x)=f(a)$.
+    <br><br>
+    Si falla cualquiera, $f$ es <em>discontinua</em> en $a$.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Las tres condiciones no sobran</h3>
+    <p>Podría parecer que la tercera implica las otras dos, pero no: para escribir la igualdad
+       hacen falta los dos objetos, y cada uno puede faltar por separado.</p>
+    <p>Falla solo la <strong>1</strong>: $\dfrac{x^{2}-4}{x-2}$ en $x=2$. El límite existe y vale 4,
+       pero la función no está definida ahí.<br>
+       Falla solo la <strong>2</strong>: $\dfrac{|x|}{x}$ en $x=0$… salvo que ahí tampoco está
+       definida. Un caso limpio es la función a trozos con laterales 3 y 5.<br>
+       Fallan 1 y 2 a la vez: $\dfrac{1}{(x-2)^{2}}$ en $x=2$.<br>
+       Se cumplen 1 y 2 pero falla la <strong>3</strong>: el Ejemplo 2 de la Guía 2, con límite 3 y
+       $f(2)=5$.</p>
+    <p>Verificar las tres <em>en orden</em> es el método seguro: la número 3 solo tiene sentido si
+       las anteriores se cumplieron.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Hallar el valor que hace continua a una función</h4>
+    <div class="ejemplo-body">
+      Sea $f(x)=\begin{cases}\dfrac{x^{2}-9}{x-3}, & x\neq3\\[6pt] k, & x=3\end{cases}$.
+      ¿Para qué $k$ es continua en $x=3$?
+      <div class="paso"><div class="paso-t">1. ¿Está definida?</div>
+        Sí: $f(3)=k$ por la propia definición. La condición 1 se cumple sea cual sea $k$.
+      </div>
+      <div class="paso"><div class="paso-t">2. ¿Existe el límite?</div>
+        $\dfrac{x^{2}-9}{x-3}=\dfrac{(x-3)(x+3)}{x-3}=x+3$ para $x\neq3$, luego
+        $\displaystyle\lim_{x\to3}f(x)=6$.
+      </div>
+      <div class="paso"><div class="paso-t">3. Igualar</div>
+        Se necesita $k=6$. Con cualquier otro valor el límite sigue siendo 6 pero no coincide con
+        $f(3)$, y la función queda discontinua.
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Empalmar dos ramas</h4>
+    <div class="ejemplo-body">
+      Halla $a$ para que $f(x)=\begin{cases}x^{2}+a, & x \lt 1\\ 3x, & x\geq1\end{cases}$ sea
+      continua en $x=1$.
+      <div class="paso"><div class="paso-t">Valor de la función</div>
+        Como $x=1$ entra en la segunda rama, $f(1)=3(1)=3$.
+      </div>
+      <div class="paso"><div class="paso-t">Laterales</div>
+        $\displaystyle\lim_{x\to1^{-}}(x^{2}+a)=1+a$ &nbsp;·&nbsp;
+        $\displaystyle\lim_{x\to1^{+}}3x=3$
+      </div>
+      <div class="paso"><div class="paso-t">Imponer las condiciones 2 y 3</div>
+        Para que el límite exista hace falta $1+a=3$, es decir $a=2$. Y con ese valor el límite
+        vale 3, que coincide con $f(1)$. Ambas condiciones se resuelven de una vez.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar</div>
+        Con $a=2$: $f(x)=x^{2}+2$ por la izquierda, que en 1 da 3 ✓, y $3x$ por la derecha, que en 1
+        da 3 ✓. Las dos ramas se tocan.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Tipos de discontinuidad</h3>
+
+  <table class="tbl">
+    <tr><th>Tipo</th><th>Qué ocurre</th><th>¿Se puede reparar?</th></tr>
+    <tr><td><strong>Evitable</strong> (o removible)</td><td>El límite existe, pero $f(a)$ no existe o vale otra cosa</td><td><strong>Sí</strong>: redefiniendo $f(a)=L$</td></tr>
+    <tr><td><strong>De salto</strong></td><td>Los laterales existen, son finitos y <em>distintos</em></td><td>No</td></tr>
+    <tr><td><strong>Infinita</strong></td><td>Al menos un lateral tiende a $\pm\infty$</td><td>No</td></tr>
+  </table>
+
+  <div class="nota">
+    <strong>El nombre lo dice todo.</strong> «Evitable» significa que el problema está solo en un
+    punto aislado y se arregla cambiando el valor <em>en ese punto</em>. En las otras dos el
+    problema es estructural: ningún valor de $f(a)$ puede pegar dos ramas que llegan a alturas
+    distintas, ni domar una que se dispara al infinito.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Dos discontinuidades en la misma función</h4>
+    <div class="ejemplo-body">
+      Clasifica las discontinuidades de $f(x)=\dfrac{x+3}{x^{2}-9}$.
+      <div class="paso"><div class="paso-t">1. Localizar los candidatos</div>
+        El denominador se anula en $x=3$ y $x=-3$. Solo ahí puede haber problemas.
+      </div>
+      <div class="paso"><div class="paso-t">2. Factorizar</div>
+        $$f(x)=\frac{x+3}{(x-3)(x+3)}=\frac{1}{x-3}\qquad (x\neq-3)$$
+      </div>
+      <div class="paso"><div class="paso-t">3. En $x=-3$</div>
+        El factor se cancela, así que
+        $\displaystyle\lim_{x\to-3}f(x)=\frac{1}{-3-3}=-\frac{1}{6}$: el límite existe.
+        Pero $f(-3)$ no está definida. <strong>Discontinuidad evitable</strong>, reparable
+        definiendo $f(-3)=-\tfrac16$.
+      </div>
+      <div class="paso"><div class="paso-t">4. En $x=3$</div>
+        El factor $(x-3)$ <em>no</em> se cancela: el denominador tiende a 0 y el numerador a 6.
+        Los laterales se disparan a $\mp\infty$. <strong>Discontinuidad infinita</strong>, y
+        $x=3$ es una asíntota vertical.
+      </div>
+      <div class="paso"><div class="paso-t">La regla que se extrae</div>
+        Un cero del denominador que <strong>se cancela</strong> produce un hueco (evitable);
+        uno que <strong>no se cancela</strong> produce una asíntota vertical. Factorizar antes de
+        concluir es imprescindible.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.1 Explora las tres condiciones</div>
+  <div class="viz" data-viz="continuidad">
+    <div class="viz-controls">
+      <label for="ct-f">Función</label>
+      <select id="ct-f">
+        <option value="evit">(x²−9)/(x−3) con f(3)=k</option>
+        <option value="salto">a trozos que empalma</option>
+        <option value="salto2">a trozos con salto</option>
+        <option value="hueco">(x²−4)/(x−2) sin definir en 2</option>
+        <option value="infi">1/(x−2)²</option>
+      </select>
+      <span class="grupo-k">
+        <label for="ct-k">Valor de k</label>
+        <input id="ct-k" class="kval" type="range" min="0" max="100" value="30">
+        <span class="k-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      </span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    En la primera opción, mueve $k$ hasta 6 y verás las tres condiciones ponerse en verde a la vez.
+    El punto dorado es $f(a)$ y el hueco azul es hacia dónde apunta el límite: la continuidad es
+    exactamente que coincidan.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Continuidad y discontinuidades</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Continuidad en un intervalo y el TVI</h3>
+
+  <div class="def">
+    $f$ es <strong>continua en un intervalo abierto</strong> $(a,b)$ si lo es en cada punto.
+    <br><br>
+    En un intervalo <strong>cerrado</strong> $[a,b]$ se exige además continuidad lateral en los
+    extremos: $\displaystyle\lim_{x\to a^{+}}f(x)=f(a)$ y
+    $\displaystyle\lim_{x\to b^{-}}f(x)=f(b)$.
+  </div>
+  <p>La exigencia lateral en los extremos es natural: por fuera del intervalo no hay nada que
+     mirar, así que solo se pide que la función llegue bien desde dentro.</p>
+
+  <div class="sub-title">3.1 Qué funciones son continuas</div>
+  <p>En vez de verificar punto por punto, conviene saber que las funciones habituales ya lo son:</p>
+  <table class="tbl">
+    <tr><th>Familia</th><th>Continua en</th></tr>
+    <tr><td>Polinomios</td><td>Todo $\mathbb{R}$</td></tr>
+    <tr><td>Racionales</td><td>Donde el denominador no se anula</td></tr>
+    <tr><td>Raíz $\sqrt[n]{x}$ con $n$ par</td><td>Donde el radicando es $\geq0$</td></tr>
+    <tr><td>$\operatorname{sen}x$, $\cos x$, $e^{x}$</td><td>Todo $\mathbb{R}$</td></tr>
+    <tr><td>$\ln x$</td><td>$(0,+\infty)$</td></tr>
+    <tr><td>$\tan x$</td><td>Donde $\cos x\neq0$</td></tr>
+  </table>
+  <p>Además, sumas, restas, productos, cocientes (con denominador no nulo) y <strong>composiciones</strong>
+     de funciones continuas vuelven a ser continuas. Con eso queda cubierto casi todo lo que
+     aparecerá en el curso, y basta con vigilar los puntos conflictivos.</p>
+
+  <div class="sub-title">3.2 Teorema del Valor Intermedio</div>
+  <div class="def">
+    <strong>TVI.</strong> Si $f$ es continua en $[a,b]$ y $N$ es un valor entre $f(a)$ y $f(b)$,
+    entonces existe al menos un $c\in(a,b)$ con $f(c)=N$.
+  </div>
+  <p>Dicho sin símbolos: una función continua no puede pasar de un valor a otro <em>saltándose</em>
+     los intermedios. Si empieza abajo y termina arriba, en algún punto cruzó todo lo que hay en medio.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Localizar una raíz sin resolver la ecuación</h4>
+    <div class="ejemplo-body">
+      Demuestra que $x^{3}-x-1=0$ tiene una solución en $(1,2)$.
+      <div class="paso"><div class="paso-t">1. Continuidad</div>
+        $f(x)=x^{3}-x-1$ es un polinomio, luego es continua en $[1,2]$. La hipótesis se cumple.
+      </div>
+      <div class="paso"><div class="paso-t">2. Evaluar en los extremos</div>
+        $f(1)=1-1-1=-1 \lt 0$ &nbsp;·&nbsp; $f(2)=8-2-1=5 \gt 0$
+      </div>
+      <div class="paso"><div class="paso-t">3. Aplicar el TVI con $N=0$</div>
+        Como $0$ está entre $-1$ y $5$, existe $c\in(1,2)$ con $f(c)=0$. <strong>Hay raíz.</strong>
+      </div>
+      <div class="paso"><div class="paso-t">Lo que el teorema NO dice</div>
+        No dice cuánto vale $c$ ni cuántas raíces hay: solo que existe al menos una. Es un teorema
+        de <em>existencia</em>.<br>
+        Y ese es exactamente el fundamento del método de <strong>bisección</strong> que verás en
+        Métodos Numéricos: partir el intervalo por la mitad, ver de qué lado cambia el signo, y
+        repetir. La raíz vale $c\approx1{,}3247$.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>La continuidad no es un detalle técnico</h3>
+    <p>Sin continuidad el TVI es falso, y basta un contraejemplo para verlo. Toma $f(x)=\dfrac1x$
+       en $[-1,1]$: se tiene $f(-1)=-1$ y $f(1)=1$, así que $0$ está entre ambos. Pero
+       $\dfrac1x$ <strong>nunca vale cero</strong>.</p>
+    <p>¿Dónde falló? En que $f$ no es continua en $[-1,1]$: se dispara al infinito en $x=0$.
+       La función se saltó todos los valores intermedios pasando por el infinito.</p>
+    <p>Por eso, cuando apliques el TVI, la primera frase debe ser siempre <em>«como $f$ es continua
+       en $[a,b]$…»</em>. No es una formalidad: es la hipótesis que sostiene todo.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Intervalos y TVI</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Límites infinitos y asíntotas verticales</h3>
+
+  <div class="def">
+    $\displaystyle\lim_{x\to a}f(x)=+\infty$ significa que $f(x)$ crece sin cota al acercarse $x$
+    a $a$. La recta $x=a$ es una <strong>asíntota vertical</strong> si al menos uno de los laterales
+    tiende a $+\infty$ o a $-\infty$.
+  </div>
+
+  <div class="nota">
+    <strong>Escribir $=\infty$ es un abuso de notación cómodo.</strong> El infinito no es un número
+    y el límite <em>no existe</em> en sentido estricto: lo que se está diciendo es <em>cómo</em> no
+    existe. Es información valiosa, mucho más útil que un escueto «no existe».
+  </div>
+
+  <div class="sub-title">4.1 Cómo hallarlas</div>
+  <ol>
+    <li>Localizar los ceros del denominador.</li>
+    <li><strong>Factorizar y simplificar.</strong> Si el factor se cancela, hay un hueco evitable,
+        no una asíntota.</li>
+    <li>Para los que no se cancelan, estudiar el <strong>signo por cada lado</strong> para saber si
+        va a $+\infty$ o a $-\infty$.</li>
+  </ol>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · El signo depende del lado</h4>
+    <div class="ejemplo-body">
+      Analiza $f(x)=\dfrac{1}{x-2}$ cerca de $x=2$.
+      <div class="paso"><div class="paso-t">Por la izquierda ($x \lt 2$)</div>
+        $x-2$ es un número negativo diminuto, así que $\dfrac{1}{\text{negativo pequeño}}$ es un
+        negativo enorme:
+        $\displaystyle\lim_{x\to2^{-}}\frac{1}{x-2}=-\infty$
+      </div>
+      <div class="paso"><div class="paso-t">Por la derecha ($x \gt 2$)</div>
+        Ahora $x-2$ es positivo diminuto:
+        $\displaystyle\lim_{x\to2^{+}}\frac{1}{x-2}=+\infty$
+      </div>
+      <div class="paso"><div class="paso-t">Contraste con $\dfrac{1}{(x-2)^{2}}$</div>
+        Al elevar al cuadrado el denominador es siempre positivo, así que los dos laterales van a
+        $+\infty$. Aquí sí se puede escribir
+        $\displaystyle\lim_{x\to2}\frac{1}{(x-2)^{2}}=+\infty$ sin especificar lado.
+      </div>
+      <div class="paso"><div class="paso-t">Técnica práctica</div>
+        Evalúa mentalmente en un punto muy cercano: $x=1{,}999$ y $x=2{,}001$. El signo que salga
+        es el del infinito correspondiente. Es más rápido y seguro que razonar en abstracto.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Límites al infinito y asíntotas horizontales</h3>
+
+  <div class="def">
+    $\displaystyle\lim_{x\to+\infty}f(x)=L$ significa que $f(x)$ se acerca a $L$ al crecer $x$ sin
+    cota. La recta $y=L$ es una <strong>asíntota horizontal</strong>.
+  </div>
+  <p>Ojo a la diferencia: en la §4 era $x\to a$ (finito) con $f\to\infty$; aquí es $x\to\infty$
+     con $f\to L$ (finito). Son preguntas opuestas y conviene no mezclarlas.</p>
+
+  <div class="sub-title">5.1 La técnica: dividir entre la mayor potencia</div>
+  <p>El hecho básico es que $\displaystyle\lim_{x\to\infty}\frac{1}{x^{n}}=0$ para $n \gt 0$.
+     Dividiendo numerador y denominador entre la mayor potencia de $x$ del <em>denominador</em>,
+     todo se reduce a ese hecho.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Los tres casos de una función racional</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Grados iguales</div>
+        $$\lim_{x\to\infty}\frac{3x^{2}-2x+1}{5x^{2}+7}
+          =\lim_{x\to\infty}\frac{3-\frac{2}{x}+\frac{1}{x^{2}}}{5+\frac{7}{x^{2}}}
+          =\frac{3}{5}$$
+        Asíntota horizontal $y=\tfrac35$: el <strong>cociente de los coeficientes principales</strong>.
+      </div>
+      <div class="paso"><div class="paso-t">Grado del numerador menor</div>
+        $$\lim_{x\to\infty}\frac{2x+1}{x^{2}+3}
+          =\lim_{x\to\infty}\frac{\frac{2}{x}+\frac{1}{x^{2}}}{1+\frac{3}{x^{2}}}=\frac{0}{1}=0$$
+        Asíntota horizontal $y=0$.
+      </div>
+      <div class="paso"><div class="paso-t">Grado del numerador mayor</div>
+        $$\lim_{x\to\infty}\frac{x^{3}}{x^{2}+1}=\lim_{x\to\infty}\frac{x}{1+\frac{1}{x^{2}}}=+\infty$$
+        <strong>No hay asíntota horizontal.</strong>
+      </div>
+      <div class="paso"><div class="paso-t">Regla resumida</div>
+        Comparando el grado del numerador $n$ con el del denominador $m$:<br>
+        $n \lt m$ → $y=0$ &nbsp;·&nbsp; $n=m$ → $y=\dfrac{a_n}{b_m}$ &nbsp;·&nbsp;
+        $n \gt m$ → no hay.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>La trampa del signo con raíces</h3>
+    <p>Calcula $\displaystyle\lim_{x\to\infty}\frac{\sqrt{x^{2}+1}}{x}$. Como
+       $\sqrt{x^{2}+1}\approx|x|$ y para $x \gt 0$ se tiene $|x|=x$, el límite vale
+       $\mathbf{1}$.</p>
+    <p>Ahora $\displaystyle\lim_{x\to-\infty}\frac{\sqrt{x^{2}+1}}{x}$. La raíz sigue siendo
+       positiva, pero ahora $x$ es negativo: $|x|=-x$, y el límite vale $\mathbf{-1}$.</p>
+    <p>Es decir, esta función tiene <strong>dos asíntotas horizontales distintas</strong>:
+       $y=1$ a la derecha e $y=-1$ a la izquierda. Siempre que aparezca $\sqrt{x^{2}}$ hay que
+       recordar que vale $|x|$, no $x$ — y que el valor absoluto se abre distinto según el signo.</p>
+    <p>Una función puede tener a lo sumo dos asíntotas horizontales, una por cada extremo. Pero
+       puede tener tantas verticales como ceros no cancelados tenga su denominador.</p>
+  </div>
+
+  <div class="sub-title">5.2 Explora las asíntotas</div>
+  <div class="viz" data-viz="asintotas">
+    <div class="viz-controls">
+      <label for="as-f">Función</label>
+      <select id="as-f">
+        <option value="ig">(3x²−2x+1)/(5x²+7) &nbsp;grados iguales</option>
+        <option value="menor">(2x+1)/(x²+3) &nbsp;numerador menor</option>
+        <option value="mayor">x³/(x²+1) &nbsp;numerador mayor</option>
+        <option value="simple">1/(x−2)</option>
+        <option value="vert">(x+3)/(x²−9) &nbsp;con hueco</option>
+        <option value="raiz">√(x²+1)/x &nbsp;dos horizontales</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Las rojas son verticales y las verdes horizontales. Fíjate en $(x+3)/(x^{2}-9)$: solo aparece
+    <em>una</em> vertical, en $x=3$, porque en $x=-3$ el factor se cancela y deja un hueco.
+    Y en $\sqrt{x^{2}+1}/x$ verás las dos horizontales del recuadro anterior.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Asíntotas</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Con costo total $C(x)=900\,000+4\,500x$, el costo medio es
+      $\bar{C}(x)=\dfrac{900\,000}{x}+4\,500$. Su asíntota horizontal es $y=4\,500$: por más que se
+      produzca, el costo medio nunca baja del costo variable unitario. Y la asíntota vertical en
+      $x=0$ dice que producir una sola unidad carga con todo el costo fijo.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Una función de utilidad con costos fijos tiene asíntota vertical en el punto donde el
+      denominador —por ejemplo, el volumen— se anula. Y el análisis del margen a largo plazo es un
+      límite al infinito: hacia qué porcentaje tiende la rentabilidad cuando la escala crece.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      El tiempo de respuesta de un servidor cerca de su capacidad máxima $\mu$ se comporta como
+      $T(\lambda)=\dfrac{1}{\mu-\lambda}$: asíntota vertical en $\lambda=\mu$. Por eso un sistema al
+      99 % de carga no va «un poco más lento», sino que colapsa. La asíntota es la explicación
+      matemática de la saturación.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La respuesta en frecuencia de un filtro RC pasa-bajos es
+      $|H(\omega)|=\dfrac{1}{\sqrt{1+(\omega RC)^{2}}}$, con asíntota horizontal $y=0$ cuando
+      $\omega\to\infty$: las frecuencias altas se atenúan por completo. Y en resonancia sin
+      amortiguamiento aparece una asíntota vertical — la amplitud teórica se dispara.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Continuidad en $a$ = <strong>tres</strong> condiciones: $f(a)$ existe, el límite existe, y coinciden.</li>
+    <li><strong>Evitable</strong>: el límite existe pero no coincide con $f(a)$. Se repara redefiniendo un punto.</li>
+    <li><strong>Salto</strong> e <strong>infinita</strong>: no se reparan; el problema es estructural.</li>
+    <li>Un cero del denominador que <strong>se cancela</strong> da hueco; el que <strong>no se cancela</strong>, asíntota vertical.</li>
+    <li>Polinomios, exponenciales y trigonométricas básicas son continuas; sus combinaciones también.</li>
+    <li><strong>TVI</strong>: si $f$ es continua en $[a,b]$, toma todos los valores entre $f(a)$ y $f(b)$. Es de <em>existencia</em>.</li>
+    <li>Sin continuidad el TVI falla: $1/x$ en $[-1,1]$ nunca vale cero.</li>
+    <li>Asíntota horizontal por comparación de grados: $n \lt m$ → $y=0$; $n=m$ → cociente de principales; $n \gt m$ → ninguna.</li>
+    <li>$\sqrt{x^{2}}=|x|$: por eso $\sqrt{x^{2}+1}/x$ tiene <strong>dos</strong> asíntotas horizontales, $y=1$ e $y=-1$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/2-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1 · Límites</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
+
 <script src="../assets/ova.js?v=20260827a"></script>
+<script src="../assets/viz-calculo.js?v=20260827a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Continuidad y discontinuidades · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Las tres condiciones', nivel: 2,
+      criterio: 'Hallar el valor que hace continua a una función (§1)',
+      enunciado: "Sea $f(x)=\\dfrac{x^{2}-9}{x-3}$ para $x\\neq3$ y $f(3)=k$. ¿Para qué $k$ es continua en $x=3$?",
+      opciones: ['$k=0$', '$k=3$', '$k=6$', 'Para ningún valor de $k$'],
+      correcta: 2,
+      pista: 'Simplifica la fracción y calcula el límite; luego iguala.',
+      solucion: "$\\dfrac{(x-3)(x+3)}{x-3}=x+3$ para $x\\neq3$, así que el límite vale 6. La tercera condición exige $f(3)=6$, es decir $k=6$. La opción d) sería correcta si el límite no existiera, pero aquí existe: por eso la discontinuidad es <em>evitable</em>."
+    },
+    {
+      etiqueta: 'Empalme', nivel: 2,
+      criterio: 'Determinar un parámetro para que dos ramas empalmen (§1)',
+      enunciado: "Para que $f(x)=\\begin{cases}x^{2}+a,& x \\lt 1\\\\ 3x,& x\\geq1\\end{cases}$ sea continua en $x=1$, el valor de $a$ es:",
+      opciones: ['$a=2$', '$a=3$', '$a=1$', '$a=-2$'],
+      correcta: 0,
+      pista: 'Iguala los dos laterales: $1+a$ debe coincidir con $3$.',
+      solucion: "El lateral izquierdo es $1+a$ y el derecho es $3$, que además es $f(1)$. Igualando, $a=2$. La opción b) confunde $a$ con el valor de la función en el punto: $f(1)=3$, pero el parámetro que hay que ajustar vale 2."
+    },
+    {
+      etiqueta: 'Clasificar', nivel: 3,
+      criterio: 'Clasificar las discontinuidades de una función racional (§2)',
+      enunciado: "Las discontinuidades de $f(x)=\\dfrac{x+3}{x^{2}-9}$ son:",
+      opciones: [
+        'Infinita en $x=-3$ y evitable en $x=3$',
+        'Evitables en $x=3$ y en $x=-3$',
+        'Solo una, infinita en $x=3$',
+        'Evitable en $x=-3$ e infinita en $x=3$'
+      ],
+      correcta: 3,
+      pista: 'Factoriza el denominador y observa qué factor se cancela.',
+      solucion: "$\\dfrac{x+3}{(x-3)(x+3)}=\\dfrac{1}{x-3}$ para $x\\neq-3$. En $x=-3$ el factor se cancela y el límite existe ($-\\tfrac16$): <strong>evitable</strong>. En $x=3$ no se cancela y los laterales se disparan: <strong>infinita</strong>. La opción a) invierte los dos puntos, que es el error típico de no factorizar antes de concluir."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Intervalos y TVI · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Aplicar el TVI', nivel: 2,
+      criterio: 'Usar el TVI para garantizar una raíz (§3.2)',
+      enunciado: "¿Qué garantiza el TVI para $f(x)=x^{3}-x-1$ en el intervalo $[1,2]$?",
+      opciones: [
+        'Que la raíz vale exactamente $1{,}5$',
+        'Que existe al menos una raíz en $(1,2)$',
+        'Que hay exactamente una raíz',
+        'Nada, porque $f$ no es continua ahí'
+      ],
+      correcta: 1,
+      pista: 'Evalúa en los extremos y observa el cambio de signo. ¿Qué tipo de teorema es el TVI?',
+      solucion: "$f(1)=-1 \\lt 0$ y $f(2)=5 \\gt 0$, y $f$ es un polinomio (continuo), así que el TVI garantiza que existe $c\\in(1,2)$ con $f(c)=0$. Es un teorema de <strong>existencia</strong>: no dice cuántas raíces hay ni cuánto valen. La raíz real es $c\\approx1{,}3247$, no $1{,}5$."
+    },
+    {
+      etiqueta: 'La hipótesis', nivel: 3,
+      criterio: 'Reconocer que la continuidad es indispensable en el TVI (§3.2)',
+      enunciado: "Para $f(x)=\\dfrac{1}{x}$ en $[-1,1]$ se tiene $f(-1)=-1$ y $f(1)=1$, pero $f$ nunca vale $0$. ¿Contradice esto el TVI?",
+      opciones: [
+        'Sí, es un contraejemplo del teorema',
+        'No, porque $0$ no está entre $-1$ y $1$',
+        'No, porque $f$ no es continua en $[-1,1]$: se dispara en $x=0$',
+        'Sí, pero solo en intervalos cerrados'
+      ],
+      correcta: 2,
+      pista: '¿Se cumplen todas las hipótesis del teorema en ese intervalo?',
+      solucion: "El TVI exige continuidad en <strong>todo</strong> $[a,b]$, y $\\dfrac1x$ tiene una discontinuidad infinita en $x=0$, que pertenece al intervalo. Sin esa hipótesis el teorema no aplica, y la función puede saltarse los valores intermedios pasando por el infinito. Por eso al usar el TVI hay que verificar la continuidad primero."
+    },
+    {
+      etiqueta: 'Continuidad', nivel: 2,
+      criterio: 'Reconocer el dominio de continuidad de funciones elementales (§3.1)',
+      enunciado: '¿En qué conjunto es continua $f(x)=\\ln x$?',
+      opciones: [
+        'En todo $\\mathbb{R}$',
+        'En $\\mathbb{R}\\setminus\\{0\\}$',
+        'En $[0,+\\infty)$',
+        'En $(0,+\\infty)$'
+      ],
+      correcta: 3,
+      pista: '¿Cuál es el dominio del logaritmo? Una función no puede ser continua donde no está definida.',
+      solucion: "El logaritmo solo está definido para $x \\gt 0$, y en ese conjunto es continuo. La opción c) incluye el $0$, donde $\\ln$ no existe; la b) incluye los negativos. Una función no puede ser continua en un punto que no pertenece a su dominio: falla la primera condición."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Asíntotas · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Vertical con signo', nivel: 2,
+      criterio: 'Determinar el signo de un límite infinito (§4.1)',
+      enunciado: "$\\displaystyle\\lim_{x\\to2^{-}}\\frac{1}{x-2}$ vale:",
+      opciones: ['$+\\infty$', '$-\\infty$', '$0$', 'No se puede determinar'],
+      correcta: 1,
+      pista: 'Prueba con $x=1{,}999$: ¿qué signo tiene $x-2$?',
+      solucion: "Por la izquierda $x \\lt 2$, así que $x-2$ es un número negativo diminuto y su recíproco es un negativo enorme: $-\\infty$. Por la derecha sería $+\\infty$. Evaluar mentalmente en un punto muy cercano es la técnica más rápida y segura para decidir el signo."
+    },
+    {
+      etiqueta: 'Horizontal', nivel: 2,
+      criterio: 'Hallar la asíntota horizontal comparando grados (§5.1)',
+      enunciado: "La asíntota horizontal de $f(x)=\\dfrac{4x^{3}-1}{2x^{3}+x}$ es:",
+      opciones: ['$y=0$', '$y=4$', 'No tiene', '$y=2$'],
+      correcta: 3,
+      pista: 'Los grados coinciden: divide los coeficientes principales.',
+      solucion: "Con grados iguales, el límite es el cociente de los coeficientes principales: $\\dfrac{4}{2}=2$. La opción b) toma solo el coeficiente del numerador, y la a) confundiría este caso con el de numerador de grado menor. Dividir entre $x^{3}$ y tomar el límite lo confirma."
+    },
+    {
+      etiqueta: 'La trampa del signo', nivel: 3,
+      criterio: 'Manejar la raíz cuadrada en límites al infinito (§5.1)',
+      enunciado: "Sabiendo que $\\displaystyle\\lim_{x\\to+\\infty}\\frac{\\sqrt{x^{2}+1}}{x}=1$, ¿cuánto vale $\\displaystyle\\lim_{x\\to-\\infty}\\frac{\\sqrt{x^{2}+1}}{x}$?",
+      opciones: ['También $1$', '$-1$', '$0$', 'No existe'],
+      correcta: 1,
+      pista: 'Recuerda que $\\sqrt{x^{2}}=|x|$, y que para $x \\lt 0$ se tiene $|x|=-x$.',
+      solucion: "La raíz es siempre positiva, pero el denominador ahora es negativo, así que el cociente tiende a $-1$. La función tiene <strong>dos asíntotas horizontales distintas</strong>: $y=1$ a la derecha e $y=-1$ a la izquierda. Escribir $\\sqrt{x^{2}}=x$ en lugar de $|x|$ es el error que produce la opción a)."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Definición', nivel: 1,
+      criterio: 'Enunciar las condiciones de continuidad (§1)',
+      enunciado: 'Para que $f$ sea continua en $x=a$ hace falta que:',
+      opciones: [
+        'Basta con que el límite exista',
+        'Basta con que $f(a)$ esté definida',
+        '$f(a)$ exista, el límite exista, y ambos coincidan',
+        'La gráfica no tenga huecos en ningún punto'
+      ],
+      correcta: 2,
+      pista: 'Son tres condiciones y cada una puede fallar por separado.',
+      solucion: "Las tres son necesarias. La a) falla con $\\dfrac{x^{2}-4}{x-2}$ en $x=2$: el límite existe y la función no. La b) falla con el ejemplo de límite 3 y $f(2)=5$. Y la d) confunde continuidad <em>en un punto</em> con continuidad global."
+    },
+    {
+      etiqueta: 'Tipos', nivel: 2,
+      criterio: 'Identificar una discontinuidad evitable (§2)',
+      enunciado: '¿Cuál de estas discontinuidades se puede reparar redefiniendo la función en un solo punto?',
+      opciones: [
+        'La de salto',
+        'La infinita',
+        'Ninguna de las tres',
+        'La evitable'
+      ],
+      correcta: 3,
+      pista: 'El nombre del tipo lo dice.',
+      solucion: "En la evitable el límite <em>existe</em>: basta definir $f(a)=L$ y las tres condiciones se cumplen. En el salto no hay un único $L$ al que igualar, y en la infinita el límite ni siquiera es finito. El problema de esas dos es estructural, no puntual."
+    },
+    {
+      etiqueta: 'Asíntota o hueco', nivel: 3,
+      criterio: 'Distinguir un cero cancelable de uno que da asíntota (§4.1)',
+      enunciado: "¿Cuántas asíntotas verticales tiene $f(x)=\\dfrac{x+3}{x^{2}-9}$?",
+      opciones: ['Ninguna', 'Una, en $x=3$', 'Dos, en $x=\\pm3$', 'Una, en $x=-3$'],
+      correcta: 1,
+      pista: 'Factoriza y mira qué factor sobrevive a la simplificación.',
+      solucion: "Tras simplificar queda $\\dfrac{1}{x-3}$, así que solo $x=3$ produce asíntota. En $x=-3$ el factor se canceló y hay un hueco, no una asíntota. La opción c) es el error de anular el denominador sin factorizar antes: no todo cero del denominador da asíntota."
+    },
+    {
+      etiqueta: 'Grados', nivel: 2,
+      criterio: 'Aplicar la comparación de grados (§5.1)',
+      enunciado: "La función $f(x)=\\dfrac{x^{3}}{x^{2}+1}$:",
+      opciones: [
+        'Tiene asíntota horizontal $y=1$',
+        'Tiene asíntota horizontal $y=0$',
+        'No tiene asíntota horizontal',
+        'Tiene asíntota vertical en $x=0$'
+      ],
+      correcta: 2,
+      pista: 'Compara el grado del numerador con el del denominador.',
+      solucion: "Grado 3 arriba contra grado 2 abajo: el cociente crece sin cota y $\\displaystyle\\lim_{x\\to\\infty}f=+\\infty$, luego no hay asíntota horizontal. La opción d) además es falsa: $x^{2}+1$ nunca se anula en los reales, así que tampoco hay verticales."
+    },
+    {
+      etiqueta: 'TVI', nivel: 2,
+      criterio: 'Delimitar qué afirma el TVI (§3.2)',
+      enunciado: 'El Teorema del Valor Intermedio es un teorema de:',
+      opciones: [
+        'Existencia: garantiza que hay un $c$, sin decir cuál',
+        'Cálculo: proporciona el valor exacto de $c$',
+        'Unicidad: garantiza que $c$ es único',
+        'Aproximación: da un valor aproximado de $c$'
+      ],
+      correcta: 0,
+      pista: '¿El enunciado del teorema incluye alguna fórmula para $c$?',
+      solucion: "El TVI afirma que <em>existe al menos un</em> $c$, y nada más. No lo calcula ni asegura que sea único. Justamente por eso hacen falta métodos numéricos como la bisección, que usan el TVI para acorralar la raíz partiendo el intervalo por la mitad."
+    },
+    {
+      etiqueta: 'Signo del infinito', nivel: 2,
+      criterio: 'Distinguir límites infinitos por ambos lados (§4.1)',
+      enunciado: "¿Para cuál de estas funciones se puede escribir $\\displaystyle\\lim_{x\\to2}f(x)=+\\infty$ sin especificar el lado?",
+      opciones: [
+        "$f(x)=\\dfrac{1}{x-2}$",
+        "$f(x)=\\dfrac{x}{x-2}$",
+        "$f(x)=\\dfrac{1}{(x-2)^{2}}$",
+        "$f(x)=\\dfrac{1}{2-x}$"
+      ],
+      correcta: 2,
+      pista: '¿En cuál el denominador tiene el mismo signo por los dos lados?',
+      solucion: "$(x-2)^{2}$ es positivo por ambos lados, así que los dos laterales van a $+\\infty$ y el enunciado bilateral es válido. En las otras tres el denominador cambia de signo al cruzar $x=2$, y los laterales van a $-\\infty$ y $+\\infty$ respectivamente: ahí hay que especificar el lado."
+    },
+    {
+      etiqueta: 'Continuidad', nivel: 2,
+      criterio: 'Determinar dónde es continua una función racional (§3.1)',
+      enunciado: "La función $f(x)=\\dfrac{x^{2}+1}{x^{2}-4}$ es continua en:",
+      opciones: [
+        'Todo $\\mathbb{R}$',
+        '$\\mathbb{R}\\setminus\\{-2,\\,2\\}$',
+        '$\\mathbb{R}\\setminus\\{-1,\\,1\\}$',
+        'Solo en $(2,+\\infty)$'
+      ],
+      correcta: 1,
+      pista: 'Una racional es continua donde su denominador no se anula.',
+      solucion: "$x^{2}-4=0$ en $x=\\pm2$, y ahí la función no está definida. En todo lo demás es continua, porque es cociente de polinomios. Nota que el numerador $x^{2}+1$ nunca se anula, así que ninguno de los dos factores se cancela: ambos puntos dan asíntota vertical."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Relacionar continuidad con la sustitución directa (§3.1)',
+      enunciado: '¿Por qué se puede calcular el límite de un polinomio simplemente sustituyendo?',
+      opciones: [
+        'Porque los polinomios no tienen denominador',
+        'Porque son continuos en todo $\\mathbb{R}$, y continuidad significa precisamente que el límite coincide con el valor',
+        'Porque su gráfica es una recta',
+        'Es una convención práctica, no un resultado'
+      ],
+      correcta: 1,
+      pista: 'Relee la tercera condición de continuidad y léela de derecha a izquierda.',
+      solucion: "La tercera condición dice $\\displaystyle\\lim_{x\\to a}f(x)=f(a)$: exactamente la sustitución directa. Es decir, «sustituir funciona» y «la función es continua» son la misma afirmación. La opción a) es una coincidencia sin relación causal — $\\dfrac{x^{2}+1}{x^{2}+4}$ tiene denominador y también admite sustitución en todo $\\mathbb{R}$."
+    }
+  ]
+});
+</script>
 </body>
 </html>
