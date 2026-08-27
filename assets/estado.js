@@ -15,7 +15,7 @@
    algo dentro de assets/.
    ══════════════════════════════════════════════════════════ */
 window.OVA_PUBLICADAS = {
-  calculo:   [1],
+  calculo:   [1, 2, 3],
   vectorial: [1],
   metodos:   [1, 2, 3],
   edo:       [1, 2, 3]
