@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 3 · Sistemas lineales: métodos exactos — Métodos Numéricos · UNIAJC</title>
+<title>Guía 3 · Sistemas lineales: métodos exactos — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <link rel="stylesheet" href="../assets/ova.css?v=20260827a">
 </head>
 <body>
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Semana 3</h1>
+      <h1>Métodos Numéricos · Guía 3</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,723 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · El problema</a>
+    <a href="#s2">2 · Gauss</a>
+    <a href="#s3">3 · Gauss-Jordan</a>
+    <a href="#s4">4 · Cramer</a>
+    <a href="#s5">5 · Pivoteo</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 3 · Sistemas lineales: métodos exactos</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 3 · Corte I</div>
+  <h2>Sistemas lineales: métodos exactos</h2>
+  <p>Tres métodos que dan la misma respuesta y no valen lo mismo. Resolver sistemas
+     $A\mathbf{x}=\mathbf{b}$ es la operación más frecuente del cálculo científico, y aquí
+     empieza a notarse la diferencia entre un método <em>correcto</em> y uno <em>utilizable</em>.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 9</span>
+    <span class="chip">Burden · Cap. 6</span>
+    <span class="chip">Semana 3</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 1 repasaste la eliminación y la sustitución hacia
+  atrás. En la Guía 2 viste que restar números casi iguales destruye cifras significativas.
+  Esta semana esas dos ideas se encuentran: la §5 muestra un sistema donde el método correcto
+  entrega un resultado <em>completamente</em> equivocado, y cómo evitarlo con un intercambio de filas.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · El problema y sus tres desenlaces</h3>
+
+  <div class="def">
+    Un sistema de $n$ ecuaciones lineales con $n$ incógnitas se escribe
+    $$A\mathbf{x}=\mathbf{b}$$
+    y se manipula sobre la <em>matriz aumentada</em> $[\,A\mid\mathbf{b}\,]$. Las tres
+    <strong>operaciones elementales de fila</strong> no alteran el conjunto solución:
+    <br><br>
+    <strong>1.</strong> Intercambiar dos filas.<br>
+    <strong>2.</strong> Multiplicar una fila por un escalar no nulo.<br>
+    <strong>3.</strong> Sumar a una fila un múltiplo de otra.
+  </div>
+
+  <div class="sub-title">1.1 Interpretación geométrica</div>
+  <p>Cada ecuación de un sistema $3\times3$ describe un <strong>plano</strong> en el espacio, y la
+     solución es el conjunto de puntos comunes a los tres. Eso explica geométricamente por qué solo
+     hay tres desenlaces posibles:</p>
+  <table class="tbl">
+    <tr><th>Al triangular aparece…</th><th>Geometría</th><th>Solución</th><th>$\det A$</th></tr>
+    <tr><td>Todos los pivotes no nulos</td><td>Los tres planos se cortan en un punto</td><td>Única</td><td>$\neq 0$</td></tr>
+    <tr><td>Una fila $[\,0\ 0\ 0\mid 0\,]$</td><td>Se cortan en una recta o un plano</td><td>Infinitas</td><td>$=0$</td></tr>
+    <tr><td>Una fila $[\,0\ 0\ 0\mid c\,]$, $c\neq0$</td><td>No hay punto común</td><td>Ninguna</td><td>$=0$</td></tr>
+  </table>
+
+  <div class="nota">
+    <strong>Cómo distinguir los dos últimos casos.</strong> Ambos dan determinante cero, y la
+    diferencia está en el término independiente. La fila $[\,0\ 0\ 0\mid 0\,]$ dice $0=0$: es
+    cierta y no aporta información, así que sobra una ecuación y queda un parámetro libre.
+    La fila $[\,0\ 0\ 0\mid 5\,]$ dice $0=5$: es falsa, y el sistema es incompatible.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Por qué esto es el problema central del cálculo científico</h3>
+    <p>Resolver $A\mathbf{x}=\mathbf{b}$ no es un ejercicio de álgebra: es la operación que aparece
+       al final de casi todo. El ajuste por mínimos cuadrados de la semana 11 termina en un sistema
+       lineal. La interpolación por splines, también. Discretizar una ecuación diferencial en
+       derivadas parciales produce sistemas de cientos de miles de incógnitas.</p>
+    <p>Se estima que una fracción enorme de todo el tiempo de cómputo científico del mundo se
+       dedica a resolver sistemas lineales. Por eso vale la pena mirar con lupa cuánto cuesta cada
+       método.</p>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Eliminación de Gauss con sustitución hacia atrás</h3>
+
+  <p>La estrategia tiene dos fases bien separadas, y conviene no confundirlas:</p>
+  <ol>
+    <li><strong>Eliminación hacia adelante.</strong> Usando operaciones de fila, anular todo lo que
+        está <em>debajo</em> de la diagonal hasta dejar una matriz triangular superior.</li>
+    <li><strong>Sustitución hacia atrás.</strong> Resolver desde la última fila —que tiene una sola
+        incógnita— hacia arriba, sustituyendo cada valor hallado.</li>
+  </ol>
+
+  <div class="def">
+    En el paso $k$, el elemento $a_{kk}$ se llama <strong>pivote</strong>. Para anular el elemento
+    $a_{ik}$ de una fila inferior se usa el <em>multiplicador</em>
+    $$f_{ik}=\frac{a_{ik}}{a_{kk}}, \qquad F_i \to F_i - f_{ik}\,F_k$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Eliminación de Gauss en un sistema $3\times3$</h4>
+    <div class="ejemplo-body">
+      Resuelve $\;x+y+z=6,\quad 2x-y+3z=9,\quad 3x+2y-2z=1$.
+      <div class="paso"><div class="paso-t">Matriz aumentada</div>
+        $$\left[\begin{array}{rrr|r}1&1&1&6\\2&-1&3&9\\3&2&-2&1\end{array}\right]$$
+      </div>
+      <div class="paso"><div class="paso-t">Eliminar la primera columna · pivote $a_{11}=1$</div>
+        $f_{21}=2/1=2$ y $f_{31}=3/1=3$:
+        $$F_2\to F_2-2F_1,\qquad F_3\to F_3-3F_1$$
+        $$\left[\begin{array}{rrr|r}1&1&1&6\\0&-3&1&-3\\0&-1&-5&-17\end{array}\right]$$
+      </div>
+      <div class="paso"><div class="paso-t">Eliminar la segunda columna · pivote $a_{22}=-3$</div>
+        $f_{32}=\dfrac{-1}{-3}=\dfrac{1}{3}$:
+        $$F_3\to F_3-\tfrac13 F_2 \qquad\Longrightarrow\qquad
+          \left[\begin{array}{rrr|r}1&1&1&6\\0&-3&1&-3\\0&0&-\tfrac{16}{3}&-16\end{array}\right]$$
+      </div>
+      <div class="paso"><div class="paso-t">Sustitución hacia atrás</div>
+        $-\dfrac{16}{3}z=-16 \Rightarrow z=3$<br>
+        $-3y+(1)(3)=-3 \Rightarrow -3y=-6 \Rightarrow y=2$<br>
+        $x+2+3=6 \Rightarrow x=1$<br>
+        Solución: $(x,y,z)=(1,\,2,\,3)$.
+      </div>
+      <div class="paso"><div class="paso-t">Verificar siempre</div>
+        $1+2+3=6$ ✓ &nbsp;·&nbsp; $2-2+9=9$ ✓ &nbsp;·&nbsp; $3+4-6=1$ ✓<br>
+        Sustituir en las ecuaciones <em>originales</em> cuesta treinta segundos y detecta cualquier
+        error aritmético cometido en el camino.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">2.1 Costo</div>
+  <p>Contando multiplicaciones y divisiones, la eliminación hacia adelante requiere del orden de
+     $\dfrac{n^{3}}{3}$ operaciones y la sustitución hacia atrás solo $\dfrac{n^{2}}{2}$.
+     Para $n$ grande domina el término cúbico, así que decimos que Gauss es
+     <strong>$O(n^{3})$</strong>.</p>
+  <div class="nota">
+    <strong>Qué significa $O(n^{3})$ en la práctica.</strong> Duplicar el tamaño del sistema
+    multiplica el trabajo por $2^{3}=8$. Pasar de $n=100$ a $n=1000$ lo multiplica por mil.
+    Es un crecimiento fuerte, pero <em>manejable</em>: un sistema de 1 000 incógnitas necesita unas
+    $3\times10^{8}$ operaciones, cosa de segundos en cualquier portátil.
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Gauss-Jordan</h3>
+
+  <p>Es una variante que lleva la eliminación más lejos, hasta eliminar la sustitución hacia atrás.</p>
+
+  <div class="def">
+    En <strong>Gauss-Jordan</strong>, en cada paso se hacen dos cosas:
+    <br><br>
+    <strong>1.</strong> <em>Normalizar</em> el pivote, dividiendo su fila entre él para que valga 1.<br>
+    <strong>2.</strong> Eliminar la columna del pivote <strong>arriba y abajo</strong>, no solo abajo.
+    <br><br>
+    Al terminar, la matriz de coeficientes es la identidad y la columna de la derecha
+    <em>es</em> la solución, sin más cálculos.
+  </div>
+
+  <table class="tbl">
+    <tr><th></th><th>Gauss + sustitución</th><th>Gauss-Jordan</th></tr>
+    <tr><td>Elimina</td><td>Solo debajo de la diagonal</td><td>Arriba y abajo</td></tr>
+    <tr><td>Forma final</td><td>Triangular superior</td><td>Identidad</td></tr>
+    <tr><td>Fase extra</td><td>Sustitución hacia atrás</td><td>Ninguna</td></tr>
+    <tr><td>Costo aproximado</td><td>$n^{3}/3$</td><td>$n^{3}/2$</td></tr>
+  </table>
+
+  <div class="callout-dark">
+    <h3>Más elegante y menos eficiente</h3>
+    <p>Gauss-Jordan es más cómodo de explicar y de programar, porque no hay que escribir la rutina
+       de sustitución. Pero cuesta <strong>alrededor de un 50 % más de operaciones</strong>.</p>
+    <p>La razón es que anular los elementos de <em>arriba</em> del pivote es trabajo que la
+       sustitución hacia atrás hace prácticamente gratis. Gauss-Jordan invierte esfuerzo en obtener
+       una matriz identidad que en realidad no se necesita.</p>
+    <p>Por eso, para resolver un sistema, en producción se usa Gauss. Gauss-Jordan tiene su lugar
+       en otro problema: <strong>invertir una matriz</strong>, donde sí se aprovecha llegar hasta
+       la identidad.</p>
+  </div>
+
+  <div class="sub-title">3.1 Explora los dos métodos sobre el mismo sistema</div>
+  <div class="viz" data-viz="gauss">
+    <div class="viz-controls">
+      <label for="gs-s">Sistema</label>
+      <select id="gs-s">
+        <option value="a">x+y+z=6 ; 2x−y+3z=9 ; 3x+2y−2z=1</option>
+        <option value="b">2x+y−z=8 ; −3x−y+2z=−11 ; −2x+y+2z=−3</option>
+        <option value="c">x−2y+z=0 ; 2y−8z=8 ; −4x+5y+9z=−9</option>
+      </select>
+      <label for="gs-m">Método</label>
+      <select id="gs-m" class="modo">
+        <option value="gauss">Gauss + sustitución</option>
+        <option value="jordan">Gauss-Jordan</option>
+      </select>
+      <label for="gs-p">Avanzar</label>
+      <input id="gs-p" class="paso" type="range" min="0" max="8" value="0">
+      <span class="paso-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="matriz" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <div class="pasos" style="margin-bottom:.8rem"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Resuelve el mismo sistema con los dos métodos y compara el <strong>total de operaciones</strong>
+    del lector. La casilla dorada es el pivote de cada paso y la columna roja es la que se está
+    anulando. Verás que Gauss-Jordan necesita más pasos para llegar al mismo sitio.
+  </p>
+  <div class="nota">
+    <strong>Un matiz sobre el 50 %.</strong> Esa cifra es <em>asintótica</em>: vale cuando $n$ es
+    grande, porque compara $n^{3}/2$ con $n^{3}/3$ despreciando los términos de orden inferior.
+    En el visualizador, con sistemas $3\times3$, la diferencia real ronda el 30 % — y además el
+    contador se salta las operaciones triviales, como normalizar un pivote que ya vale 1.
+    Para $n=50$ la razón ya es $1{,}49$. Conviene saber distinguir la estimación asintótica del
+    conteo exacto en un caso pequeño.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Eliminación</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Regla de Cramer</h3>
+
+  <div class="def">
+    Si $\det A\neq 0$, el sistema $A\mathbf{x}=\mathbf{b}$ tiene solución única dada por
+    $$x_i=\frac{\det A_i}{\det A}$$
+    donde $A_i$ es la matriz $A$ con su columna $i$ reemplazada por el vector $\mathbf{b}$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Cramer en $2\times2$</h4>
+    <div class="ejemplo-body">
+      Resuelve $\;2x+3y=8,\quad x-2y=-3$.
+      <div class="paso"><div class="paso-t">Determinante del sistema</div>
+        $\det A=\begin{vmatrix}2&3\\1&-2\end{vmatrix}=(2)(-2)-(3)(1)=-7\neq 0$
+      </div>
+      <div class="paso"><div class="paso-t">Reemplazar columnas</div>
+        $\det A_x=\begin{vmatrix}8&3\\-3&-2\end{vmatrix}=-16+9=-7$ &nbsp;·&nbsp;
+        $\det A_y=\begin{vmatrix}2&8\\1&-3\end{vmatrix}=-6-8=-14$
+      </div>
+      <div class="paso"><div class="paso-t">Dividir</div>
+        $x=\dfrac{-7}{-7}=1$ &nbsp;·&nbsp; $y=\dfrac{-14}{-7}=2$
+      </div>
+      <div class="paso"><div class="paso-t">Verificar</div>
+        $2(1)+3(2)=8$ ✓ &nbsp;·&nbsp; $1-2(2)=-3$ ✓
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · El mismo sistema del Ejemplo 1, ahora por Cramer</h4>
+    <div class="ejemplo-body">
+      Para $A=\begin{pmatrix}1&1&1\\2&-1&3\\3&2&-2\end{pmatrix}$ y $\mathbf{b}=(6,9,1)$:
+      <div class="paso"><div class="paso-t">Los cuatro determinantes</div>
+        $\det A=16$ &nbsp;·&nbsp; $\det A_x=16$ &nbsp;·&nbsp; $\det A_y=32$ &nbsp;·&nbsp; $\det A_z=48$
+      </div>
+      <div class="paso"><div class="paso-t">Solución</div>
+        $x=\dfrac{16}{16}=1$, &nbsp; $y=\dfrac{32}{16}=2$, &nbsp; $z=\dfrac{48}{16}=3$ — la misma
+        que dio Gauss, como debe ser.
+      </div>
+      <div class="paso"><div class="paso-t">Pero cuenta el trabajo</div>
+        Hubo que calcular <strong>cuatro</strong> determinantes $3\times3$ en vez de hacer una sola
+        eliminación. Para $3\times3$ la diferencia es soportable; el problema aparece al crecer $n$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 Por qué Cramer no se usa</div>
+  <div class="callout-dark">
+    <h3>Correcto no es lo mismo que utilizable</h3>
+    <p>La regla de Cramer es un teorema impecable: da la solución exacta siempre que
+       $\det A\neq 0$. Y sin embargo ningún programa serio la implementa. La razón es el costo.</p>
+    <p>Calcular un determinante $n\times n$ por <strong>expansión de cofactores</strong> —el método
+       que se enseña en álgebra— cuesta del orden de $n!$ operaciones. Cramer necesita $n+1$ de
+       ellos, así que el total es del orden de $(n+1)!$</p>
+    <p>Para $n=20$: unas $5{,}1\times10^{19}$ operaciones. A mil millones de operaciones por
+       segundo, eso son <strong>más de mil seiscientos años</strong>. La eliminación de Gauss
+       resuelve el mismo sistema con unas 2 700 operaciones: microsegundos.</p>
+    <p><strong>Matiz honesto:</strong> los determinantes también pueden calcularse por eliminación,
+       en $O(n^{3})$. Con esa mejora Cramer deja de ser factorial, pero sigue costando $n+1$ veces
+       más que resolver el sistema directamente. Sea como sea, nunca conviene.</p>
+  </div>
+
+  <div class="nota">
+    <strong>Entonces, ¿para qué sirve Cramer?</strong> Para dos cosas legítimas: resolver a mano
+    sistemas $2\times2$ o $3\times3$, donde es rápido y cómodo, y sobre todo como
+    <strong>herramienta teórica</strong>. La fórmula $x_i=\det A_i/\det A$ muestra explícitamente
+    cómo depende la solución de los datos, y de ahí sale buena parte del análisis de sensibilidad
+    y del condicionamiento que verás en la semana 6.
+  </div>
+
+  <div class="sub-title">4.2 Explora el costo de los tres métodos</div>
+  <div class="viz" data-viz="costo">
+    <div class="viz-controls">
+      <label for="co-n">Tamaño máximo</label>
+      <input id="co-n" class="nmax" type="range" min="4" max="20" value="12">
+      <span class="nmax-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    El eje vertical es logarítmico. Las curvas de Gauss y Gauss-Jordan son casi indistinguibles —
+    difieren solo en un factor $1{,}5$— mientras la de Cramer se despega y no vuelve. Lleva el
+    deslizador a $n=20$ y lee el tiempo estimado.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Gauss-Jordan y Cramer</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Pivoteo: cuando el método correcto falla</h3>
+
+  <p>Todo lo anterior supone que los pivotes son «buenos». Hay dos maneras de que no lo sean, y la
+     segunda es la peligrosa.</p>
+
+  <div class="sub-title">5.1 El problema evidente y el problema escondido</div>
+  <table class="tbl">
+    <tr><th>Situación</th><th>Consecuencia</th><th>¿Se nota?</th></tr>
+    <tr><td>Pivote exactamente cero</td><td>División por cero: el programa se detiene</td><td>Sí, de inmediato</td></tr>
+    <tr><td>Pivote muy pequeño</td><td>El multiplicador se dispara y amplifica el error de redondeo</td><td><strong>No</strong>: el programa entrega un número equivocado sin avisar</td></tr>
+  </table>
+
+  <div class="callout-dark">
+    <h3>Un caso que parece inofensivo y no lo es</h3>
+    <p>Considera este sistema, cuya solución exacta es $x_1=\tfrac13$ y $x_2=\tfrac23$:</p>
+    <p>$$0{,}0003\,x_1+3{,}0000\,x_2=2{,}0001$$
+       $$1{,}0000\,x_1+1{,}0000\,x_2=1{,}0000$$</p>
+    <p>Nada llama la atención. Pero al eliminar con el pivote $0{,}0003$, el multiplicador es
+       $1/0{,}0003=3\,333$, y ese factor multiplica cualquier error que arrastren los cálculos.
+       Peor aún: en la sustitución hacia atrás hay que restar dos números casi iguales
+       —$2{,}0001$ menos $3x_2$— y ahí ocurre la cancelación de la Guía 2.</p>
+    <p>Con aritmética de 4 cifras significativas, el método entrega
+       $x_1=\mathbf{0}$ en lugar de $0{,}333$. Un <strong>error del 100 %</strong>, sin ningún
+       mensaje de advertencia.</p>
+  </div>
+
+  <div class="def">
+    <strong>Pivoteo parcial.</strong> Antes de eliminar la columna $k$, buscar en esa columna
+    (de la fila $k$ hacia abajo) el elemento de <strong>mayor valor absoluto</strong> e
+    intercambiar filas para ponerlo en la posición de pivote.
+    <br><br>
+    Así todos los multiplicadores cumplen $|f_{ik}|\leq 1$ y no amplifican el error.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · El mismo sistema, con pivoteo</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Intercambiar</div>
+        En la primera columna, $|1{,}0000| \gt |0{,}0003|$, así que se permutan las filas:
+        $$1{,}0000\,x_1+1{,}0000\,x_2=1{,}0000$$
+        $$0{,}0003\,x_1+3{,}0000\,x_2=2{,}0001$$
+      </div>
+      <div class="paso"><div class="paso-t">Eliminar</div>
+        Ahora $f=0{,}0003/1=0{,}0003$, un multiplicador diminuto que no amplifica nada:<br>
+        $a_{22}=3{,}0000-0{,}0003=2{,}9997$ &nbsp;·&nbsp; $b_2=2{,}0001-0{,}0003=1{,}9998$
+      </div>
+      <div class="paso"><div class="paso-t">Sustituir hacia atrás</div>
+        $x_2=\dfrac{1{,}9998}{2{,}9997}=0{,}66667$ &nbsp;·&nbsp;
+        $x_1=1{,}0000-0{,}66667=0{,}33333$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Lo notable</div>
+        No cambió el método, ni la aritmética, ni la precisión de la máquina. Cambió
+        <strong>el orden de las filas</strong>, que no altera la solución. Y el resultado pasó de
+        inservible a correcto.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>En la práctica.</strong> Toda implementación seria de eliminación gaussiana incluye
+    pivoteo parcial por defecto — <code>numpy.linalg.solve</code>, MATLAB, LAPACK. El costo
+    adicional es despreciable: unas $n^{2}/2$ comparaciones frente a $n^{3}/3$ operaciones
+    aritméticas. Es de las mejores relaciones costo-beneficio del cálculo numérico.
+  </div>
+
+  <div class="sub-title">5.2 Explora el desastre y su remedio</div>
+  <div class="viz" data-viz="pivoteo">
+    <div class="viz-controls">
+      <label for="pv-d">Precisión de la máquina</label>
+      <input id="pv-d" class="cifras" type="range" min="3" max="12" value="4">
+      <span class="cifras-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Con 3 y 4 cifras la curva roja está clavada arriba del todo: error del 100 %, porque el método
+    devuelve cero. La verde baja de forma ordenada desde el principio. A partir de 5 cifras ambas
+    convergen, pero <strong>eso no salva al método ingenuo</strong>: siempre existe un sistema con
+    un pivote lo bastante pequeño para arruinar la precisión que tengas.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Pivoteo</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Un modelo de producción con varios insumos y restricciones se plantea como sistema lineal.
+      Y el análisis insumo-producto de Leontief, que reparte la producción entre sectores de una
+      economía, es literalmente $(\mathbf{I}-A)\mathbf{x}=\mathbf{d}$: un sistema que en un país
+      real tiene cientos de sectores.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La distribución de costos entre departamentos con servicios recíprocos —el método algebraico
+      de asignación— exige resolver un sistema lineal, porque cada departamento consume de los
+      otros. Con dos o tres departamentos se hace a mano; con veinte, hace falta el computador.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Casi todo el gráfico 3D es álgebra lineal: transformar, proyectar e iluminar son sistemas
+      resueltos millones de veces por segundo. Y entrenar un modelo de regresión termina en las
+      ecuaciones normales $A^{T}A\,\mathbf{x}=A^{T}\mathbf{b}$. Que la biblioteca use $O(n^{3})$ en
+      lugar de $O(n!)$ es la diferencia entre que el programa termine o no.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El análisis nodal de un circuito produce directamente $G\mathbf{v}=\mathbf{i}$, donde $G$ es
+      la matriz de conductancias. SPICE construye y resuelve ese sistema en cada punto de la
+      simulación — con pivoteo, porque los valores de conductancia pueden diferir en muchos órdenes
+      de magnitud y ahí los pivotes pequeños son la norma, no la excepción.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Las tres operaciones elementales de fila no alteran el conjunto solución.</li>
+    <li>Tres desenlaces: única, infinitas o ninguna. La fila $[\,0\ 0\ 0\mid c\,]$ con $c\neq0$ delata la incompatibilidad.</li>
+    <li><strong>Gauss</strong> elimina solo debajo de la diagonal y luego sustituye hacia atrás: $\approx n^{3}/3$.</li>
+    <li><strong>Gauss-Jordan</strong> llega a la identidad y no necesita sustitución, pero cuesta un 50 % más.</li>
+    <li>El multiplicador es $f_{ik}=a_{ik}/a_{kk}$: si el pivote es pequeño, se dispara.</li>
+    <li><strong>Cramer</strong> por cofactores cuesta $\approx (n+1)!$: para $n=20$ son mil seiscientos años.</li>
+    <li>Cramer sirve para $2\times2$ a mano y como herramienta teórica, no para calcular.</li>
+    <li>Un pivote cero detiene el programa; uno <em>pequeño</em> devuelve basura <strong>sin avisar</strong>.</li>
+    <li><strong>Pivoteo parcial</strong>: pon en el pivote el mayor valor absoluto de la columna. Así $|f_{ik}|\leq 1$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2</a> · <a href="https://www.geogebra.org/m/YCZa8TAH" target="_blank" rel="noopener">GeoGebra · Matrices</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
+
 <script src="../assets/ova.js?v=20260827a"></script>
+<script src="../assets/viz-metodos.js?v=20260827a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Eliminación · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Multiplicador', nivel: 2,
+      criterio: 'Calcular el multiplicador y aplicar la operación de fila (§2)',
+      enunciado: "Al eliminar la primera columna de $\\left[\\begin{array}{rrr|r}1&1&1&6\\\\2&-1&3&9\\\\3&2&-2&1\\end{array}\\right]$, la nueva segunda fila es:",
+      opciones: [
+        '$[\\,0\\;\\;-3\\;\\;1\\mid-3\\,]$',
+        '$[\\,0\\;\\;\\;1\\;\\;5\\mid\\;\\;12\\,]$',
+        '$[\\,0\\;\\;-1\\;\\;-5\\mid-17\\,]$',
+        '$[\\,2\\;\\;-1\\;\\;3\\mid\\;\\;9\\,]$'
+      ],
+      correcta: 0,
+      pista: 'El multiplicador es $f_{21}=a_{21}/a_{11}=2/1=2$, y la operación es $F_2\\to F_2-2F_1$.',
+      solucion: "$F_2-2F_1 = [2-2,\\;-1-2,\\;3-2\\mid 9-12] = [0,\\;-3,\\;1\\mid -3]$. La opción c) es la <em>tercera</em> fila tras $F_3-3F_1$, y la d) es la fila original sin tocar. Verificar cada fila nueva antes de seguir evita arrastrar el error a los pasos siguientes."
+    },
+    {
+      etiqueta: 'Los tres casos', nivel: 2,
+      criterio: 'Interpretar una fila nula tras la eliminación (§1.1)',
+      enunciado: 'Al triangular un sistema $3\\times3$ aparece la fila $[\\,0\\;\\;0\\;\\;0\\mid 0\\,]$. El sistema:',
+      opciones: [
+        'No tiene solución',
+        'Tiene solución única',
+        'Tiene infinitas soluciones',
+        'Requiere más eliminación'
+      ],
+      correcta: 2,
+      pista: 'Traduce la fila de vuelta a una ecuación: ¿qué afirma?',
+      solucion: "Esa fila dice $0=0$: es cierta pero no aporta información, así que quedan dos ecuaciones independientes para tres incógnitas y aparece un parámetro libre. Geométricamente, los tres planos se cortan en una recta. Con $[\\,0\\;0\\;0\\mid 5\\,]$ ocurriría lo contrario: $0=5$ es falso y el sistema sería incompatible."
+    },
+    {
+      etiqueta: 'Estrategia', nivel: 1,
+      criterio: 'Distinguir las dos fases del método de Gauss (§2)',
+      enunciado: 'En la eliminación de Gauss, la fase de eliminación hacia adelante busca dejar la matriz:',
+      opciones: [
+        'Igual a la identidad',
+        'Triangular superior, con ceros debajo de la diagonal',
+        'Diagonal, con ceros arriba y abajo',
+        'Simétrica'
+      ],
+      correcta: 1,
+      pista: '¿Qué forma necesita la matriz para que la sustitución hacia atrás sea posible?',
+      solucion: "Gauss anula solo lo que está <strong>debajo</strong> de la diagonal. Esa forma triangular es justo lo que hace posible la sustitución hacia atrás: la última fila queda con una sola incógnita. Llegar hasta la identidad —opciones a) y c)— es lo que hace Gauss-Jordan, y cuesta más operaciones."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Gauss-Jordan y Cramer · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Comparación', nivel: 2,
+      criterio: 'Comparar el costo de Gauss y Gauss-Jordan (§3)',
+      enunciado: 'Frente a la eliminación de Gauss con sustitución hacia atrás, Gauss-Jordan:',
+      opciones: [
+        'Cuesta aproximadamente la mitad de operaciones',
+        'Cuesta aproximadamente lo mismo',
+        'Cuesta aproximadamente un 50 % más de operaciones',
+        'Solo funciona para sistemas $2\\times2$'
+      ],
+      correcta: 2,
+      pista: 'Compara $n^{3}/3$ con $n^{3}/2$.',
+      solucion: "Gauss cuesta $\\approx n^{3}/3$ y Gauss-Jordan $\\approx n^{3}/2$, y $\\dfrac{1/2}{1/3}=1{,}5$. El sobrecosto viene de anular también los elementos <em>arriba</em> del pivote, trabajo que la sustitución hacia atrás hace casi gratis. Por eso Gauss-Jordan se reserva para invertir matrices, donde llegar a la identidad sí se aprovecha."
+    },
+    {
+      etiqueta: 'Cramer', nivel: 2,
+      criterio: 'Aplicar correctamente la regla de Cramer (§4)',
+      enunciado: "Para $2x+3y=8$, $\\;x-2y=-3$, el determinante $\\det A_x$ se obtiene:",
+      opciones: [
+        'Reemplazando la primera <em>fila</em> de $A$ por $\\mathbf{b}$',
+        'Reemplazando la primera <em>columna</em> de $A$ por $\\mathbf{b}$',
+        'Multiplicando $\\det A$ por $\\mathbf{b}$',
+        'Eliminando la primera fila y columna de $A$'
+      ],
+      correcta: 1,
+      pista: 'La incógnita $x$ es la primera. ¿Qué se reemplaza para hallar $x$?',
+      solucion: "Se reemplaza la <strong>columna</strong> correspondiente a la incógnita. Aquí $\\det A=-7$ y $\\det A_x=\\begin{vmatrix}8&3\\\\-3&-2\\end{vmatrix}=-7$, de donde $x=1$. Confundir fila con columna da un determinante distinto y una respuesta equivocada; la opción d) describe un menor, que es otra cosa."
+    },
+    {
+      etiqueta: 'Costo de Cramer', nivel: 3,
+      criterio: 'Justificar por qué Cramer no se usa en la práctica (§4.1)',
+      enunciado: 'La regla de Cramer es matemáticamente correcta. ¿Por qué ningún programa la implementa para $n$ grande?',
+      opciones: [
+        'Porque falla cuando el determinante es negativo',
+        'Porque solo vale para matrices simétricas',
+        'Porque acumula más error de redondeo que Gauss',
+        'Porque exige $n+1$ determinantes, y por cofactores el costo crece como $(n+1)!$'
+      ],
+      correcta: 3,
+      pista: 'Estima cuántas operaciones haría falta para $n=20$ y divídelo entre mil millones por segundo.',
+      solucion: "Para $n=20$ son unas $21!\\approx 5{,}1\\times10^{19}$ operaciones: más de mil seiscientos años a mil millones por segundo, frente a unas 2 700 de Gauss. La opción a) es falsa —un determinante negativo no da ningún problema— y la b) confunde Cramer con métodos como Cholesky, que sí exigen simetría."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Pivoteo · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Estrategia', nivel: 1,
+      criterio: 'Enunciar el criterio del pivoteo parcial (§5.1)',
+      enunciado: 'El pivoteo parcial consiste en:',
+      opciones: [
+        'Intercambiar filas para poner en el pivote el mayor valor absoluto de la columna',
+        'Intercambiar columnas para ordenar las incógnitas',
+        'Dividir todas las filas entre su primer elemento',
+        'Eliminar las filas cuyo pivote sea pequeño'
+      ],
+      correcta: 0,
+      pista: 'El objetivo es que los multiplicadores $f_{ik}=a_{ik}/a_{kk}$ no se disparen.',
+      solucion: "Poniendo el mayor elemento en la posición de pivote se garantiza $|f_{ik}|\\leq 1$, así que los multiplicadores nunca amplifican el error. Es <em>parcial</em> porque solo intercambia filas; el pivoteo <em>total</em> también permuta columnas, pero obliga a llevar la cuenta del reordenamiento de las incógnitas y rara vez compensa."
+    },
+    {
+      etiqueta: 'El riesgo real', nivel: 3,
+      criterio: 'Distinguir el pivote nulo del pivote pequeño (§5.1)',
+      enunciado: '¿Cuál de estas dos situaciones es más peligrosa en un programa?',
+      opciones: [
+        'Un pivote exactamente cero, porque detiene la ejecución',
+        'Un pivote muy pequeño, porque devuelve un resultado equivocado sin ningún aviso',
+        'Las dos por igual',
+        'Ninguna: la eliminación siempre funciona'
+      ],
+      correcta: 1,
+      pista: '¿Cuál de los dos errores puede pasar desapercibido y llegar a un informe?',
+      solucion: "Un pivote cero provoca una división por cero y el programa se detiene: el error es <strong>ruidoso</strong> y te enteras. Un pivote pequeño produce multiplicadores enormes y cancelación en la sustitución, y el programa entrega un número plausible pero falso. Un error silencioso siempre es más peligroso que uno que se anuncia."
+    },
+    {
+      etiqueta: 'El caso concreto', nivel: 3,
+      criterio: 'Interpretar el fallo del método sin pivoteo (§5)',
+      enunciado: "En el sistema $0{,}0003x_1+3x_2=2{,}0001$, $\\;x_1+x_2=1$ (solución exacta $x_1=1/3$), con 4 cifras significativas y <strong>sin</strong> pivoteo se obtiene $x_1=0$. El multiplicador usado fue:",
+      opciones: [
+        '$0{,}0003$, demasiado pequeño',
+        '$1$, neutro',
+        '$3\\,333$, que amplifica el error de redondeo',
+        '$3$, el coeficiente de $x_2$'
+      ],
+      correcta: 2,
+      pista: 'El multiplicador es $f=a_{21}/a_{11}=1/0{,}0003$.',
+      solucion: "$f=1/0{,}0003=3\\,333$. Ese factor multiplica todo lo que arrastre la fila, y además la sustitución hacia atrás exige restar $2{,}0001-3x_2$, dos números casi iguales: la cancelación de la Guía 2 sumada a la amplificación. Con pivoteo el multiplicador pasa a ser $0{,}0003$ y el resultado sale correcto."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Operaciones de fila', nivel: 1,
+      criterio: 'Reconocer las operaciones que preservan la solución (§1)',
+      enunciado: '¿Cuál de estas operaciones <strong>altera</strong> el conjunto solución de un sistema?',
+      opciones: [
+        'Intercambiar dos filas',
+        'Multiplicar una fila por cero',
+        'Sumar a una fila un múltiplo de otra',
+        'Multiplicar una fila por $-3$'
+      ],
+      correcta: 1,
+      pista: 'La segunda operación elemental exige un escalar <em>no nulo</em>. ¿Por qué?',
+      solucion: "Multiplicar por cero convierte la fila en $[\\,0\\;0\\;0\\mid 0\\,]$ y <strong>destruye</strong> la información de esa ecuación: el sistema resultante tiene más soluciones que el original. Por eso la operación elemental exige un escalar distinto de cero. Las otras tres son reversibles y por eso preservan la solución."
+    },
+    {
+      etiqueta: 'Compatibilidad', nivel: 2,
+      criterio: 'Clasificar un sistema por su forma escalonada (§1.1)',
+      enunciado: 'El sistema $x+y=2$, $\\;2x+2y=5$ es:',
+      opciones: [
+        'Compatible determinado',
+        'Compatible indeterminado',
+        'Incompatible',
+        'Compatible con solución $(1,1)$'
+      ],
+      correcta: 2,
+      pista: 'La segunda ecuación es el doble de la primera en el lado izquierdo. ¿Y en el derecho?',
+      solucion: "$F_2-2F_1$ da $[\\,0\\;0\\mid 1\\,]$, es decir $0=1$: contradicción. Las dos rectas son paralelas y no se cortan. Si el término independiente hubiera sido 4 en vez de 5, la fila quedaría $[\\,0\\;0\\mid 0\\,]$ y el sistema tendría infinitas soluciones: la misma matriz de coeficientes, desenlaces opuestos."
+    },
+    {
+      etiqueta: 'Gauss', nivel: 2,
+      criterio: 'Reconocer el resultado de la eliminación (§2)',
+      enunciado: "Al aplicar Gauss-Jordan al sistema $x+y+z=6$, $2x-y+3z=9$, $3x+2y-2z=1$ se llega a $\\left[\\begin{array}{rrr|r}1&0&0&1\\\\0&1&0&2\\\\0&0&1&3\\end{array}\\right]$. La solución es:",
+      opciones: [
+        '$(6,\\,9,\\,1)$',
+        '$(1,\\,2,\\,3)$',
+        '$(1,\\,1,\\,1)$',
+        'Hace falta sustitución hacia atrás'
+      ],
+      correcta: 1,
+      pista: 'Traduce cada fila de vuelta a una ecuación.',
+      solucion: "Las filas dicen $x=1$, $y=2$, $z=3$: la columna de la derecha <em>es</em> la solución. Esa es la ventaja de Gauss-Jordan, y la opción d) es precisamente lo que el método evita. Verificación en las ecuaciones originales: $1+2+3=6$ ✓, $2-2+9=9$ ✓, $3+4-6=1$ ✓."
+    },
+    {
+      etiqueta: 'Complejidad', nivel: 2,
+      criterio: 'Interpretar el orden $O(n^{3})$ (§2.1)',
+      enunciado: 'Un programa resuelve un sistema de $n=100$ en 1 segundo con eliminación de Gauss. ¿Cuánto tardará aproximadamente con $n=200$?',
+      opciones: ['2 segundos', '4 segundos', '8 segundos', '100 segundos'],
+      correcta: 2,
+      pista: 'Gauss es $O(n^{3})$. ¿Qué le pasa al trabajo al duplicar $n$?',
+      solucion: "Al duplicar $n$, el trabajo se multiplica por $2^{3}=8$. La opción a) supondría complejidad lineal y la b) cuadrática. Este razonamiento es el que permite estimar si un cálculo es viable <em>antes</em> de lanzarlo, y por eso el orden de complejidad importa tanto como la corrección."
+    },
+    {
+      etiqueta: 'Cramer', nivel: 2,
+      criterio: 'Aplicar Cramer a un sistema $3\\times3$ (§4)',
+      enunciado: "Para cierto sistema $3\\times3$ se obtiene $\\det A=16$ y $\\det A_y=32$. El valor de $y$ es:",
+      opciones: ['$16$', '$0{,}5$', '$48$', '$2$'],
+      correcta: 3,
+      pista: 'La fórmula es $x_i=\\det A_i/\\det A$. Cuida el orden de la división.',
+      solucion: "$y=\\dfrac{\\det A_y}{\\det A}=\\dfrac{32}{16}=2$. La opción b) invierte la división, que es el descuido típico: el determinante del sistema va siempre en el <strong>denominador</strong>, y por eso Cramer exige $\\det A\\neq0$."
+    },
+    {
+      etiqueta: 'Cuándo usar cada uno', nivel: 3,
+      criterio: 'Elegir el método adecuado según el problema (§3–§4)',
+      enunciado: '¿Para qué tarea resulta razonable usar Gauss-Jordan en lugar de Gauss?',
+      opciones: [
+        'Para resolver un sistema muy grande lo más rápido posible',
+        'Para calcular la inversa de una matriz',
+        'Para calcular un determinante',
+        'Para sistemas con pivotes pequeños'
+      ],
+      correcta: 1,
+      pista: '¿En qué problema sí resulta útil llegar hasta la matriz identidad?',
+      solucion: "Al invertir se parte de $[\\,A\\mid I\\,]$ y se llega a $[\\,I\\mid A^{-1}\\,]$: aquí alcanzar la identidad es exactamente el objetivo, no un trabajo desperdiciado. Para resolver un solo sistema, Gauss es más barato. Y la opción d) es un malentendido: el remedio para los pivotes pequeños es el pivoteo, no cambiar de método."
+    },
+    {
+      etiqueta: 'Pivoteo', nivel: 3,
+      criterio: 'Justificar por qué el pivoteo no altera la solución (§5)',
+      enunciado: 'Intercambiar dos filas antes de eliminar es legítimo porque:',
+      opciones: [
+        'Es una operación elemental de fila y no altera el conjunto solución',
+        'Cambia la solución de forma controlada',
+        'Solo es válido si el sistema es cuadrado',
+        'Obliga a reordenar después las incógnitas'
+      ],
+      correcta: 0,
+      pista: 'Intercambiar filas es cambiar el orden en que están escritas las ecuaciones.',
+      solucion: "Intercambiar filas equivale a escribir las mismas ecuaciones en otro orden, y eso no cambia qué valores las satisfacen: es la primera operación elemental. La opción d) describe el pivoteo <em>total</em>, que sí permuta columnas y por tanto exige llevar la cuenta del reordenamiento de las incógnitas."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Relacionar el pivoteo con los errores de la Guía 2 (§5)',
+      enunciado: 'El pivoteo parcial mejora la precisión porque garantiza que los multiplicadores cumplan $|f_{ik}|\\leq 1$. El efecto de esto es:',
+      opciones: [
+        'Que el sistema se vuelve bien condicionado',
+        'Que los errores de redondeo presentes no se amplifican al propagarse por las filas',
+        'Que desaparece por completo el error de redondeo',
+        'Que se reduce el número de operaciones necesarias'
+      ],
+      correcta: 1,
+      pista: 'El multiplicador multiplica la fila entera, incluidos los errores que ya arrastra.',
+      solucion: "Un multiplicador de magnitud menor o igual que 1 no puede aumentar el error que ya arrastra una fila; uno de 3 333 lo multiplica por 3 333. Las opciones a) y c) prometen demasiado: el pivoteo no cambia el <em>condicionamiento del problema</em> —eso es propiedad de la matriz, y lo estudiarás en la semana 6— ni elimina el redondeo, solo evita amplificarlo. Y la d) es falsa: añade comparaciones, aunque muy pocas."
+    }
+  ]
+});
+</script>
 </body>
 </html>
