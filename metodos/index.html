@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Métodos Numéricos · Plan del curso — UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260823b">
+<link rel="stylesheet" href="../assets/ova.css?v=20260827a">
 </head>
-<body>
+<body data-curso="metodos">
 
 <header id="top">
   <div class="top-inner">
@@ -28,7 +28,7 @@
     <h2>Métodos Numéricos</h2>
     <p>Errores y aproximación; sistemas de ecuaciones lineales y no lineales; regresión, integración numérica y ecuaciones diferenciales.</p>
     <div class="chips">
-      <span class="chip">2 de 12 guías publicadas</span>
+      <span class="chip" data-contador>Guías del curso</span>
       <span class="chip">Evaluación en las semanas 5, 10 y 15</span>
     </div>
   </div>
@@ -36,30 +36,30 @@
   <section class="card">
     <h3 class="card-title"><span class="corte-head">Corte I<span class="semanas">Semanas 1 a 5</span></span></h3>
     <div class="grid-cards">
-      <a class="tile" href="s01.html">
+      <a class="tile borrador" href="s01.html" data-semana="1">
         <div class="n">Semana 1</div>
         <div class="t">Presentación y repaso</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Presentación del curso.</li><li>Prueba diagnóstica.</li><li>Repaso de raíces de polinomios, sistemas de ecuaciones, derivación, integración y ecuaciones diferenciales.</li></ul>
-        <span class="estado lista">Guía publicada</span>
+        <span class="estado pend">Próximamente</span>
       </a>
-      <a class="tile" href="s02.html">
+      <a class="tile borrador" href="s02.html" data-semana="2">
         <div class="n">Semana 2</div>
         <div class="t">Conceptos básicos, errores y Taylor</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Conceptos básicos.</li><li>Aproximaciones y errores.</li><li>Métodos iterativos.</li><li>Polinomios de Taylor.</li></ul>
-        <span class="estado lista">Guía publicada</span>
+        <span class="estado pend">Próximamente</span>
       </a>
-      <div class="tile" aria-disabled="true">
+      <a class="tile borrador" href="s03.html" data-semana="3">
         <div class="n">Semana 3</div>
         <div class="t">Sistemas lineales: métodos exactos</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Sistemas de ecuaciones lineales.</li><li>Métodos de solución exactos: Gauss-Jordan, Gauss con sustitución, regla de Cramer.</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
-      <div class="tile" aria-disabled="true">
+      </a>
+      <a class="tile borrador" href="s04.html" data-semana="4">
         <div class="n">Semana 4</div>
         <div class="t">Factorización LU y Cholesky</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Factorización LU.</li><li>Factorización de Cholesky.</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
+      </a>
       <div class="tile eval">
         <div class="n">Semana 5</div>
         <div class="t">Actividad final de corte</div>
@@ -71,30 +71,30 @@
   <section class="card">
     <h3 class="card-title"><span class="corte-head">Corte II<span class="semanas">Semanas 6 a 10</span></span></h3>
     <div class="grid-cards">
-      <div class="tile" aria-disabled="true">
+      <a class="tile borrador" href="s06.html" data-semana="6">
         <div class="n">Semana 6</div>
         <div class="t">Normas y condicionamiento</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Normas vectoriales y matriciales.</li><li>Condicionamiento de un sistema.</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
-      <div class="tile" aria-disabled="true">
+      </a>
+      <a class="tile borrador" href="s07.html" data-semana="7">
         <div class="n">Semana 7</div>
         <div class="t">Métodos aproximados para SEL</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Métodos aproximados de SEL: Richardson, Jacobi y Gauss-Seidel.</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
-      <div class="tile" aria-disabled="true">
+      </a>
+      <a class="tile borrador" href="s08.html" data-semana="8">
         <div class="n">Semana 8</div>
         <div class="t">Ecuaciones no lineales</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Solución de ecuaciones no lineales.</li><li>Métodos cerrados (gráfico, bisección y falsa posición) y abiertos (punto fijo, secante y Newton-Raphson).</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
-      <div class="tile" aria-disabled="true">
+      </a>
+      <a class="tile borrador" href="s09.html" data-semana="9">
         <div class="n">Semana 9</div>
         <div class="t">Sistemas de ecuaciones no lineales</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Sistemas de ecuaciones no lineales.</li><li>Métodos de solución.</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
+      </a>
       <div class="tile eval">
         <div class="n">Semana 10</div>
         <div class="t">Actividad final de corte</div>
@@ -106,30 +106,30 @@
   <section class="card">
     <h3 class="card-title"><span class="corte-head">Corte III<span class="semanas">Semanas 11 a 16</span></span></h3>
     <div class="grid-cards">
-      <div class="tile" aria-disabled="true">
+      <a class="tile borrador" href="s11.html" data-semana="11">
         <div class="n">Semana 11</div>
         <div class="t">Regresión y mínimos cuadrados</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Regresión lineal.</li><li>Regresión polinomial.</li><li>Regresión lineal múltiple.</li><li>Mínimos cuadrados lineales general.</li><li>Linealización de modelos no lineales (potencias, exponencial y logístico).</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
-      <div class="tile" aria-disabled="true">
+      </a>
+      <a class="tile borrador" href="s12.html" data-semana="12">
         <div class="n">Semana 12</div>
         <div class="t">Diferenciación e integración numérica</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Diferenciación numérica (diferencia central y desarrollo matricial).</li><li>Integración numérica (trapecio, Simpson 1/3 y 3/8).</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
-      <div class="tile" aria-disabled="true">
+      </a>
+      <a class="tile borrador" href="s13.html" data-semana="13">
         <div class="n">Semana 13</div>
         <div class="t">EDO numéricas: método de Euler</div>
         <ul class="d" style="margin:.35rem 0 0"><li>EDO numéricas.</li><li>Método de Euler.</li><li>Mejoras del método de Euler.</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
-      <div class="tile" aria-disabled="true">
+      </a>
+      <a class="tile borrador" href="s14.html" data-semana="14">
         <div class="n">Semana 14</div>
         <div class="t">Métodos de Runge-Kutta</div>
         <ul class="d" style="margin:.35rem 0 0"><li>Métodos de Runge-Kutta.</li><li>Sistemas de ecuaciones y EDO lineales de orden superior.</li></ul>
         <span class="estado pend">Próximamente</span>
-      </div>
+      </a>
       <div class="tile eval">
         <div class="n">Semana 15</div>
         <div class="t">Actividad final de corte</div>
@@ -145,8 +145,9 @@
 
   <section class="card">
     <h3 class="card-title">Cómo avanza el curso</h3>
-    <p>Las guías se publican semana a semana siguiendo este plan. Guarda esta página en favoritos:
-       el enlace no cambia y siempre muestra lo más reciente.</p>
+    <p>Todas las semanas del plan están enlazadas. Las que ya tienen guía aparecen marcadas como
+       <strong>publicadas</strong>; las demás llevan a una página de aviso mientras se preparan.
+       Guarda esta página en favoritos: el enlace no cambia y siempre muestra lo más reciente.</p>
     <p style="font-size:.86rem;color:var(--muted)">
       Cada guía trae teoría condensada, ejemplos resueltos paso a paso, visualizadores interactivos
       y práctica de refuerzo <strong>sin nota</strong>. Las semanas 5, 10 y 15 corresponden a las
@@ -160,6 +161,7 @@
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260823b"></script>
+<script src="../assets/ova.js?v=20260827a"></script>
+<script src="../assets/estado.js?v=20260827a"></script>
 </body>
 </html>
