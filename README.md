@@ -75,7 +75,7 @@ GitHub te preguntará si quieres reemplazar el archivo existente. Di que sí.
 window.OVA_PUBLICADAS = {
   calculo:   [1, 2],     ←  añade el 2
   vectorial: [1],
-  metodos:   [1, 2],
+  metodos:   [1, 2, 3],
   edo:       [1, 2, 3]
 };
 ```
