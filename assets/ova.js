@@ -436,11 +436,41 @@ function initContacto() {
   });
 }
 
-/* ── 11. Arranque ───────────────────────────────────────── */
+/* ── 11. Estado de publicación ──────────────────────────────
+   Lee window.OVA_PUBLICADAS (assets/estado.js) y pinta las
+   etiquetas de las fichas y el contador. Así publicar una guía
+   solo exige añadir un número a esa lista, sin tocar el HTML. */
+function initEstado() {
+  var curso = document.body.getAttribute('data-curso');
+  var mapa = global.OVA_PUBLICADAS;
+  if (!curso || !mapa) return;
+  var pub = mapa[curso] || [];
+  var listas = 0, total = 0;
+
+  document.querySelectorAll('.tile[data-semana]').forEach(function (t) {
+    total++;
+    var s = parseInt(t.getAttribute('data-semana'), 10);
+    var publicada = pub.indexOf(s) !== -1;
+    if (publicada) listas++;
+    t.classList.toggle('borrador', !publicada);
+    var badge = t.querySelector('.estado');
+    if (badge) {
+      badge.className = 'estado ' + (publicada ? 'lista' : 'pend');
+      badge.textContent = publicada ? 'Guía publicada' : 'Próximamente';
+    }
+  });
+
+  document.querySelectorAll('[data-contador]').forEach(function (el) {
+    el.textContent = listas + ' de ' + total + ' guías publicadas';
+  });
+}
+
+/* ── 12. Arranque ───────────────────────────────────────── */
 function init() {
   initProgramas();
   initGuiaNav();
   initContacto();
+  initEstado();
   document.querySelectorAll('[data-dark-toggle]').forEach(function (b) {
     b.addEventListener('click', OVA.toggleDark);
     b.textContent = document.body.classList.contains('dark') ? '☀ Modo claro' : '☾ Modo oscuro';

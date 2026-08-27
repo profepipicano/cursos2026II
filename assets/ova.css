@@ -237,6 +237,23 @@ body.dark .tile .t{color:var(--steel-300)}
 .tile .d{font-size:.82rem;color:var(--muted)}
 .tile[aria-disabled=true]{opacity:.5;pointer-events:none;border-left-color:var(--muted)}
 
+/* Semana activada pero cuya guía aún no se publica: sigue siendo
+   navegable (lleva a un aviso), pero se distingue a simple vista. */
+.tile.borrador{border-left-style:dashed;border-left-color:var(--muted);background:transparent}
+.tile.borrador .t{color:var(--muted)}
+.tile.borrador:hover{border-left-color:var(--steel-500)}
+.tile.borrador:hover .t{color:var(--navy-700)}
+body.dark .tile.borrador:hover .t{color:var(--steel-300)}
+
+/* Aviso de guía en preparación */
+.aviso-borrador{background:var(--surface2);border:2px dashed var(--border);
+  border-radius:var(--radius);padding:1.6rem 1.4rem;text-align:center;margin:1.2rem 0}
+.aviso-borrador .icono{font-size:1.8rem;display:block;margin-bottom:.5rem}
+.aviso-borrador h3{color:var(--navy-700);font-size:1.05rem;margin-bottom:.5rem}
+body.dark .aviso-borrador h3{color:var(--steel-300)}
+.aviso-borrador p{color:var(--muted);max-width:520px;margin:0 auto .8rem}
+.aviso-borrador .acciones{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+
 /* Semanas de evaluación y de cierre: hitos del calendario, no guías pendientes */
 .tile.eval,.tile.cierre{opacity:1;border-style:dashed;border-width:1px 1px 1px 4px;background:transparent}
 .tile.eval{border-left-color:var(--gold-500)}
