@@ -43,14 +43,15 @@ ova-dcb/
 ├── assets/
 │   ├── ova.css                 estilos comunes
 │   ├── ova.js                  MOTOR: quiz, validador, canvas, modo oscuro
+│   ├── estado.js               QUÉ GUÍAS ESTÁN PUBLICADAS (edítalo al publicar)
 │   ├── viz-calculo.js          explorador de funciones · acercamiento al límite · tangente
 │   ├── viz-metodos.js          error de truncamiento de Taylor · bisección iterativa
 │   ├── viz-vectorial.js        productos vectoriales · gradiente y curvas de nivel
 │   └── viz-edo.js              campo de direcciones con clic
-├── calculo/     index.html + s01.html   Repaso de funciones
-├── metodos/     index.html + s01.html   Errores y aproximación
-├── vectorial/   index.html + s01.html   Vectores y geometría del espacio
-└── edo/         index.html + s01.html   EDO de primer orden
+├── calculo/     index.html + s01.html … s14.html   (las no escritas son avisos)
+├── metodos/     index.html + s01.html … s14.html
+├── vectorial/   index.html + s01.html … s14.html
+└── edo/         index.html + s01.html … s14.html
 ```
 
 Cada curso tiene su índice con las 5 sesiones del Corte I: la sesión 1 activa y
@@ -58,22 +59,45 @@ las demás marcadas como pendientes.
 
 ---
 
-## 3. Crear la semana siguiente (~40 minutos)
+## 3. Publicar una guía nueva
 
-1. Copia `<curso>/s01.html` → `<curso>/s02.html`.
+Las 16 semanas de los cuatro cursos **ya están enlazadas**. Las que aún no tienen guía llevan a
+una página de aviso, así que ningún enlace da error 404. Publicar consiste en dos pasos:
+
+### Paso 1 — Reemplaza el archivo provisional
+
+Sube la guía con el nombre que ya espera el índice: `calculo/s02.html`, `edo/s03.html`, etc.
+GitHub te preguntará si quieres reemplazar el archivo existente. Di que sí.
+
+### Paso 2 — Añade el número a `assets/estado.js`
+
+```js
+window.OVA_PUBLICADAS = {
+  calculo:   [1, 2],     ←  añade el 2
+  vectorial: [1],
+  metodos:   [1, 2],
+  edo:       [1]
+};
+```
+
+Eso es todo. La ficha del índice pasa de «Próximamente» a «Guía publicada», deja de verse
+punteada y el contador «N de 12 guías publicadas» se recalcula solo.
+
+**Nunca tienes que editar el HTML de los índices.** Ese fue el motivo de separar el estado en
+su propio archivo: editar markup de fichas a mano es donde se cometen errores.
+
+---
+
+## 3b. Escribir la guía
+
+1. Copia una guía ya publicada del mismo curso (por ejemplo `calculo/s01.html`) sobre el archivo
+   provisional que vas a reemplazar.
 2. Cambia el `<title>`, el encabezado y el bloque `.hero`.
 3. Reemplaza el contenido de las `<section class="card">`. Clases disponibles:
    `.def`, `.nota`, `.callout-dark`, `.formulas`, `.ejemplo` + `.paso`, `.tbl`, `.carrera`.
-4. Reemplaza el bloque `OVA.quiz({...})` del final y cambia el `id` del `<div>` destino.
-5. En `<curso>/index.html`, convierte la ficha de esa sesión de
-   `<div class="tile" aria-disabled="true">` a `<a class="tile" href="s02.html">`
-   y actualiza su descripción.
-6. Sube el archivo a GitHub. Publicado.
-
-**No edites `assets/` al crear una semana.** Si necesitas algo que el motor no hace,
-añádelo al motor una vez y servirá para los cuatro cursos a la vez.
-
----
+4. Reemplaza el bloque `OVA.quiz({...})` del final y ajusta los `id` de los `<div>` destino.
+5. Si necesitas un visualizador nuevo, añádelo al `assets/viz-*.js` del curso y **cambia el `?v=`
+   en todas las páginas** (ver §7).
 
 ## 4. Formato del banco de preguntas
 
@@ -166,8 +190,8 @@ sigue estos pasos en orden:
 Todas las páginas enlazan los archivos con un sufijo de versión:
 
 ```html
-<link rel="stylesheet" href="../assets/ova.css?v=20260823b">
-<script src="../assets/viz-vectorial.js?v=20260823b"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260827a">
+<script src="../assets/viz-vectorial.js?v=20260827a"></script>
 ```
 
 Ese `?v=` obliga al navegador a descargar el archivo de nuevo en lugar de usar el que tiene
