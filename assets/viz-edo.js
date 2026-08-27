@@ -3,6 +3,10 @@
    familia    S01  solución general vs particular (clic)
    verificar  S01  comprobar una solución por sustitución
    campo      S02  campo de direcciones con clic
+   isoclinas  S02  curvas de pendiente constante
+   autonoma   S02  línea de fase y equilibrios
+   decaimiento S03 crecimiento y decrecimiento exponencial
+   lineal     S03  transitorio y estado estacionario
    ══════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
@@ -232,6 +236,340 @@ OVA.viz.registrar('verificar', function (host) {
         '(máximo ≈ ' + maxres.toFixed(3) + ' en la muestra): la sustitución no cierra.') +
     '<br><span style="color:#8fb4d9">Verificar cuesta quince segundos y siempre se puede hacer, ' +
     'aunque no sepas resolver la ecuación. Es la comprobación más rentable del curso.</span>';
+});
+
+/* ══════ S02 · Isoclinas: dónde la pendiente es la misma ══════ */
+var ISO = {
+  lin:  { f: function (x, y) { return x - y; },        n: "y' = x − y",
+          iso: 'x − y = k  →  rectas y = x − k', ks: [-2,-1,0,1,2,3] },
+  cuad: { f: function (x, y) { return y - x * x; },    n: "y' = y − x²",
+          iso: 'y − x² = k  →  parábolas y = x² + k', ks: [-3,-2,-1,0,1,2] },
+  circ: { f: function (x, y) { return x * x + y * y; }, n: "y' = x² + y²",
+          iso: 'x² + y² = k  →  circunferencias', ks: [1,2,4,6,9] },
+  prod: { f: function (x, y) { return x * y; },        n: "y' = x·y",
+          iso: 'x·y = k  →  hipérbolas', ks: [-4,-2,-1,1,2,4] }
+};
+var COLISO = ['#c68f2e','#1c7a4c','#b0392c','#7d4f9e','#3a6ea5','#c65e2e'];
+
+OVA.viz.registrar('isoclinas', function (host) {
+  var cfg = ISO[q(host, 'select').value] || ISO.lin;
+  var cuantas = parseInt(q(host, '.cuantas').value, 10);
+  var ks = cfg.ks.slice(0, cuantas);
+  q(host, '.cuantas-val').textContent = ks.length + ' isoclinas';
+
+  var L = OVA.lienzo(host.querySelector('canvas'), { sx: 40, sy: 32 });
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // campo de direcciones tenue de fondo
+  var paso = 30, largo = 12;
+  for (var px = paso / 2; px < L.w; px += paso) {
+    for (var py = paso / 2; py < L.h; py += paso) {
+      var xv = (px - L.ox) / L.sx, yv = (L.oy - py) / L.sy, m = cfg.f(xv, yv);
+      if (!isFinite(m)) continue;
+      var a = Math.atan(m), dx = Math.cos(a) * largo / 2, dy = Math.sin(a) * largo / 2;
+      c.strokeStyle = document.body.classList.contains('dark')
+        ? 'rgba(143,180,217,.30)' : 'rgba(34,80,125,.28)';
+      c.lineWidth = 1.2;
+      c.beginPath(); c.moveTo(px - dx, py + dy); c.lineTo(px + dx, py - dy); c.stroke();
+    }
+  }
+
+  // cada isoclina, por cambio de signo de f(x,y) − k
+  ks.forEach(function (k, idx) {
+    var col = COLISO[idx % COLISO.length];
+    var g = function (X, Y) { return cfg.f((X - L.ox) / L.sx, (L.oy - Y) / L.sy) - k; };
+    var puntos = [];
+    c.fillStyle = col;
+    for (var X = 0; X < L.w; X += 2) {
+      for (var Y = 0; Y < L.h; Y += 2) {
+        var v = g(X, Y);
+        if (!isFinite(v)) continue;
+        var vd = g(X + 2, Y), vb = g(X, Y + 2);
+        if ((isFinite(vd) && v * vd < 0) || (isFinite(vb) && v * vb < 0)) {
+          c.fillRect(X, Y, 2.4, 2.4);
+          puntos.push([X, Y]);
+        }
+      }
+    }
+    // sobre la isoclina, segmentos con pendiente k: todos paralelos
+    c.strokeStyle = col; c.lineWidth = 2.4;
+    var salto = Math.max(1, Math.floor(puntos.length / 9));
+    for (var i = 0; i < puntos.length; i += salto) {
+      var p = puntos[i], ang = Math.atan(k), d1 = Math.cos(ang) * 9, d2 = Math.sin(ang) * 9;
+      c.beginPath();
+      c.moveTo(p[0] - d1, p[1] + d2); c.lineTo(p[0] + d1, p[1] - d2); c.stroke();
+    }
+  });
+
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;·&nbsp; isoclinas: ' + cfg.iso + '<br>' +
+    ks.map(function (k, i) {
+      return '<span style="color:' + COLISO[i % COLISO.length] + '">■</span> k = ' + k;
+    }).join(' &nbsp; ') + '<br>' +
+    '<span style="color:#8fb4d9">Sobre cada curva de color, todos los segmentos son ' +
+    '<strong>paralelos entre sí</strong>: esa es la definición de isoclina. Dibujar tres o cuatro ' +
+    'y rellenar entre ellas es como se bosqueja un campo a mano, sin computador.</span>';
+});
+
+/* ══════ S02 · EDO autónomas y línea de fase ══════ */
+var AUTO = {
+  log:  { f: function (y) { return y * (1 - y / 3); }, n: "y' = y(1 − y/3)",
+          eq: [0, 3], y0s: [-0.6, 0.4, 1.5, 2.6, 3.8, 4.6], rango: [-1.4, 5] },
+  cuad: { f: function (y) { return y * y - 4; },       n: "y' = y² − 4",
+          eq: [-2, 2], y0s: [-3.4, -2.6, -1, 1, 1.9, 2.4], rango: [-4, 4] },
+  semi: { f: function (y) { return y * (y - 2) * (y - 2); }, n: "y' = y(y − 2)²",
+          eq: [0, 2], y0s: [-0.5, 0.4, 1.4, 2.3, 2.8], rango: [-1.2, 3.4] },
+  dec:  { f: function (y) { return 2 - y; },           n: "y' = 2 − y",
+          eq: [2], y0s: [-1, 0.5, 3.5, 5], rango: [-1.5, 5.5] }
+};
+
+OVA.viz.registrar('autonoma', function (host) {
+  var cfg = AUTO[q(host, 'select').value] || AUTO.log;
+  var L = OVA.lienzo(host.querySelector('canvas'), { alto: 300 });
+  var c = L.ctx;
+  var mL = 96, mR = 14, mT = 22, mB = 28;
+  var W = L.w - mL - mR, H = L.h - mT - mB;
+  var y0 = cfg.rango[0], y1 = cfg.rango[1];
+  var PY = function (v) { return mT + (y1 - v) / (y1 - y0) * H; };
+  var PT = function (tt) { return mL + tt / 6 * W; };
+
+  // ── línea de fase (izquierda) ──
+  var xf = 62;
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 2;
+  c.beginPath(); c.moveTo(xf, mT); c.lineTo(xf, mT + H); c.stroke();
+  var cortes = [y0].concat(cfg.eq).concat([y1]);
+  for (var i = 0; i < cortes.length - 1; i++) {
+    var med = (cortes[i] + cortes[i + 1]) / 2, sube = cfg.f(med) > 0;
+    var ym = PY(med);
+    c.strokeStyle = sube ? '#1c7a4c' : '#b0392c'; c.fillStyle = c.strokeStyle;
+    c.lineWidth = 2.4;
+    c.beginPath(); c.moveTo(xf, ym + 14); c.lineTo(xf, ym - 14); c.stroke();
+    var p = sube ? ym - 14 : ym + 14, s = sube ? 1 : -1;
+    c.beginPath();
+    c.moveTo(xf, p); c.lineTo(xf - 5, p + s * 8); c.lineTo(xf + 5, p + s * 8);
+    c.closePath(); c.fill();
+  }
+  cfg.eq.forEach(function (e) {
+    c.fillStyle = '#c68f2e';
+    c.beginPath(); c.arc(xf, PY(e), 6, 0, 6.2832); c.fill();
+    c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace';
+    c.fillText('y = ' + e, 6, PY(e) + 4);
+    // recta de equilibrio en el plano t-y
+    c.strokeStyle = 'rgba(198,143,46,.9)'; c.lineWidth = 2; c.setLineDash([7, 4]);
+    c.beginPath(); c.moveTo(mL, PY(e)); c.lineTo(mL + W, PY(e)); c.stroke();
+    c.setLineDash([]);
+  });
+  c.fillStyle = OVA.color('cv-text'); c.font = '10px ui-monospace,monospace';
+  c.fillText('línea de fase', 4, mT - 8);
+
+  // ── curvas solución (derecha), por RK4 ──
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mL, mT); c.lineTo(mL, mT + H); c.lineTo(mL + W, mT + H); c.stroke();
+  c.fillStyle = OVA.color('cv-text'); c.font = '10px ui-monospace,monospace';
+  c.fillText('t', mL + W / 2, L.h - 6);
+
+  cfg.y0s.forEach(function (v0) {
+    var h = 0.01, v = v0;
+    c.strokeStyle = '#3a6ea5'; c.lineWidth = 2.4;
+    c.beginPath(); c.moveTo(PT(0), PY(v));
+    for (var s = 0; s < 600; s++) {
+      var k1 = cfg.f(v), k2 = cfg.f(v + h * k1 / 2),
+          k3 = cfg.f(v + h * k2 / 2), k4 = cfg.f(v + h * k3);
+      v += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+      if (!isFinite(v)) break;
+      var Y = PY(v);
+      if (Y < mT - 30 || Y > mT + H + 30) break;
+      c.lineTo(PT((s + 1) * h), Y);
+    }
+    c.stroke();
+  });
+
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, mL + 8, mT + 12);
+
+  // clasificación de cada equilibrio
+  var clas = cfg.eq.map(function (e) {
+    var d = 0.05, ab = cfg.f(e + d), ba = cfg.f(e - d);
+    var tipo = (ba > 0 && ab < 0) ? 'atractor (estable)'
+             : (ba < 0 && ab > 0) ? 'repulsor (inestable)'
+             : 'semiestable';
+    return 'y = ' + e + ' → <strong>' + tipo + '</strong>';
+  }).join(' &nbsp;·&nbsp; ');
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> — ecuación autónoma: la pendiente depende solo de y.<br>' +
+    clas + '<br>' +
+    '<span style="color:#8fb4d9">Las flechas verdes suben y las rojas bajan. Fíjate en que ' +
+    'ninguna curva cruza una recta dorada de equilibrio: no puede, porque ahí la pendiente es cero. ' +
+    'Toda la información de la izquierda se leyó <em>sin resolver la ecuación</em>.</span>';
+});
+
+/* ══════ S03 · Crecimiento y decrecimiento exponencial ══════ */
+var CREC = {
+  bact: { P0: 100, k: Math.log(3) / 3, T: 12, u: 'h', n: 'Cultivo de bacterias',
+          txt: 'P₀ = 100, se triplica en 3 h' },
+  c14:  { P0: 100, k: -Math.log(2) / 5730, T: 25000, u: 'años', n: 'Carbono-14',
+          txt: 'semivida 5 730 años' },
+  med:  { P0: 500, k: -Math.log(2) / 4, T: 24, u: 'h', n: 'Fármaco en sangre',
+          txt: 'P₀ = 500 mg, semivida 4 h' },
+  int:  { P0: 1000, k: 0.08, T: 30, u: 'años', n: 'Interés compuesto continuo',
+          txt: 'capital 1 000, tasa 8 % anual' }
+};
+
+OVA.viz.registrar('decaimiento', function (host) {
+  var cfg = CREC[q(host, 'select').value] || CREC.bact;
+  var tv = parseFloat(q(host, '.tiempo').value) / 100 * cfg.T;
+  q(host, '.t-val').textContent = 't = ' + (cfg.T > 100 ? tv.toFixed(0) : tv.toFixed(2)) + ' ' + cfg.u;
+
+  var P = function (tt) { return cfg.P0 * Math.exp(cfg.k * tt); };
+  var crece = cfg.k > 0;
+  var tc = Math.log(2) / Math.abs(cfg.k);   // duplicación o semivida
+
+  var L = OVA.lienzo(host.querySelector('canvas'), { alto: 260 });
+  var c = L.ctx, mL = 62, mR = 16, mT = 22, mB = 30;
+  var W = L.w - mL - mR, H = L.h - mT - mB;
+  var Pmax = crece ? P(cfg.T) * 1.05 : cfg.P0 * 1.08;
+  var PX = function (tt) { return mL + tt / cfg.T * W; };
+  var PY = function (v) { return mT + (1 - v / Pmax) * H; };
+
+  c.strokeStyle = OVA.color('cv-grid'); c.lineWidth = 1;
+  for (var g = 1; g <= 4; g++) {
+    var yy = mT + H * g / 5;
+    c.beginPath(); c.moveTo(mL, yy); c.lineTo(mL + W, yy); c.stroke();
+  }
+  // marcas de duplicación / semivida
+  var col = crece ? '#1c7a4c' : '#b0392c';
+  for (var m = 1; m * tc <= cfg.T; m++) {
+    c.strokeStyle = 'rgba(198,143,46,.8)'; c.lineWidth = 1.6; c.setLineDash([5, 4]);
+    c.beginPath(); c.moveTo(PX(m * tc), mT); c.lineTo(PX(m * tc), mT + H); c.stroke();
+    c.setLineDash([]);
+    c.fillStyle = '#c68f2e'; c.font = '10px ui-monospace,monospace';
+    c.fillText((crece ? '×' : '÷') + Math.pow(2, m), PX(m * tc) + 3, mT + 12);
+  }
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mL, mT); c.lineTo(mL, mT + H); c.lineTo(mL + W, mT + H); c.stroke();
+
+  c.strokeStyle = col; c.lineWidth = 3.2; c.beginPath();
+  for (var s = 0; s <= 400; s++) {
+    var tt = cfg.T * s / 400;
+    s ? c.lineTo(PX(tt), PY(P(tt))) : c.moveTo(PX(tt), PY(P(tt)));
+  }
+  c.stroke();
+
+  c.fillStyle = col;
+  c.beginPath(); c.arc(PX(tv), PY(P(tv)), 6, 0, 6.2832); c.fill();
+  c.strokeStyle = 'rgba(128,128,128,.6)'; c.lineWidth = 1; c.setLineDash([4, 4]);
+  c.beginPath(); c.moveTo(mL, PY(P(tv))); c.lineTo(PX(tv), PY(P(tv)));
+  c.lineTo(PX(tv), mT + H); c.stroke(); c.setLineDash([]);
+
+  c.fillStyle = OVA.color('cv-text'); c.font = '10px ui-monospace,monospace';
+  c.fillText(Pmax.toPrecision(3), 4, mT + 6);
+  c.fillText('0', 4, mT + H);
+  c.fillText(cfg.T + ' ' + cfg.u, mL + W - 34, L.h - 8);
+  c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, mL + 10, mT + 14);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> — ' + cfg.txt + '<br>' +
+    'k = <strong>' + cfg.k.toExponential(4) + '</strong> por ' + cfg.u.replace('años', 'año') +
+    ' &nbsp;·&nbsp; ' + (crece ? 'tiempo de duplicación' : 'semivida') +
+    ' = <strong>' + (tc > 100 ? tc.toFixed(0) : tc.toFixed(3)) + ' ' + cfg.u + '</strong><br>' +
+    'P(' + (cfg.T > 100 ? tv.toFixed(0) : tv.toFixed(2)) + ') = <strong>' +
+      P(tv).toPrecision(6) + '</strong> &nbsp;·&nbsp; P(t)/P₀ = ' +
+      (P(tv) / cfg.P0).toPrecision(4) + '<br>' +
+    '<span style="color:#8fb4d9">Las líneas doradas están <em>igualmente espaciadas</em>: cada ' +
+    (crece ? 'duplicación' : 'reducción a la mitad') + ' tarda lo mismo, sin importar desde qué ' +
+    'valor se parta. Esa es la firma del modelo exponencial.</span>';
+});
+
+/* ══════ S03 · Transitorio y estado estacionario ══════ */
+var LINEAL = {
+  rl:   { n: "0,5·i' + 10i = 12   (circuito RL)", yp: function () { return 1.2; },
+          yc: function (C, t) { return C * Math.exp(-20 * t); },
+          Cde: function (y0) { return y0 - 1.2; }, x0: 0, x1: 0.3, y0s: [0, 0.6, 2],
+          vx: 't (s)', vy: 'i (A)', est: '1,2 A', transitorio: true },
+  lin:  { n: "y' + y = x", yp: function (x) { return x - 1; },
+          yc: function (C, x) { return C * Math.exp(-x); },
+          Cde: function (y0) { return y0 + 1; }, x0: 0, x1: 6, y0s: [-2, 0, 4],
+          vx: 'x', vy: 'y', est: 'la recta y = x − 1', transitorio: true },
+  cte:  { n: "y' + 2y = 4", yp: function () { return 2; },
+          yc: function (C, x) { return C * Math.exp(-2 * x); },
+          Cde: function (y0) { return y0 - 2; }, x0: 0, x1: 3, y0s: [-1, 2, 5],
+          vx: 'x', vy: 'y', est: '2', transitorio: true },
+  crece:{ n: "y' − 3y = 6", yp: function () { return -2; },
+          yc: function (C, x) { return C * Math.exp(3 * x); },
+          Cde: function (y0) { return y0 + 2; }, x0: 0, x1: 1.2, y0s: [-2.4, -2, -1.6],
+          vx: 'x', vy: 'y', est: 'no hay: la parte homogénea CRECE', transitorio: false }
+};
+
+OVA.viz.registrar('lineal', function (host) {
+  var cfg = LINEAL[q(host, 'select').value] || LINEAL.rl;
+  var idx = parseInt(q(host, '.ci').value, 10) % cfg.y0s.length;
+  var v0 = cfg.y0s[idx];
+  q(host, '.ci-val').textContent = 'valor inicial = ' + v0;
+  var C = cfg.Cde(v0);
+  var tot = function (x) { return cfg.yp(x) + cfg.yc(C, x); };
+
+  var L = OVA.lienzo(host.querySelector('canvas'), { alto: 270 });
+  var c = L.ctx, mL = 54, mR = 16, mT = 34, mB = 28;
+  var W = L.w - mL - mR, H = L.h - mT - mB;
+  var vals = [];
+  for (var s = 0; s <= 200; s++) {
+    var xx = cfg.x0 + (cfg.x1 - cfg.x0) * s / 200;
+    cfg.y0s.forEach(function (u) { vals.push(cfg.yp(xx) + cfg.yc(cfg.Cde(u), xx)); });
+    vals.push(cfg.yp(xx));
+  }
+  vals = vals.filter(isFinite);
+  var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+  var pad = (hi - lo) * 0.12 || 1; lo -= pad; hi += pad;
+  var PX = function (xx) { return mL + (xx - cfg.x0) / (cfg.x1 - cfg.x0) * W; };
+  var PY = function (v) { return mT + (hi - v) / (hi - lo) * H; };
+
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mL, mT); c.lineTo(mL, mT + H);
+  if (lo < 0 && hi > 0) { c.moveTo(mL, PY(0)); c.lineTo(mL + W, PY(0)); }
+  else { c.lineTo(mL + W, mT + H); }
+  c.stroke();
+
+  function curva(fn, color, ancho, guiones) {
+    c.strokeStyle = color; c.lineWidth = ancho;
+    if (guiones) c.setLineDash(guiones);
+    c.beginPath();
+    for (var s = 0; s <= 400; s++) {
+      var xx = cfg.x0 + (cfg.x1 - cfg.x0) * s / 400, v = fn(xx);
+      if (!isFinite(v)) continue;
+      s ? c.lineTo(PX(xx), PY(v)) : c.moveTo(PX(xx), PY(v));
+    }
+    c.stroke(); c.setLineDash([]);
+  }
+  curva(function (xx) { return cfg.yp(xx); }, '#1c7a4c', 2.6, [8, 5]);
+  curva(function (xx) { return cfg.yc(C, xx); }, '#b0392c', 2.2, [3, 3]);
+  curva(tot, '#3a6ea5', 3.4);
+
+  c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = '#3a6ea5'; c.fillText('— y = y_p + y_c  (solución)', mL + 8, 12);
+  c.fillStyle = '#1c7a4c'; c.fillText('- - y_p  (estado estacionario)', mL + 8, 24);
+  c.fillStyle = '#b0392c'; c.fillText('· · y_c  (transitorio)', mL + W - 150, 12);
+  c.fillStyle = OVA.color('cv-text'); c.font = '10px ui-monospace,monospace';
+  c.fillText(cfg.vy, 4, mT + 8);
+  c.fillText(cfg.vx, mL + W / 2, L.h - 6);
+
+  var fin = tot(cfg.x1), yc_fin = cfg.yc(C, cfg.x1);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;·&nbsp; C = ' + C.toPrecision(4) + '<br>' +
+    (cfg.transitorio
+      ? 'La parte roja <strong>se desvanece</strong>: en el extremo derecho vale ' +
+        yc_fin.toExponential(2) + '. La azul se pega a la verde.<br>' +
+        'Estado estacionario: <strong style="color:#7fd4a4">' + cfg.est + '</strong>'
+      : '<strong style="color:#f0a58a">Aquí no hay estado estacionario.</strong> La parte ' +
+        'homogénea es Ce^{3x} y crece sin límite, así que domina en vez de desvanecerse.') +
+    '<br><span style="color:#8fb4d9">Cambia el valor inicial: la curva verde <em>no se mueve</em>. ' +
+    'La condición inicial solo afecta al transitorio, y por eso a largo plazo todas las soluciones ' +
+    (cfg.transitorio ? 'terminan igual.' : 'se separan cada vez más.') + '</span>';
 });
 
 document.addEventListener('DOMContentLoaded', function () {

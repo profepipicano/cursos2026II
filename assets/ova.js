@@ -424,7 +424,7 @@ function initGuiaNav() {
    que leen el código fuente no encuentran una dirección válida. */
 function initContacto() {
   var titulo = document.querySelector('#top .top-titles h1');
-  var pagina = (titulo ? titulo.textContent : document.title).trim();
+  var pagina = ((titulo ? titulo.textContent : document.title) || 'OVA').trim();
   document.querySelectorAll('.enlace-correo[data-u]').forEach(function (a) {
     var u = a.getAttribute('data-u'), d = a.getAttribute('data-d');
     if (!u || !d) return;
