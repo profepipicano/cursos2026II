@@ -7,6 +7,9 @@
    cota-taylor   §6.5 error real frente a la cota de Lagrange
    sustitucion   S01 §2  sustitución hacia atrás
    riemann       S01 §4  sumas de Riemann y convergencia
+   gauss         S03 §2-3 eliminación paso a paso (Gauss / Gauss-Jordan)
+   pivoteo       S03 §5  por qué hace falta intercambiar filas
+   costo         S03 §4  n³/3 contra (n+1)!
    biseccion     (semana 8 · métodos cerrados)
    ══════════════════════════════════════════════════════════ */
 (function () {
@@ -477,6 +480,266 @@ OVA.viz.registrar('riemann', function (host) {
     '<span style="color:#8fb4d9">Sube n y observa cómo cae el error. El trapecio y el punto medio ' +
     'convergen mucho más rápido que los extremos: eso es exactamente lo que formalizarás en la ' +
     'semana 12.</span>';
+});
+
+/* ══════ S03 · Eliminación paso a paso: Gauss vs Gauss-Jordan ══════ */
+var SIS = {
+  a: { n: 'x+y+z=6 ; 2x−y+3z=9 ; 3x+2y−2z=1', v: ['x','y','z'],
+       M: [[1,1,1,6],[2,-1,3,9],[3,2,-2,1]], sol: [1,2,3] },
+  b: { n: '2x+y−z=8 ; −3x−y+2z=−11 ; −2x+y+2z=−3', v: ['x','y','z'],
+       M: [[2,1,-1,8],[-3,-1,2,-11],[-2,1,2,-3]], sol: [2,3,-1] },
+  c: { n: 'x−2y+z=0 ; 2y−8z=8 ; −4x+5y+9z=−9', v: ['x','y','z'],
+       M: [[1,-2,1,0],[0,2,-8,8],[-4,5,9,-9]], sol: [29,16,3] }
+};
+
+function fmt(v) {
+  if (Math.abs(v) < 1e-10) return '0';
+  var r = Math.round(v * 1000) / 1000;
+  return (Math.abs(r - Math.round(r)) < 1e-9) ? String(Math.round(r)) : r.toFixed(3);
+}
+
+/* Genera la lista de pasos de eliminación. modo: 'gauss' | 'jordan' */
+function pasosElim(M0, n, modo) {
+  var M = M0.map(function (f) { return f.slice(); });
+  var pasos = [], ops = 0;
+  for (var k = 0; k < n; k++) {
+    // normalizar el pivote (solo Gauss-Jordan)
+    if (modo === 'jordan' && Math.abs(M[k][k] - 1) > 1e-12) {
+      var p = M[k][k];
+      for (var c = k; c <= n; c++) { M[k][c] /= p; ops++; }
+      pasos.push({ txt: 'F' + (k + 1) + ' → F' + (k + 1) + ' / (' + fmt(p) + ')',
+                   M: M.map(function (f) { return f.slice(); }), piv: k, ops: ops });
+    }
+    for (var i = 0; i < n; i++) {
+      if (i === k) continue;
+      if (modo === 'gauss' && i < k) continue;   // Gauss solo elimina hacia abajo
+      if (Math.abs(M[i][k]) < 1e-12) continue;
+      var f = M[i][k] / M[k][k];
+      for (var c2 = k; c2 <= n; c2++) { M[i][c2] -= f * M[k][c2]; ops += 2; }
+      pasos.push({ txt: 'F' + (i + 1) + ' → F' + (i + 1) + ' − (' + fmt(f) + ')·F' + (k + 1),
+                   M: M.map(function (g) { return g.slice(); }), piv: k, ops: ops });
+    }
+  }
+  if (modo === 'gauss') {
+    // sustitución hacia atrás
+    var xs = new Array(n).fill(null);
+    for (var s = n - 1; s >= 0; s--) {
+      var suma = 0;
+      for (var j = s + 1; j < n; j++) { suma += M[s][j] * xs[j]; ops += 2; }
+      xs[s] = (M[s][n] - suma) / M[s][s]; ops++;
+      pasos.push({ txt: 'Sustitución hacia atrás: despejar la incógnita ' + (s + 1),
+                   M: M.map(function (g) { return g.slice(); }), piv: -1, ops: ops, xs: xs.slice() });
+    }
+  }
+  return pasos;
+}
+
+OVA.viz.registrar('gauss', function (host) {
+  var cfg = SIS[q(host, 'select').value] || SIS.a;
+  var modo = q(host, '.modo').value;
+  var n = cfg.M.length;
+  var pasos = pasosElim(cfg.M, n, modo);
+  var sl = q(host, '.paso');
+  sl.max = pasos.length;
+  var p = Math.min(parseInt(sl.value, 10), pasos.length);
+  q(host, '.paso-val').textContent = 'paso ' + p + ' de ' + pasos.length;
+
+  var M = p === 0 ? cfg.M : pasos[p - 1].M;
+  var piv = p === 0 ? -1 : pasos[p - 1].piv;
+  var xs = p > 0 ? pasos[p - 1].xs : null;
+
+  var t = '<table class="tbl" style="margin:0;font-size:.88rem;text-align:center"><tr>';
+  cfg.v.forEach(function (v) { t += '<th style="text-align:center">' + v + '</th>'; });
+  t += '<th style="text-align:center">=</th></tr>';
+  for (var r = 0; r < n; r++) {
+    t += '<tr>';
+    for (var c = 0; c <= n; c++) {
+      var est = '';
+      if (c === piv && r === piv) est = 'font-weight:800;background:rgba(198,143,46,.35)';
+      else if (c === piv && c < n) est = 'background:rgba(176,57,44,.16)';
+      else if (Math.abs(M[r][c]) < 1e-10) est = 'color:var(--muted);opacity:.45';
+      if (c === n) est += ';font-weight:700;border-left:2px solid var(--border)';
+      t += '<td style="text-align:center;' + est + '">' + fmt(M[r][c]) + '</td>';
+    }
+    t += '</tr>';
+  }
+  q(host, '.matriz').innerHTML = t + '</table>';
+
+  var h = '';
+  if (p === 0) {
+    h = '<p style="color:var(--muted);font-size:.88rem">Matriz aumentada inicial. ' +
+        'Avanza el deslizador para ver cada operación de fila.</p>';
+  } else {
+    for (var i = Math.max(0, p - 4); i < p; i++) {
+      h += '<div class="paso"><div class="paso-t">Paso ' + (i + 1) + '</div>' +
+           '<span style="font-family:ui-monospace,monospace">' + pasos[i].txt + '</span></div>';
+    }
+  }
+  q(host, '.pasos').innerHTML = h;
+
+  var listo = p >= pasos.length;
+  var res = xs ? xs : (listo && modo === 'jordan'
+    ? M.map(function (f) { return f[n]; }) : null);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + (modo === 'gauss' ? 'Eliminación de Gauss + sustitución hacia atrás'
+                                   : 'Gauss-Jordan') + '</strong><br>' +
+    (listo && res
+      ? '<strong style="color:#7fd4a4">Solución: ' +
+        cfg.v.map(function (v, i) { return v + ' = ' + fmt(res[i]); }).join(', ') + '</strong><br>'
+      : '') +
+    'Operaciones acumuladas: <strong>' + (p ? pasos[p - 1].ops : 0) + '</strong>' +
+    ' &nbsp;·&nbsp; total del método: <strong>' + pasos[pasos.length - 1].ops + '</strong><br>' +
+    '<span style="color:#8fb4d9">' +
+    (modo === 'gauss'
+      ? 'Gauss solo elimina <em>por debajo</em> de la diagonal y luego sustituye hacia atrás.'
+      : 'Gauss-Jordan normaliza cada pivote y elimina <em>arriba y abajo</em>, hasta dejar la ' +
+        'identidad. No necesita sustitución, pero cuesta más operaciones.') +
+    ' Cambia de método con el mismo sistema y compara el total.</span>';
+});
+
+/* ══════ S03 · Por qué hace falta el pivoteo ══════ */
+function sigc(v, d) {
+  if (v === 0 || !isFinite(v)) return v;
+  var m = Math.pow(10, d - 1 - Math.floor(Math.log10(Math.abs(v))));
+  return Math.round(v * m) / m;
+}
+
+/* Máquina consistente de d cifras: se redondea TODO, incluidas las entradas */
+function resolver2x2(d, pivotear) {
+  var a = [[sigc(0.0003, d), sigc(3.0, d)], [sigc(1.0, d), sigc(1.0, d)]];
+  var b = [sigc(2.0001, d), sigc(1.0, d)];
+  var permuta = false;
+  if (pivotear && Math.abs(a[1][0]) > Math.abs(a[0][0])) {
+    permuta = true;
+    var ta = a[0]; a[0] = a[1]; a[1] = ta;
+    var tb = b[0]; b[0] = b[1]; b[1] = tb;
+  }
+  var f = sigc(a[1][0] / a[0][0], d);
+  var a22 = sigc(a[1][1] - sigc(f * a[0][1], d), d);
+  var b2 = sigc(b[1] - sigc(f * b[0], d), d);
+  var x2 = sigc(b2 / a22, d);
+  var x1 = sigc(sigc(b[0] - sigc(a[0][1] * x2, d), d) / a[0][0], d);
+  return { x1: x1, x2: x2, f: f, permuta: permuta };
+}
+
+OVA.viz.registrar('pivoteo', function (host) {
+  var d = parseInt(q(host, '.cifras').value, 10);
+  q(host, '.cifras-val').textContent = d + ' cifras significativas';
+  var EX1 = 1 / 3, EX2 = 2 / 3;
+  var sin = resolver2x2(d, false), con = resolver2x2(d, true);
+  var eSin = Math.abs(sin.x1 - EX1) / EX1, eCon = Math.abs(con.x1 - EX1) / EX1;
+
+  var L = OVA.lienzo(host.querySelector('canvas'), { alto: 240 });
+  var c = L.ctx, mI = 52, mA = 18, mB = 32, mD = 14;
+  var W = L.w - mI - mD, H = L.h - mA - mB;
+  var dmin = 3, dmax = 12;
+  var PX = function (dd) { return mI + (dd - dmin) / (dmax - dmin) * W; };
+  var PY = function (e) {
+    var v = Math.max(Math.min(Math.log10(Math.max(e, 1e-13)), 1), -12);
+    return mA + (1 - v) / 13 * H;
+  };
+  c.strokeStyle = OVA.color('cv-grid'); c.lineWidth = 1;
+  c.fillStyle = OVA.color('cv-text'); c.font = '9px ui-monospace,monospace';
+  for (var g = 0; g >= -12; g -= 3) {
+    c.beginPath(); c.moveTo(mI, PY(Math.pow(10, g))); c.lineTo(mI + W, PY(Math.pow(10, g))); c.stroke();
+    c.fillText('1e' + g, 4, PY(Math.pow(10, g)) + 3);
+  }
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mI, mA); c.lineTo(mI, mA + H); c.lineTo(mI + W, mA + H); c.stroke();
+  c.font = '10px ui-monospace,monospace';
+  for (var dd = dmin; dd <= dmax; dd++) c.fillText(String(dd), PX(dd) - 3, L.h - 12);
+  c.font = 'bold 10px ui-monospace,monospace';
+  c.fillText('cifras significativas de la máquina', mI + W / 2 - 95, L.h - 1);
+
+  [[false, '#b0392c', 'sin pivoteo'], [true, '#1c7a4c', 'con pivoteo parcial']]
+    .forEach(function (par, idx) {
+      c.strokeStyle = par[1]; c.lineWidth = 2.8; c.beginPath();
+      for (var dv = dmin; dv <= dmax; dv++) {
+        var r = resolver2x2(dv, par[0]);
+        var e = Math.abs(r.x1 - EX1) / EX1;
+        var X = PX(dv), Y = PY(e);
+        dv === dmin ? c.moveTo(X, Y) : c.lineTo(X, Y);
+      }
+      c.stroke();
+      c.fillStyle = par[1]; c.font = 'bold 11px ui-monospace,monospace';
+      c.fillText('— ' + par[2], mI + 10, mA + 14 + idx * 15);
+    });
+  c.strokeStyle = '#c68f2e'; c.lineWidth = 1.6; c.setLineDash([4, 4]);
+  c.beginPath(); c.moveTo(PX(d), mA); c.lineTo(PX(d), mA + H); c.stroke();
+  c.setLineDash([]);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Con ' + d + ' cifras significativas:</strong><br>' +
+    '<span style="color:#f0a58a">Sin pivoteo:</span> x₁ = <strong>' + sin.x1.toFixed(6) +
+      '</strong> &nbsp;(multiplicador ' + sin.f.toPrecision(5) + ', error ' +
+      (eSin * 100).toFixed(3) + ' %)<br>' +
+    '<span style="color:#7fd4a4">Con pivoteo:</span> x₁ = <strong>' + con.x1.toFixed(6) +
+      '</strong> &nbsp;(multiplicador ' + con.f.toPrecision(5) + ', error ' +
+      (eCon * 100).toFixed(5) + ' %)<br>' +
+    'Valor exacto: x₁ = 1/3 = 0,333333…<br>' +
+    '<span style="color:#8fb4d9">Sin pivoteo el multiplicador es enorme y la resta cancela ' +
+    'cifras; con 3 o 4 cifras el resultado es <strong>cero</strong>: 100 % de error. ' +
+    'Intercambiar filas cuesta nada y lo evita por completo.</span>';
+});
+
+/* ══════ S03 · Costo de los tres métodos ══════ */
+OVA.viz.registrar('costo', function (host) {
+  var nmax = parseInt(q(host, '.nmax').value, 10);
+  q(host, '.nmax-val').textContent = 'hasta n = ' + nmax;
+
+  var gauss = function (n) { return n * n * n / 3; };
+  var jordan = function (n) { return n * n * n / 2; };
+  var cramer = function (n) { var f = 1; for (var i = 2; i <= n + 1; i++) f *= i; return f; };
+
+  var L = OVA.lienzo(host.querySelector('canvas'), { alto: 260 });
+  var c = L.ctx, mI = 56, mA = 18, mB = 32, mD = 14;
+  var W = L.w - mI - mD, H = L.h - mA - mB;
+  var top = Math.max(Math.log10(cramer(nmax)), 4);
+  var PX = function (n) { return mI + (n - 2) / (nmax - 2) * W; };
+  var PY = function (v) { return mA + (1 - Math.log10(Math.max(v, 1)) / top) * H; };
+
+  c.strokeStyle = OVA.color('cv-grid'); c.lineWidth = 1;
+  c.fillStyle = OVA.color('cv-text'); c.font = '9px ui-monospace,monospace';
+  var salto = Math.max(3, Math.ceil(top / 6));
+  for (var e = 0; e <= top; e += salto) {
+    c.beginPath(); c.moveTo(mI, PY(Math.pow(10, e))); c.lineTo(mI + W, PY(Math.pow(10, e))); c.stroke();
+    c.fillText('1e' + e, 4, PY(Math.pow(10, e)) + 3);
+  }
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mI, mA); c.lineTo(mI, mA + H); c.lineTo(mI + W, mA + H); c.stroke();
+  c.font = '10px ui-monospace,monospace';
+  for (var nv = 2; nv <= nmax; nv += Math.max(1, Math.round((nmax - 2) / 8)))
+    c.fillText(String(nv), PX(nv) - 4, L.h - 12);
+  c.font = 'bold 10px ui-monospace,monospace';
+  c.fillText('tamaño del sistema n', mI + W / 2 - 55, L.h - 1);
+
+  [[gauss, '#1c7a4c', 'Gauss  ≈ n³/3'],
+   [jordan, '#3a6ea5', 'Gauss-Jordan  ≈ n³/2'],
+   [cramer, '#b0392c', 'Cramer por cofactores  ≈ (n+1)!']]
+    .forEach(function (par, idx) {
+      c.strokeStyle = par[1]; c.lineWidth = 2.8; c.beginPath();
+      for (var n = 2; n <= nmax; n++) {
+        var X = PX(n), Y = PY(par[0](n));
+        n === 2 ? c.moveTo(X, Y) : c.lineTo(X, Y);
+      }
+      c.stroke();
+      c.fillStyle = par[1]; c.font = 'bold 11px ui-monospace,monospace';
+      c.fillText('— ' + par[2], mI + 10, mA + 14 + idx * 15);
+    });
+
+  var seg = cramer(nmax) / 1e9;
+  var tiempo = seg < 60 ? seg.toPrecision(3) + ' s'
+             : seg < 3.15e7 ? (seg / 86400).toPrecision(3) + ' días'
+             : (seg / 3.15e7).toExponential(2) + ' años';
+  q(host, '.viz-readout').innerHTML =
+    'Para <strong>n = ' + nmax + '</strong>:<br>' +
+    '<span style="color:#7fd4a4">Gauss</span> ≈ ' + Math.round(gauss(nmax)).toLocaleString('es') +
+      ' operaciones &nbsp;·&nbsp; <span style="color:#8fb4d9">Gauss-Jordan</span> ≈ ' +
+      Math.round(jordan(nmax)).toLocaleString('es') + '<br>' +
+    '<span style="color:#f0a58a">Cramer por cofactores</span> ≈ ' + cramer(nmax).toExponential(3) +
+      ' operaciones — a mil millones por segundo, <strong>' + tiempo + '</strong><br>' +
+    '<span style="color:#8fb4d9">El eje vertical es logarítmico: cada línea horizontal multiplica ' +
+    'por mil. Las dos curvas cúbicas son casi indistinguibles; la factorial se despega y no vuelve.</span>';
 });
 
 document.addEventListener('DOMContentLoaded', function () {
