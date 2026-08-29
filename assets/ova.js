@@ -387,6 +387,147 @@ OVA.punto = function (L, x, y, color, hueco) {
   else { c.fillStyle = color; c.fill(); }
 };
 
+
+/* ══════════════════════════════════════════════════════════
+   8b. ESCENA 3D · proyección ortográfica sin dependencias
+   ----------------------------------------------------------
+   Gira la escena un ángulo θ (azimut) alrededor del eje z y la
+   inclina un ángulo φ (elevación). Es ORTOGRÁFICA a propósito:
+   las rectas paralelas se ven paralelas y las longitudes son
+   comparables, cosa que la perspectiva rompería.
+
+   No hay eliminación de líneas ocultas: para curvas y vectores
+   basta con girar la escena. Para superficies habrá que ordenar
+   por profundidad con E.prof(), que ya está disponible.
+   ══════════════════════════════════════════════════════════ */
+OVA.esc3d = function (canvas, opts) {
+  opts = opts || {};
+  var th = opts.th !== undefined ? opts.th : 0.9;
+  var ph = opts.ph !== undefined ? opts.ph : 0.5;
+  var w = canvas.clientWidth || 640;
+  var h = opts.alto || Math.round(w * 0.78);
+  var dpr = Math.min(global.devicePixelRatio || 1, 2);
+  canvas.style.height = h + 'px';
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  var ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = OVA.color('cv-bg');
+  ctx.fillRect(0, 0, w, h);
+
+  var st = Math.sin(th), ct = Math.cos(th), sp = Math.sin(ph), cp = Math.cos(ph);
+
+  return {
+    ctx: ctx, w: w, h: h, th: th, ph: ph, cx: 0, cy: 0, esc: 1,
+
+    bruto: function (P) {
+      var xr = P[0] * ct + P[1] * st;
+      var yr = -P[0] * st + P[1] * ct;
+      return [xr, P[2] * cp - yr * sp];
+    },
+    prof: function (P) {
+      return (-P[0] * st + P[1] * ct) * cp + P[2] * sp;
+    },
+    p: function (P) {
+      var q = this.bruto(P);
+      return [(q[0] - this.cx) * this.esc + this.w / 2,
+              this.h / 2 - (q[1] - this.cy) * this.esc];
+    },
+    ajustar: function (pts, margen) {
+      var m = margen === undefined ? 0.90 : margen, xs = [], ys = [], i;
+      for (i = 0; i < pts.length; i++) {
+        var q = this.bruto(pts[i]);
+        if (!isFinite(q[0]) || !isFinite(q[1])) continue;
+        xs.push(q[0]); ys.push(q[1]);
+      }
+      if (!xs.length) return this;
+      var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+      var y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+      this.cx = (x0 + x1) / 2; this.cy = (y0 + y1) / 2;
+      this.esc = m * Math.min(this.w / Math.max(x1 - x0, 1e-9),
+                              this.h / Math.max(y1 - y0, 1e-9));
+      return this;
+    },
+    ejes: function (L, Lneg) {
+      L = L || 2.5; Lneg = Lneg === undefined ? 1.1 : Lneg;
+      var c = this.ctx, self = this;
+      var cols = document.body.classList.contains('dark')
+        ? ['#e08b7e', '#7fd4a4', '#8fb4d9'] : ['#b0392c', '#1c7a4c', '#3a6ea5'];
+      [[1, 0, 0, 'x'], [0, 1, 0, 'y'], [0, 0, 1, 'z']].forEach(function (e, i) {
+        var o = self.p([0, 0, 0]);
+        var neg = self.p([-e[0] * Lneg, -e[1] * Lneg, -e[2] * Lneg]);
+        var pos = self.p([e[0] * L, e[1] * L, e[2] * L]);
+        c.strokeStyle = cols[i];
+        c.globalAlpha = 0.3; c.lineWidth = 1;
+        c.beginPath(); c.moveTo(neg[0], neg[1]); c.lineTo(o[0], o[1]); c.stroke();
+        c.globalAlpha = 1; c.lineWidth = 1.5;
+        c.beginPath(); c.moveTo(o[0], o[1]); c.lineTo(pos[0], pos[1]); c.stroke();
+        c.fillStyle = cols[i]; c.font = 'bold 12px ui-monospace,monospace';
+        c.fillText(e[3], pos[0] + 5, pos[1] - 4);
+      });
+      return this;
+    },
+    curva: function (fn, t0, t1, color, ancho, n) {
+      n = n || 400;
+      var c = this.ctx;
+      c.strokeStyle = color; c.lineWidth = ancho || 2.8; c.lineJoin = 'round';
+      c.beginPath();
+      var primero = true;
+      for (var i = 0; i <= n; i++) {
+        var P = fn(t0 + (t1 - t0) * i / n);
+        if (!P || !isFinite(P[0]) || !isFinite(P[1]) || !isFinite(P[2])) { primero = true; continue; }
+        var q = this.p(P);
+        if (primero) { c.moveTo(q[0], q[1]); primero = false; } else c.lineTo(q[0], q[1]);
+      }
+      c.stroke();
+      return this;
+    },
+    sombra: function (fn, t0, t1, n) {
+      this.ctx.setLineDash([3, 4]);
+      this.curva(function (t) { var P = fn(t); return P ? [P[0], P[1], 0] : null; },
+                 t0, t1, 'rgba(150,167,181,.85)', 1.4, n);
+      this.ctx.setLineDash([]);
+      return this;
+    },
+    segmento: function (A, B, color, guiones) {
+      var c = this.ctx, a = this.p(A), b = this.p(B);
+      c.strokeStyle = color; c.lineWidth = 1.2;
+      if (guiones) c.setLineDash(guiones);
+      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke();
+      c.setLineDash([]);
+      return this;
+    },
+    flecha: function (A, B, color, ancho, etiqueta) {
+      var c = this.ctx, a = this.p(A), b = this.p(B);
+      c.strokeStyle = color; c.fillStyle = color; c.lineWidth = ancho || 2.8;
+      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke();
+      var ang = Math.atan2(b[1] - a[1], b[0] - a[0]), s = 10;
+      c.beginPath(); c.moveTo(b[0], b[1]);
+      c.lineTo(b[0] - s * Math.cos(ang - 0.4), b[1] - s * Math.sin(ang - 0.4));
+      c.lineTo(b[0] - s * Math.cos(ang + 0.4), b[1] - s * Math.sin(ang + 0.4));
+      c.closePath(); c.fill();
+      if (etiqueta) {
+        c.font = 'bold 12px ui-monospace,monospace';
+        c.fillText(etiqueta, b[0] + 6, b[1] - 5);
+      }
+      return this;
+    },
+    punto: function (P, color, radio) {
+      var c = this.ctx, q = this.p(P);
+      c.fillStyle = color;
+      c.beginPath(); c.arc(q[0], q[1], radio || 6, 0, 6.2832); c.fill();
+      return this;
+    },
+    texto: function (txt, px, py, color) {
+      this.ctx.fillStyle = color || OVA.color('cv-text');
+      this.ctx.font = 'bold 12px ui-monospace,monospace';
+      this.ctx.fillText(txt, px, py);
+      return this;
+    }
+  };
+};
+
 /* ── 9. Navegación de guías largas ──────────────────────── */
 function initGuiaNav() {
   var hdr = document.getElementById('top');

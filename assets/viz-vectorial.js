@@ -11,6 +11,7 @@
 
 var AZUL = '#3a6ea5', ORO = '#c68f2e', VERDE = '#1c7a4c', ROJO = '#b0392c', MORADO = '#7d4f9e';
 function q(host, sel) { return host.querySelector(sel); }
+var ctrl = q;
 
 function flecha(L, x0, y0, x1, y1, color, ancho) {
   var c = L.ctx, a = L.px(x0), b = L.py(y0), d = L.px(x1), e = L.py(y1);
@@ -380,6 +381,326 @@ OVA.viz.registrar('gradiente', function (host) {
     ' · |∇f| = ' + norma.toFixed(3) + '<br>' +
     '<span style="color:#8fb4d9">La flecha dorada apunta hacia donde f crece más rápido; ' +
     'la línea punteada es la curva de nivel, siempre perpendicular al gradiente.</span>';
+});
+
+/* ══════ S02 · Curvas paramétricas ══════ */
+var PARAM = {
+  circ:  { x: function (t) { return 2 * Math.cos(t); }, y: function (t) { return 2 * Math.sin(t); },
+           t0: 0, t1: 6.2832, n: 'x = 2cos t,  y = 2sen t', car: 'x² + y² = 4', rap: '2 (constante)' },
+  circ2: { x: function (t) { return 2 * Math.cos(2 * t); }, y: function (t) { return 2 * Math.sin(2 * t); },
+           t0: 0, t1: 3.1416, n: 'x = 2cos 2t,  y = 2sen 2t', car: 'x² + y² = 4  (¡la misma curva!)',
+           rap: '4 (el doble)' },
+  horar: { x: function (t) { return 2 * Math.sin(t); }, y: function (t) { return 2 * Math.cos(t); },
+           t0: 0, t1: 6.2832, n: 'x = 2sen t,  y = 2cos t', car: 'x² + y² = 4  (sentido horario)',
+           rap: '2 (constante)' },
+  elip:  { x: function (t) { return 3 * Math.cos(t); }, y: function (t) { return 1.6 * Math.sin(t); },
+           t0: 0, t1: 6.2832, n: 'x = 3cos t,  y = 1,6sen t', car: 'x²/9 + y²/2,56 = 1', rap: 'variable' },
+  parab: { x: function (t) { return t + 1; }, y: function (t) { return t * t; },
+           t0: -2.2, t1: 2.2, n: 'x = t+1,  y = t²', car: 'y = (x − 1)²', rap: 'variable' },
+  cicl:  { x: function (t) { return t - Math.sin(t); }, y: function (t) { return 1 - Math.cos(t); },
+           t0: 0, t1: 12.566, n: 'x = t − sen t,  y = 1 − cos t', car: 'cicloide (sin forma cartesiana simple)',
+           rap: 'cero en el suelo' },
+  liss:  { x: function (t) { return 2.4 * Math.sin(3 * t); }, y: function (t) { return 2.4 * Math.sin(2 * t); },
+           t0: 0, t1: 6.2832, n: 'x = 2,4sen 3t,  y = 2,4sen 2t', car: 'figura de Lissajous', rap: 'variable' }
+};
+
+OVA.viz.registrar('parametricas', function (host) {
+  var cfg = PARAM[ctrl(host, 'select').value] || PARAM.circ;
+  var frac = parseFloat(ctrl(host, '.tpar').value) / 100;
+  var tv = cfg.t0 + (cfg.t1 - cfg.t0) * frac;
+  ctrl(host, '.t-val').textContent = 't = ' + tv.toFixed(2);
+
+  var L = OVA.lienzo(ctrl(host, 'canvas'), { sx: 46, sy: 46 });
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // parte ya recorrida en fuerte, el resto tenue
+  var trazo = function (a, b, color, ancho) {
+    c.strokeStyle = color; c.lineWidth = ancho; c.lineJoin = 'round';
+    c.beginPath();
+    for (var i = 0; i <= 300; i++) {
+      var t = a + (b - a) * i / 300;
+      var q = [L.px(cfg.x(t)), L.py(cfg.y(t))];
+      i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]);
+    }
+    c.stroke();
+  };
+  trazo(cfg.t0, cfg.t1, 'rgba(150,167,181,.55)', 1.8);
+  if (tv > cfg.t0) trazo(cfg.t0, tv, AZUL, 3.2);
+
+  // punto móvil y sus proyecciones sobre los ejes
+  var X = cfg.x(tv), Y = cfg.y(tv);
+  c.strokeStyle = 'rgba(128,128,128,.55)'; c.lineWidth = 1; c.setLineDash([4, 4]);
+  c.beginPath();
+  c.moveTo(L.px(X), L.py(Y)); c.lineTo(L.px(X), L.oy);
+  c.moveTo(L.px(X), L.py(Y)); c.lineTo(L.ox, L.py(Y));
+  c.stroke(); c.setLineDash([]);
+  OVA.punto(L, X, Y, ORO);
+  OVA.punto(L, X, 0, ROJO, true);
+  OVA.punto(L, 0, Y, VERDE, true);
+
+  // vector velocidad (numérico)
+  var d = 1e-4, vx = (cfg.x(tv + d) - cfg.x(tv - d)) / (2 * d),
+                vy = (cfg.y(tv + d) - cfg.y(tv - d)) / (2 * d);
+  var rap = Math.hypot(vx, vy), k = rap > 1e-6 ? 0.9 / Math.max(rap, 0.5) : 0;
+  if (k) {
+    c.strokeStyle = MORADO; c.fillStyle = MORADO; c.lineWidth = 2.6;
+    var a1 = [L.px(X), L.py(Y)], b1 = [L.px(X + vx * k), L.py(Y + vy * k)];
+    c.beginPath(); c.moveTo(a1[0], a1[1]); c.lineTo(b1[0], b1[1]); c.stroke();
+    var an = Math.atan2(b1[1] - a1[1], b1[0] - a1[0]);
+    c.beginPath(); c.moveTo(b1[0], b1[1]);
+    c.lineTo(b1[0] - 9 * Math.cos(an - 0.4), b1[1] - 9 * Math.sin(an - 0.4));
+    c.lineTo(b1[0] - 9 * Math.cos(an + 0.4), b1[1] - 9 * Math.sin(an + 0.4));
+    c.closePath(); c.fill();
+  }
+
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  ctrl(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;·&nbsp; ' + cfg.car + '<br>' +
+    'En t = ' + tv.toFixed(2) + ': &nbsp;<span style="color:#e08b7e">x = ' + X.toFixed(3) +
+      '</span> &nbsp;·&nbsp; <span style="color:#7fd4a4">y = ' + Y.toFixed(3) + '</span>' +
+      ' &nbsp;·&nbsp; rapidez |v| = <strong>' + rap.toFixed(3) + '</strong>' +
+      ' &nbsp;(' + cfg.rap + ')<br>' +
+    '<span style="color:#8fb4d9">La flecha morada apunta en el sentido del recorrido. ' +
+    'Compara «2cos t» con «2cos 2t»: <em>la misma circunferencia</em> recorrida al doble de ' +
+    'rapidez, y «2sen t» la recorre al revés. La curva no determina la parametrización.</span>';
+});
+
+/* ══════ S02 · Coordenadas polares ══════ */
+var POLAR = {
+  circR: { r: function (a) { return 2; }, t0: 0, t1: 6.2832, n: 'r = 2',
+           car: 'circunferencia de radio 2 centrada en el origen' },
+  circD: { r: function (a) { return 2 * Math.cos(a); }, t0: 0, t1: 3.1416, n: 'r = 2cos θ',
+           car: 'circunferencia de radio 1 centrada en (1, 0)  →  (x−1)² + y² = 1' },
+  card:  { r: function (a) { return 1.4 * (1 + Math.cos(a)); }, t0: 0, t1: 6.2832, n: 'r = 1,4(1 + cos θ)',
+           car: 'cardioide: r(0) = 2,8 y r(π) = 0' },
+  rosa3: { r: function (a) { return 2.4 * Math.cos(3 * a); }, t0: 0, t1: 3.1416, n: 'r = 2,4cos 3θ',
+           car: 'rosa de 3 pétalos  (n impar ⟹ n pétalos)' },
+  rosa4: { r: function (a) { return 2.4 * Math.cos(2 * a); }, t0: 0, t1: 6.2832, n: 'r = 2,4cos 2θ',
+           car: 'rosa de 4 pétalos  (n par ⟹ 2n pétalos)' },
+  lima:  { r: function (a) { return 1 + 2 * Math.cos(a); }, t0: 0, t1: 6.2832, n: 'r = 1 + 2cos θ',
+           car: 'limaçon con rizo interior: r &lt; 0 en θ ∈ (2π/3, 4π/3)' },
+  espir: { r: function (a) { return 0.32 * a; }, t0: 0, t1: 12.566, n: 'r = 0,32 θ',
+           car: 'espiral de Arquímedes' }
+};
+
+OVA.viz.registrar('polares', function (host) {
+  var cfg = POLAR[ctrl(host, 'select').value] || POLAR.card;
+  var frac = parseFloat(ctrl(host, '.tpol').value) / 100;
+  var av = cfg.t0 + (cfg.t1 - cfg.t0) * frac;
+  ctrl(host, '.a-val').textContent = 'θ = ' + av.toFixed(2) + ' rad';
+
+  var L = OVA.lienzo(ctrl(host, 'canvas'), { sx: 44, sy: 44 });
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // malla polar: circunferencias y radios
+  c.strokeStyle = 'rgba(150,167,181,.35)'; c.lineWidth = 1;
+  for (var rr = 1; rr <= 4; rr++) {
+    c.beginPath(); c.arc(L.ox, L.oy, rr * L.sx, 0, 6.2832); c.stroke();
+  }
+  for (var k = 0; k < 12; k++) {
+    var an = k * Math.PI / 6;
+    c.beginPath(); c.moveTo(L.ox, L.oy);
+    c.lineTo(L.px(4.3 * Math.cos(an)), L.py(4.3 * Math.sin(an))); c.stroke();
+  }
+
+  var trazo = function (a, b, color, ancho) {
+    c.strokeStyle = color; c.lineWidth = ancho; c.lineJoin = 'round';
+    c.beginPath();
+    for (var i = 0; i <= 400; i++) {
+      var th = a + (b - a) * i / 400, rv = cfg.r(th);
+      var q = [L.px(rv * Math.cos(th)), L.py(rv * Math.sin(th))];
+      i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]);
+    }
+    c.stroke();
+  };
+  trazo(cfg.t0, cfg.t1, 'rgba(150,167,181,.55)', 1.8);
+  if (av > cfg.t0) trazo(cfg.t0, av, AZUL, 3.2);
+
+  // el radio vector actual
+  var rv = cfg.r(av), X = rv * Math.cos(av), Y = rv * Math.sin(av);
+  var negativo = rv < 0;
+  c.strokeStyle = negativo ? ROJO : ORO; c.lineWidth = 2.8;
+  c.beginPath(); c.moveTo(L.ox, L.oy); c.lineTo(L.px(X), L.py(Y)); c.stroke();
+  // dirección θ, aunque r sea negativo
+  c.strokeStyle = 'rgba(150,167,181,.9)'; c.lineWidth = 1.4; c.setLineDash([5, 4]);
+  c.beginPath(); c.moveTo(L.ox, L.oy);
+  c.lineTo(L.px(4.2 * Math.cos(av)), L.py(4.2 * Math.sin(av))); c.stroke();
+  c.setLineDash([]);
+  OVA.punto(L, X, Y, negativo ? ROJO : ORO);
+
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  ctrl(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;·&nbsp; ' + cfg.car + '<br>' +
+    'θ = ' + av.toFixed(3) + ' rad = ' + (av * 180 / Math.PI).toFixed(1) + '°' +
+      ' &nbsp;·&nbsp; r = <strong style="color:' + (negativo ? '#f0a58a' : '#dba949') + '">' +
+      rv.toFixed(3) + '</strong>' +
+      ' &nbsp;·&nbsp; cartesianas (' + X.toFixed(3) + ', ' + Y.toFixed(3) + ')<br>' +
+    (negativo
+      ? '<strong style="color:#f0a58a">r es negativo:</strong> el punto se dibuja en el sentido ' +
+        '<em>opuesto</em> a la dirección θ (línea punteada). Eso es lo que genera el rizo interior.'
+      : '<span style="color:#8fb4d9">El radio dorado sigue la dirección punteada θ. ' +
+        'Prueba el limaçon y observa qué pasa cuando r se vuelve negativo.</span>');
+});
+
+/* ══════ S03 · Curvas en el espacio · velocidad y aceleración ══════ */
+var CUR3D = {
+  helice: { r: function (t) { return [1.4 * Math.cos(t), 1.4 * Math.sin(t), t / 3]; },
+            v: function (t) { return [-1.4 * Math.sin(t), 1.4 * Math.cos(t), 1 / 3]; },
+            a: function (t) { return [-1.4 * Math.cos(t), -1.4 * Math.sin(t), 0]; },
+            t0: 0, t1: 9.4248, n: 'r(t) = ⟨1,4cos t, 1,4sen t, t/3⟩',
+            com: 'hélice circular: rapidez constante y a siempre perpendicular a v' },
+  circ:   { r: function (t) { return [2 * Math.cos(t), 2 * Math.sin(t), 0]; },
+            v: function (t) { return [-2 * Math.sin(t), 2 * Math.cos(t), 0]; },
+            a: function (t) { return [-2 * Math.cos(t), -2 * Math.sin(t), 0]; },
+            t0: 0, t1: 6.2832, n: 'r(t) = ⟨2cos t, 2sen t, 0⟩',
+            com: 'circunferencia en el plano z = 0: la aceleración apunta al centro' },
+  twist:  { r: function (t) { return [t, t * t, t * t * t / 3]; },
+            v: function (t) { return [1, 2 * t, t * t]; },
+            a: function (t) { return [0, 2, 2 * t]; },
+            t0: -1.6, t1: 1.6, n: 'r(t) = ⟨t, t², t³/3⟩',
+            com: 'cúbica alabeada: no cabe en ningún plano' },
+  recta:  { r: function (t) { return [t, 0.6 * t, 0.4 * t]; },
+            v: function (t) { return [1, 0.6, 0.4]; },
+            a: function (t) { return [0, 0, 0]; },
+            t0: -2, t1: 2.4, n: 'r(t) = ⟨t, 0,6t, 0,4t⟩',
+            com: 'recta en el espacio: aceleración nula' },
+  nudo:   { r: function (t) { return [Math.cos(t) * (2 + Math.cos(3 * t)) / 2,
+                                      Math.sin(t) * (2 + Math.cos(3 * t)) / 2,
+                                      Math.sin(3 * t) / 2]; },
+            v: null, a: null, t0: 0, t1: 6.2832,
+            n: 'curva cerrada en el espacio',
+            com: 'gira la escena: el cruce aparente se deshace al cambiar el punto de vista' }
+};
+
+OVA.viz.registrar('curva3d', function (host) {
+  var cfg = CUR3D[ctrl(host, 'select').value] || CUR3D.helice;
+  var th = parseFloat(ctrl(host, '.giro').value) / 100;
+  var frac = parseFloat(ctrl(host, '.tpos').value) / 100;
+  var tv = cfg.t0 + (cfg.t1 - cfg.t0) * frac;
+  ctrl(host, '.giro-val').textContent = 'θ = ' + th.toFixed(2);
+  ctrl(host, '.t-val').textContent = 't = ' + tv.toFixed(2);
+
+  var E = OVA.esc3d(host.querySelector('canvas'), { th: th, ph: 0.5 });
+
+  // encuadre: curva + sombra + ejes + puntas de las flechas
+  var pts = [], i;
+  for (i = 0; i <= 120; i++) {
+    var P = cfg.r(cfg.t0 + (cfg.t1 - cfg.t0) * i / 120);
+    pts.push(P); pts.push([P[0], P[1], 0]);
+  }
+  [[1,0,0],[0,1,0],[0,0,1]].forEach(function (e) {
+    pts.push([e[0]*2.5, e[1]*2.5, e[2]*2.5]);
+    pts.push([-e[0]*1.1, -e[1]*1.1, -e[2]*1.1]);
+  });
+  var Pt = cfg.r(tv);
+  if (cfg.v) {
+    var V = cfg.v(tv), A = cfg.a(tv);
+    pts.push([Pt[0]+V[0], Pt[1]+V[1], Pt[2]+V[2]]);
+    pts.push([Pt[0]+A[0], Pt[1]+A[1], Pt[2]+A[2]]);
+  }
+  E.ajustar(pts);
+
+  E.ejes(2.5);
+  E.sombra(cfg.r, cfg.t0, cfg.t1);
+  E.curva(cfg.r, cfg.t0, cfg.t1, AZUL, 3);
+  E.segmento(Pt, [Pt[0], Pt[1], 0], 'rgba(150,167,181,.9)', [3, 4]);
+
+  var lectura = '';
+  if (cfg.v) {
+    var V2 = cfg.v(tv), A2 = cfg.a(tv);
+    E.flecha(Pt, [Pt[0]+V2[0], Pt[1]+V2[1], Pt[2]+V2[2]], ORO, 3, 'v');
+    if (Math.hypot(A2[0], A2[1], A2[2]) > 1e-9)
+      E.flecha(Pt, [Pt[0]+A2[0], Pt[1]+A2[1], Pt[2]+A2[2]], ROJO, 3, 'a');
+    var rap = Math.hypot(V2[0], V2[1], V2[2]);
+    var pun = V2[0]*A2[0] + V2[1]*A2[1] + V2[2]*A2[2];
+    lectura =
+      'r(t) = ⟨' + Pt.map(function (u) { return u.toFixed(2); }).join(', ') + '⟩<br>' +
+      '<span style="color:#dba949">v = ⟨' + V2.map(function (u) { return u.toFixed(2); }).join(', ') +
+        '⟩</span> &nbsp;·&nbsp; rapidez |v| = <strong>' + rap.toFixed(4) + '</strong><br>' +
+      '<span style="color:#f0a58a">a = ⟨' + A2.map(function (u) { return u.toFixed(2); }).join(', ') +
+        '⟩</span> &nbsp;·&nbsp; v·a = <strong>' + pun.toFixed(4) + '</strong>' +
+        (Math.abs(pun) < 1e-9 ? ' <span style="color:#7fd4a4">(perpendiculares)</span>' : '') + '<br>';
+  }
+  E.punto(Pt, MORADO, 6);
+  E.texto(cfg.n, 10, 18);
+
+  ctrl(host, '.viz-readout').innerHTML = lectura +
+    '<span style="color:#8fb4d9">' + cfg.com + '. La línea punteada baja al plano z = 0, ' +
+    'donde la curva gris es su <em>sombra</em>: sirve para leer la profundidad. ' +
+    'Gira la escena con el primer deslizador.</span>';
+});
+
+/* ══════ S03 · Movimiento de un proyectil ══════ */
+OVA.viz.registrar('proyectil', function (host) {
+  var v0 = parseFloat(ctrl(host, '.v0').value);
+  var al = parseFloat(ctrl(host, '.ang').value) * Math.PI / 180;
+  var frac = parseFloat(ctrl(host, '.tp').value) / 100;
+  var g = 9.8;
+  ctrl(host, '.v0-val').textContent = 'v₀ = ' + v0 + ' m/s';
+  ctrl(host, '.ang-val').textContent = 'α = ' + (al * 180 / Math.PI).toFixed(0) + '°';
+
+  var tf = 2 * v0 * Math.sin(al) / g;
+  var tv = tf * frac;
+  ctrl(host, '.t-val').textContent = 't = ' + tv.toFixed(2) + ' s';
+  var X = function (t) { return v0 * Math.cos(al) * t; };
+  var Y = function (t) { return v0 * Math.sin(al) * t - g * t * t / 2; };
+  var alc = v0 * v0 * Math.sin(2 * al) / g;
+  var hmax = Math.pow(v0 * Math.sin(al), 2) / (2 * g);
+
+  var L = OVA.lienzo(ctrl(host, 'canvas'), { alto: 260 });
+  var c = L.ctx, mI = 46, mD = 16, mA = 20, mB = 30;
+  var W = L.w - mI - mD, H = L.h - mA - mB;
+  var Xm = Math.max(alc, 1), Ym = Math.max(hmax, 1) * 1.25;
+  var esc = Math.min(W / Xm, H / Ym);
+  var PX = function (x) { return mI + x * esc; };
+  var PY = function (y) { return mA + H - y * esc; };
+
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mI, mA); c.lineTo(mI, mA + H); c.lineTo(mI + W, mA + H); c.stroke();
+
+  c.strokeStyle = 'rgba(150,167,181,.6)'; c.lineWidth = 1.8; c.beginPath();
+  for (var i = 0; i <= 200; i++) { var t = tf * i / 200; i ? c.lineTo(PX(X(t)), PY(Y(t))) : c.moveTo(PX(X(t)), PY(Y(t))); }
+  c.stroke();
+  c.strokeStyle = AZUL; c.lineWidth = 3.2; c.beginPath();
+  for (var j = 0; j <= 200; j++) { var t2 = tv * j / 200; j ? c.lineTo(PX(X(t2)), PY(Y(t2))) : c.moveTo(PX(X(t2)), PY(Y(t2))); }
+  c.stroke();
+
+  var vx = v0 * Math.cos(al), vy = v0 * Math.sin(al) - g * tv;
+  var px = PX(X(tv)), py = PY(Y(tv)), k = 0.45 * esc / 1;
+  [[vx * 0.35, vy * 0.35, ORO, 'v'], [0, -g * 0.35, ROJO, 'a']].forEach(function (F) {
+    var bx = px + F[0] * esc * 0.9, by = py - F[1] * esc * 0.9;
+    c.strokeStyle = F[2]; c.fillStyle = F[2]; c.lineWidth = 2.8;
+    c.beginPath(); c.moveTo(px, py); c.lineTo(bx, by); c.stroke();
+    var an = Math.atan2(by - py, bx - px);
+    c.beginPath(); c.moveTo(bx, by);
+    c.lineTo(bx - 9 * Math.cos(an - 0.4), by - 9 * Math.sin(an - 0.4));
+    c.lineTo(bx - 9 * Math.cos(an + 0.4), by - 9 * Math.sin(an + 0.4));
+    c.closePath(); c.fill();
+    c.font = 'bold 12px ui-monospace,monospace';
+    c.fillText(F[3], bx + 5, by - 4);
+  });
+  c.fillStyle = MORADO;
+  c.beginPath(); c.arc(px, py, 6, 0, 6.2832); c.fill();
+  c.fillStyle = OVA.color('cv-text'); c.font = '10px ui-monospace,monospace';
+  c.fillText('0', mI - 8, mA + H + 14);
+  c.fillText(alc.toFixed(1) + ' m', mI + W - 40, mA + H + 14);
+
+  ctrl(host, '.viz-readout').innerHTML =
+    'r(t) = ⟨' + X(tv).toFixed(2) + ', ' + Y(tv).toFixed(2) + '⟩ m &nbsp;·&nbsp; ' +
+    '<span style="color:#dba949">v = ⟨' + vx.toFixed(2) + ', ' + vy.toFixed(2) + '⟩</span>' +
+    ' &nbsp;·&nbsp; |v| = ' + Math.hypot(vx, vy).toFixed(2) + ' m/s<br>' +
+    '<span style="color:#f0a58a">a = ⟨0, −9,8⟩ constante</span> &nbsp;·&nbsp; ' +
+    'alcance = <strong>' + alc.toFixed(2) + ' m</strong> &nbsp;·&nbsp; altura máx = <strong>' +
+    hmax.toFixed(2) + ' m</strong> &nbsp;·&nbsp; vuelo = ' + tf.toFixed(2) + ' s<br>' +
+    '<span style="color:#8fb4d9">La componente horizontal de v <strong>nunca cambia</strong> ' +
+    '(no hay fuerza horizontal); solo la vertical. Prueba α = 45°: da el alcance máximo, ' +
+    'porque sen(2α) llega a 1.</span>';
 });
 
 document.addEventListener('DOMContentLoaded', function () {
