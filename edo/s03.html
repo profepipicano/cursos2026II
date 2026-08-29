@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía 3 · Crecimiento, decrecimiento y EDO lineales — Ecuaciones Diferenciales · UNIAJC</title>
+<title>Guía 3 · Curvas solución y variables separables — Ecuaciones Diferenciales · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827b">
+<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
 </head>
 <body>
 
@@ -31,11 +31,11 @@ window.MathJax = {
 
 <nav id="guia-nav" aria-label="Secciones de la guía">
   <div class="guia-nav-inner">
-    <a href="#s1">1 · El modelo exponencial</a>
-    <a href="#s2">2 · Aplicaciones</a>
-    <a href="#s3">3 · EDO lineales</a>
-    <a href="#s4">4 · Factor integrante</a>
-    <a href="#s5">5 · Transitorio y estacionario</a>
+    <a href="#s1">1 · Campo de direcciones</a>
+    <a href="#s2">2 · Isoclinas</a>
+    <a href="#s3">3 · EDO autónomas</a>
+    <a href="#s4">4 · Variables separables</a>
+    <a href="#s5">5 · Soluciones singulares</a>
     <a href="#s6">6 · Práctica final</a>
   </div>
 </nav>
@@ -44,400 +44,423 @@ window.MathJax = {
 
 <div class="hero">
   <div class="eyebrow">Guía de estudio 3 · Corte I</div>
-  <h2>Crecimiento, decrecimiento y EDO lineales</h2>
-  <p>Primero el modelo más usado de la ciencia aplicada, que sale con lo que ya sabes de la
-     Guía 2. Después el segundo método de solución del curso, que resuelve una clase mucho
-     más amplia y funciona <em>siempre</em>, sin depender de que la ecuación se deje separar.</p>
+  <h2>Curvas solución y variables separables</h2>
+  <p>Dos caminos que se complementan. Primero aprenderás a <em>ver</em> las soluciones sin
+     resolver nada: la ecuación misma dibuja el mapa. Después aprenderás el primer método
+     de solución exacta, que no necesita ninguna fórmula nueva — solo integrar.</p>
   <div class="chips">
-    <span class="chip">Zill · Cap. 2.3 y 3.1</span>
+    <span class="chip">Zill · Cap. 2.1–2.2</span>
     <span class="chip">Semana 3</span>
     <span class="chip">3 comprobaciones + práctica final</span>
   </div>
 </div>
 
 <div class="nota">
-  <strong>De dónde venimos.</strong> En la Guía 2 aprendiste a separar variables. El modelo de esta
-  semana es la aplicación más importante de ese método. Y la segunda mitad presenta el factor
-  integrante, que resuelve ecuaciones lineales que <em>no</em> son separables.
+  <strong>De dónde venimos.</strong> En la Guía 2 quedó claro que la solución general es una
+  familia infinita y que la condición inicial elige un miembro. Aquí se responde la pregunta
+  natural: <em>¿qué forma tiene esa familia?</em> Primero geométricamente, luego con lápiz.
 </div>
 
 <section class="card" id="s1">
-  <h3 class="card-title">1 · El modelo de crecimiento y decrecimiento</h3>
+  <h3 class="card-title">1 · El campo de direcciones</h3>
 
   <div class="callout-dark">
-    <h3>Una hipótesis que aparece en todas partes</h3>
-    <p>«La velocidad de cambio es proporcional a la cantidad presente.» Esa sola frase describe
-       poblaciones de bacterias, desintegración radiactiva, interés compuesto continuo, eliminación
-       de un fármaco, y la carga de un capacitor.</p>
-    <p>Su traducción es inmediata, y es la ecuación más importante del curso:</p>
-    <p>$$\frac{dP}{dt}=kP$$</p>
-    <p>Si $k \gt 0$ el modelo <em>crece</em>; si $k \lt 0$, <em>decrece</em>. Es la misma ecuación:
-       solo cambia el signo.</p>
+    <h3>La ecuación es un mapa de pendientes</h3>
+    <p>Mira $\dfrac{dy}{dx}=f(x,y)$ otra vez, pero al revés. En lugar de leerla como «una ecuación
+       que hay que resolver», léela como una <strong>instrucción</strong>: <em>en el punto $(x,y)$,
+       la pendiente vale $f(x,y)$</em>.</p>
+    <p>Con esa lectura la ecuación deja de ser un obstáculo y se vuelve un mapa. Puedes recorrer
+       todo el plano preguntándole a la ecuación qué pendiente exige en cada sitio, y dibujar ahí
+       un segmentito con esa inclinación.</p>
+    <p>Lo notable es que ese mapa se construye <strong>sin resolver nada</strong>: solo evaluando.</p>
   </div>
 
-  <div class="sub-title">1.1 Solución</div>
-  <p>Es separable y autónoma, así que la resolvemos con el método de la Guía 2:</p>
-  <div class="ejemplo">
-    <h4>Ejemplo 1 · Deducción de la solución general</h4>
-    <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Separar (excluyendo $P=0$)</div>
-        $\dfrac{dP}{P}=k\,dt$
-      </div>
-      <div class="paso"><div class="paso-t">Integrar</div>
-        $\ln|P|=kt+C_1 \Rightarrow P=Ce^{kt}$
-      </div>
-      <div class="paso"><div class="paso-t">Condición inicial</div>
-        $P(0)=Ce^{0}=C=P_0$, de donde
-        $$\boxed{\,P(t)=P_0e^{kt}\,}$$
-      </div>
-      <div class="paso"><div class="paso-t">Sobre lo excluido</div>
-        $P\equiv 0$ es solución de equilibrio, y sí se recupera con $C=0$. No hay solución singular
-        aquí. Nota además que es un equilibrio <strong>repulsor</strong> si $k \gt 0$ y
-        <strong>atractor</strong> si $k \lt 0$ — la línea de fase de la Guía 2 lo dice de un vistazo.
-      </div>
-    </div>
-  </div>
-
-  <div class="sub-title">1.2 Semivida y tiempo de duplicación</div>
   <div class="def">
-    El <strong>tiempo de duplicación</strong> (si $k \gt 0$) o la <strong>semivida</strong>
-    (si $k \lt 0$) es el tiempo que tarda la cantidad en multiplicarse o dividirse por dos:
-    $$P_0e^{k\tau}=2P_0 \;\Longrightarrow\; \tau=\frac{\ln 2}{|k|}$$
-  </div>
-  <p>Lo notable es que $P_0$ <strong>se cancela</strong>. El tiempo de duplicación no depende de
-     cuánto haya al principio: una población de 100 bacterias y otra de un millón tardan lo mismo en
-     duplicarse. Esa independencia del punto de partida es la firma del modelo exponencial, y es lo
-     que lo hace tan fácil de reconocer en datos reales.</p>
-
-  <div class="sub-title">1.3 Hallar $k$ a partir de dos datos</div>
-  <p>En la práctica $k$ nunca viene dado: se calcula. Con dos mediciones $P(t_1)$ y $P(t_2)$:</p>
-  <div class="formula" style="max-width:420px">
-    $$k=\frac{1}{t_2-t_1}\,\ln\!\left(\frac{P(t_2)}{P(t_1)}\right)$$
-  </div>
-  <p>Sale de dividir $P_0e^{kt_2}$ entre $P_0e^{kt_1}$ y tomar logaritmo. Otra vez $P_0$ desaparece,
-     así que <em>ni siquiera hace falta conocer la cantidad inicial</em> para determinar $k$.</p>
-</section>
-
-<section class="card" id="s2">
-  <h3 class="card-title">2 · Aplicaciones</h3>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 2 · Cultivo de bacterias</h4>
-    <div class="ejemplo-body">
-      Un cultivo tiene 100 bacterias. A las 3 horas hay 300. ¿Cuántas habrá a las 10 horas?
-      <div class="paso"><div class="paso-t">1. Modelo</div>
-        $P(t)=100e^{kt}$
-      </div>
-      <div class="paso"><div class="paso-t">2. Hallar $k$</div>
-        $100e^{3k}=300 \Rightarrow e^{3k}=3 \Rightarrow k=\dfrac{\ln 3}{3}=0{,}366204$ por hora
-      </div>
-      <div class="paso"><div class="paso-t">3. Evaluar en $t=10$</div>
-        $P(10)=100e^{10\ln3/3}=100\cdot 3^{10/3}\approx \mathbf{3\,894}$ bacterias
-      </div>
-      <div class="paso"><div class="paso-t">4. Comprobación de sensatez</div>
-        El tiempo de duplicación es $\ln2/k=1{,}893$ h. En 10 horas caben $10/1{,}893=5{,}28$
-        duplicaciones, así que esperamos $100\cdot 2^{5{,}28}\approx 3\,894$ ✓ Coincide.
-      </div>
-    </div>
+    El <em>elemento lineal</em> en el punto $(x,y)$ es un segmento corto con pendiente $f(x,y)$.
+    El conjunto de elementos lineales trazados en una malla de puntos se llama
+    <strong>campo de direcciones</strong> o campo de pendientes.
   </div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 3 · Datación por carbono-14</h4>
-    <div class="ejemplo-body">
-      El C-14 tiene una semivida de 5 730 años. Un fósil conserva el 10 % del C-14 original.
-      ¿Qué edad tiene?
-      <div class="paso"><div class="paso-t">1. Hallar $k$ desde la semivida</div>
-        $e^{5730k}=\dfrac12 \Rightarrow k=-\dfrac{\ln 2}{5730}=-1{,}20968\times10^{-4}$ por año
-      </div>
-      <div class="paso"><div class="paso-t">2. Plantear</div>
-        $\dfrac{P(t)}{P_0}=e^{kt}=0{,}10$
-      </div>
-      <div class="paso"><div class="paso-t">3. Despejar</div>
-        $t=\dfrac{\ln 0{,}10}{k}=\dfrac{-2{,}302585}{-1{,}20968\times10^{-4}}\approx
-        \mathbf{19\,035}$ años
-      </div>
-      <div class="paso"><div class="paso-t">4. Comprobación</div>
-        $19\,035/5\,730=3{,}32$ semividas, y $2^{-3{,}32}=0{,}100$ ✓<br>
-        Nota que no hizo falta saber cuánto C-14 había originalmente: solo la <em>proporción</em>.
-        Eso es lo que hace viable el método en arqueología.
-      </div>
-    </div>
-  </div>
+  <p>Y aquí está la conexión con las soluciones: si $y=\phi(x)$ resuelve la ecuación, entonces en
+     cada punto de su gráfica la pendiente de la curva coincide con la del elemento lineal. Es decir,
+     <strong>una curva solución es una curva que va peinando los segmentos</strong>, tangente a
+     todos los que toca.</p>
 
-  <div class="nota">
-    <strong>Hasta dónde llega el modelo.</strong> El crecimiento exponencial supone recursos
-    ilimitados, y ninguna población real los tiene. Si el cultivo del Ejemplo 2 siguiera esa ley,
-    en una semana su masa superaría la de la Tierra. El modelo es excelente en la fase inicial y
-    falso a largo plazo; el remedio es la ecuación logística, que verás en la semana 11.
-  </div>
-
-  <div class="sub-title">2.1 Explora el modelo</div>
-  <div class="viz" data-viz="decaimiento">
+  <div class="sub-title">1.1 Explora: haz clic y nace una solución</div>
+  <div class="viz" data-viz="campo">
     <div class="viz-controls">
-      <label for="dc-e">Escenario</label>
-      <select id="dc-e">
-        <option value="bact">Cultivo de bacterias</option>
-        <option value="c14">Carbono-14</option>
-        <option value="med">Fármaco en sangre</option>
-        <option value="int">Interés compuesto continuo</option>
+      <label for="e-fn">Ecuación</label>
+      <select id="e-fn">
+        <option value="lin">y′ = y</option>
+        <option value="log">y′ = y(1 − y/3) &nbsp;logística</option>
+        <option value="sep">y′ = −x/y</option>
+        <option value="dec">y′ = −0,8y + 2</option>
+        <option value="osc">y′ = cos x − 0,3y</option>
       </select>
-      <label for="dc-t">Tiempo</label>
-      <input id="dc-t" class="tiempo" type="range" min="0" max="100" value="30">
-      <span class="t-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <button class="btn ghost" type="button" data-limpiar="campo">Borrar curvas</button>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Fíjate en las líneas doradas: están <strong>igualmente espaciadas</strong> en todos los
-    escenarios. Cada duplicación —o cada reducción a la mitad— tarda exactamente lo mismo,
-    sin importar el valor de partida. Ninguna otra familia de funciones tiene esa propiedad.
+    Haz varios clics a distintas alturas. Todas las curvas obedecen la <em>misma</em> ecuación:
+    son la familia de la Guía 2, ahora visible. Elige $y'=-x/y$ y verás circunferencias —
+    en la §4 las obtendremos con álgebra y sabrás por qué.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Isoclinas: cómo dibujar el campo a mano</h3>
+
+  <p>Trazar el campo punto por punto es tedioso. Hay un atajo clásico que reduce el trabajo a
+     dibujar unas pocas curvas.</p>
+
+  <div class="def">
+    Una <strong>isoclina</strong> es el conjunto de puntos donde la pendiente toma un mismo valor $k$:
+    $$f(x,y)=k$$
+    Sobre toda la isoclina, los elementos lineales son <em>paralelos entre sí</em>, con pendiente $k$.
+  </div>
+
+  <p>La palabra lo dice: <em>iso</em> (igual) + <em>clina</em> (inclinación). El procedimiento es:</p>
+  <ol>
+    <li>Elige tres o cuatro valores de $k$ sencillos, incluyendo $k=0$.</li>
+    <li>Para cada uno, resuelve $f(x,y)=k$ y dibuja esa curva.</li>
+    <li>Sobre ella, traza varios segmentos paralelos de pendiente $k$.</li>
+    <li>Rellena entre isoclinas interpolando a ojo.</li>
+  </ol>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Las isoclinas de $y'=x-y$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Plantear</div>
+        $f(x,y)=x-y=k \Rightarrow y=x-k$: las isoclinas son <strong>rectas de pendiente 1</strong>.
+      </div>
+      <div class="paso"><div class="paso-t">Algunos valores</div>
+        $k=0$ → la recta $y=x$, donde el campo es horizontal.<br>
+        $k=1$ → la recta $y=x-1$, donde los segmentos tienen pendiente 1.<br>
+        $k=2$ → la recta $y=x-2$, con segmentos de pendiente 2.
+      </div>
+      <div class="paso"><div class="paso-t">La coincidencia notable</div>
+        En la isoclina $k=1$, la recta es $y=x-1$ y los segmentos tienen pendiente 1 — que es
+        justamente la pendiente de esa misma recta. Los segmentos van <em>a lo largo</em> de la
+        isoclina, no la cruzan.
+      </div>
+      <div class="paso"><div class="paso-t">Consecuencia</div>
+        Eso significa que $y=x-1$ <strong>es ella misma una solución</strong>. Compruébalo:
+        $y'=1$ y $x-y=x-(x-1)=1$ ✓. Cuando una isoclina de pendiente $k$ resulta ser una recta de
+        pendiente $k$, esa recta es una solución. Es el único caso en que una isoclina es también
+        curva solución.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>$k=0$ merece atención aparte.</strong> La isoclina $f(x,y)=0$ marca dónde el campo es
+    horizontal, es decir dónde las soluciones tienen máximos, mínimos o puntos de inflexión
+    horizontales. Suele ser la primera que conviene dibujar.
+  </div>
+
+  <div class="sub-title">2.1 Explora las isoclinas</div>
+  <div class="viz" data-viz="isoclinas">
+    <div class="viz-controls">
+      <label for="is-e">Ecuación</label>
+      <select id="is-e">
+        <option value="lin">y′ = x − y &nbsp;(rectas)</option>
+        <option value="cuad">y′ = y − x² &nbsp;(parábolas)</option>
+        <option value="circ">y′ = x² + y² &nbsp;(circunferencias)</option>
+        <option value="prod">y′ = x·y &nbsp;(hipérbolas)</option>
+      </select>
+      <label for="is-n">Cuántas</label>
+      <input id="is-n" class="cuantas" type="range" min="1" max="6" value="4">
+      <span class="cuantas-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Sobre cada curva de color, todos los segmentos gruesos son paralelos. Con $y'=x-y$, busca la
+    isoclina cuyos segmentos van <em>a lo largo</em> de ella: es la solución recta del Ejemplo 1.
   </p>
 </section>
 
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 1 — Crecimiento y decrecimiento</h3>
+  <h3 class="card-title">✓ Comprobación 1 — Campo de direcciones e isoclinas</h3>
   <div id="chk1"></div>
 </div>
 
 <section class="card" id="s3">
-  <h3 class="card-title">3 · Ecuaciones diferenciales lineales de primer orden</h3>
-
-  <p>El método de separación tiene un límite claro: exige que el lado derecho se factorice como
-     $g(x)h(y)$. Muchas ecuaciones útiles no lo permiten, y sin embargo son perfectamente
-     resolubles.</p>
+  <h3 class="card-title">3 · Ecuaciones autónomas y soluciones de equilibrio</h3>
 
   <div class="def">
-    Una EDO de primer orden es <strong>lineal</strong> si puede escribirse en la
-    <em>forma estándar</em>
-    $$\frac{dy}{dx}+P(x)\,y=f(x)$$
-    con el coeficiente de $\dfrac{dy}{dx}$ igual a 1.
+    Una EDO de primer orden es <strong>autónoma</strong> si la variable independiente no aparece
+    explícitamente:
+    $$\frac{dy}{dx}=f(y)$$
+    La pendiente depende <em>solo</em> de la altura, no de dónde estemos horizontalmente.
   </div>
 
-  <div class="callout-dark">
-    <h3>El primer paso es siempre el mismo, y es donde más se falla</h3>
-    <p>Casi ninguna ecuación llega ya en forma estándar. Suele venir como
-       $a_1(x)y'+a_0(x)y=g(x)$, y hay que <strong>dividir toda la ecuación entre $a_1(x)$</strong>
-       antes de hacer nada más.</p>
-    <p>Si te saltas ese paso, el factor integrante que calcules será el equivocado y todo lo demás
-       se derrumba. Y ojo: al dividir entre $a_1(x)$ hay que excluir los puntos donde se anula,
-       que quedan fuera del intervalo de solución.</p>
+  <p>Casi todos los modelos de la Guía 2 son autónomos: $P'=kP$, $T'=k(T-T_a)$, la logística.
+     Y tienen una propiedad geométrica cómoda: <strong>el campo de direcciones se ve igual en
+     toda franja horizontal</strong>, porque la pendiente no cambia al desplazarse en $x$.</p>
+
+  <div class="def">
+    Un valor $c$ con $f(c)=0$ se llama <strong>punto crítico</strong>, y la función constante
+    $y(x)=c$ es una <strong>solución de equilibrio</strong>.
   </div>
 
-  <div class="sub-title">3.1 Separable contra lineal</div>
+  <p>La comprobación es inmediata: si $y\equiv c$ entonces $y'=0$, y $f(c)=0$ por hipótesis, así que
+     la ecuación se satisface. Estas soluciones se encuentran <em>sin integrar</em>: basta resolver
+     una ecuación algebraica.</p>
+
+  <div class="sub-title">3.1 La línea de fase</div>
+  <p>Los puntos críticos parten el eje $y$ en intervalos. En cada uno, el signo de $f(y)$ no cambia,
+     y ese signo dice si las soluciones suben o bajan:</p>
   <table class="tbl">
-    <tr><th>Ecuación</th><th>¿Separable?</th><th>¿Lineal?</th></tr>
-    <tr><td>$y'=xy$</td><td>Sí, $g(x)=x$, $h(y)=y$</td><td>Sí, $P=-x$, $f=0$</td></tr>
-    <tr><td>$y'+y=x$</td><td>No: $x-y$ no se factoriza</td><td>Sí, $P=1$, $f=x$</td></tr>
-    <tr><td>$y'=y^{2}$</td><td>Sí</td><td>No: $y$ está al cuadrado</td></tr>
-    <tr><td>$y'=x^{2}+y^{2}$</td><td>No</td><td>No</td></tr>
+    <tr><th>En el intervalo</th><th>Las soluciones</th><th>Flecha</th></tr>
+    <tr><td>$f(y) \gt 0$</td><td>Crecen</td><td>Hacia arriba</td></tr>
+    <tr><td>$f(y) \lt 0$</td><td>Decrecen</td><td>Hacia abajo</td></tr>
   </table>
-  <p style="font-size:.88rem">Las dos clases se solapan pero ninguna contiene a la otra. Ante una
-     ecuación nueva conviene preguntarse por las dos: si es separable, ese camino suele ser más
-     corto; si no lo es pero sí es lineal, el factor integrante la resuelve sin falta.</p>
-</section>
+  <p>Dibujar el eje $y$ vertical con los puntos críticos marcados y una flecha por intervalo se
+     llama <strong>línea de fase</strong>, y resume el comportamiento cualitativo de todas las
+     soluciones en un solo trazo.</p>
 
-<section class="card" id="s4">
-  <h3 class="card-title">4 · El factor integrante</h3>
-
-  <div class="callout-dark">
-    <h3>De dónde sale la idea</h3>
-    <p>Mira el lado izquierdo de $y'+P(x)y=f(x)$ y compáralo con la derivada de un producto:
-       $(\mu y)'=\mu y'+\mu' y$.</p>
-    <p>Se parecen mucho. Si multiplicamos toda la ecuación por una función $\mu(x)$ obtenemos
-       $\mu y'+\mu P y=\mu f$, y el lado izquierdo sería exactamente $(\mu y)'$ siempre que
-       $$\mu' = \mu P$$</p>
-    <p>Esa condición sobre $\mu$ es a su vez una ecuación diferencial — pero separable, y de las
-       fáciles: $\dfrac{d\mu}{\mu}=P\,dx$, de donde $\mu=e^{\int P\,dx}$.</p>
-    <p>Es decir: el método no es un truco caído del cielo. Es <em>forzar</em> que el lado izquierdo
-       se convierta en la derivada de un producto, y esa exigencia determina $\mu$ sin ambigüedad.</p>
-  </div>
-
-  <div class="def">
-    <strong>Método del factor integrante.</strong> Para $\dfrac{dy}{dx}+P(x)y=f(x)$:
-    <br><br>
-    <strong>1.</strong> Lleva la ecuación a la forma estándar (coeficiente 1 en $y'$).<br>
-    <strong>2.</strong> Calcula $\;\mu(x)=e^{\int P(x)\,dx}\;$ (sin constante de integración).<br>
-    <strong>3.</strong> Multiplica toda la ecuación por $\mu$. El lado izquierdo se vuelve
-    $\dfrac{d}{dx}\big[\mu(x)\,y\big]$.<br>
-    <strong>4.</strong> Integra ambos lados: $\;\mu y=\displaystyle\int \mu f\,dx + C$.<br>
-    <strong>5.</strong> Despeja $y$ dividiendo entre $\mu$.
-  </div>
-
-  <div class="nota">
-    <strong>¿Por qué se omite la constante en el paso 2?</strong> Si usáramos
-    $\mu=e^{\int P\,dx+C_1}=e^{C_1}e^{\int P\,dx}$, esa constante multiplicaría ambos lados de la
-    ecuación y se cancelaría al despejar. No aporta nada, así que se toma $C_1=0$ por comodidad.
-  </div>
+  <div class="sub-title">3.2 Clasificación de los equilibrios</div>
+  <table class="tbl">
+    <tr><th>Flechas alrededor</th><th>Tipo</th><th>Comportamiento</th></tr>
+    <tr><td>Ambas apuntan hacia $c$</td><td><strong>Atractor</strong> (asintóticamente estable)</td><td>Las soluciones cercanas se acercan a $c$</td></tr>
+    <tr><td>Ambas se alejan de $c$</td><td><strong>Repulsor</strong> (inestable)</td><td>Las soluciones cercanas se alejan</td></tr>
+    <tr><td>Una hacia y otra desde</td><td><strong>Semiestable</strong></td><td>Atrae por un lado, repele por el otro</td></tr>
+  </table>
 
   <div class="ejemplo">
-    <h4>Ejemplo 4 · El caso más simple</h4>
+    <h4>Ejemplo 2 · Análisis completo de $y'=y^{2}-4$</h4>
     <div class="ejemplo-body">
-      Resuelve $\dfrac{dy}{dx}-3y=6$.
-      <div class="paso"><div class="paso-t">1. Forma estándar</div>
-        Ya lo está: $P(x)=-3$, $f(x)=6$.
+      <div class="paso"><div class="paso-t">1. Puntos críticos</div>
+        $y^2-4=0 \Rightarrow y=2$ y $y=-2$. Hay dos soluciones de equilibrio: $y\equiv 2$ e $y\equiv -2$.
       </div>
-      <div class="paso"><div class="paso-t">2. Factor integrante</div>
-        $\mu=e^{\int -3\,dx}=e^{-3x}$
+      <div class="paso"><div class="paso-t">2. Signo en cada intervalo</div>
+        $f(-3)=9-4=5 \gt 0$ &nbsp;·&nbsp; $f(0)=-4 \lt 0$ &nbsp;·&nbsp; $f(3)=5 \gt 0$
       </div>
-      <div class="paso"><div class="paso-t">3. Multiplicar</div>
-        $e^{-3x}y'-3e^{-3x}y=6e^{-3x}$, es decir
-        $\dfrac{d}{dx}\left[e^{-3x}y\right]=6e^{-3x}$
+      <div class="paso"><div class="paso-t">3. Línea de fase</div>
+        En $(-\infty,-2)$ sube ↑ &nbsp;·&nbsp; en $(-2,2)$ baja ↓ &nbsp;·&nbsp; en $(2,\infty)$ sube ↑
       </div>
-      <div class="paso"><div class="paso-t">4. Integrar</div>
-        $e^{-3x}y=-2e^{-3x}+C$
+      <div class="paso"><div class="paso-t">4. Clasificar</div>
+        A $y=-2$ le llegan flechas por los dos lados: <strong>atractor</strong>.<br>
+        De $y=2$ se van por los dos lados: <strong>repulsor</strong>.
       </div>
-      <div class="paso"><div class="paso-t">5. Despejar</div>
-        $$y=-2+Ce^{3x}$$
-        Verificación: $y'=3Ce^{3x}$ y $3y+6=-6+3Ce^{3x}+6=3Ce^{3x}$ ✓
+      <div class="paso"><div class="paso-t">5. Conclusión sin resolver</div>
+        Toda solución que arranque con $y(0) \lt 2$ tiende a $-2$. Toda solución con $y(0) \gt 2$
+        se dispara al infinito. Y $y(0)=2$ se queda clavada en 2 para siempre. Todo eso, sin haber
+        integrado.
       </div>
     </div>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 5 · Con coeficiente variable</h4>
-    <div class="ejemplo-body">
-      Resuelve $x\dfrac{dy}{dx}-4y=x^{6}e^{x}$.
-      <div class="paso"><div class="paso-t">1. Forma estándar</div>
-        Dividir entre $x$: &nbsp; $\dfrac{dy}{dx}-\dfrac{4}{x}\,y=x^{5}e^{x}$, con $x\neq 0$.<br>
-        Aquí $P(x)=-\dfrac{4}{x}$ y $f(x)=x^{5}e^{x}$.
-      </div>
-      <div class="paso"><div class="paso-t">2. Factor integrante</div>
-        $\displaystyle\int -\frac{4}{x}dx=-4\ln|x|=\ln x^{-4}$, luego
-        $\mu=e^{\ln x^{-4}}=x^{-4}$
-      </div>
-      <div class="paso"><div class="paso-t">3–4. Multiplicar e integrar</div>
-        $\dfrac{d}{dx}\left[x^{-4}y\right]=x^{-4}\cdot x^{5}e^{x}=xe^{x}$<br>
-        Integrando por partes: $\displaystyle\int xe^{x}dx=xe^{x}-e^{x}+C$
-      </div>
-      <div class="paso"><div class="paso-t">5. Despejar</div>
-        $$y=x^{4}\left(xe^{x}-e^{x}+C\right)=x^{5}e^{x}-x^{4}e^{x}+Cx^{4}$$
-      </div>
-      <div class="paso"><div class="paso-t">Intervalo</div>
-        Como se dividió entre $x$, la solución vale en $(0,\infty)$ o en $(-\infty,0)$, pero no en
-        un intervalo que contenga el origen.
-      </div>
-    </div>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 6 · Un problema de valor inicial que ya habías visto</h4>
-    <div class="ejemplo-body">
-      Resuelve $\dfrac{dy}{dx}+y=x$ con $y(0)=4$.
-      <div class="paso"><div class="paso-t">Reconocer la ecuación</div>
-        Reescrita como $y'=x-y$, es <strong>la misma ecuación cuyo campo de direcciones e isoclinas
-        estudiaste en la Guía 2</strong>. Ahora vas a resolverla exactamente.
-      </div>
-      <div class="paso"><div class="paso-t">1–2. Factor integrante</div>
-        $P(x)=1$, luego $\mu=e^{\int 1\,dx}=e^{x}$
-      </div>
-      <div class="paso"><div class="paso-t">3–4. Multiplicar e integrar</div>
-        $\dfrac{d}{dx}\left[e^{x}y\right]=xe^{x}$ &nbsp;⟹&nbsp; $e^{x}y=xe^{x}-e^{x}+C$
-      </div>
-      <div class="paso"><div class="paso-t">5. Despejar</div>
-        $y=x-1+Ce^{-x}$
-      </div>
-      <div class="paso"><div class="paso-t">Condición inicial</div>
-        $y(0)=0-1+C=4 \Rightarrow C=5$, así que
-        $$y=x-1+5e^{-x}$$
-      </div>
-      <div class="paso"><div class="paso-t">La recta reaparece</div>
-        Con $C=0$ queda $y=x-1$: exactamente la solución recta que en la Guía 2 descubrimos
-        mirando las isoclinas. Lo que allí fue una observación geométrica, aquí es un caso
-        particular de la fórmula general. Los dos caminos llevan al mismo sitio.
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="card">
-  <h3 class="card-title">✓ Comprobación 2 — Factor integrante</h3>
-  <div id="chk2"></div>
-</div>
-
-<section class="card" id="s5">
-  <h3 class="card-title">5 · Transitorio y estado estacionario</h3>
-
-  <p>Observa la estructura de las soluciones anteriores. Todas tienen la misma forma:</p>
-  <div class="formula" style="max-width:460px">$$y=\underbrace{y_p(x)}_{\text{sin }C}+\underbrace{y_c(x)}_{\text{con }C}$$</div>
-
-  <div class="def">
-    En $y=y_p+y_c$:
-    <br><br>
-    $y_c$ es la <strong>solución complementaria</strong>: resuelve la ecuación homogénea
-    $y'+P(x)y=0$ y contiene la constante arbitraria.<br>
-    $y_p$ es una <strong>solución particular</strong>: cualquier función concreta que satisfaga la
-    ecuación completa.
-    <br><br>
-    Cuando $y_c\to 0$ al crecer $x$, se le llama <em>término transitorio</em>, y a $y_p$
-    <em>estado estacionario</em>.
   </div>
 
   <div class="callout-dark">
-    <h3>Por qué esto importa en ingeniería</h3>
-    <p>La constante $C$ vive <strong>solo</strong> en $y_c$. Y $y_c$ es lo que se desvanece.
-       Por tanto, si el transitorio decae, <em>a largo plazo todas las soluciones se parecen entre
-       sí</em>, sin importar de dónde partieron.</p>
-    <p>Eso explica por qué un circuito llega al mismo régimen permanente lo tengas cargado o
-       descargado al encenderlo, y por qué un horno alcanza su temperatura de consigna venga de
-       donde venga. La condición inicial decide el <em>camino</em>, no el <em>destino</em>.</p>
-    <p>Pero cuidado: esto exige que $y_c$ decaiga. Si $P(x)$ es negativa —como en
-       $y'-3y=6$, donde $y_c=Ce^{3x}$— el término homogéneo <strong>crece</strong> y domina.
-       Ahí no hay estado estacionario y las soluciones se separan cada vez más.</p>
+    <h3>Ninguna solución cruza un equilibrio</h3>
+    <p>Es una consecuencia del teorema de existencia y unicidad de la Guía 2. Si una solución
+       tocara la recta $y=c$ en algún punto, por ese punto pasarían <em>dos</em> soluciones
+       distintas: ella y la constante $y\equiv c$. La unicidad lo prohíbe.</p>
+    <p>Por eso los equilibrios funcionan como barreras: una solución que empieza entre dos de ellos
+       se queda atrapada entre ellos para siempre. Y por eso la línea de fase basta para predecir
+       el destino de cualquier solución.</p>
   </div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 7 · Circuito RL en serie</h4>
-    <div class="ejemplo-body">
-      Un circuito con $L=0{,}5$ H, $R=10\ \Omega$ y $E=12$ V se cierra en $t=0$ con $i(0)=0$.
-      La ley de Kirchhoff da $L\dfrac{di}{dt}+Ri=E$.
-      <div class="paso"><div class="paso-t">1. Forma estándar</div>
-        $0{,}5\,i'+10\,i=12 \;\Rightarrow\; i'+20\,i=24$
-      </div>
-      <div class="paso"><div class="paso-t">2–4. Factor integrante</div>
-        $\mu=e^{20t}$, luego $\dfrac{d}{dt}\left[e^{20t}i\right]=24e^{20t}$ y
-        $e^{20t}i=\dfrac{24}{20}e^{20t}+C$
-      </div>
-      <div class="paso"><div class="paso-t">5. Despejar y aplicar $i(0)=0$</div>
-        $i=1{,}2+Ce^{-20t}$, y $i(0)=1{,}2+C=0 \Rightarrow C=-1{,}2$:
-        $$i(t)=1{,}2\left(1-e^{-20t}\right)$$
-      </div>
-      <div class="paso"><div class="paso-t">Lectura física</div>
-        <strong>Estado estacionario:</strong> $i\to 1{,}2$ A $=E/R$, que es la ley de Ohm. A la larga
-        la inductancia no importa.<br>
-        <strong>Transitorio:</strong> $-1{,}2e^{-20t}$, que decae con constante de tiempo
-        $\tau=L/R=0{,}05$ s. A los $5\tau=0{,}25$ s la corriente ya alcanzó el 99,3 % de su valor final.
-      </div>
-    </div>
-  </div>
-
-  <div class="sub-title">5.1 Explora la descomposición</div>
-  <div class="viz" data-viz="lineal">
+  <div class="sub-title">3.3 Explora la línea de fase</div>
+  <div class="viz" data-viz="autonoma">
     <div class="viz-controls">
-      <label for="ln-e">Ecuación</label>
-      <select id="ln-e">
-        <option value="rl">0,5·i′ + 10i = 12 &nbsp;(circuito RL)</option>
-        <option value="lin">y′ + y = x</option>
-        <option value="cte">y′ + 2y = 4</option>
-        <option value="crece">y′ − 3y = 6 &nbsp;(sin estacionario)</option>
+      <label for="au-e">Ecuación autónoma</label>
+      <select id="au-e">
+        <option value="cuad">y′ = y² − 4</option>
+        <option value="log">y′ = y(1 − y/3) &nbsp;logística</option>
+        <option value="semi">y′ = y(y − 2)² &nbsp;semiestable</option>
+        <option value="dec">y′ = 2 − y</option>
       </select>
-      <label for="ln-c">Valor inicial</label>
-      <input id="ln-c" class="ci" type="range" min="0" max="2" value="0">
-      <span class="ci-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Cambia el valor inicial en cualquiera de las tres primeras: la curva verde <strong>no se mueve</strong>
-    y la azul termina pegándose a ella. Luego elige la última, $y'-3y=6$: ahí la parte roja crece en
-    vez de desvanecerse, y las soluciones se separan sin límite. El estado estacionario no está
-    garantizado — depende del signo de $P(x)$.
+    Prueba $y'=y(y-2)^2$: en $y=2$ las flechas <strong>apuntan en el mismo sentido por ambos lados</strong>.
+    Las soluciones de abajo se acercan y las de arriba se alejan. Ese es un equilibrio semiestable,
+    y no existiría si la raíz no fuera doble.
   </p>
 </section>
 
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 3 — Transitorio y estacionario</h3>
+  <h3 class="card-title">✓ Comprobación 2 — Ecuaciones autónomas</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Variables separables</h3>
+
+  <p>Pasamos del análisis cualitativo a la solución exacta. Este es el primer método del curso, y
+     el único que no exige memorizar ninguna fórmula: es integración pura.</p>
+
+  <div class="def">
+    Una EDO de primer orden es <strong>separable</strong> si puede escribirse como
+    $$\frac{dy}{dx}=g(x)\,h(y)$$
+    es decir, si el lado derecho se factoriza en una parte que depende solo de $x$ por otra que
+    depende solo de $y$.
+  </div>
+
+  <div class="sub-title">4.1 El método</div>
+  <ol>
+    <li><strong>Reconocer</strong> la factorización $g(x)h(y)$.</li>
+    <li><strong>Separar:</strong> pasar todo lo de $y$ a un lado y todo lo de $x$ al otro:
+        $\dfrac{dy}{h(y)}=g(x)\,dx$. Aquí se divide entre $h(y)$: anota qué valores excluyes.</li>
+    <li><strong>Integrar</strong> ambos lados. Basta una constante $C$ en un solo lado.</li>
+    <li><strong>Despejar</strong> $y$ si se puede. Si no, la solución queda implícita.</li>
+    <li><strong>Revisar</strong> los valores excluidos en el paso 2: pueden ser soluciones perdidas.</li>
+  </ol>
+
+  <div class="nota">
+    <strong>Sobre el paso 2.</strong> Tratar $\dfrac{dy}{dx}$ como un cociente de diferenciales y
+    «pasar el $dx$ multiplicando» es una manipulación formal que aquí funciona. La justificación
+    rigurosa pasa por la regla de la cadena y la integración por sustitución, pero el resultado es
+    el mismo y el procedimiento es seguro.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Una solución implícita: $\dfrac{dy}{dx}=-\dfrac{x}{y}$</h4>
+    <div class="ejemplo-body">
+      Resuelve con la condición $y(4)=3$.
+      <div class="paso"><div class="paso-t">1–2. Separar</div>
+        $y\,dy = -x\,dx$ &nbsp;(se divide entre $1/y$, o sea se excluye $y=0$)
+      </div>
+      <div class="paso"><div class="paso-t">3. Integrar</div>
+        $\dfrac{y^{2}}{2}=-\dfrac{x^{2}}{2}+C_1 \Rightarrow x^{2}+y^{2}=C$ &nbsp;con $C=2C_1$
+      </div>
+      <div class="paso"><div class="paso-t">4. La familia</div>
+        Circunferencias centradas en el origen — exactamente lo que muestra el campo de direcciones
+        de la §1.1 al elegir $y'=-x/y$.
+      </div>
+      <div class="paso"><div class="paso-t">5. Condición inicial</div>
+        $16+9=25$, luego $x^{2}+y^{2}=25$. Despejando la rama que contiene el punto $(4,3)$:
+        $$y=\sqrt{25-x^{2}}, \qquad x\in(-5,\,5)$$
+      </div>
+      <div class="paso"><div class="paso-t">6. El intervalo, otra vez</div>
+        Es abierto porque en $x=\pm5$ se tiene $y=0$, y ahí la ecuación $-x/y$ no está definida.
+        La solución implícita $x^2+y^2=25$ describe la circunferencia entera, pero la
+        <em>solución</em> del problema es solo el arco superior.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Un problema de valor inicial explícito</h4>
+    <div class="ejemplo-body">
+      Resuelve $\dfrac{dy}{dx}=y\cos x$ con $y(0)=1$.
+      <div class="paso"><div class="paso-t">Separar e integrar</div>
+        $\dfrac{dy}{y}=\cos x\,dx \Rightarrow \ln|y|=\operatorname{sen}x+C_1$
+      </div>
+      <div class="paso"><div class="paso-t">Despejar</div>
+        $|y|=e^{\operatorname{sen}x+C_1}=e^{C_1}e^{\operatorname{sen}x}$, y absorbiendo el signo y
+        la constante en una sola $C$:
+        $$y=Ce^{\operatorname{sen}x}$$
+      </div>
+      <div class="paso"><div class="paso-t">Condición inicial</div>
+        $y(0)=Ce^{0}=C=1$, luego $y=e^{\operatorname{sen}x}$.
+      </div>
+      <div class="paso"><div class="paso-t">Verificar</div>
+        $y'=\cos x\cdot e^{\operatorname{sen}x}=y\cos x$ ✓ &nbsp; y $y(0)=e^{0}=1$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Sobre el valor absoluto</div>
+        Al escribir $C=\pm e^{C_1}$ la nueva constante puede ser positiva o negativa, y eso libera
+        del $|\cdot|$. Además $C=0$ recupera la solución $y\equiv 0$ que habíamos excluido al
+        dividir. Aquí no se pierde nada, pero no siempre es así — es el tema de la §5.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Cuando no se puede despejar</h4>
+    <div class="ejemplo-body">
+      Resuelve $\dfrac{dy}{dx}=\dfrac{1+y^{2}}{1+x^{2}}$.
+      <div class="paso"><div class="paso-t">Separar e integrar</div>
+        $\dfrac{dy}{1+y^{2}}=\dfrac{dx}{1+x^{2}} \Rightarrow \arctan y=\arctan x + C$
+      </div>
+      <div class="paso"><div class="paso-t">¿Despejar?</div>
+        Se puede: $y=\tan(\arctan x + C)$. Pero la forma implícita es más limpia y muestra mejor la
+        estructura. Además el despeje introduce problemas de dominio, porque la tangente tiene
+        asíntotas.
+      </div>
+      <div class="paso"><div class="paso-t">Criterio práctico</div>
+        Deja la respuesta implícita si despejar oscurece más de lo que aclara. Una solución
+        implícita es una respuesta completa y aceptable, siempre que indiques el intervalo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Soluciones singulares: lo que se pierde al dividir</h3>
+
+  <div class="callout-dark">
+    <h3>El paso 2 tiene una trampa</h3>
+    <p>Separar exige dividir entre $h(y)$. Y dividir supone que $h(y)\neq 0$.</p>
+    <p>Pero si $h(c)=0$ para algún $c$, entonces $y\equiv c$ es una solución de equilibrio de la
+       ecuación — y acabas de excluirla del cálculo. Puede que reaparezca al final como un caso
+       particular de la familia, o puede que no.</p>
+    <p>Cuando <strong>no</strong> reaparece, se llama <em>solución singular</em>: es una solución
+       legítima que no se obtiene de la solución general para ningún valor de $C$.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Una solución que se pierde: $\dfrac{dy}{dx}=y^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Separar (excluyendo $y=0$)</div>
+        $\dfrac{dy}{y^{2}}=dx \Rightarrow -\dfrac{1}{y}=x+C \Rightarrow y=\dfrac{-1}{x+C}$
+      </div>
+      <div class="paso"><div class="paso-t">Revisar lo excluido</div>
+        $h(y)=y^{2}$ se anula en $y=0$. ¿Es $y\equiv 0$ solución? $y'=0$ y $y^{2}=0$ ✓ Sí lo es.
+      </div>
+      <div class="paso"><div class="paso-t">¿Está en la familia?</div>
+        $\dfrac{-1}{x+C}$ nunca vale cero, para ningún $C$ ni ningún $x$. Así que $y\equiv 0$
+        <strong>es una solución singular</strong>.
+      </div>
+      <div class="paso"><div class="paso-t">Respuesta completa</div>
+        $y=\dfrac{-1}{x+C}$ &nbsp;y además&nbsp; $y\equiv 0$. Omitir la segunda deja la respuesta incompleta.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · Y una donde además falla la unicidad: $\dfrac{dy}{dx}=x\,y^{1/2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Separar e integrar</div>
+        $\dfrac{dy}{\sqrt{y}}=x\,dx \Rightarrow 2\sqrt{y}=\dfrac{x^{2}}{2}+C_1
+        \Rightarrow \sqrt{y}=\dfrac{x^{2}}{4}+C$
+      </div>
+      <div class="paso"><div class="paso-t">Elevar al cuadrado</div>
+        $$y=\left(\frac{x^{2}}{4}+C\right)^{2}$$
+        Verificación: $y'=2\left(\dfrac{x^2}{4}+C\right)\cdot\dfrac{x}{2}=x\left(\dfrac{x^2}{4}+C\right)$,
+        y $x\sqrt{y}=x\left(\dfrac{x^2}{4}+C\right)$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">La singular</div>
+        $y\equiv 0$ también resuelve la ecuación, y no se obtiene con ningún $C$ salvo en el punto
+        aislado donde $x^2/4+C=0$. Es singular.
+      </div>
+      <div class="paso"><div class="paso-t">La conexión con la Guía 2</div>
+        Con la condición $y(0)=0$ hay <strong>dos</strong> soluciones: $y\equiv 0$ y
+        $y=\left(\dfrac{x^{2}}{4}\right)^{2}=\dfrac{x^{4}}{16}$. Falla la unicidad.<br>
+        ¿Por qué? Porque $\dfrac{\partial}{\partial y}\left(xy^{1/2}\right)=\dfrac{x}{2\sqrt{y}}$
+        no está acotada en $y=0$. Es el mismo diagnóstico que hicimos con $y'=y^{2/3}$: las
+        soluciones singulares y los fallos de unicidad aparecen en los mismos sitios.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Regla de trabajo.</strong> Cada vez que dividas entre una expresión con $y$, escribe al
+    margen qué valores estás excluyendo. Al terminar, vuelve a esa nota y comprueba uno por uno si
+    son soluciones y si la familia los recupera. Cuesta treinta segundos y es la diferencia entre
+    una respuesta correcta y una incompleta.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Separables y singulares</h3>
   <div id="chk3"></div>
 </div>
 
@@ -448,25 +471,25 @@ window.MathJax = {
     <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      Un fondo con interés continuo $r$ y aportes constantes $d$ obedece
-      $\dfrac{dA}{dt}=rA+d$, que en forma estándar es $A'-rA=d$: lineal, no separable de forma
-      cómoda. Su solución $A=-\dfrac{d}{r}+Ce^{rt}$ muestra que el término de aportes desplaza el
-      equilibrio, y como $r \gt 0$ no hay estado estacionario: el capital crece indefinidamente.</div>
+      El modelo logístico $\dfrac{dS}{dt}=kS\!\left(1-\dfrac{S}{M}\right)$ es autónomo y separable.
+      Su línea de fase da la conclusión gerencial sin resolver nada: $S=M$ es atractor, así que
+      cualquier campaña con ventas iniciales positivas converge al mismo techo de mercado. Lo que
+      cambia con la inversión es la <em>velocidad</em>, no el destino.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      La depreciación exponencial $V=V_0e^{-kt}$ sale del mismo modelo con $k \gt 0$, y su
-      «semivida» es el tiempo en que el activo pierde la mitad de su valor. A diferencia de la línea
-      recta, nunca llega a cero: por eso las normas fijan un valor residual y un horizonte, en lugar
-      de esperar a que el modelo se agote solo.</div>
+      El interés compuesto continuo $\dfrac{dA}{dt}=rA$ es separable y autónomo, con
+      $A=0$ como único punto crítico y repulsor: cualquier capital positivo crece sin límite.
+      La depreciación exponencial es la misma ecuación con $r \lt 0$, y ahí $A=0$ pasa a ser
+      atractor.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      La ley de Moore es exactamente $\dfrac{dN}{dt}=kN$ con tiempo de duplicación de unos 24 meses.
-      Y el crecimiento de usuarios de un servicio sigue este modelo solo en su fase inicial: cuando
-      la adopción se satura hay que pasar a la logística. Confundir las dos fases es el error clásico
-      de las proyecciones de startups.</div>
+      La difusión de un virus en una red de $N$ equipos, $\dfrac{dI}{dt}=\beta I(N-I)$, es autónoma
+      con equilibrios $I=0$ (repulsor) e $I=N$ (atractor). La línea de fase predice que basta un
+      solo equipo infectado para que la red termine comprometida: el punto $I=0$ es inestable.
+      Ese es el argumento matemático de por qué la contención temprana lo es todo.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      Los circuitos RC y RL son el ejemplo canónico de EDO lineal de primer orden. El transitorio
-      decae con $\tau=RC$ o $\tau=L/R$, y a los $5\tau$ el sistema está prácticamente en régimen
-      permanente. Ese número —cinco constantes de tiempo— es una regla de diseño que usarás toda la
-      carrera, y sale de que $e^{-5}=0{,}0067$.</div>
+      La descarga de un capacitor, $\dfrac{dq}{dt}=-\dfrac{q}{RC}$, es separable y autónoma con
+      $q=0$ como atractor. Su solución $q=q_0e^{-t/RC}$ sale en dos líneas de integración.
+      Y en un circuito RL, la corriente obedece $\dfrac{di}{dt}=\dfrac{E-Ri}{L}$, cuyo equilibrio
+      $i=E/R$ es el valor de régimen que verás en la Guía 4.</div>
   </div>
 </section>
 
@@ -481,15 +504,15 @@ window.MathJax = {
 <section class="card">
   <h3 class="card-title">Resumen para llevar</h3>
   <ul>
-    <li>$\dfrac{dP}{dt}=kP$ tiene solución $P=P_0e^{kt}$: crece si $k \gt 0$, decrece si $k \lt 0$.</li>
-    <li>Semivida y tiempo de duplicación valen $\dfrac{\ln 2}{|k|}$ y <strong>no dependen de $P_0$</strong>.</li>
-    <li>Con dos mediciones, $k=\dfrac{1}{t_2-t_1}\ln\dfrac{P(t_2)}{P(t_1)}$, sin necesidad de conocer $P_0$.</li>
-    <li>Forma estándar: $y'+P(x)y=f(x)$, con coeficiente <strong>1</strong> en $y'$. Divide primero.</li>
-    <li>$\mu=e^{\int P\,dx}$ convierte el lado izquierdo en $\dfrac{d}{dx}[\mu y]$, y por eso funciona.</li>
-    <li>Separable y lineal son clases distintas que se solapan: pregúntate por las dos.</li>
-    <li>$y=y_p+y_c$; la constante vive solo en $y_c$.</li>
-    <li>Si $y_c\to 0$ es <strong>transitorio</strong> y $y_p$ es el estado estacionario; si $y_c$ crece, no hay estacionario.</li>
-    <li>En un circuito, a los $5\tau$ el transitorio ya se extinguió al 99,3 %.</li>
+    <li>La ecuación $y'=f(x,y)$ es un <strong>mapa de pendientes</strong>: se puede dibujar sin resolver nada.</li>
+    <li>Una curva solución es tangente a todos los elementos lineales que toca.</li>
+    <li>Una <strong>isoclina</strong> $f(x,y)=k$ reúne los puntos de igual pendiente; sobre ella los segmentos son paralelos.</li>
+    <li>Si una isoclina de pendiente $k$ resulta ser una recta de pendiente $k$, esa recta es solución.</li>
+    <li>Una EDO <strong>autónoma</strong> $y'=f(y)$ tiene soluciones de equilibrio en los ceros de $f$.</li>
+    <li>La <strong>línea de fase</strong> clasifica cada equilibrio como atractor, repulsor o semiestable.</li>
+    <li>Ninguna solución cruza un equilibrio: lo impide el teorema de unicidad.</li>
+    <li><strong>Separable</strong> es $y'=g(x)h(y)$: separa, integra, despeja si puedes.</li>
+    <li>Al dividir entre $h(y)$ anota lo excluido: puede haber <strong>soluciones singulares</strong>.</li>
   </ul>
 </section>
 
@@ -497,128 +520,138 @@ window.MathJax = {
 
 <footer>
   <div class="cred-compacto">
-    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/classic" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/classic" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260827b"></script>
-<script src="../assets/viz-edo.js?v=20260827b"></script>
+<script src="../assets/ova.js?v=20260827c"></script>
+<script src="../assets/viz-edo.js?v=20260827c"></script>
 <script>
 OVA.quiz({
   destino: 'chk1',
-  titulo: 'Crecimiento y decrecimiento · 3 preguntas',
+  titulo: 'Campo de direcciones e isoclinas · 3 preguntas',
   items: [
     {
-      etiqueta: 'Semivida', nivel: 2,
-      criterio: 'Reconocer que la semivida no depende de la cantidad inicial (§1.2)',
-      enunciado: 'Dos muestras del mismo isótopo tienen 10 g y 500 g. ¿Cuál tarda más en reducirse a la mitad?',
+      etiqueta: 'Campo', nivel: 1,
+      criterio: 'Leer la pendiente que impone la ecuación en un punto (§1)',
+      enunciado: "Para $y'=x-y$, la pendiente del elemento lineal en el punto $(2,1)$ vale:",
+      opciones: ['$2$', '$1$', '$-1$', '$3$'],
+      correcta: 1,
+      pista: 'Basta evaluar $f(x,y)$ en ese punto: no hay que resolver nada.',
+      solucion: "$f(2,1)=2-1=1$. Construir el campo es solo <em>evaluar</em>, no resolver: esa es la razón de que se pueda dibujar para ecuaciones que no sabemos integrar. La opción c) invierte el orden de la resta."
+    },
+    {
+      etiqueta: 'Isoclinas', nivel: 2,
+      criterio: 'Identificar la forma geométrica de las isoclinas (§2)',
+      enunciado: "Las isoclinas de $y'=y-x^{2}$ son:",
       opciones: [
-        'La de 500 g, porque tiene más material',
-        'Tardan exactamente lo mismo',
-        'La de 10 g, porque decae más rápido en proporción',
-        'Depende de la temperatura'
+        'Rectas horizontales $y=k$',
+        'Circunferencias centradas en el origen',
+        'Parábolas $y=x^{2}+k$',
+        'Rectas de pendiente 1'
+      ],
+      correcta: 2,
+      pista: 'Iguala $f(x,y)$ a $k$ y despeja $y$.',
+      solucion: "De $y-x^{2}=k$ se obtiene $y=x^{2}+k$: una familia de parábolas iguales, desplazadas verticalmente. La opción d) corresponde a $y'=x-y$, cuyas isoclinas sí son rectas de pendiente 1."
+    },
+    {
+      etiqueta: 'Isoclina especial', nivel: 3,
+      criterio: 'Reconocer cuándo una isoclina es además solución (§2)',
+      enunciado: "En $y'=x-y$, la isoclina $k=1$ es la recta $y=x-1$ y sus elementos lineales tienen pendiente 1. ¿Qué se concluye?",
+      opciones: [
+        'Que en esa recta el campo es horizontal',
+        'Que la recta $y=x-1$ es ella misma una solución de la ecuación',
+        'Que la ecuación no tiene solución en esa región',
+        'Que la isoclina está mal calculada'
       ],
       correcta: 1,
-      pista: 'Escribe $P_0e^{k\\tau}=\\tfrac12 P_0$ y observa qué se cancela.',
-      solucion: "Al plantear $P_0e^{k\\tau}=\\tfrac{1}{2}P_0$, la cantidad inicial <strong>se cancela</strong> y queda $\\tau=\\dfrac{\\ln 2}{|k|}$, que depende solo de la constante del isótopo. Esa independencia del punto de partida es la firma del modelo exponencial y lo que permite tabular semividas como propiedad del material."
-    },
-    {
-      etiqueta: 'Duplicación', nivel: 2,
-      criterio: 'Aplicar el tiempo de duplicación (§1.2)',
-      enunciado: 'Una población se duplica cada 5 horas. ¿Por cuánto se multiplica en 15 horas?',
-      opciones: ['Por 3', 'Por 6', 'Por 8', 'Por 32'],
-      correcta: 2,
-      pista: '¿Cuántos periodos de duplicación caben en 15 horas?',
-      solucion: "En 15 horas caben $15/5=3$ duplicaciones, así que el factor es $2^{3}=8$. La opción a) confunde el número de duplicaciones con el factor: duplicarse tres veces no es triplicarse. Compruébalo con la fórmula: $e^{k\\cdot 15}$ con $k=\\ln2/5$ da exactamente 8."
-    },
-    {
-      etiqueta: 'Datación', nivel: 3,
-      criterio: 'Resolver un problema de decaimiento con proporciones (§2)',
-      enunciado: 'El C-14 tiene semivida de 5 730 años. Un fósil conserva el 25 % del original. Su edad es:',
-      opciones: ['$5\\,730$ años', '$14\\,325$ años', '$22\\,920$ años', '$11\\,460$ años'],
-      correcta: 3,
-      pista: 'El 25 % es la mitad de la mitad. ¿Cuántas semividas son?',
-      solucion: "El 25 % corresponde a exactamente <strong>dos</strong> semividas ($\\tfrac12\\cdot\\tfrac12=\\tfrac14$), luego $t=2\\times5\\,730=11\\,460$ años. Se puede resolver de cabeza sin usar logaritmos. Nota que nunca hizo falta saber cuánto C-14 había originalmente: solo la proporción, y eso es lo que hace viable el método en arqueología."
+      pista: 'La recta tiene pendiente 1 y los segmentos sobre ella también. ¿Qué significa que coincidan?',
+      solucion: "Los segmentos van <em>a lo largo</em> de la isoclina en vez de cruzarla, así que la recta es tangente al campo en cada uno de sus puntos: es una curva solución. Verificación directa: $y'=1$ y $x-y=x-(x-1)=1$ ✓. La opción a) describiría la isoclina $k=0$, que es $y=x$."
     }
   ]
 });
 
 OVA.quiz({
   destino: 'chk2',
-  titulo: 'Factor integrante · 3 preguntas',
+  titulo: 'Ecuaciones autónomas · 3 preguntas',
   items: [
     {
-      etiqueta: 'Forma estándar', nivel: 2,
-      criterio: 'Llevar una EDO lineal a la forma estándar (§3)',
-      enunciado: "Para $3\\dfrac{dy}{dx}+6y=12$, la función $P(x)$ de la forma estándar es:",
-      opciones: ['$P=2$', '$P=6$', '$P=3$', '$P=12$'],
-      correcta: 0,
-      pista: 'La forma estándar exige coeficiente <strong>1</strong> en $y\'$. Divide toda la ecuación primero.',
-      solucion: "Dividiendo entre 3: $y'+2y=4$, de donde $P(x)=2$. La opción b) es el error más común del tema: leer el coeficiente de $y$ sin haber normalizado antes. Con $P=6$ el factor integrante saldría $e^{6x}$ en vez de $e^{2x}$ y todo el desarrollo se derrumbaría."
-    },
-    {
-      etiqueta: 'Factor integrante', nivel: 2,
-      criterio: 'Calcular el factor integrante con coeficiente variable (§4)',
-      enunciado: "Para $x\\dfrac{dy}{dx}+2y=x^{3}$, el factor integrante es:",
-      opciones: ['$\\mu=e^{2x}$', '$\\mu=x^{2}$', '$\\mu=x$', '$\\mu=e^{x^{2}}$'],
-      correcta: 1,
-      pista: 'Normaliza primero dividiendo entre $x$, y luego integra $P(x)$.',
-      solucion: "En forma estándar: $y'+\\dfrac{2}{x}y=x^{2}$, con $P=\\dfrac{2}{x}$. Entonces $\\int\\dfrac{2}{x}dx=2\\ln|x|=\\ln x^{2}$ y $\\mu=e^{\\ln x^{2}}=x^{2}$. La opción a) es el error de no normalizar y tratar el 2 como constante. Cuando $P$ es un cociente en $x$, el factor suele salir una potencia, no una exponencial."
-    },
-    {
-      etiqueta: 'Por qué funciona', nivel: 3,
-      criterio: 'Justificar el método del factor integrante (§4)',
-      enunciado: '¿Por qué multiplicar por $\\mu=e^{\\int P\\,dx}$ resuelve la ecuación?',
-      opciones: [
-        'Porque cancela el término $f(x)$ del lado derecho',
-        'Porque convierte la ecuación en separable',
-        'Porque convierte el lado izquierdo en la derivada del producto $\\mu y$, que se integra directamente',
-        'Porque elimina la constante arbitraria'
-      ],
+      etiqueta: 'Equilibrios', nivel: 1,
+      criterio: 'Hallar las soluciones de equilibrio de una EDO autónoma (§3)',
+      enunciado: "Las soluciones de equilibrio de $y'=y\\left(1-\\dfrac{y}{3}\\right)$ son:",
+      opciones: ['$y=1$ y $y=3$', '$y=0$ únicamente', '$y=0$ y $y=3$', '$y=-3$ y $y=3$'],
       correcta: 2,
-      pista: 'Compara $\\mu y\'+\\mu P y$ con la regla del producto $(\\mu y)\'=\\mu y\'+\\mu\' y$.',
-      solucion: "Al multiplicar queda $\\mu y'+\\mu P y$, que es exactamente $(\\mu y)'$ siempre que $\\mu'=\\mu P$ — y esa condición es la que define a $\\mu$. El método no es un truco: es <em>forzar</em> que aparezca una derivada de producto, y esa exigencia determina $\\mu$ sin ambigüedad. La opción d) es falsa: la constante aparece justamente al integrar."
+      pista: 'Iguala el lado derecho a cero: es una ecuación algebraica, no diferencial.',
+      solucion: "$y(1-y/3)=0$ se anula en $y=0$ y en $y=3$, así que las funciones constantes $y\\equiv 0$ e $y\\equiv 3$ resuelven la ecuación. Se hallan <strong>sin integrar</strong>, que es la gran ventaja del caso autónomo."
+    },
+    {
+      etiqueta: 'Línea de fase', nivel: 2,
+      criterio: 'Predecir el comportamiento a largo plazo con la línea de fase (§3.1)',
+      enunciado: "Para $y'=y^{2}-4$, una solución con $y(0)=1$ tiende a:",
+      opciones: ['$-2$', '$+2$', '$+\\infty$', '$0$'],
+      correcta: 0,
+      pista: '¿Qué signo tiene $f(y)$ en el intervalo $(-2,2)$, donde está el valor inicial?',
+      solucion: "En $(-2,2)$ se tiene $f(y)=y^{2}-4 \\lt 0$ (por ejemplo $f(1)=-3$), así que la solución <strong>decrece</strong>. Y no puede cruzar el equilibrio $y=-2$, porque lo impide la unicidad: se acerca a $-2$ asintóticamente. Nota que la respuesta salió sin resolver la ecuación."
+    },
+    {
+      etiqueta: 'Clasificación', nivel: 3,
+      criterio: 'Distinguir un equilibrio semiestable (§3.2)',
+      enunciado: "En $y'=y(y-2)^{2}$ se tiene $f(1)=1 \\gt 0$ y $f(3)=3 \\gt 0$. El equilibrio $y=2$ es:",
+      opciones: ['Atractor', 'Repulsor', 'Semiestable', 'No es un equilibrio'],
+      correcta: 2,
+      pista: 'Las flechas a ambos lados apuntan en el mismo sentido. ¿Qué le pasa a una solución que empieza justo debajo? ¿Y justo encima?',
+      solucion: "Como $f \\gt 0$ a ambos lados, las soluciones suben en los dos casos: las de abajo se <em>acercan</em> a 2 y las de arriba se <em>alejan</em>. Eso es un equilibrio semiestable, y aparece cuando la raíz es de multiplicidad par — aquí $(y-2)^2$ no cambia de signo al atravesar $y=2$."
     }
   ]
 });
 
 OVA.quiz({
   destino: 'chk3',
-  titulo: 'Transitorio y estacionario · 3 preguntas',
+  titulo: 'Separables y singulares · 3 preguntas',
   items: [
     {
-      etiqueta: 'Descomposición', nivel: 2,
-      criterio: 'Identificar el término transitorio y el estacionario (§5)',
-      enunciado: "En la solución $y=2+Ce^{-2x}$ de $y'+2y=4$, el estado estacionario es:",
-      opciones: ['$2$', '$Ce^{-2x}$', '$4$', 'Depende del valor de $C$'],
-      correcta: 0,
-      pista: '¿Qué queda cuando $x$ se hace muy grande?',
-      solucion: "El término $Ce^{-2x}$ tiende a cero, así que a largo plazo $y\\to 2$: ese es el estado estacionario. La opción d) es justamente lo contrario de lo que ocurre — el estacionario <strong>no</strong> depende de $C$, y por eso todas las soluciones terminan igual sin importar de dónde partan."
-    },
-    {
-      etiqueta: 'Circuito', nivel: 3,
-      criterio: 'Interpretar físicamente el estado estacionario (§5)',
-      enunciado: "Un circuito RL con $L=0{,}5$ H, $R=10\\ \\Omega$ y $E=12$ V, cerrado con $i(0)=0$, da $i(t)=1{,}2(1-e^{-20t})$. La corriente de régimen permanente vale:",
-      opciones: ['$0$ A', '$12$ A', '$24$ A', '$1{,}2$ A'],
-      correcta: 3,
-      pista: 'Toma el límite cuando $t\\to\\infty$, o aplica directamente la ley de Ohm.',
-      solucion: "Cuando $t\\to\\infty$ la exponencial se anula y $i\\to 1{,}2$ A, que es exactamente $E/R=12/10$: la ley de Ohm. A largo plazo la inductancia deja de importar, porque ya no hay variación de corriente que se oponga. El transitorio decae con $\\tau=L/R=0{,}05$ s."
-    },
-    {
-      etiqueta: 'Cuándo NO hay', nivel: 3,
-      criterio: 'Reconocer que el estado estacionario no siempre existe (§5)',
-      enunciado: "La ecuación $y'-3y=6$ tiene solución $y=-2+Ce^{3x}$. ¿Cuál es su estado estacionario?",
+      etiqueta: 'Reconocer', nivel: 2,
+      criterio: 'Identificar si una EDO es separable (§4)',
+      enunciado: "¿Cuál de estas ecuaciones <strong>no</strong> es separable?",
       opciones: [
-        '$-2$',
-        'No tiene: la parte homogénea crece en vez de desvanecerse',
-        '$0$',
-        '$6$'
+        "$\\dfrac{dy}{dx}=xy$",
+        "$\\dfrac{dy}{dx}=e^{x+y}$",
+        "$\\dfrac{dy}{dx}=x+y$",
+        "$\\dfrac{dy}{dx}=y^{2}\\cos x$"
+      ],
+      correcta: 2,
+      pista: 'Separable significa que el lado derecho se factoriza como (algo con $x$) × (algo con $y$).',
+      solucion: "La suma $x+y$ no se factoriza en un producto de la forma $g(x)h(y)$. La opción b) sí lo es, aunque no lo parezca: $e^{x+y}=e^{x}\\cdot e^{y}$. Esa reescritura es el truco que hay que buscar antes de descartar una ecuación como no separable."
+    },
+    {
+      etiqueta: 'Resolver', nivel: 2,
+      criterio: 'Resolver un PVI separable (§4.1)',
+      enunciado: "La solución de $\\dfrac{dy}{dx}=y\\cos x$ con $y(0)=1$ es:",
+      opciones: [
+        '$y=\\cos x$',
+        '$y=e^{\\operatorname{sen}x}$',
+        '$y=1+\\operatorname{sen}x$',
+        '$y=e^{\\cos x}$'
       ],
       correcta: 1,
-      pista: '¿Qué hace $Ce^{3x}$ cuando $x$ crece? Compáralo con $Ce^{-2x}$.',
-      solucion: "Aquí $y_c=Ce^{3x}$ <strong>crece sin límite</strong> en vez de decaer, así que domina la solución y no hay régimen permanente. El término $-2$ sigue siendo una solución particular, pero no es un estado estacionario porque nada converge hacia él. La existencia del estacionario depende del signo de $P(x)$: se necesita $y_c\\to 0$."
+      pista: 'Separa como $\\dfrac{dy}{y}=\\cos x\\,dx$ e integra los dos lados.',
+      solucion: "$\\ln|y|=\\operatorname{sen}x+C_1$, y al exponenciar $y=Ce^{\\operatorname{sen}x}$; con $y(0)=C=1$ queda $y=e^{\\operatorname{sen}x}$. Verificación: $y'=\\cos x\\,e^{\\operatorname{sen}x}=y\\cos x$ ✓. La opción d) cumple $y(0)=e$, no 1, y además no satisface la ecuación."
+    },
+    {
+      etiqueta: 'Singulares', nivel: 3,
+      criterio: 'Detectar una solución perdida al separar (§5)',
+      enunciado: "Al resolver $\\dfrac{dy}{dx}=y^{2}$ se obtiene $y=\\dfrac{-1}{x+C}$. ¿Falta algo?",
+      opciones: [
+        'No, esa es la solución general completa',
+        'Falta la solución $y\\equiv 0$, que se perdió al dividir entre $y^{2}$',
+        'Falta añadir una segunda constante arbitraria',
+        'Falta la solución $y\\equiv 1$'
+      ],
+      correcta: 1,
+      pista: '¿Entre qué expresión se dividió al separar, y para qué valor de $y$ se anula?',
+      solucion: "Separar exigió dividir entre $y^{2}$, lo que excluye $y=0$. Y $y\\equiv 0$ <strong>sí</strong> resuelve la ecuación ($0'=0$ y $0^{2}=0$), pero no se obtiene de $\\dfrac{-1}{x+C}$ para ningún $C$, porque esa expresión nunca vale cero. Es una solución <em>singular</em> y omitirla deja la respuesta incompleta."
     }
   ]
 });
@@ -628,106 +661,111 @@ OVA.quiz({
   titulo: 'Práctica final · 8 preguntas',
   items: [
     {
-      etiqueta: 'Modelo', nivel: 1,
-      criterio: 'Resolver la ecuación de crecimiento exponencial (§1.1)',
-      enunciado: "La solución general de $\\dfrac{dP}{dt}=kP$ es:",
-      opciones: ['$P=kt+C$', '$P=P_0e^{kt}$', '$P=\\dfrac{k}{2}t^{2}+C$', '$P=C\\ln(kt)$'],
-      correcta: 1,
-      pista: 'Es separable: $\\dfrac{dP}{P}=k\\,dt$.',
-      solucion: "Integrando: $\\ln|P|=kt+C_1$, y al exponenciar $P=Ce^{kt}$, con $C=P_0$ por la condición inicial. La opción c) resolvería $P'=kt$, donde la derivada depende del <em>tiempo</em> y no de la cantidad presente: es un modelo completamente distinto."
-    },
-    {
-      etiqueta: 'Hallar k', nivel: 2,
-      criterio: 'Determinar la constante a partir de dos datos (§1.3)',
-      enunciado: 'Un cultivo pasa de 100 a 300 bacterias en 3 horas. La constante $k$ vale:',
+      etiqueta: 'Campo', nivel: 2,
+      criterio: 'Interpretar geométricamente una curva solución (§1)',
+      enunciado: 'Una curva solución de $y\'=f(x,y)$ se caracteriza geométricamente porque:',
       opciones: [
-        '$\\dfrac{\\ln 3}{3}\\approx 0{,}3662$',
-        '$\\dfrac{300}{3}=100$',
-        '$\\ln 3\\approx 1{,}0986$',
-        '$\\dfrac{\\ln 300}{3}\\approx 1{,}9010$'
-      ],
-      correcta: 0,
-      pista: 'De $100e^{3k}=300$ sale $e^{3k}=3$. Ahora toma logaritmo.',
-      solucion: "$e^{3k}=3 \\Rightarrow 3k=\\ln 3 \\Rightarrow k=\\dfrac{\\ln 3}{3}\\approx 0{,}3662$ por hora. La opción d) es el error de tomar el logaritmo de la población final en vez del <em>cociente</em>: es el cociente el que hace desaparecer a $P_0$."
-    },
-    {
-      etiqueta: 'Clasificar', nivel: 2,
-      criterio: 'Distinguir ecuaciones separables de lineales (§3.1)',
-      enunciado: "La ecuación $\\dfrac{dy}{dx}+y=x$ es:",
-      opciones: [
-        'Separable pero no lineal',
-        'Lineal pero no separable',
-        'Separable y lineal',
-        'Ni separable ni lineal'
+        'Pasa por el origen',
+        'Es tangente al elemento lineal en cada uno de sus puntos',
+        'Cruza perpendicularmente los elementos lineales',
+        'Coincide siempre con una isoclina'
       ],
       correcta: 1,
-      pista: 'Escríbela como $y\'=x-y$ e intenta factorizar el lado derecho.',
-      solucion: "Es lineal, con $P=1$ y $f(x)=x$. Pero $x-y$ no se factoriza como $g(x)h(y)$, así que no es separable: hay que usar el factor integrante. Es justamente el caso que motiva el método — separar no siempre alcanza."
+      pista: 'La derivada de la curva y la pendiente que dicta la ecuación deben coincidir en cada punto.',
+      solucion: "Si $y=\\phi(x)$ es solución, entonces $\\phi'(x)=f(x,\\phi(x))$: la pendiente de la curva iguala la del elemento lineal en ese punto, es decir la curva es tangente a él. Por eso decimos que una solución «peina» el campo. La opción d) solo ocurre en el caso excepcional de la §2."
     },
     {
-      etiqueta: 'Resolver', nivel: 2,
-      criterio: 'Aplicar el factor integrante a un caso con coeficiente constante (§4)',
-      enunciado: "La solución general de $\\dfrac{dy}{dx}-3y=6$ es:",
-      opciones: ['$y=2+Ce^{-3x}$', '$y=6x+C$', '$y=-2+Ce^{3x}$', '$y=-2+Ce^{-3x}$'],
+      etiqueta: 'Isoclinas', nivel: 2,
+      criterio: 'Determinar una isoclina concreta (§2)',
+      enunciado: "Para $y'=x^{2}+y^{2}$, la isoclina correspondiente a $k=4$ es:",
+      opciones: [
+        'La recta $y=4-x$',
+        'La parábola $y=x^{2}+4$',
+        'La circunferencia de radio $2$ centrada en el origen',
+        'La circunferencia de radio $4$ centrada en el origen'
+      ],
       correcta: 2,
-      pista: 'Aquí $P=-3$, así que $\\mu=e^{-3x}$. Ojo con los signos al despejar.',
-      solucion: "Con $\\mu=e^{-3x}$: $\\dfrac{d}{dx}[e^{-3x}y]=6e^{-3x}$, luego $e^{-3x}y=-2e^{-3x}+C$ y $y=-2+Ce^{3x}$. La opción d) invierte el signo del exponente al despejar, que es el descuido típico: al dividir entre $e^{-3x}$ el exponente cambia de signo."
+      pista: 'Escribe $x^{2}+y^{2}=4$ y reconoce la curva. Ojo con la raíz.',
+      solucion: "$x^{2}+y^{2}=4$ es la circunferencia de radio $\\sqrt{4}=2$. La opción d) confunde el valor de $k$ con el radio: hay que sacar la raíz. Nota además que para $k \\lt 0$ no hay isoclina, porque una suma de cuadrados nunca es negativa — el campo nunca tiene pendiente negativa."
     },
     {
-      etiqueta: 'PVI', nivel: 3,
-      criterio: 'Resolver un problema de valor inicial lineal (§4)',
-      enunciado: "La solución de $\\dfrac{dy}{dx}+y=x$ con $y(0)=4$ es:",
+      etiqueta: 'Autónomas', nivel: 2,
+      criterio: 'Reconocer una EDO autónoma (§3)',
+      enunciado: '¿Cuál de estas ecuaciones es <strong>autónoma</strong>?',
       opciones: [
-        '$y=x-1+5e^{-x}$',
-        '$y=x+1+3e^{-x}$',
-        '$y=x-1+4e^{-x}$',
-        '$y=x+4e^{-x}$'
+        "$\\dfrac{dy}{dx}=x^{2}-4$",
+        "$\\dfrac{dy}{dx}=y^{2}-4$",
+        "$\\dfrac{dy}{dx}=xy-4$",
+        "$\\dfrac{dy}{dx}=x-y$"
       ],
-      correcta: 0,
-      pista: 'Con $\\mu=e^{x}$ llegas a $y=x-1+Ce^{-x}$. Ahora impón la condición.',
-      solucion: "$\\dfrac{d}{dx}[e^{x}y]=xe^{x}$, e integrando por partes $e^{x}y=xe^{x}-e^{x}+C$, de donde $y=x-1+Ce^{-x}$. Con $y(0)=-1+C=4$ sale $C=5$. La opción c) toma $C=4$ olvidando el $-1$ que aporta el término $x-1$ en $x=0$."
+      correcta: 1,
+      pista: 'Autónoma significa que la variable independiente no aparece explícitamente.',
+      solucion: "Solo en b) el lado derecho depende exclusivamente de $y$. Eso implica que el campo de direcciones se ve igual en toda franja horizontal, y permite usar la línea de fase. En a) ocurre lo contrario —depende solo de $x$—, que se resuelve por integración directa pero no es autónoma."
     },
     {
-      etiqueta: 'Estructura', nivel: 2,
-      criterio: 'Identificar dónde vive la constante arbitraria (§5)',
-      enunciado: 'En la descomposición $y=y_p+y_c$ de una EDO lineal, la constante arbitraria $C$ aparece:',
+      etiqueta: 'Equilibrios', nivel: 3,
+      criterio: 'Justificar que las soluciones no cruzan un equilibrio (§3.2)',
+      enunciado: 'Ninguna solución de una EDO autónoma cruza una recta de equilibrio $y=c$. La razón es:',
       opciones: [
-        'En $y_p$, la solución particular',
-        'En ambos términos',
-        'En ninguno: se cancela',
-        'Solo en $y_c$, la solución complementaria'
+        'Que en $y=c$ la ecuación no está definida',
+        'Que la solución constante $y\\equiv c$ ya ocupa ese punto y la unicidad prohíbe dos soluciones por el mismo punto',
+        'Que el campo de direcciones es vertical en $y=c$',
+        'Que $c$ siempre es cero'
+      ],
+      correcta: 1,
+      pista: 'Piensa en el teorema de existencia y unicidad de la Guía 2.',
+      solucion: "Si una solución tocara $y=c$ en un punto, por ese punto pasarían dos soluciones distintas: ella y la constante $y\\equiv c$. La unicidad lo impide. La opción c) es falsa: en un equilibrio el campo es <em>horizontal</em>, con pendiente cero, no vertical."
+    },
+    {
+      etiqueta: 'Separables', nivel: 2,
+      criterio: 'Reconocer la familia de curvas de una EDO separable (§4)',
+      enunciado: "La solución general de $\\dfrac{dy}{dx}=\\dfrac{x}{y}$ es una familia de:",
+      opciones: [
+        'Circunferencias $x^{2}+y^{2}=C$',
+        'Rectas por el origen',
+        'Parábolas $y=x^{2}+C$',
+        'Hipérbolas $y^{2}-x^{2}=C$'
       ],
       correcta: 3,
-      pista: '¿Cuál de los dos resuelve la ecuación homogénea?',
-      solucion: "La constante vive únicamente en $y_c$, que resuelve $y'+P(x)y=0$. Por eso, cuando $y_c$ decae, la condición inicial deja de importar a largo plazo: decide el <em>camino</em>, no el <em>destino</em>. Ese es el fundamento matemático del concepto de régimen permanente en ingeniería."
+      pista: 'Separa como $y\\,dy=x\\,dx$ y observa el signo al integrar.',
+      solucion: "$\\dfrac{y^2}{2}=\\dfrac{x^2}{2}+C_1$, es decir $y^{2}-x^{2}=C$: hipérbolas. La opción a) corresponde a $y'=-\\dfrac{x}{y}$, con signo negativo, que sí da circunferencias. Ese solo signo cambia por completo la geometría de la familia."
     },
     {
-      etiqueta: 'Aplicación', nivel: 3,
-      criterio: 'Interpretar la constante de tiempo de un circuito (§5)',
-      enunciado: "En un circuito RL con $\\tau=L/R=0{,}05$ s, ¿cuánto tarda la corriente en alcanzar el 99 % de su valor final?",
-      opciones: [
-        'Unos $0{,}05$ s (una constante de tiempo)',
-        'Unos $0{,}25$ s (cinco constantes de tiempo)',
-        'Exactamente $1$ s',
-        'Nunca lo alcanza',
-      ],
-      correcta: 1,
-      pista: 'El transitorio vale $e^{-t/\\tau}$. ¿Para qué múltiplo de $\\tau$ es esa exponencial menor que $0{,}01$?',
-      solucion: "A los $5\\tau$ el transitorio vale $e^{-5}=0{,}0067$, es decir menos del 1 % del valor inicial: la corriente ha alcanzado el 99,3 %. Con una sola constante de tiempo solo llegaría al 63 %. La regla de <strong>cinco constantes de tiempo</strong> es un criterio de diseño estándar. La opción d) es cierta en sentido estricto —el límite es asintótico— pero irrelevante en la práctica."
+      etiqueta: 'Intervalo', nivel: 3,
+      criterio: 'Determinar el intervalo de una solución implícita (§4.1)',
+      enunciado: "El PVI $\\dfrac{dy}{dx}=-\\dfrac{x}{y}$ con $y(4)=3$ tiene por solución $y=\\sqrt{25-x^{2}}$. Su intervalo de definición es:",
+      opciones: ['$(-5,\\,5)$', '$[-5,\\,5]$', '$(0,\\,5)$', '$(4,\\,5)$'],
+      correcta: 0,
+      pista: '¿Qué le pasa a la ecuación $-x/y$ justo donde $y$ se anula?',
+      solucion: "En $x=\\pm 5$ se tiene $y=0$, y ahí $-x/y$ no está definida: la ecuación misma se rompe, así que el intervalo debe ser <strong>abierto</strong>. La opción b) es el descuido de incluir los extremos por costumbre. Nota que la circunferencia completa es la solución <em>implícita</em>, pero la solución del PVI es solo el arco superior."
     },
     {
-      etiqueta: 'Síntesis', nivel: 3,
-      criterio: 'Reconocer los límites del modelo exponencial (§2)',
-      enunciado: 'El modelo $P=P_0e^{kt}$ con $k \\gt 0$ falla a largo plazo en poblaciones reales porque:',
+      etiqueta: 'Singulares', nivel: 3,
+      criterio: 'Relacionar soluciones singulares con el fallo de unicidad (§5)',
+      enunciado: "Para $\\dfrac{dy}{dx}=x\\,y^{1/2}$ con $y(0)=0$ existen al menos dos soluciones: $y\\equiv 0$ y $y=\\dfrac{x^{4}}{16}$. ¿Por qué no lo impide el teorema de unicidad?",
       opciones: [
-        'La solución no existe para $t$ grande',
-        'La ecuación deja de ser separable',
-        'Supone recursos ilimitados, y ninguna población los tiene',
-        'El valor de $k$ cambia de signo'
+        'Porque $f(x,y)=xy^{1/2}$ es discontinua en el origen',
+        'Porque la ecuación no es separable',
+        'Porque $\\partial f/\\partial y=\\dfrac{x}{2\\sqrt{y}}$ no está acotada en $y=0$',
+        'Porque la condición inicial está en $x=0$'
       ],
       correcta: 2,
-      pista: 'Piensa en qué hipótesis biológica está detrás de «la tasa es proporcional a la cantidad».',
-      solucion: "El modelo asume que cada individuo se reproduce al mismo ritmo sin importar cuántos haya, lo que exige alimento y espacio ilimitados. Matemáticamente la solución existe siempre; lo que falla es el <em>modelo</em>, no la matemática. El remedio es la ecuación logística $P'=kP(1-P/M)$, que verás en la semana 11 y cuya línea de fase ya analizaste en la Guía 2."
+      pista: 'El teorema exige dos continuidades. ¿Cuál de las dos falla en el punto inicial?',
+      solucion: "$f(x,y)=xy^{1/2}$ sí es continua en el origen, pero su derivada parcial respecto de $y$ se dispara cuando $y\\to 0$. Al no cumplirse la hipótesis, el teorema no garantiza unicidad — y aquí efectivamente falla. Las soluciones singulares y los fallos de unicidad aparecen en los mismos sitios, y no es coincidencia."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 2,
+      criterio: 'Relacionar el análisis cualitativo con la solución exacta (§1–§5)',
+      enunciado: '¿Qué ventaja tiene el campo de direcciones frente a resolver la ecuación?',
+      opciones: [
+        'Que da la solución exacta más rápido',
+        'Que se puede construir aunque la ecuación no se sepa resolver',
+        'Que evita usar condiciones iniciales',
+        'Que solo funciona para ecuaciones lineales'
+      ],
+      correcta: 1,
+      pista: '¿Qué operación hace falta para dibujar el campo: integrar o evaluar?',
+      solucion: "Dibujar el campo solo exige <strong>evaluar</strong> $f(x,y)$, no integrarla. Por eso funciona con ecuaciones sin solución elemental, como $y'=\\operatorname{sen}(xy)$ de la Guía 2. La opción a) es falsa: el campo da información cualitativa, no valores exactos, y por eso los dos enfoques se complementan en vez de competir."
     }
   ]
 });

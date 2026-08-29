@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía 2 · Curvas solución y variables separables — Ecuaciones Diferenciales · UNIAJC</title>
+<title>Guía 2 · Introducción a las EDO — Ecuaciones Diferenciales · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827b">
+<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
 </head>
 <body>
 
@@ -31,12 +31,13 @@ window.MathJax = {
 
 <nav id="guia-nav" aria-label="Secciones de la guía">
   <div class="guia-nav-inner">
-    <a href="#s1">1 · Campo de direcciones</a>
-    <a href="#s2">2 · Isoclinas</a>
-    <a href="#s3">3 · EDO autónomas</a>
-    <a href="#s4">4 · Variables separables</a>
-    <a href="#s5">5 · Soluciones singulares</a>
-    <a href="#s6">6 · Práctica final</a>
+    <a href="#s1">1 · Por qué</a>
+    <a href="#s2">2 · La incógnita es una función</a>
+    <a href="#s3">3 · Clasificación</a>
+    <a href="#s4">4 · Qué es una solución</a>
+    <a href="#s5">5 · General y particular</a>
+    <a href="#s6">6 · Existencia y unicidad</a>
+    <a href="#s7">7 · Práctica final</a>
   </div>
 </nav>
 
@@ -44,423 +45,373 @@ window.MathJax = {
 
 <div class="hero">
   <div class="eyebrow">Guía de estudio 2 · Corte I</div>
-  <h2>Curvas solución y variables separables</h2>
-  <p>Dos caminos que se complementan. Primero aprenderás a <em>ver</em> las soluciones sin
-     resolver nada: la ecuación misma dibuja el mapa. Después aprenderás el primer método
-     de solución exacta, que no necesita ninguna fórmula nueva — solo integrar.</p>
+  <h2>Introducción a las ecuaciones diferenciales</h2>
+  <p>Ninguna ley de la naturaleza dice cuánto <em>vale</em> algo. Todas dicen cuán rápido
+     <em>cambia</em>. Por eso la física, la química, la biología, la economía y la ingeniería hablan
+     el mismo idioma, y ese idioma es el de esta asignatura.</p>
   <div class="chips">
-    <span class="chip">Zill · Cap. 2.1–2.2</span>
+    <span class="chip">Zill · Cap. 1</span>
     <span class="chip">Semana 2</span>
     <span class="chip">3 comprobaciones + práctica final</span>
   </div>
 </div>
 
 <div class="nota">
-  <strong>De dónde venimos.</strong> En la Guía 1 quedó claro que la solución general es una
-  familia infinita y que la condición inicial elige un miembro. Aquí se responde la pregunta
-  natural: <em>¿qué forma tiene esa familia?</em> Primero geométricamente, luego con lápiz.
+  <strong>Cómo usar esta guía.</strong> Léela en orden. Después de los bloques 3, 4 y 6 hay una
+  comprobación de tres preguntas: resuélvela antes de seguir. Ninguna práctica tiene nota.
 </div>
 
 <section class="card" id="s1">
-  <h3 class="card-title">1 · El campo de direcciones</h3>
+  <h3 class="card-title">1 · Por qué las leyes son ecuaciones diferenciales</h3>
 
   <div class="callout-dark">
-    <h3>La ecuación es un mapa de pendientes</h3>
-    <p>Mira $\dfrac{dy}{dx}=f(x,y)$ otra vez, pero al revés. En lugar de leerla como «una ecuación
-       que hay que resolver», léela como una <strong>instrucción</strong>: <em>en el punto $(x,y)$,
-       la pendiente vale $f(x,y)$</em>.</p>
-    <p>Con esa lectura la ecuación deja de ser un obstáculo y se vuelve un mapa. Puedes recorrer
-       todo el plano preguntándole a la ecuación qué pendiente exige en cada sitio, y dibujar ahí
-       un segmentito con esa inclinación.</p>
-    <p>Lo notable es que ese mapa se construye <strong>sin resolver nada</strong>: solo evaluando.</p>
+    <h3>Lo que Newton entendió</h3>
+    <p>Cuando Newton escribió $F=ma$ no estaba escribiendo una fórmula: estaba escribiendo una
+       ecuación diferencial. Porque $a$ es la segunda derivada de la posición, y lo que la ley
+       afirma es
+       $$m\frac{d^2x}{dt^2}=F$$</p>
+    <p>La ley <strong>no dice dónde está el cuerpo</strong>. Dice cómo cambia su cambio. Para saber
+       dónde está hay que resolver la ecuación, y para eso Newton tuvo que inventar el cálculo.</p>
+    <p>Ese patrón se repite en todas las ciencias. Es más fácil observar y medir <em>tasas de
+       cambio</em> que estados absolutos, y por eso las leyes se descubren en forma diferencial.</p>
   </div>
 
-  <div class="def">
-    El <em>elemento lineal</em> en el punto $(x,y)$ es un segmento corto con pendiente $f(x,y)$.
-    El conjunto de elementos lineales trazados en una malla de puntos se llama
-    <strong>campo de direcciones</strong> o campo de pendientes.
-  </div>
-
-  <p>Y aquí está la conexión con las soluciones: si $y=\phi(x)$ resuelve la ecuación, entonces en
-     cada punto de su gráfica la pendiente de la curva coincide con la del elemento lineal. Es decir,
-     <strong>una curva solución es una curva que va peinando los segmentos</strong>, tangente a
-     todos los que toca.</p>
-
-  <div class="sub-title">1.1 Explora: haz clic y nace una solución</div>
-  <div class="viz" data-viz="campo">
-    <div class="viz-controls">
-      <label for="e-fn">Ecuación</label>
-      <select id="e-fn">
-        <option value="lin">y′ = y</option>
-        <option value="log">y′ = y(1 − y/3) &nbsp;logística</option>
-        <option value="sep">y′ = −x/y</option>
-        <option value="dec">y′ = −0,8y + 2</option>
-        <option value="osc">y′ = cos x − 0,3y</option>
-      </select>
-      <button class="btn ghost" type="button" data-limpiar="campo">Borrar curvas</button>
-    </div>
-    <canvas></canvas>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    Haz varios clics a distintas alturas. Todas las curvas obedecen la <em>misma</em> ecuación:
-    son la familia de la Guía 1, ahora visible. Elige $y'=-x/y$ y verás circunferencias —
-    en la §4 las obtendremos con álgebra y sabrás por qué.
-  </p>
+  <div class="sub-title">1.1 El mismo patrón, cinco veces</div>
+  <table class="tbl">
+    <tr><th>Fenómeno</th><th>Lo que se observa</th><th>Ecuación</th></tr>
+    <tr><td>Población</td><td>Crece proporcionalmente a cuántos hay</td><td>$\dfrac{dP}{dt}=kP$</td></tr>
+    <tr><td>Enfriamiento</td><td>Se enfría según lo lejos que esté del ambiente</td><td>$\dfrac{dT}{dt}=k(T-T_a)$</td></tr>
+    <tr><td>Decaimiento radiactivo</td><td>Decae proporcionalmente a la masa presente</td><td>$\dfrac{dm}{dt}=-\lambda m$</td></tr>
+    <tr><td>Circuito RC</td><td>La corriente depende de la carga acumulada</td><td>$R\dfrac{dq}{dt}+\dfrac{q}{C}=V$</td></tr>
+    <tr><td>Mezclas</td><td>Entra y sale sal a distintas tasas</td><td>$\dfrac{dS}{dt}=e-s$</td></tr>
+  </table>
+  <p>Las cinco frases de la columna del medio son observaciones cotidianas que cualquiera puede
+     hacer. Las cinco ecuaciones de la derecha son su traducción literal. <strong>Modelar</strong>
+     es, en buena medida, hacer esa traducción.</p>
 </section>
 
 <section class="card" id="s2">
-  <h3 class="card-title">2 · Isoclinas: cómo dibujar el campo a mano</h3>
+  <h3 class="card-title">2 · El cambio de pregunta</h3>
 
-  <p>Trazar el campo punto por punto es tedioso. Hay un atajo clásico que reduce el trabajo a
-     dibujar unas pocas curvas.</p>
+  <div class="callout-dark">
+    <h3>La incógnita ya no es un número</h3>
+    <p>En álgebra resolvías $x^2-4=0$ y la respuesta era $x=\pm 2$: <strong>números</strong>.</p>
+    <p>Aquí resuelves $\dfrac{dy}{dx}=2y$ y la respuesta es $y=Ce^{2x}$: una <strong>función</strong>.
+       Y no una, sino infinitas — una por cada valor de $C$.</p>
+    <p>Ese doble salto —de número a función, y de una respuesta a una familia infinita— es el
+       obstáculo conceptual de las primeras semanas. Vale la pena detenerse en él ahora.</p>
+  </div>
 
   <div class="def">
-    Una <strong>isoclina</strong> es el conjunto de puntos donde la pendiente toma un mismo valor $k$:
-    $$f(x,y)=k$$
-    Sobre toda la isoclina, los elementos lineales son <em>paralelos entre sí</em>, con pendiente $k$.
+    Una <strong>ecuación diferencial</strong> es una ecuación que relaciona una función desconocida
+    con una o más de sus derivadas.
   </div>
 
-  <p>La palabra lo dice: <em>iso</em> (igual) + <em>clina</em> (inclinación). El procedimiento es:</p>
-  <ol>
-    <li>Elige tres o cuatro valores de $k$ sencillos, incluyendo $k=0$.</li>
-    <li>Para cada uno, resuelve $f(x,y)=k$ y dibuja esa curva.</li>
-    <li>Sobre ella, traza varios segmentos paralelos de pendiente $k$.</li>
-    <li>Rellena entre isoclinas interpolando a ojo.</li>
-  </ol>
+  <div class="sub-title">2.1 Notación</div>
+  <p>Las tres notaciones siguientes dicen exactamente lo mismo, y las verás mezcladas en el curso y
+     en los libros:</p>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Leibniz</div>$$\frac{dy}{dx}+2y=e^{x}$$</div>
+    <div class="formula"><div class="lbl">Lagrange (prima)</div>$$y'+2y=e^{x}$$</div>
+    <div class="formula"><div class="lbl">Con variable explícita</div>$$y'(x)+2y(x)=e^{x}$$</div>
+  </div>
+  <div class="nota">
+    <strong>Una advertencia de lectura.</strong> En $y'+2y=e^{x}$, la letra $y$ no es un número: es
+    la función $y(x)$. Escribir «$y$» a secas es una abreviatura cómoda, pero conviene leerla
+    mentalmente como $y(x)$ hasta que el hábito se asiente.
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Clasificación</h3>
+
+  <p>Toda EDO se clasifica por tres criterios independientes. Saber clasificar es lo que permite
+     elegir el método: cada tipo tiene el suyo, y aplicar el método equivocado es el error más
+     costoso del curso.</p>
+
+  <div class="sub-title">3.1 Tipo: ordinaria o parcial</div>
+  <div class="def">
+    Si la función desconocida depende de <strong>una sola</strong> variable independiente, la
+    ecuación es <em>ordinaria</em> (EDO) y aparecen derivadas $\dfrac{dy}{dx}$. Si depende de
+    varias, es <em>parcial</em> (EDP) y aparecen $\dfrac{\partial u}{\partial t}$.
+    <br><br>
+    Todo este curso trata de EDO.
+  </div>
+
+  <div class="sub-title">3.2 Orden</div>
+  <p>El <strong>orden</strong> es el de la derivada más alta que aparece. No importa la potencia a
+     la que esté elevada — solo cuál derivada es.</p>
+  <table class="tbl">
+    <tr><th>Ecuación</th><th>Orden</th><th>Por qué</th></tr>
+    <tr><td>$y'+3y=x$</td><td>1</td><td>La derivada más alta es $y'$</td></tr>
+    <tr><td>$y''+3y'+2y=0$</td><td>2</td><td>La derivada más alta es $y''$</td></tr>
+    <tr><td>$(y')^{5}+y=x$</td><td>1</td><td>El exponente 5 no cambia el orden</td></tr>
+    <tr><td>$y'''+(y'')^{2}=0$</td><td>3</td><td>La más alta es $y'''$, aunque no esté elevada</td></tr>
+  </table>
+
+  <div class="sub-title">3.3 Linealidad</div>
+  <div class="def">
+    Una EDO de orden $n$ es <strong>lineal</strong> si puede escribirse como
+    $$a_n(x)y^{(n)}+a_{n-1}(x)y^{(n-1)}+\cdots+a_1(x)y'+a_0(x)y=g(x)$$
+    Es decir, si se cumplen las tres condiciones:
+    <br><br>
+    <strong>1.</strong> $y$ y todas sus derivadas aparecen a la <em>primera</em> potencia.<br>
+    <strong>2.</strong> No hay productos entre $y$ y sus derivadas (ni $y\cdot y'$, ni $(y')^2$).<br>
+    <strong>3.</strong> $y$ no aparece dentro de funciones como $\operatorname{sen}$, $\ln$ o exponenciales.
+  </div>
+
+  <div class="callout-dark">
+    <h3>La trampa que atrapa a todo el mundo</h3>
+    <p>Las tres condiciones se refieren <strong>únicamente a $y$ y sus derivadas</strong>. Los
+       coeficientes $a_i(x)$ y el término independiente $g(x)$ pueden ser tan salvajes como quieran.</p>
+    <p>Por eso $\;y'+x^{3}y=e^{x^{2}}\;$ <strong>sí es lineal</strong>, por raro que se vea:
+       el coeficiente $x^3$ y el término $e^{x^2}$ dependen de $x$, no de $y$.</p>
+    <p>En cambio $\;y'+y^{2}=x\;$ <strong>no lo es</strong>, porque $y$ está al cuadrado. Y tampoco
+       $\;y'+\operatorname{sen}(y)=0$, porque $y$ está dentro del seno.</p>
+    <p>La pregunta correcta no es «¿se ve complicada?», sino <em>«¿qué le está pasando a la $y$?»</em>.</p>
+  </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 1 · Las isoclinas de $y'=x-y$</h4>
+    <h4>Ejemplo 1 · Clasificar cuatro ecuaciones</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Plantear</div>
-        $f(x,y)=x-y=k \Rightarrow y=x-k$: las isoclinas son <strong>rectas de pendiente 1</strong>.
-      </div>
-      <div class="paso"><div class="paso-t">Algunos valores</div>
-        $k=0$ → la recta $y=x$, donde el campo es horizontal.<br>
-        $k=1$ → la recta $y=x-1$, donde los segmentos tienen pendiente 1.<br>
-        $k=2$ → la recta $y=x-2$, con segmentos de pendiente 2.
-      </div>
-      <div class="paso"><div class="paso-t">La coincidencia notable</div>
-        En la isoclina $k=1$, la recta es $y=x-1$ y los segmentos tienen pendiente 1 — que es
-        justamente la pendiente de esa misma recta. Los segmentos van <em>a lo largo</em> de la
-        isoclina, no la cruzan.
-      </div>
-      <div class="paso"><div class="paso-t">Consecuencia</div>
-        Eso significa que $y=x-1$ <strong>es ella misma una solución</strong>. Compruébalo:
-        $y'=1$ y $x-y=x-(x-1)=1$ ✓. Cuando una isoclina de pendiente $k$ resulta ser una recta de
-        pendiente $k$, esa recta es una solución. Es el único caso en que una isoclina es también
-        curva solución.
+      <table class="tbl" style="margin:.3rem 0">
+        <tr><th>Ecuación</th><th>Orden</th><th>¿Lineal?</th><th>Motivo</th></tr>
+        <tr><td>$y''-5y'+6y=\operatorname{sen}x$</td><td>2</td><td>Sí</td><td>Todo a la primera potencia; el seno actúa sobre $x$</td></tr>
+        <tr><td>$y'+x^{3}y=e^{x^{2}}$</td><td>1</td><td>Sí</td><td>Coeficiente y término independiente dependen solo de $x$</td></tr>
+        <tr><td>$yy'+x=0$</td><td>1</td><td>No</td><td>Hay un producto $y\cdot y'$</td></tr>
+        <tr><td>$y''+\operatorname{sen}(y)=0$</td><td>2</td><td>No</td><td>$y$ aparece dentro del seno</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Un comentario sobre la última</div>
+        $y''+\operatorname{sen}(y)=0$ es la ecuación exacta del péndulo. Es no lineal y no tiene
+        solución elemental. Por eso en física se estudia el péndulo <em>de ángulos pequeños</em>:
+        para $y$ pequeño se aproxima $\operatorname{sen}(y)\approx y$, y la ecuación se vuelve
+        $y''+y=0$, lineal y resoluble. Linealizar es la maniobra más común de la ingeniería aplicada.
       </div>
     </div>
   </div>
-
-  <div class="nota">
-    <strong>$k=0$ merece atención aparte.</strong> La isoclina $f(x,y)=0$ marca dónde el campo es
-    horizontal, es decir dónde las soluciones tienen máximos, mínimos o puntos de inflexión
-    horizontales. Suele ser la primera que conviene dibujar.
-  </div>
-
-  <div class="sub-title">2.1 Explora las isoclinas</div>
-  <div class="viz" data-viz="isoclinas">
-    <div class="viz-controls">
-      <label for="is-e">Ecuación</label>
-      <select id="is-e">
-        <option value="lin">y′ = x − y &nbsp;(rectas)</option>
-        <option value="cuad">y′ = y − x² &nbsp;(parábolas)</option>
-        <option value="circ">y′ = x² + y² &nbsp;(circunferencias)</option>
-        <option value="prod">y′ = x·y &nbsp;(hipérbolas)</option>
-      </select>
-      <label for="is-n">Cuántas</label>
-      <input id="is-n" class="cuantas" type="range" min="1" max="6" value="4">
-      <span class="cuantas-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
-    </div>
-    <canvas></canvas>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    Sobre cada curva de color, todos los segmentos gruesos son paralelos. Con $y'=x-y$, busca la
-    isoclina cuyos segmentos van <em>a lo largo</em> de ella: es la solución recta del Ejemplo 1.
-  </p>
 </section>
 
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 1 — Campo de direcciones e isoclinas</h3>
+  <h3 class="card-title">✓ Comprobación 1 — Clasificación</h3>
   <div id="chk1"></div>
 </div>
 
-<section class="card" id="s3">
-  <h3 class="card-title">3 · Ecuaciones autónomas y soluciones de equilibrio</h3>
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Qué es una solución</h3>
 
   <div class="def">
-    Una EDO de primer orden es <strong>autónoma</strong> si la variable independiente no aparece
-    explícitamente:
-    $$\frac{dy}{dx}=f(y)$$
-    La pendiente depende <em>solo</em> de la altura, no de dónde estemos horizontalmente.
+    Una función $\phi$ es <strong>solución</strong> de una EDO en un intervalo $I$ si está definida
+    y es suficientemente derivable en $I$, y al sustituirla en la ecuación la convierte en una
+    identidad válida para todo $x\in I$.
   </div>
 
-  <p>Casi todos los modelos de la Guía 1 son autónomos: $P'=kP$, $T'=k(T-T_a)$, la logística.
-     Y tienen una propiedad geométrica cómoda: <strong>el campo de direcciones se ve igual en
-     toda franja horizontal</strong>, porque la pendiente no cambia al desplazarse en $x$.</p>
-
-  <div class="def">
-    Un valor $c$ con $f(c)=0$ se llama <strong>punto crítico</strong>, y la función constante
-    $y(x)=c$ es una <strong>solución de equilibrio</strong>.
-  </div>
-
-  <p>La comprobación es inmediata: si $y\equiv c$ entonces $y'=0$, y $f(c)=0$ por hipótesis, así que
-     la ecuación se satisface. Estas soluciones se encuentran <em>sin integrar</em>: basta resolver
-     una ecuación algebraica.</p>
-
-  <div class="sub-title">3.1 La línea de fase</div>
-  <p>Los puntos críticos parten el eje $y$ en intervalos. En cada uno, el signo de $f(y)$ no cambia,
-     y ese signo dice si las soluciones suben o bajan:</p>
-  <table class="tbl">
-    <tr><th>En el intervalo</th><th>Las soluciones</th><th>Flecha</th></tr>
-    <tr><td>$f(y) \gt 0$</td><td>Crecen</td><td>Hacia arriba</td></tr>
-    <tr><td>$f(y) \lt 0$</td><td>Decrecen</td><td>Hacia abajo</td></tr>
-  </table>
-  <p>Dibujar el eje $y$ vertical con los puntos críticos marcados y una flecha por intervalo se
-     llama <strong>línea de fase</strong>, y resume el comportamiento cualitativo de todas las
-     soluciones en un solo trazo.</p>
-
-  <div class="sub-title">3.2 Clasificación de los equilibrios</div>
-  <table class="tbl">
-    <tr><th>Flechas alrededor</th><th>Tipo</th><th>Comportamiento</th></tr>
-    <tr><td>Ambas apuntan hacia $c$</td><td><strong>Atractor</strong> (asintóticamente estable)</td><td>Las soluciones cercanas se acercan a $c$</td></tr>
-    <tr><td>Ambas se alejan de $c$</td><td><strong>Repulsor</strong> (inestable)</td><td>Las soluciones cercanas se alejan</td></tr>
-    <tr><td>Una hacia y otra desde</td><td><strong>Semiestable</strong></td><td>Atrae por un lado, repele por el otro</td></tr>
-  </table>
+  <div class="sub-title">4.1 Verificar es siempre posible</div>
+  <p>Este es el mejor hábito que puedes adquirir en la primera semana. Resolver una EDO puede ser
+     difícil o imposible; <strong>verificar</strong> una solución candidata es siempre mecánico:
+     derivas, sustituyes y miras si la ecuación se cierra.</p>
+  <ol>
+    <li>Escribe el candidato $y$.</li>
+    <li>Calcula las derivadas que la ecuación necesite.</li>
+    <li>Sustituye todo en la ecuación.</li>
+    <li>Simplifica. Si queda $0=0$, es solución. Si queda cualquier otra cosa, no lo es.</li>
+  </ol>
 
   <div class="ejemplo">
-    <h4>Ejemplo 2 · Análisis completo de $y'=y^{2}-4$</h4>
+    <h4>Ejemplo 2 · Dos candidatos, un solo acierto</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">1. Puntos críticos</div>
-        $y^2-4=0 \Rightarrow y=2$ y $y=-2$. Hay dos soluciones de equilibrio: $y\equiv 2$ e $y\equiv -2$.
+      ¿Cuál de $\;y=e^{2x}\;$ y $\;y=x^{2}\;$ resuelve $\;y'-2y=0$?
+      <div class="paso"><div class="paso-t">Candidato $y=e^{2x}$</div>
+        $y'=2e^{2x}$, y entonces $y'-2y=2e^{2x}-2e^{2x}=0$ ✓ <strong>Es solución.</strong>
       </div>
-      <div class="paso"><div class="paso-t">2. Signo en cada intervalo</div>
-        $f(-3)=9-4=5 \gt 0$ &nbsp;·&nbsp; $f(0)=-4 \lt 0$ &nbsp;·&nbsp; $f(3)=5 \gt 0$
-      </div>
-      <div class="paso"><div class="paso-t">3. Línea de fase</div>
-        En $(-\infty,-2)$ sube ↑ &nbsp;·&nbsp; en $(-2,2)$ baja ↓ &nbsp;·&nbsp; en $(2,\infty)$ sube ↑
-      </div>
-      <div class="paso"><div class="paso-t">4. Clasificar</div>
-        A $y=-2$ le llegan flechas por los dos lados: <strong>atractor</strong>.<br>
-        De $y=2$ se van por los dos lados: <strong>repulsor</strong>.
-      </div>
-      <div class="paso"><div class="paso-t">5. Conclusión sin resolver</div>
-        Toda solución que arranque con $y(0) \lt 2$ tiende a $-2$. Toda solución con $y(0) \gt 2$
-        se dispara al infinito. Y $y(0)=2$ se queda clavada en 2 para siempre. Todo eso, sin haber
-        integrado.
+      <div class="paso"><div class="paso-t">Candidato $y=x^{2}$</div>
+        $y'=2x$, y entonces $y'-2y=2x-2x^{2}=2x(1-x)$.<br>
+        Eso no es cero salvo en $x=0$ y $x=1$. <strong>No es solución</strong>, porque una solución
+        debe cumplir la ecuación en todo un intervalo, no en puntos sueltos.
       </div>
     </div>
   </div>
 
-  <div class="callout-dark">
-    <h3>Ninguna solución cruza un equilibrio</h3>
-    <p>Es una consecuencia del teorema de existencia y unicidad de la Guía 1. Si una solución
-       tocara la recta $y=c$ en algún punto, por ese punto pasarían <em>dos</em> soluciones
-       distintas: ella y la constante $y\equiv c$. La unicidad lo prohíbe.</p>
-    <p>Por eso los equilibrios funcionan como barreras: una solución que empieza entre dos de ellos
-       se queda atrapada entre ellos para siempre. Y por eso la línea de fase basta para predecir
-       el destino de cualquier solución.</p>
+  <div class="sub-title">4.2 Explícitas, implícitas y el intervalo</div>
+  <p>Una solución <strong>explícita</strong> viene despejada, $y=\phi(x)$. Una
+     <strong>implícita</strong> se da como una relación $G(x,y)=0$ de la que no siempre se puede
+     despejar.</p>
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Una solución implícita y su intervalo</h4>
+    <div class="ejemplo-body">
+      Comprueba que $x^{2}+y^{2}=25$ define soluciones de $\;\dfrac{dy}{dx}=-\dfrac{x}{y}$.
+      <div class="paso"><div class="paso-t">Derivar implícitamente</div>
+        $2x+2y\dfrac{dy}{dx}=0 \Rightarrow \dfrac{dy}{dx}=-\dfrac{x}{y}$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Pero la circunferencia no es una función</div>
+        $x^2+y^2=25$ no pasa la prueba de la recta vertical. Hay que quedarse con una rama:
+        $y=\sqrt{25-x^{2}}$ (superior) o $y=-\sqrt{25-x^{2}}$ (inferior), cada una en $(-5,5)$.
+      </div>
+      <div class="paso"><div class="paso-t">Por qué el intervalo importa</div>
+        En $x=\pm 5$ se tiene $y=0$, y ahí $-x/y$ no está definido: la ecuación misma se rompe.
+        Por eso el intervalo es <strong>abierto</strong>. Toda solución viene con su intervalo, y
+        omitirlo es una respuesta incompleta.
+      </div>
+    </div>
   </div>
 
-  <div class="sub-title">3.3 Explora la línea de fase</div>
-  <div class="viz" data-viz="autonoma">
+  <div class="sub-title">4.3 Explora la verificación</div>
+  <div class="viz" data-viz="verificar">
     <div class="viz-controls">
-      <label for="au-e">Ecuación autónoma</label>
-      <select id="au-e">
-        <option value="cuad">y′ = y² − 4</option>
-        <option value="log">y′ = y(1 − y/3) &nbsp;logística</option>
-        <option value="semi">y′ = y(y − 2)² &nbsp;semiestable</option>
-        <option value="dec">y′ = 2 − y</option>
+      <label for="vf-c">Caso</label>
+      <select id="vf-c">
+        <option value="v1">y' − 2y = 0 &nbsp;con&nbsp; y = e^(2x)</option>
+        <option value="v2">y' − 2y = 0 &nbsp;con&nbsp; y = x²</option>
+        <option value="v3">y'' + y = 0 &nbsp;con&nbsp; y = sen x</option>
+        <option value="v4">y'' + y = 0 &nbsp;con&nbsp; y = eˣ</option>
+        <option value="v5">x·y' + y = 0 &nbsp;con&nbsp; y = 1/x</option>
+        <option value="v6">y' − y/x = 0 &nbsp;con&nbsp; y = 3x</option>
+      </select>
+    </div>
+    <div class="pasos" style="margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La curva es el <em>residuo</em>: lo que queda al pasar todo a un lado de la ecuación. Si el
+    candidato es solución, el residuo se pega al eje horizontal en todo el intervalo. Si no lo es,
+    se despega — y observa que en el caso $y=x^2$ toca el cero en dos puntos aislados sin ser
+    solución, que es justo lo que discutimos en el Ejemplo 2.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Soluciones</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Solución general y solución particular</h3>
+
+  <div class="def">
+    La <strong>solución general</strong> de una EDO de orden $n$ contiene $n$ constantes arbitrarias
+    y describe una familia de funciones.
+    <br><br>
+    Una <strong>solución particular</strong> se obtiene al fijar esas constantes mediante
+    condiciones adicionales.
+    <br><br>
+    El conjunto
+    $$\left\{\;\frac{dy}{dx}=f(x,y),\qquad y(x_0)=y_0\;\right\}$$
+    se llama <strong>problema de valor inicial</strong> (PVI).
+  </div>
+
+  <p>La razón de que aparezcan constantes es transparente: resolver una EDO implica integrar, y cada
+     integración introduce una constante. Una EDO de orden 2 exige integrar dos veces, y por eso
+     necesita <em>dos</em> condiciones para quedar determinada.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · De la familia a una sola curva</h4>
+    <div class="ejemplo-body">
+      Resuelve $\dfrac{dy}{dx}=2x$ y luego impón $y(1)=5$.
+      <div class="paso"><div class="paso-t">Solución general</div>
+        $y=\displaystyle\int 2x\,dx=x^{2}+C$. Es una familia de parábolas idénticas, desplazadas
+        verticalmente: una por cada valor de $C$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la condición</div>
+        $y(1)=1+C=5 \Rightarrow C=4$, luego $y=x^{2}+4$.
+      </div>
+      <div class="paso"><div class="paso-t">Interpretación geométrica</div>
+        La condición inicial dice «la curva debe pasar por el punto $(1,5)$». Como por cada punto
+        del plano pasa exactamente una parábola de la familia, esa condición selecciona una y
+        descarta las demás.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Explora: infinitas soluciones y cómo elegir una</div>
+  <div class="viz" data-viz="familia">
+    <div class="viz-controls">
+      <label for="fa-e">Ecuación</label>
+      <select id="fa-e">
+        <option value="exp">y′ = y &nbsp;→&nbsp; y = C·eˣ</option>
+        <option value="cuad">y′ = 2x &nbsp;→&nbsp; y = x² + C</option>
+        <option value="dec">y′ = −y &nbsp;→&nbsp; y = C·e⁻ˣ</option>
+        <option value="recta">y′ = y/x &nbsp;→&nbsp; y = C·x</option>
       </select>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Prueba $y'=y(y-2)^2$: en $y=2$ las flechas <strong>apuntan en el mismo sentido por ambos lados</strong>.
-    Las soluciones de abajo se acercan y las de arriba se alejan. Ese es un equilibrio semiestable,
-    y no existiría si la raíz no fuera doble.
+    Haz clic en varios puntos del plano y observa que cada uno selecciona una curva distinta de la
+    misma familia. Ninguna de las curvas grises es «la» solución: todas lo son. Lo que las separa es
+    únicamente la condición inicial.
   </p>
+  <div class="nota">
+    <strong>Prueba esto:</strong> elige $y'=y/x$ y haz clic en dos puntos con la misma abscisa pero
+    distinta ordenada. Luego intenta hacer clic sobre el eje $y$ (donde $x=0$): ahí no se puede
+    determinar $C$, porque todas las rectas de la familia pasan por el origen. Es un primer aviso de
+    que <em>no siempre</em> una condición inicial selecciona una única solución — que es exactamente
+    el tema de la sección siguiente.
+  </div>
 </section>
 
-<div class="card">
-  <h3 class="card-title">✓ Comprobación 2 — Ecuaciones autónomas</h3>
-  <div id="chk2"></div>
-</div>
+<section class="card" id="s6">
+  <h3 class="card-title">6 · ¿Siempre hay solución, y es única?</h3>
 
-<section class="card" id="s4">
-  <h3 class="card-title">4 · Variables separables</h3>
-
-  <p>Pasamos del análisis cualitativo a la solución exacta. Este es el primer método del curso, y
-     el único que no exige memorizar ninguna fórmula: es integración pura.</p>
+  <p>Las dos preguntas son legítimas y no tienen respuesta obvia. Antes de invertir horas resolviendo
+     un problema conviene saber si tiene solución y si es la única.</p>
 
   <div class="def">
-    Una EDO de primer orden es <strong>separable</strong> si puede escribirse como
-    $$\frac{dy}{dx}=g(x)\,h(y)$$
-    es decir, si el lado derecho se factoriza en una parte que depende solo de $x$ por otra que
-    depende solo de $y$.
+    <strong>Teorema de existencia y unicidad (Picard–Lindelöf).</strong> Considera el problema de
+    valor inicial
+    $$\frac{dy}{dx}=f(x,y),\qquad y(x_0)=y_0$$
+    Si $f$ y $\dfrac{\partial f}{\partial y}$ son continuas en un rectángulo del plano que contenga
+    al punto $(x_0,y_0)$, entonces existe un intervalo alrededor de $x_0$ en el cual el problema
+    tiene <strong>una única</strong> solución.
   </div>
-
-  <div class="sub-title">4.1 El método</div>
-  <ol>
-    <li><strong>Reconocer</strong> la factorización $g(x)h(y)$.</li>
-    <li><strong>Separar:</strong> pasar todo lo de $y$ a un lado y todo lo de $x$ al otro:
-        $\dfrac{dy}{h(y)}=g(x)\,dx$. Aquí se divide entre $h(y)$: anota qué valores excluyes.</li>
-    <li><strong>Integrar</strong> ambos lados. Basta una constante $C$ en un solo lado.</li>
-    <li><strong>Despejar</strong> $y$ si se puede. Si no, la solución queda implícita.</li>
-    <li><strong>Revisar</strong> los valores excluidos en el paso 2: pueden ser soluciones perdidas.</li>
-  </ol>
 
   <div class="nota">
-    <strong>Sobre el paso 2.</strong> Tratar $\dfrac{dy}{dx}$ como un cociente de diferenciales y
-    «pasar el $dx$ multiplicando» es una manipulación formal que aquí funciona. La justificación
-    rigurosa pasa por la regla de la cadena y la integración por sustitución, pero el resultado es
-    el mismo y el procedimiento es seguro.
+    <strong>Léelo con precisión.</strong> El teorema da una condición <em>suficiente</em>, no
+    necesaria: si se cumple, hay unicidad garantizada. Si no se cumple, el teorema simplemente no
+    dice nada — puede haber una solución, ninguna o infinitas. Y la garantía es
+    <strong>local</strong>: vale en algún intervalo alrededor de $x_0$, no necesariamente en todo
+    el eje real.
   </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 3 · Una solución implícita: $\dfrac{dy}{dx}=-\dfrac{x}{y}$</h4>
-    <div class="ejemplo-body">
-      Resuelve con la condición $y(4)=3$.
-      <div class="paso"><div class="paso-t">1–2. Separar</div>
-        $y\,dy = -x\,dx$ &nbsp;(se divide entre $1/y$, o sea se excluye $y=0$)
-      </div>
-      <div class="paso"><div class="paso-t">3. Integrar</div>
-        $\dfrac{y^{2}}{2}=-\dfrac{x^{2}}{2}+C_1 \Rightarrow x^{2}+y^{2}=C$ &nbsp;con $C=2C_1$
-      </div>
-      <div class="paso"><div class="paso-t">4. La familia</div>
-        Circunferencias centradas en el origen — exactamente lo que muestra el campo de direcciones
-        de la §1.1 al elegir $y'=-x/y$.
-      </div>
-      <div class="paso"><div class="paso-t">5. Condición inicial</div>
-        $16+9=25$, luego $x^{2}+y^{2}=25$. Despejando la rama que contiene el punto $(4,3)$:
-        $$y=\sqrt{25-x^{2}}, \qquad x\in(-5,\,5)$$
-      </div>
-      <div class="paso"><div class="paso-t">6. El intervalo, otra vez</div>
-        Es abierto porque en $x=\pm5$ se tiene $y=0$, y ahí la ecuación $-x/y$ no está definida.
-        La solución implícita $x^2+y^2=25$ describe la circunferencia entera, pero la
-        <em>solución</em> del problema es solo el arco superior.
-      </div>
-    </div>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 4 · Un problema de valor inicial explícito</h4>
-    <div class="ejemplo-body">
-      Resuelve $\dfrac{dy}{dx}=y\cos x$ con $y(0)=1$.
-      <div class="paso"><div class="paso-t">Separar e integrar</div>
-        $\dfrac{dy}{y}=\cos x\,dx \Rightarrow \ln|y|=\operatorname{sen}x+C_1$
-      </div>
-      <div class="paso"><div class="paso-t">Despejar</div>
-        $|y|=e^{\operatorname{sen}x+C_1}=e^{C_1}e^{\operatorname{sen}x}$, y absorbiendo el signo y
-        la constante en una sola $C$:
-        $$y=Ce^{\operatorname{sen}x}$$
-      </div>
-      <div class="paso"><div class="paso-t">Condición inicial</div>
-        $y(0)=Ce^{0}=C=1$, luego $y=e^{\operatorname{sen}x}$.
-      </div>
-      <div class="paso"><div class="paso-t">Verificar</div>
-        $y'=\cos x\cdot e^{\operatorname{sen}x}=y\cos x$ ✓ &nbsp; y $y(0)=e^{0}=1$ ✓
-      </div>
-      <div class="paso"><div class="paso-t">Sobre el valor absoluto</div>
-        Al escribir $C=\pm e^{C_1}$ la nueva constante puede ser positiva o negativa, y eso libera
-        del $|\cdot|$. Además $C=0$ recupera la solución $y\equiv 0$ que habíamos excluido al
-        dividir. Aquí no se pierde nada, pero no siempre es así — es el tema de la §5.
-      </div>
-    </div>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 5 · Cuando no se puede despejar</h4>
-    <div class="ejemplo-body">
-      Resuelve $\dfrac{dy}{dx}=\dfrac{1+y^{2}}{1+x^{2}}$.
-      <div class="paso"><div class="paso-t">Separar e integrar</div>
-        $\dfrac{dy}{1+y^{2}}=\dfrac{dx}{1+x^{2}} \Rightarrow \arctan y=\arctan x + C$
-      </div>
-      <div class="paso"><div class="paso-t">¿Despejar?</div>
-        Se puede: $y=\tan(\arctan x + C)$. Pero la forma implícita es más limpia y muestra mejor la
-        estructura. Además el despeje introduce problemas de dominio, porque la tangente tiene
-        asíntotas.
-      </div>
-      <div class="paso"><div class="paso-t">Criterio práctico</div>
-        Deja la respuesta implícita si despejar oscurece más de lo que aclara. Una solución
-        implícita es una respuesta completa y aceptable, siempre que indiques el intervalo.
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="card" id="s5">
-  <h3 class="card-title">5 · Soluciones singulares: lo que se pierde al dividir</h3>
 
   <div class="callout-dark">
-    <h3>El paso 2 tiene una trampa</h3>
-    <p>Separar exige dividir entre $h(y)$. Y dividir supone que $h(y)\neq 0$.</p>
-    <p>Pero si $h(c)=0$ para algún $c$, entonces $y\equiv c$ es una solución de equilibrio de la
-       ecuación — y acabas de excluirla del cálculo. Puede que reaparezca al final como un caso
-       particular de la familia, o puede que no.</p>
-    <p>Cuando <strong>no</strong> reaparece, se llama <em>solución singular</em>: es una solución
-       legítima que no se obtiene de la solución general para ningún valor de $C$.</p>
+    <h3>Un problema con infinitas soluciones</h3>
+    <p>Considera $\;\dfrac{dy}{dx}=y^{2/3}\;$ con $\;y(0)=0$.</p>
+    <p>La función constante $y\equiv 0$ es solución: su derivada es $0$ y $0^{2/3}=0$ ✓</p>
+    <p>Pero $\;y=\dfrac{x^{3}}{27}\;$ <em>también</em> lo es:
+       $y'=\dfrac{x^{2}}{9}$, y $\left(\dfrac{x^{3}}{27}\right)^{2/3}=\dfrac{x^{2}}{9}$ ✓
+       — y además $y(0)=0$.</p>
+    <p>Y hay infinitas más: para cualquier $c\geq 0$, la función que vale $0$ hasta $x=c$ y luego
+       $\left(\dfrac{x-c}{3}\right)^{3}$ también resuelve el problema.</p>
+    <p><strong>¿Por qué falla la unicidad?</strong> Porque
+       $\dfrac{\partial f}{\partial y}=\dfrac{2}{3}y^{-1/3}$ no está acotada cuando $y$ tiende a $0$:
+       justo en el punto de la condición inicial. La hipótesis del teorema no se cumple, y en efecto
+       la unicidad se pierde.</p>
+    <p>Que exista un caso donde falla es lo que le da contenido al teorema. Si la unicidad fuera
+       automática, no haría falta enunciarlo.</p>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 6 · Una solución que se pierde: $\dfrac{dy}{dx}=y^{2}$</h4>
+    <h4>Ejemplo 5 · Aplicar el teorema antes de resolver</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Separar (excluyendo $y=0$)</div>
-        $\dfrac{dy}{y^{2}}=dx \Rightarrow -\dfrac{1}{y}=x+C \Rightarrow y=\dfrac{-1}{x+C}$
+      ¿Garantiza el teorema solución única para $\;y'=\dfrac{y}{x}\;$ con (a) $y(1)=2$ y (b) $y(0)=0$?
+      <div class="paso"><div class="paso-t">Identificar $f$ y su derivada parcial</div>
+        $f(x,y)=\dfrac{y}{x}$ &nbsp;·&nbsp; $\dfrac{\partial f}{\partial y}=\dfrac{1}{x}$
       </div>
-      <div class="paso"><div class="paso-t">Revisar lo excluido</div>
-        $h(y)=y^{2}$ se anula en $y=0$. ¿Es $y\equiv 0$ solución? $y'=0$ y $y^{2}=0$ ✓ Sí lo es.
+      <div class="paso"><div class="paso-t">(a) En $(1,2)$</div>
+        Ambas son continuas en cualquier rectángulo que no toque $x=0$. El punto $(1,2)$ admite uno,
+        así que <strong>sí</strong> hay solución única: $y=2x$.
       </div>
-      <div class="paso"><div class="paso-t">¿Está en la familia?</div>
-        $\dfrac{-1}{x+C}$ nunca vale cero, para ningún $C$ ni ningún $x$. Así que $y\equiv 0$
-        <strong>es una solución singular</strong>.
-      </div>
-      <div class="paso"><div class="paso-t">Respuesta completa</div>
-        $y=\dfrac{-1}{x+C}$ &nbsp;y además&nbsp; $y\equiv 0$. Omitir la segunda deja la respuesta incompleta.
+      <div class="paso"><div class="paso-t">(b) En $(0,0)$</div>
+        Ni $f$ ni $\partial f/\partial y$ están definidas en $x=0$. El teorema
+        <strong>no aplica</strong>. Y de hecho falla la unicidad: <em>toda</em> recta $y=Cx$ pasa por
+        el origen y resuelve la ecuación. Es lo que viste en el visualizador de §5.1.
       </div>
     </div>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 7 · Y una donde además falla la unicidad: $\dfrac{dy}{dx}=x\,y^{1/2}$</h4>
-    <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Separar e integrar</div>
-        $\dfrac{dy}{\sqrt{y}}=x\,dx \Rightarrow 2\sqrt{y}=\dfrac{x^{2}}{2}+C_1
-        \Rightarrow \sqrt{y}=\dfrac{x^{2}}{4}+C$
-      </div>
-      <div class="paso"><div class="paso-t">Elevar al cuadrado</div>
-        $$y=\left(\frac{x^{2}}{4}+C\right)^{2}$$
-        Verificación: $y'=2\left(\dfrac{x^2}{4}+C\right)\cdot\dfrac{x}{2}=x\left(\dfrac{x^2}{4}+C\right)$,
-        y $x\sqrt{y}=x\left(\dfrac{x^2}{4}+C\right)$ ✓
-      </div>
-      <div class="paso"><div class="paso-t">La singular</div>
-        $y\equiv 0$ también resuelve la ecuación, y no se obtiene con ningún $C$ salvo en el punto
-        aislado donde $x^2/4+C=0$. Es singular.
-      </div>
-      <div class="paso"><div class="paso-t">La conexión con la Guía 1</div>
-        Con la condición $y(0)=0$ hay <strong>dos</strong> soluciones: $y\equiv 0$ y
-        $y=\left(\dfrac{x^{2}}{4}\right)^{2}=\dfrac{x^{4}}{16}$. Falla la unicidad.<br>
-        ¿Por qué? Porque $\dfrac{\partial}{\partial y}\left(xy^{1/2}\right)=\dfrac{x}{2\sqrt{y}}$
-        no está acotada en $y=0$. Es el mismo diagnóstico que hicimos con $y'=y^{2/3}$: las
-        soluciones singulares y los fallos de unicidad aparecen en los mismos sitios.
-      </div>
-    </div>
-  </div>
-
-  <div class="nota">
-    <strong>Regla de trabajo.</strong> Cada vez que dividas entre una expresión con $y$, escribe al
-    margen qué valores estás excluyendo. Al terminar, vuelve a esa nota y comprueba uno por uno si
-    son soluciones y si la familia los recupera. Cuesta treinta segundos y es la diferencia entre
-    una respuesta correcta y una incompleta.
   </div>
 </section>
 
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 3 — Separables y singulares</h3>
+  <h3 class="card-title">✓ Comprobación 3 — Familias y unicidad</h3>
   <div id="chk3"></div>
 </div>
 
@@ -471,30 +422,28 @@ window.MathJax = {
     <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      El modelo logístico $\dfrac{dS}{dt}=kS\!\left(1-\dfrac{S}{M}\right)$ es autónomo y separable.
-      Su línea de fase da la conclusión gerencial sin resolver nada: $S=M$ es atractor, así que
-      cualquier campaña con ventas iniciales positivas converge al mismo techo de mercado. Lo que
-      cambia con la inversión es la <em>velocidad</em>, no el destino.</div>
+      El crecimiento de un mercado con saturación se modela como
+      $\dfrac{dS}{dt}=kS\!\left(1-\dfrac{S}{M}\right)$: no es lineal, porque $S$ aparece al
+      cuadrado al distribuir. Esa no linealidad es justo lo que hace que la curva se aplane en el
+      techo $M$ en vez de crecer sin límite.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      El interés compuesto continuo $\dfrac{dA}{dt}=rA$ es separable y autónomo, con
-      $A=0$ como único punto crítico y repulsor: cualquier capital positivo crece sin límite.
-      La depreciación exponencial es la misma ecuación con $r \lt 0$, y ahí $A=0$ pasa a ser
-      atractor.</div>
+      El interés compuesto continuo es $\dfrac{dA}{dt}=rA$, una EDO lineal de primer orden cuya
+      solución $A=A_0e^{rt}$ ya conoces. Con aportes periódicos se vuelve
+      $\dfrac{dA}{dt}=rA+d$: sigue siendo lineal, y la resolverás en la semana 4.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      La difusión de un virus en una red de $N$ equipos, $\dfrac{dI}{dt}=\beta I(N-I)$, es autónoma
-      con equilibrios $I=0$ (repulsor) e $I=N$ (atractor). La línea de fase predice que basta un
-      solo equipo infectado para que la red termine comprometida: el punto $I=0$ es inestable.
-      Ese es el argumento matemático de por qué la contención temprana lo es todo.</div>
+      La difusión de un virus en una red de $N$ equipos sigue $\dfrac{dI}{dt}=\beta I(N-I)$.
+      La curva en S de los reportes de seguridad es su solución. Y como casi ninguna EDO real tiene
+      solución cerrada, los simuladores la integran numéricamente.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      La descarga de un capacitor, $\dfrac{dq}{dt}=-\dfrac{q}{RC}$, es separable y autónoma con
-      $q=0$ como atractor. Su solución $q=q_0e^{-t/RC}$ sale en dos líneas de integración.
-      Y en un circuito RL, la corriente obedece $\dfrac{di}{dt}=\dfrac{E-Ri}{L}$, cuyo equilibrio
-      $i=E/R$ es el valor de régimen que verás en la Guía 3.</div>
+      Un circuito RC es $R\dfrac{dq}{dt}+\dfrac{q}{C}=V$: lineal, de primer orden. La constante de
+      tiempo $\tau=RC$ sale directamente de su solución y es el número que define cuánto tarda el
+      capacitor en cargarse al 63 %. El circuito RLC añade una segunda derivada y da lugar a la
+      ecuación de la semana 9.</div>
   </div>
 </section>
 
-<section class="card" id="s6">
-  <h3 class="card-title">6 · Práctica final integradora</h3>
+<section class="card" id="s7">
+  <h3 class="card-title">7 · Práctica final integradora</h3>
   <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
     Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
     sección volver.</p>
@@ -504,15 +453,15 @@ window.MathJax = {
 <section class="card">
   <h3 class="card-title">Resumen para llevar</h3>
   <ul>
-    <li>La ecuación $y'=f(x,y)$ es un <strong>mapa de pendientes</strong>: se puede dibujar sin resolver nada.</li>
-    <li>Una curva solución es tangente a todos los elementos lineales que toca.</li>
-    <li>Una <strong>isoclina</strong> $f(x,y)=k$ reúne los puntos de igual pendiente; sobre ella los segmentos son paralelos.</li>
-    <li>Si una isoclina de pendiente $k$ resulta ser una recta de pendiente $k$, esa recta es solución.</li>
-    <li>Una EDO <strong>autónoma</strong> $y'=f(y)$ tiene soluciones de equilibrio en los ceros de $f$.</li>
-    <li>La <strong>línea de fase</strong> clasifica cada equilibrio como atractor, repulsor o semiestable.</li>
-    <li>Ninguna solución cruza un equilibrio: lo impide el teorema de unicidad.</li>
-    <li><strong>Separable</strong> es $y'=g(x)h(y)$: separa, integra, despeja si puedes.</li>
-    <li>Al dividir entre $h(y)$ anota lo excluido: puede haber <strong>soluciones singulares</strong>.</li>
+    <li>Las leyes de la naturaleza se descubren en forma diferencial porque es más fácil observar tasas de cambio que estados absolutos.</li>
+    <li>La incógnita de una EDO es una <strong>función</strong>, y la respuesta general es una familia infinita.</li>
+    <li>El <strong>orden</strong> es el de la derivada más alta; el exponente al que esté elevada no cuenta.</li>
+    <li>La <strong>linealidad</strong> se juzga solo sobre $y$ y sus derivadas: $y'+x^3y=e^{x^2}$ sí es lineal.</li>
+    <li>Una solución debe cumplir la ecuación en todo un <strong>intervalo</strong>, no en puntos sueltos.</li>
+    <li><strong>Verificar por sustitución</strong> siempre es posible, aunque no sepas resolver. Hazlo siempre.</li>
+    <li>Una EDO de orden $n$ tiene $n$ constantes arbitrarias y necesita $n$ condiciones.</li>
+    <li>Picard da unicidad si $f$ y $\partial f/\partial y$ son continuas cerca de $(x_0,y_0)$: condición <em>suficiente</em>, garantía <em>local</em>.</li>
+    <li>$y'=y^{2/3}$ con $y(0)=0$ tiene infinitas soluciones, porque $\partial f/\partial y$ estalla justo ahí.</li>
   </ul>
 </section>
 
@@ -526,132 +475,127 @@ window.MathJax = {
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260827b"></script>
-<script src="../assets/viz-edo.js?v=20260827b"></script>
+<script src="../assets/ova.js?v=20260827c"></script>
+<script src="../assets/viz-edo.js?v=20260827c"></script>
 <script>
 OVA.quiz({
   destino: 'chk1',
-  titulo: 'Campo de direcciones e isoclinas · 3 preguntas',
+  titulo: 'Clasificación · 3 preguntas',
   items: [
     {
-      etiqueta: 'Campo', nivel: 1,
-      criterio: 'Leer la pendiente que impone la ecuación en un punto (§1)',
-      enunciado: "Para $y'=x-y$, la pendiente del elemento lineal en el punto $(2,1)$ vale:",
-      opciones: ['$2$', '$1$', '$-1$', '$3$'],
+      etiqueta: 'Orden', nivel: 1,
+      criterio: 'Determinar el orden de una EDO (§3.2)',
+      enunciado: "El orden de la ecuación $(y')^{5}+y''+y=x$ es:",
+      opciones: ['$5$', '$2$', '$1$', '$6$'],
       correcta: 1,
-      pista: 'Basta evaluar $f(x,y)$ en ese punto: no hay que resolver nada.',
-      solucion: "$f(2,1)=2-1=1$. Construir el campo es solo <em>evaluar</em>, no resolver: esa es la razón de que se pueda dibujar para ecuaciones que no sabemos integrar. La opción c) invierte el orden de la resta."
+      pista: 'El orden lo fija cuál derivada aparece, no a qué potencia esté elevada.',
+      solucion: "La derivada más alta que aparece es $y''$, así que el orden es 2. El exponente 5 sobre $y'$ afecta a la <em>linealidad</em> (la destruye), pero no al orden. Confundir exponente con orden es el error más frecuente del tema."
     },
     {
-      etiqueta: 'Isoclinas', nivel: 2,
-      criterio: 'Identificar la forma geométrica de las isoclinas (§2)',
-      enunciado: "Las isoclinas de $y'=y-x^{2}$ son:",
+      etiqueta: 'Linealidad', nivel: 2,
+      criterio: 'Identificar cuándo una EDO deja de ser lineal (§3.3)',
+      enunciado: '¿Cuál de estas ecuaciones <strong>no</strong> es lineal?',
       opciones: [
-        'Rectas horizontales $y=k$',
-        'Circunferencias centradas en el origen',
-        'Parábolas $y=x^{2}+k$',
-        'Rectas de pendiente 1'
+        "$y' + x^{3}y = e^{x^{2}}$",
+        "$x^{2}y'' + \\ln(x)\\,y = \\operatorname{sen} x$",
+        "$y\\,y' + x = 0$",
+        "$y'' - 5y' + 6y = 0$"
       ],
       correcta: 2,
-      pista: 'Iguala $f(x,y)$ a $k$ y despeja $y$.',
-      solucion: "De $y-x^{2}=k$ se obtiene $y=x^{2}+k$: una familia de parábolas iguales, desplazadas verticalmente. La opción d) corresponde a $y'=x-y$, cuyas isoclinas sí son rectas de pendiente 1."
+      pista: 'Fíjate solo en qué le está pasando a la $y$ y a sus derivadas, no en los coeficientes.',
+      solucion: "En c) hay un producto $y\\cdot y'$ entre la función y su derivada, lo que rompe la linealidad. Las otras tres son lineales aunque los coeficientes se vean complicados: $x^3$, $x^2$, $\\ln x$ y $e^{x^2}$ dependen solo de $x$, y la definición no les impone ninguna restricción."
     },
     {
-      etiqueta: 'Isoclina especial', nivel: 3,
-      criterio: 'Reconocer cuándo una isoclina es además solución (§2)',
-      enunciado: "En $y'=x-y$, la isoclina $k=1$ es la recta $y=x-1$ y sus elementos lineales tienen pendiente 1. ¿Qué se concluye?",
+      etiqueta: 'Linealidad', nivel: 3,
+      criterio: 'Reconocer que la linealidad se juzga solo sobre y (§3.3)',
+      enunciado: "La ecuación $y' + x^{3}y = e^{x^{2}}$ es lineal. ¿Por qué, si contiene $x^3$ y una exponencial?",
       opciones: [
-        'Que en esa recta el campo es horizontal',
-        'Que la recta $y=x-1$ es ella misma una solución de la ecuación',
-        'Que la ecuación no tiene solución en esa región',
-        'Que la isoclina está mal calculada'
+        'Porque $x^3$ y $e^{x^2}$ se pueden simplificar',
+        'Porque el orden es 1 y toda EDO de primer orden es lineal',
+        'Porque la exponencial está elevada a un cuadrado',
+        'Porque la linealidad solo restringe a $y$ y sus derivadas, no a los coeficientes ni al término independiente'
       ],
-      correcta: 1,
-      pista: 'La recta tiene pendiente 1 y los segmentos sobre ella también. ¿Qué significa que coincidan?',
-      solucion: "Los segmentos van <em>a lo largo</em> de la isoclina en vez de cruzarla, así que la recta es tangente al campo en cada uno de sus puntos: es una curva solución. Verificación directa: $y'=1$ y $x-y=x-(x-1)=1$ ✓. La opción a) describiría la isoclina $k=0$, que es $y=x$."
+      correcta: 3,
+      pista: 'Vuelve a la forma general $a_n(x)y^{(n)}+\\cdots+a_0(x)y=g(x)$ y mira qué papel juega cada pieza.',
+      solucion: "Aquí $a_1(x)=1$, $a_0(x)=x^3$ y $g(x)=e^{x^2}$: todos son funciones de $x$, y la definición les permite ser cualquier cosa. Lo único que se exige es que $y$ e $y'$ aparezcan a la primera potencia, sin productos entre sí y fuera de funciones no lineales. La opción b) es falsa: $y'+y^2=x$ es de primer orden y no es lineal."
     }
   ]
 });
 
 OVA.quiz({
   destino: 'chk2',
-  titulo: 'Ecuaciones autónomas · 3 preguntas',
+  titulo: 'Soluciones · 3 preguntas',
   items: [
     {
-      etiqueta: 'Equilibrios', nivel: 1,
-      criterio: 'Hallar las soluciones de equilibrio de una EDO autónoma (§3)',
-      enunciado: "Las soluciones de equilibrio de $y'=y\\left(1-\\dfrac{y}{3}\\right)$ son:",
-      opciones: ['$y=1$ y $y=3$', '$y=0$ únicamente', '$y=0$ y $y=3$', '$y=-3$ y $y=3$'],
+      etiqueta: 'Verificación', nivel: 1,
+      criterio: 'Verificar una solución por sustitución (§4.1)',
+      enunciado: "¿Cuál función es solución de $y'' + y = 0$?",
+      opciones: ['$y = e^{x}$', '$y = x^{2}$', '$y = \\operatorname{sen} x$', '$y = e^{-x}$'],
       correcta: 2,
-      pista: 'Iguala el lado derecho a cero: es una ecuación algebraica, no diferencial.',
-      solucion: "$y(1-y/3)=0$ se anula en $y=0$ y en $y=3$, así que las funciones constantes $y\\equiv 0$ e $y\\equiv 3$ resuelven la ecuación. Se hallan <strong>sin integrar</strong>, que es la gran ventaja del caso autónomo."
+      pista: 'Deriva dos veces cada candidata y súmala con ella misma.',
+      solucion: "Si $y=\\operatorname{sen} x$, entonces $y''=-\\operatorname{sen} x$ y por tanto $y''+y=-\\operatorname{sen}x+\\operatorname{sen}x=0$ ✓. Con $y=e^{x}$ se obtiene $y''+y=2e^{x}\\neq 0$, y lo mismo con $e^{-x}$. Solo las funciones cuya segunda derivada es su propio negativo sirven, y eso caracteriza a senos y cosenos."
     },
     {
-      etiqueta: 'Línea de fase', nivel: 2,
-      criterio: 'Predecir el comportamiento a largo plazo con la línea de fase (§3.1)',
-      enunciado: "Para $y'=y^{2}-4$, una solución con $y(0)=1$ tiende a:",
-      opciones: ['$-2$', '$+2$', '$+\\infty$', '$0$'],
-      correcta: 0,
-      pista: '¿Qué signo tiene $f(y)$ en el intervalo $(-2,2)$, donde está el valor inicial?',
-      solucion: "En $(-2,2)$ se tiene $f(y)=y^{2}-4 \\lt 0$ (por ejemplo $f(1)=-3$), así que la solución <strong>decrece</strong>. Y no puede cruzar el equilibrio $y=-2$, porque lo impide la unicidad: se acerca a $-2$ asintóticamente. Nota que la respuesta salió sin resolver la ecuación."
+      etiqueta: 'Intervalo', nivel: 3,
+      criterio: 'Reconocer que una solución debe cumplir la ecuación en todo un intervalo (§4)',
+      enunciado: "Al sustituir $y=x^{2}$ en $y'-2y=0$ queda $2x-2x^{2}=2x(1-x)$, que vale cero en $x=0$ y $x=1$. ¿Es $y=x^2$ solución?",
+      opciones: [
+        'Sí, porque anula la ecuación en dos puntos',
+        'Sí, pero solo en el intervalo $[0,1]$',
+        'No, porque una solución debe anular la ecuación en todo un intervalo, no en puntos aislados',
+        'No se puede determinar sin una condición inicial'
+      ],
+      correcta: 2,
+      pista: 'Relee la definición de solución: ¿qué se exige, y dónde?',
+      solucion: "La definición exige que la sustitución produzca una identidad válida <strong>para todo $x$ de un intervalo</strong>. Aquí el residuo $2x(1-x)$ solo se anula en dos puntos sueltos y es distinto de cero en todo lo demás, incluido el interior de $[0,1]$: por ejemplo en $x=\\tfrac12$ vale $\\tfrac12$. No es solución en ningún intervalo."
     },
     {
-      etiqueta: 'Clasificación', nivel: 3,
-      criterio: 'Distinguir un equilibrio semiestable (§3.2)',
-      enunciado: "En $y'=y(y-2)^{2}$ se tiene $f(1)=1 \\gt 0$ y $f(3)=3 \\gt 0$. El equilibrio $y=2$ es:",
-      opciones: ['Atractor', 'Repulsor', 'Semiestable', 'No es un equilibrio'],
-      correcta: 2,
-      pista: 'Las flechas a ambos lados apuntan en el mismo sentido. ¿Qué le pasa a una solución que empieza justo debajo? ¿Y justo encima?',
-      solucion: "Como $f \\gt 0$ a ambos lados, las soluciones suben en los dos casos: las de abajo se <em>acercan</em> a 2 y las de arriba se <em>alejan</em>. Eso es un equilibrio semiestable, y aparece cuando la raíz es de multiplicidad par — aquí $(y-2)^2$ no cambia de signo al atravesar $y=2$."
+      etiqueta: 'Solución implícita', nivel: 2,
+      criterio: 'Determinar el intervalo de definición de una solución (§4.2)',
+      enunciado: "La relación $x^{2}+y^{2}=25$ define soluciones de $y'=-x/y$. La rama superior $y=\\sqrt{25-x^{2}}$ es solución en:",
+      opciones: ['$[-5,\\,5]$', '$(-5,\\,5)$', '$[0,\\,5]$', '$(-\\infty,+\\infty)$'],
+      correcta: 1,
+      pista: '¿Qué le pasa a la ecuación $y\'=-x/y$ justo en los extremos, donde $y=0$?',
+      solucion: "En $x=\\pm 5$ se tiene $y=0$, y ahí $-x/y$ no está definido: la ecuación misma se rompe. Por eso el intervalo debe ser <strong>abierto</strong>, $(-5,5)$. La opción a) es el error de incluir los extremos por costumbre; toda solución viene con su intervalo y omitirlo deja la respuesta incompleta."
     }
   ]
 });
 
 OVA.quiz({
   destino: 'chk3',
-  titulo: 'Separables y singulares · 3 preguntas',
+  titulo: 'Familias y unicidad · 3 preguntas',
   items: [
     {
-      etiqueta: 'Reconocer', nivel: 2,
-      criterio: 'Identificar si una EDO es separable (§4)',
-      enunciado: "¿Cuál de estas ecuaciones <strong>no</strong> es separable?",
-      opciones: [
-        "$\\dfrac{dy}{dx}=xy$",
-        "$\\dfrac{dy}{dx}=e^{x+y}$",
-        "$\\dfrac{dy}{dx}=x+y$",
-        "$\\dfrac{dy}{dx}=y^{2}\\cos x$"
-      ],
+      etiqueta: 'General vs particular', nivel: 1,
+      criterio: 'Distinguir solución general de particular (§5)',
+      enunciado: "La solución de $\\dfrac{dy}{dx}=2x$ con $y(1)=5$ es:",
+      opciones: ['$y=x^{2}+C$', '$y=x^{2}+5$', '$y=x^{2}+4$', '$y=2x+3$'],
       correcta: 2,
-      pista: 'Separable significa que el lado derecho se factoriza como (algo con $x$) × (algo con $y$).',
-      solucion: "La suma $x+y$ no se factoriza en un producto de la forma $g(x)h(y)$. La opción b) sí lo es, aunque no lo parezca: $e^{x+y}=e^{x}\\cdot e^{y}$. Esa reescritura es el truco que hay que buscar antes de descartar una ecuación como no separable."
+      pista: 'Integra primero y luego sustituye el punto $(1,5)$ para hallar $C$.',
+      solucion: "Integrando: $y=x^2+C$. Con $y(1)=1+C=5$ sale $C=4$, luego $y=x^2+4$. La opción a) es la solución <em>general</em>, que describe infinitas curvas: no responde el problema. La b) es el error de tomar $C=5$ leyendo directamente el valor de $y$ sin restar $x^2=1$."
     },
     {
-      etiqueta: 'Resolver', nivel: 2,
-      criterio: 'Resolver un PVI separable (§4.1)',
-      enunciado: "La solución de $\\dfrac{dy}{dx}=y\\cos x$ con $y(0)=1$ es:",
-      opciones: [
-        '$y=\\cos x$',
-        '$y=e^{\\operatorname{sen}x}$',
-        '$y=1+\\operatorname{sen}x$',
-        '$y=e^{\\cos x}$'
-      ],
-      correcta: 1,
-      pista: 'Separa como $\\dfrac{dy}{y}=\\cos x\\,dx$ e integra los dos lados.',
-      solucion: "$\\ln|y|=\\operatorname{sen}x+C_1$, y al exponenciar $y=Ce^{\\operatorname{sen}x}$; con $y(0)=C=1$ queda $y=e^{\\operatorname{sen}x}$. Verificación: $y'=\\cos x\\,e^{\\operatorname{sen}x}=y\\cos x$ ✓. La opción d) cumple $y(0)=e$, no 1, y además no satisface la ecuación."
+      etiqueta: 'Número de constantes', nivel: 2,
+      criterio: 'Relacionar el orden con el número de condiciones necesarias (§5)',
+      enunciado: '¿Cuántas condiciones se necesitan para determinar completamente la solución de una EDO de segundo orden?',
+      opciones: ['Dos', 'Una', 'Tres', 'Ninguna, la solución ya es única'],
+      correcta: 0,
+      pista: 'Cada integración introduce una constante. ¿Cuántas veces hay que integrar?',
+      solucion: "Una EDO de orden $n$ exige integrar $n$ veces y su solución general contiene $n$ constantes arbitrarias, así que hacen falta $n$ condiciones. Para orden 2 son dos: por ejemplo $y(0)$ e $y'(0)$ en un problema de valor inicial, o $y(0)$ e $y(1)$ en uno de valor frontera."
     },
     {
-      etiqueta: 'Singulares', nivel: 3,
-      criterio: 'Detectar una solución perdida al separar (§5)',
-      enunciado: "Al resolver $\\dfrac{dy}{dx}=y^{2}$ se obtiene $y=\\dfrac{-1}{x+C}$. ¿Falta algo?",
+      etiqueta: 'Existencia y unicidad', nivel: 3,
+      criterio: 'Aplicar el teorema de Picard y reconocer cuándo falla (§6)',
+      enunciado: "El problema $y'=y^{2/3}$ con $y(0)=0$ tiene infinitas soluciones. ¿Por qué no lo impide el teorema de existencia y unicidad?",
       opciones: [
-        'No, esa es la solución general completa',
-        'Falta la solución $y\\equiv 0$, que se perdió al dividir entre $y^{2}$',
-        'Falta añadir una segunda constante arbitraria',
-        'Falta la solución $y\\equiv 1$'
+        'Porque $f(x,y)=y^{2/3}$ es discontinua en el origen',
+        'Porque el teorema solo vale para ecuaciones lineales',
+        'Porque la condición inicial está en $x=0$',
+        'Porque $\\partial f/\\partial y = \\tfrac{2}{3}y^{-1/3}$ no está acotada en $y=0$, así que la hipótesis no se cumple'
       ],
-      correcta: 1,
-      pista: '¿Entre qué expresión se dividió al separar, y para qué valor de $y$ se anula?',
-      solucion: "Separar exigió dividir entre $y^{2}$, lo que excluye $y=0$. Y $y\\equiv 0$ <strong>sí</strong> resuelve la ecuación ($0'=0$ y $0^{2}=0$), pero no se obtiene de $\\dfrac{-1}{x+C}$ para ningún $C$, porque esa expresión nunca vale cero. Es una solución <em>singular</em> y omitirla deja la respuesta incompleta."
+      correcta: 3,
+      pista: 'El teorema pide dos continuidades. ¿Cuál de las dos falla en $(0,0)$?',
+      solucion: "La función $f(x,y)=y^{2/3}$ <em>sí</em> es continua en el origen, pero su derivada parcial $\\tfrac{2}{3}y^{-1/3}$ se dispara cuando $y\\to 0$. Al no cumplirse la hipótesis, el teorema no garantiza nada — y en efecto la unicidad falla: $y\\equiv 0$ y $y=x^3/27$ resuelven ambas el mismo problema. La opción b) es falsa: el teorema no exige linealidad."
     }
   ]
 });
@@ -661,111 +605,111 @@ OVA.quiz({
   titulo: 'Práctica final · 8 preguntas',
   items: [
     {
-      etiqueta: 'Campo', nivel: 2,
-      criterio: 'Interpretar geométricamente una curva solución (§1)',
-      enunciado: 'Una curva solución de $y\'=f(x,y)$ se caracteriza geométricamente porque:',
+      etiqueta: 'Modelado', nivel: 1,
+      criterio: 'Traducir un enunciado verbal a una EDO (§1.1)',
+      enunciado: '«La rapidez con que se enfría un cuerpo es proporcional a la diferencia entre su temperatura y la del ambiente $T_a$». La traducción correcta es:',
       opciones: [
-        'Pasa por el origen',
-        'Es tangente al elemento lineal en cada uno de sus puntos',
-        'Cruza perpendicularmente los elementos lineales',
-        'Coincide siempre con una isoclina'
-      ],
-      correcta: 1,
-      pista: 'La derivada de la curva y la pendiente que dicta la ecuación deben coincidir en cada punto.',
-      solucion: "Si $y=\\phi(x)$ es solución, entonces $\\phi'(x)=f(x,\\phi(x))$: la pendiente de la curva iguala la del elemento lineal en ese punto, es decir la curva es tangente a él. Por eso decimos que una solución «peina» el campo. La opción d) solo ocurre en el caso excepcional de la §2."
-    },
-    {
-      etiqueta: 'Isoclinas', nivel: 2,
-      criterio: 'Determinar una isoclina concreta (§2)',
-      enunciado: "Para $y'=x^{2}+y^{2}$, la isoclina correspondiente a $k=4$ es:",
-      opciones: [
-        'La recta $y=4-x$',
-        'La parábola $y=x^{2}+4$',
-        'La circunferencia de radio $2$ centrada en el origen',
-        'La circunferencia de radio $4$ centrada en el origen'
+        '$\\dfrac{dT}{dt}=kT$',
+        '$T = k(T-T_a)$',
+        '$\\dfrac{dT}{dt}=k(T-T_a)$',
+        '$\\dfrac{dT}{dt}=k\\,T_a$'
       ],
       correcta: 2,
-      pista: 'Escribe $x^{2}+y^{2}=4$ y reconoce la curva. Ojo con la raíz.',
-      solucion: "$x^{2}+y^{2}=4$ es la circunferencia de radio $\\sqrt{4}=2$. La opción d) confunde el valor de $k$ con el radio: hay que sacar la raíz. Nota además que para $k \\lt 0$ no hay isoclina, porque una suma de cuadrados nunca es negativa — el campo nunca tiene pendiente negativa."
+      pista: '«Rapidez con que se enfría» es una derivada; «proporcional a» es un factor $k$.',
+      solucion: "«Rapidez» se traduce como $dT/dt$ y «proporcional a la diferencia» como $k(T-T_a)$. La opción b) no contiene derivada alguna, así que ni siquiera es una ecuación diferencial. La a) sería válida solo si el ambiente estuviera a cero grados."
     },
     {
-      etiqueta: 'Autónomas', nivel: 2,
-      criterio: 'Reconocer una EDO autónoma (§3)',
-      enunciado: '¿Cuál de estas ecuaciones es <strong>autónoma</strong>?',
+      etiqueta: 'Clasificación', nivel: 2,
+      criterio: 'Determinar orden y linealidad simultáneamente (§3)',
+      enunciado: "La ecuación $x^{2}y'' + xy' + (x^{2}-4)y = 0$ es:",
       opciones: [
-        "$\\dfrac{dy}{dx}=x^{2}-4$",
-        "$\\dfrac{dy}{dx}=y^{2}-4$",
-        "$\\dfrac{dy}{dx}=xy-4$",
-        "$\\dfrac{dy}{dx}=x-y$"
+        'De orden 2 y no lineal, por los coeficientes con $x$',
+        'De orden 2 y lineal',
+        'De orden 1 y lineal',
+        'De orden 4, por el término $x^{2}$'
       ],
       correcta: 1,
-      pista: 'Autónoma significa que la variable independiente no aparece explícitamente.',
-      solucion: "Solo en b) el lado derecho depende exclusivamente de $y$. Eso implica que el campo de direcciones se ve igual en toda franja horizontal, y permite usar la línea de fase. En a) ocurre lo contrario —depende solo de $x$—, que se resuelve por integración directa pero no es autónoma."
+      pista: 'Los coeficientes pueden ser cualquier función de $x$ sin afectar la linealidad.',
+      solucion: "La derivada más alta es $y''$, luego el orden es 2. Y $y$, $y'$, $y''$ aparecen todas a la primera potencia con coeficientes que solo dependen de $x$: es lineal. Se trata de la ecuación de Bessel de orden 2, fundamental en problemas con simetría cilíndrica."
     },
     {
-      etiqueta: 'Equilibrios', nivel: 3,
-      criterio: 'Justificar que las soluciones no cruzan un equilibrio (§3.2)',
-      enunciado: 'Ninguna solución de una EDO autónoma cruza una recta de equilibrio $y=c$. La razón es:',
+      etiqueta: 'Verificación', nivel: 2,
+      criterio: 'Verificar una solución que involucra un cociente (§4.1)',
+      enunciado: "¿Es $y=\\dfrac{1}{x}$ solución de $x\\,y' + y = 0$?",
       opciones: [
-        'Que en $y=c$ la ecuación no está definida',
-        'Que la solución constante $y\\equiv c$ ya ocupa ese punto y la unicidad prohíbe dos soluciones por el mismo punto',
-        'Que el campo de direcciones es vertical en $y=c$',
-        'Que $c$ siempre es cero'
+        'No, porque no está definida en $x=0$',
+        'Sí, en cualquier intervalo que no contenga a $x=0$',
+        'No, el residuo da $2/x$',
+        'Solo si se añade una constante'
       ],
       correcta: 1,
-      pista: 'Piensa en el teorema de existencia y unicidad de la Guía 1.',
-      solucion: "Si una solución tocara $y=c$ en un punto, por ese punto pasarían dos soluciones distintas: ella y la constante $y\\equiv c$. La unicidad lo impide. La opción c) es falsa: en un equilibrio el campo es <em>horizontal</em>, con pendiente cero, no vertical."
+      pista: "Calcula $y'=-1/x^2$ y sustituye.",
+      solucion: "$y'=-\\dfrac{1}{x^{2}}$, y entonces $x\\left(-\\dfrac{1}{x^{2}}\\right)+\\dfrac{1}{x}=-\\dfrac{1}{x}+\\dfrac{1}{x}=0$ ✓. Sí es solución, con la salvedad del intervalo: en $(0,\\infty)$ o en $(-\\infty,0)$, pero no en un intervalo que cruce el origen. La opción a) confunde una restricción de dominio con una descalificación."
     },
     {
-      etiqueta: 'Separables', nivel: 2,
-      criterio: 'Reconocer la familia de curvas de una EDO separable (§4)',
-      enunciado: "La solución general de $\\dfrac{dy}{dx}=\\dfrac{x}{y}$ es una familia de:",
+      etiqueta: 'Familia de soluciones', nivel: 2,
+      criterio: 'Interpretar geométricamente la solución general (§5)',
+      enunciado: "La solución general de $y'=y$ es $y=Ce^{x}$. Geométricamente, esto representa:",
       opciones: [
-        'Circunferencias $x^{2}+y^{2}=C$',
-        'Rectas por el origen',
-        'Parábolas $y=x^{2}+C$',
-        'Hipérbolas $y^{2}-x^{2}=C$'
+        'Una única curva exponencial',
+        'Dos curvas, una para $C \\gt 0$ y otra para $C \\lt 0$',
+        'Una recta con pendiente $C$',
+        'Una familia infinita de curvas, una por cada valor de $C$'
       ],
       correcta: 3,
-      pista: 'Separa como $y\\,dy=x\\,dx$ y observa el signo al integrar.',
-      solucion: "$\\dfrac{y^2}{2}=\\dfrac{x^2}{2}+C_1$, es decir $y^{2}-x^{2}=C$: hipérbolas. La opción a) corresponde a $y'=-\\dfrac{x}{y}$, con signo negativo, que sí da circunferencias. Ese solo signo cambia por completo la geometría de la familia."
+      pista: '¿Cuántos valores puede tomar $C$?',
+      solucion: "Cada valor real de $C$ produce una curva distinta, y todas resuelven la misma ecuación: la solución general es una familia infinita. Incluye también $C=0$, la solución constante $y\\equiv 0$. Una condición inicial elige un miembro y descarta el resto."
     },
     {
-      etiqueta: 'Intervalo', nivel: 3,
-      criterio: 'Determinar el intervalo de una solución implícita (§4.1)',
-      enunciado: "El PVI $\\dfrac{dy}{dx}=-\\dfrac{x}{y}$ con $y(4)=3$ tiene por solución $y=\\sqrt{25-x^{2}}$. Su intervalo de definición es:",
-      opciones: ['$(-5,\\,5)$', '$[-5,\\,5]$', '$(0,\\,5)$', '$(4,\\,5)$'],
+      etiqueta: 'Valor inicial', nivel: 2,
+      criterio: 'Resolver un problema de valor inicial (§5)',
+      enunciado: "Si la solución general de una EDO es $y=Ce^{-x}$ y se impone $y(0)=3$, la solución particular es:",
+      opciones: ['$y=3e^{-x}$', '$y=e^{-x}+3$', '$y=3e^{x}$', '$y=-3e^{-x}$'],
       correcta: 0,
-      pista: '¿Qué le pasa a la ecuación $-x/y$ justo donde $y$ se anula?',
-      solucion: "En $x=\\pm 5$ se tiene $y=0$, y ahí $-x/y$ no está definida: la ecuación misma se rompe, así que el intervalo debe ser <strong>abierto</strong>. La opción b) es el descuido de incluir los extremos por costumbre. Nota que la circunferencia completa es la solución <em>implícita</em>, pero la solución del PVI es solo el arco superior."
+      pista: 'Sustituye $x=0$ recordando que $e^{0}=1$.',
+      solucion: "$y(0)=Ce^{0}=C=3$, luego $y=3e^{-x}$. La opción b) suma la constante en vez de multiplicarla: eso correspondería a una solución general de la forma $y=e^{-x}+C$, que sale de una ecuación distinta."
     },
     {
-      etiqueta: 'Singulares', nivel: 3,
-      criterio: 'Relacionar soluciones singulares con el fallo de unicidad (§5)',
-      enunciado: "Para $\\dfrac{dy}{dx}=x\\,y^{1/2}$ con $y(0)=0$ existen al menos dos soluciones: $y\\equiv 0$ y $y=\\dfrac{x^{4}}{16}$. ¿Por qué no lo impide el teorema de unicidad?",
+      etiqueta: 'Unicidad', nivel: 3,
+      criterio: 'Aplicar el teorema de Picard a un caso concreto (§6)',
+      enunciado: "Para $y'=\\dfrac{y}{x}$ con la condición $y(0)=0$, el teorema de existencia y unicidad:",
       opciones: [
-        'Porque $f(x,y)=xy^{1/2}$ es discontinua en el origen',
-        'Porque la ecuación no es separable',
-        'Porque $\\partial f/\\partial y=\\dfrac{x}{2\\sqrt{y}}$ no está acotada en $y=0$',
-        'Porque la condición inicial está en $x=0$'
+        'Garantiza una solución única',
+        'Garantiza que no hay solución',
+        'No aplica, porque $f$ y $\\partial f/\\partial y$ no están definidas en $x=0$',
+        'Aplica, pero solo para $x \\lt 0$'
       ],
       correcta: 2,
-      pista: 'El teorema exige dos continuidades. ¿Cuál de las dos falla en el punto inicial?',
-      solucion: "$f(x,y)=xy^{1/2}$ sí es continua en el origen, pero su derivada parcial respecto de $y$ se dispara cuando $y\\to 0$. Al no cumplirse la hipótesis, el teorema no garantiza unicidad — y aquí efectivamente falla. Las soluciones singulares y los fallos de unicidad aparecen en los mismos sitios, y no es coincidencia."
+      pista: 'El teorema exige continuidad en un rectángulo <em>que contenga</em> al punto inicial.',
+      solucion: "Con $f(x,y)=y/x$, ni $f$ ni $\\partial f/\\partial y=1/x$ existen en $x=0$, así que no hay rectángulo alrededor de $(0,0)$ donde se cumplan las hipótesis: el teorema no dice nada. Y de hecho la unicidad falla, porque toda recta $y=Cx$ pasa por el origen y resuelve la ecuación."
+    },
+    {
+      etiqueta: 'No linealidad', nivel: 3,
+      criterio: 'Reconocer el papel de la linealización en modelos físicos (§3.3)',
+      enunciado: "La ecuación exacta del péndulo es $y''+\\operatorname{sen}(y)=0$, no lineal. En física se estudia $y''+y=0$. ¿Por qué es legítimo el cambio?",
+      opciones: [
+        'Porque $\\operatorname{sen}(y)$ y $y$ son iguales',
+        'Porque para ángulos pequeños $\\operatorname{sen}(y)\\approx y$, y la aproximación es buena en ese rango',
+        'Porque la ecuación no lineal no tiene solución',
+        'Porque el seno se puede factorizar'
+      ],
+      correcta: 1,
+      pista: 'Piensa en el polinomio de Taylor de $\\operatorname{sen}(y)$ alrededor de cero.',
+      solucion: "Para $y$ pequeño, $\\operatorname{sen}(y)=y-\\tfrac{y^{3}}{6}+\\cdots\\approx y$, y el error es de orden $y^3$: despreciable en ángulos de pocos grados. La ecuación linealizada sí tiene solución elemental. Pero es una <em>aproximación</em> con rango de validez: para amplitudes grandes el péndulo real se desvía notablemente del modelo lineal."
     },
     {
       etiqueta: 'Síntesis', nivel: 2,
-      criterio: 'Relacionar el análisis cualitativo con la solución exacta (§1–§5)',
-      enunciado: '¿Qué ventaja tiene el campo de direcciones frente a resolver la ecuación?',
+      criterio: 'Distinguir la naturaleza de la incógnita en una EDO (§2)',
+      enunciado: '¿Cuál es la diferencia esencial entre resolver $x^{2}-4=0$ y resolver $y\'=2y$?',
       opciones: [
-        'Que da la solución exacta más rápido',
-        'Que se puede construir aunque la ecuación no se sepa resolver',
-        'Que evita usar condiciones iniciales',
-        'Que solo funciona para ecuaciones lineales'
+        'La primera es más fácil de calcular',
+        'La segunda requiere calculadora',
+        'En la primera la incógnita es un número; en la segunda es una función',
+        'La segunda no tiene solución exacta'
       ],
-      correcta: 1,
-      pista: '¿Qué operación hace falta para dibujar el campo: integrar o evaluar?',
-      solucion: "Dibujar el campo solo exige <strong>evaluar</strong> $f(x,y)$, no integrarla. Por eso funciona con ecuaciones sin solución elemental, como $y'=\\operatorname{sen}(xy)$ de la Guía 1. La opción a) es falsa: el campo da información cualitativa, no valores exactos, y por eso los dos enfoques se complementan en vez de competir."
+      correcta: 2,
+      pista: 'Compara qué tipo de objeto es la respuesta en cada caso.',
+      solucion: "La primera pide números ($x=\\pm2$); la segunda pide una <strong>función</strong>, y de hecho una familia infinita ($y=Ce^{2x}$). Ese cambio en la naturaleza de la incógnita es lo que define a la asignatura. La opción d) es falsa: $y=Ce^{2x}$ es una solución exacta y cerrada."
     }
   ]
 });

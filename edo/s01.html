@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía 1 · Introducción a las EDO — Ecuaciones Diferenciales · UNIAJC</title>
+<title>Guía 1 · Repaso de prerrequisitos — Ecuaciones Diferenciales · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827b">
+<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
 </head>
 <body>
 
@@ -31,13 +31,12 @@ window.MathJax = {
 
 <nav id="guia-nav" aria-label="Secciones de la guía">
   <div class="guia-nav-inner">
-    <a href="#s1">1 · Por qué</a>
-    <a href="#s2">2 · La incógnita es una función</a>
-    <a href="#s3">3 · Clasificación</a>
-    <a href="#s4">4 · Qué es una solución</a>
-    <a href="#s5">5 · General y particular</a>
-    <a href="#s6">6 · Existencia y unicidad</a>
-    <a href="#s7">7 · Práctica final</a>
+    <a href="#s1">1 · Derivación</a>
+    <a href="#s2">2 · Integración</a>
+    <a href="#s3">3 · Exponenciales</a>
+    <a href="#s4">4 · Raíces y complejos</a>
+    <a href="#s5">5 · Derivadas parciales</a>
+    <a href="#s6">6 · Práctica final</a>
   </div>
 </nav>
 
@@ -45,373 +44,440 @@ window.MathJax = {
 
 <div class="hero">
   <div class="eyebrow">Guía de estudio 1 · Corte I</div>
-  <h2>Introducción a las ecuaciones diferenciales</h2>
-  <p>Ninguna ley de la naturaleza dice cuánto <em>vale</em> algo. Todas dicen cuán rápido
-     <em>cambia</em>. Por eso la física, la química, la biología, la economía y la ingeniería hablan
-     el mismo idioma, y ese idioma es el de esta asignatura.</p>
+  <h2>Repaso de prerrequisitos</h2>
+  <p>Cinco bloques de cursos anteriores que este semestre vas a usar constantemente. No los
+     repasamos «en general»: cada uno viene con la semana exacta que lo necesita y con el uso
+     concreto que le vas a dar.</p>
   <div class="chips">
-    <span class="chip">Zill · Cap. 1</span>
     <span class="chip">Semana 1</span>
+    <span class="chip">Prerrequisitos</span>
     <span class="chip">3 comprobaciones + práctica final</span>
   </div>
 </div>
 
-<div class="nota">
-  <strong>Cómo usar esta guía.</strong> Léela en orden. Después de los bloques 3, 4 y 6 hay una
-  comprobación de tres preguntas: resuélvela antes de seguir. Ninguna práctica tiene nota.
-</div>
+<section class="card">
+  <h3 class="card-title">Mapa del repaso</h3>
+  <p>Esta tabla es también un adelanto del semestre. Si algún bloque te resulta ajeno, esa es
+     justamente la semana en la que conviene llegar preparado:</p>
+  <table class="tbl">
+    <tr><th>Repasas…</th><th>Porque en la semana…</th><th>Lo usarás para…</th></tr>
+    <tr><td>Derivación: reglas, cadena, implícita</td><td>2 y 3</td><td>Verificar soluciones sustituyendo en la ecuación</td></tr>
+    <tr><td>Integración: sustitución, partes, <strong>fracciones parciales</strong></td><td>3, 4 y 13</td><td>Separar variables, factor integrante, invertir Laplace</td></tr>
+    <tr><td>Exponenciales y logaritmos</td><td>3 y 4</td><td>Despejar $y$ tras integrar $dy/y$</td></tr>
+    <tr><td>Raíces de polinomios y <strong>números complejos</strong></td><td>9</td><td>Resolver la ecuación auxiliar</td></tr>
+    <tr><td><strong>Derivadas parciales</strong></td><td>7</td><td>Comprobar si una EDO es exacta</td></tr>
+  </table>
 
+  <div class="callout-dark">
+    <h3>Qué es una ecuación diferencial, en una línea</h3>
+    <p>Para que el repaso tenga sentido, conviene saber a dónde apunta. Una <strong>ecuación
+       diferencial</strong> relaciona una función desconocida con sus derivadas, y resolverla
+       significa hallar la <em>función</em>, no un número.</p>
+    <p>Por ejemplo, $\dfrac{dy}{dx}=2y$ tiene por solución $y=Ce^{2x}$. Fíjate en lo que hizo falta:
+       <strong>integrar</strong> para deshacer la derivada, y <strong>exponenciar</strong> para
+       despejar $y$. Los bloques 2 y 3 de esta guía son exactamente esas dos herramientas.</p>
+    <p>La semana que viene empezamos en serio. Hoy afilamos las herramientas.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 1 ═══════════ -->
 <section class="card" id="s1">
-  <h3 class="card-title">1 · Por qué las leyes son ecuaciones diferenciales</h3>
+  <h3 class="card-title">1 · Derivación</h3>
 
-  <div class="callout-dark">
-    <h3>Lo que Newton entendió</h3>
-    <p>Cuando Newton escribió $F=ma$ no estaba escribiendo una fórmula: estaba escribiendo una
-       ecuación diferencial. Porque $a$ es la segunda derivada de la posición, y lo que la ley
-       afirma es
-       $$m\frac{d^2x}{dt^2}=F$$</p>
-    <p>La ley <strong>no dice dónde está el cuerpo</strong>. Dice cómo cambia su cambio. Para saber
-       dónde está hay que resolver la ecuación, y para eso Newton tuvo que inventar el cálculo.</p>
-    <p>Ese patrón se repite en todas las ciencias. Es más fácil observar y medir <em>tasas de
-       cambio</em> que estados absolutos, y por eso las leyes se descubren en forma diferencial.</p>
-  </div>
-
-  <div class="sub-title">1.1 El mismo patrón, cinco veces</div>
-  <table class="tbl">
-    <tr><th>Fenómeno</th><th>Lo que se observa</th><th>Ecuación</th></tr>
-    <tr><td>Población</td><td>Crece proporcionalmente a cuántos hay</td><td>$\dfrac{dP}{dt}=kP$</td></tr>
-    <tr><td>Enfriamiento</td><td>Se enfría según lo lejos que esté del ambiente</td><td>$\dfrac{dT}{dt}=k(T-T_a)$</td></tr>
-    <tr><td>Decaimiento radiactivo</td><td>Decae proporcionalmente a la masa presente</td><td>$\dfrac{dm}{dt}=-\lambda m$</td></tr>
-    <tr><td>Circuito RC</td><td>La corriente depende de la carga acumulada</td><td>$R\dfrac{dq}{dt}+\dfrac{q}{C}=V$</td></tr>
-    <tr><td>Mezclas</td><td>Entra y sale sal a distintas tasas</td><td>$\dfrac{dS}{dt}=e-s$</td></tr>
-  </table>
-  <p>Las cinco frases de la columna del medio son observaciones cotidianas que cualquiera puede
-     hacer. Las cinco ecuaciones de la derecha son su traducción literal. <strong>Modelar</strong>
-     es, en buena medida, hacer esa traducción.</p>
-</section>
-
-<section class="card" id="s2">
-  <h3 class="card-title">2 · El cambio de pregunta</h3>
-
-  <div class="callout-dark">
-    <h3>La incógnita ya no es un número</h3>
-    <p>En álgebra resolvías $x^2-4=0$ y la respuesta era $x=\pm 2$: <strong>números</strong>.</p>
-    <p>Aquí resuelves $\dfrac{dy}{dx}=2y$ y la respuesta es $y=Ce^{2x}$: una <strong>función</strong>.
-       Y no una, sino infinitas — una por cada valor de $C$.</p>
-    <p>Ese doble salto —de número a función, y de una respuesta a una familia infinita— es el
-       obstáculo conceptual de las primeras semanas. Vale la pena detenerse en él ahora.</p>
-  </div>
-
-  <div class="def">
-    Una <strong>ecuación diferencial</strong> es una ecuación que relaciona una función desconocida
-    con una o más de sus derivadas.
-  </div>
-
-  <div class="sub-title">2.1 Notación</div>
-  <p>Las tres notaciones siguientes dicen exactamente lo mismo, y las verás mezcladas en el curso y
-     en los libros:</p>
+  <div class="sub-title">1.1 Las reglas que no pueden fallar</div>
   <div class="formulas">
-    <div class="formula"><div class="lbl">Leibniz</div>$$\frac{dy}{dx}+2y=e^{x}$$</div>
-    <div class="formula"><div class="lbl">Lagrange (prima)</div>$$y'+2y=e^{x}$$</div>
-    <div class="formula"><div class="lbl">Con variable explícita</div>$$y'(x)+2y(x)=e^{x}$$</div>
+    <div class="formula"><div class="lbl">Potencia</div>$$(x^{n})'=nx^{n-1}$$</div>
+    <div class="formula"><div class="lbl">Producto</div>$$(fg)'=f'g+fg'$$</div>
+    <div class="formula"><div class="lbl">Cociente</div>$$\left(\frac{f}{g}\right)'=\frac{f'g-fg'}{g^{2}}$$</div>
+    <div class="formula"><div class="lbl">Cadena</div>$$\big(f(g(x))\big)'=f'(g(x))\,g'(x)$$</div>
+    <div class="formula"><div class="lbl">Exponencial</div>$$(e^{kx})'=k\,e^{kx}$$</div>
+    <div class="formula"><div class="lbl">Logaritmo</div>$$(\ln x)'=\frac{1}{x}$$</div>
+    <div class="formula"><div class="lbl">Seno y coseno</div>$$(\operatorname{sen}x)'=\cos x,\quad(\cos x)'=-\operatorname{sen}x$$</div>
   </div>
+
   <div class="nota">
-    <strong>Una advertencia de lectura.</strong> En $y'+2y=e^{x}$, la letra $y$ no es un número: es
-    la función $y(x)$. Escribir «$y$» a secas es una abreviatura cómoda, pero conviene leerla
-    mentalmente como $y(x)$ hasta que el hábito se asiente.
-  </div>
-</section>
-
-<section class="card" id="s3">
-  <h3 class="card-title">3 · Clasificación</h3>
-
-  <p>Toda EDO se clasifica por tres criterios independientes. Saber clasificar es lo que permite
-     elegir el método: cada tipo tiene el suyo, y aplicar el método equivocado es el error más
-     costoso del curso.</p>
-
-  <div class="sub-title">3.1 Tipo: ordinaria o parcial</div>
-  <div class="def">
-    Si la función desconocida depende de <strong>una sola</strong> variable independiente, la
-    ecuación es <em>ordinaria</em> (EDO) y aparecen derivadas $\dfrac{dy}{dx}$. Si depende de
-    varias, es <em>parcial</em> (EDP) y aparecen $\dfrac{\partial u}{\partial t}$.
-    <br><br>
-    Todo este curso trata de EDO.
-  </div>
-
-  <div class="sub-title">3.2 Orden</div>
-  <p>El <strong>orden</strong> es el de la derivada más alta que aparece. No importa la potencia a
-     la que esté elevada — solo cuál derivada es.</p>
-  <table class="tbl">
-    <tr><th>Ecuación</th><th>Orden</th><th>Por qué</th></tr>
-    <tr><td>$y'+3y=x$</td><td>1</td><td>La derivada más alta es $y'$</td></tr>
-    <tr><td>$y''+3y'+2y=0$</td><td>2</td><td>La derivada más alta es $y''$</td></tr>
-    <tr><td>$(y')^{5}+y=x$</td><td>1</td><td>El exponente 5 no cambia el orden</td></tr>
-    <tr><td>$y'''+(y'')^{2}=0$</td><td>3</td><td>La más alta es $y'''$, aunque no esté elevada</td></tr>
-  </table>
-
-  <div class="sub-title">3.3 Linealidad</div>
-  <div class="def">
-    Una EDO de orden $n$ es <strong>lineal</strong> si puede escribirse como
-    $$a_n(x)y^{(n)}+a_{n-1}(x)y^{(n-1)}+\cdots+a_1(x)y'+a_0(x)y=g(x)$$
-    Es decir, si se cumplen las tres condiciones:
-    <br><br>
-    <strong>1.</strong> $y$ y todas sus derivadas aparecen a la <em>primera</em> potencia.<br>
-    <strong>2.</strong> No hay productos entre $y$ y sus derivadas (ni $y\cdot y'$, ni $(y')^2$).<br>
-    <strong>3.</strong> $y$ no aparece dentro de funciones como $\operatorname{sen}$, $\ln$ o exponenciales.
-  </div>
-
-  <div class="callout-dark">
-    <h3>La trampa que atrapa a todo el mundo</h3>
-    <p>Las tres condiciones se refieren <strong>únicamente a $y$ y sus derivadas</strong>. Los
-       coeficientes $a_i(x)$ y el término independiente $g(x)$ pueden ser tan salvajes como quieran.</p>
-    <p>Por eso $\;y'+x^{3}y=e^{x^{2}}\;$ <strong>sí es lineal</strong>, por raro que se vea:
-       el coeficiente $x^3$ y el término $e^{x^2}$ dependen de $x$, no de $y$.</p>
-    <p>En cambio $\;y'+y^{2}=x\;$ <strong>no lo es</strong>, porque $y$ está al cuadrado. Y tampoco
-       $\;y'+\operatorname{sen}(y)=0$, porque $y$ está dentro del seno.</p>
-    <p>La pregunta correcta no es «¿se ve complicada?», sino <em>«¿qué le está pasando a la $y$?»</em>.</p>
+    <strong>La regla que más se usará este semestre es $(e^{kx})'=k\,e^{kx}$.</strong> Casi todas las
+    soluciones del curso son exponenciales, y verificarlas consiste en aplicar esa regla y comprobar
+    que la ecuación se cierra. Si la tienes automatizada, media asignatura se vuelve mecánica.
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 1 · Clasificar cuatro ecuaciones</h4>
+    <h4>Ejemplo 1 · Para qué sirve derivar aquí</h4>
     <div class="ejemplo-body">
-      <table class="tbl" style="margin:.3rem 0">
-        <tr><th>Ecuación</th><th>Orden</th><th>¿Lineal?</th><th>Motivo</th></tr>
-        <tr><td>$y''-5y'+6y=\operatorname{sen}x$</td><td>2</td><td>Sí</td><td>Todo a la primera potencia; el seno actúa sobre $x$</td></tr>
-        <tr><td>$y'+x^{3}y=e^{x^{2}}$</td><td>1</td><td>Sí</td><td>Coeficiente y término independiente dependen solo de $x$</td></tr>
-        <tr><td>$yy'+x=0$</td><td>1</td><td>No</td><td>Hay un producto $y\cdot y'$</td></tr>
-        <tr><td>$y''+\operatorname{sen}(y)=0$</td><td>2</td><td>No</td><td>$y$ aparece dentro del seno</td></tr>
-      </table>
-      <div class="paso"><div class="paso-t">Un comentario sobre la última</div>
-        $y''+\operatorname{sen}(y)=0$ es la ecuación exacta del péndulo. Es no lineal y no tiene
-        solución elemental. Por eso en física se estudia el péndulo <em>de ángulos pequeños</em>:
-        para $y$ pequeño se aproxima $\operatorname{sen}(y)\approx y$, y la ecuación se vuelve
-        $y''+y=0$, lineal y resoluble. Linealizar es la maniobra más común de la ingeniería aplicada.
+      Comprueba que $y=e^{-3x}$ resuelve $y'+3y=0$.
+      <div class="paso"><div class="paso-t">Derivar (regla de la cadena)</div>
+        $y'=-3e^{-3x}$
+      </div>
+      <div class="paso"><div class="paso-t">Sustituir</div>
+        $y'+3y=-3e^{-3x}+3e^{-3x}=0$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Lo que acabas de hacer</div>
+        Verificar una solución por sustitución. Es lo que harás en la <strong>semana 2</strong>,
+        y lo notable es que funciona <em>aunque no sepas resolver</em> la ecuación: derivar es
+        mecánico, resolver no.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">1.2 Derivación implícita</div>
+  <p>Cuando la relación entre $x$ e $y$ no está despejada, se deriva todo respecto de $x$
+     recordando que <strong>$y$ es función de $x$</strong>, así que cada $y$ que se derive arrastra
+     un factor $\dfrac{dy}{dx}$ por la regla de la cadena.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Una circunferencia derivada implícitamente</h4>
+    <div class="ejemplo-body">
+      Halla $\dfrac{dy}{dx}$ si $x^{2}+y^{2}=25$.
+      <div class="paso"><div class="paso-t">Derivar término a término</div>
+        $2x+2y\dfrac{dy}{dx}=0$<br>
+        El segundo término lleva $\dfrac{dy}{dx}$ porque $y^{2}$ es una composición: derivada de la
+        externa ($2y$) por derivada de la interna ($y'$).
+      </div>
+      <div class="paso"><div class="paso-t">Despejar</div>
+        $\dfrac{dy}{dx}=-\dfrac{x}{y}$
+      </div>
+      <div class="paso"><div class="paso-t">Adelanto</div>
+        Acabas de obtener una <strong>ecuación diferencial</strong> a partir de una familia de
+        curvas. En la semana 3 recorrerás el camino inverso: partir de $\dfrac{dy}{dx}=-\dfrac{x}{y}$
+        y llegar a $x^{2}+y^{2}=C$.
       </div>
     </div>
   </div>
 </section>
 
+<!-- ═══════════ 2 ═══════════ -->
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Integración</h3>
+
+  <p>Este es el bloque más importante del repaso. <strong>Resolver una EDO casi siempre termina en
+     una integral</strong>, y si esa integral se atasca, el problema se atasca — aunque el método
+     diferencial esté bien aplicado.</p>
+
+  <div class="sub-title">2.1 Primitivas inmediatas</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Potencia</div>$$\int x^{n}dx=\frac{x^{n+1}}{n+1}+C,\;n\neq-1$$</div>
+    <div class="formula"><div class="lbl">Caso $n=-1$</div>$$\int\frac{dx}{x}=\ln|x|+C$$</div>
+    <div class="formula"><div class="lbl">Exponencial</div>$$\int e^{ax}dx=\frac{e^{ax}}{a}+C$$</div>
+    <div class="formula"><div class="lbl">Trigonométricas</div>$$\int\operatorname{sen}x\,dx=-\cos x+C$$</div>
+  </div>
+
+  <div class="sub-title">2.2 Las tres técnicas</div>
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Sustitución</h4>
+    <div class="ejemplo-body">
+      $\displaystyle\int 2x\,e^{x^{2}}dx$
+      <div class="paso"><div class="paso-t">Elegir $u$</div>
+        $u=x^{2}$, luego $du=2x\,dx$. El $2x$ que sobra es justamente el $du$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar y volver</div>
+        $\displaystyle\int e^{u}du=e^{u}+C=e^{x^{2}}+C$
+      </div>
+      <div class="paso"><div class="paso-t">Dónde aparecerá</div>
+        En la semana 3, al separar variables, casi todas las integrales salen por sustitución.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Por partes</h4>
+    <div class="ejemplo-body">
+      $\displaystyle\int x\,e^{x}dx$, con $\;\int u\,dv=uv-\int v\,du$.
+      <div class="paso"><div class="paso-t">Elegir</div>
+        $u=x$ (se simplifica al derivar) y $dv=e^{x}dx$ (se integra fácil).<br>
+        Entonces $du=dx$ y $v=e^{x}$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar</div>
+        $\displaystyle\int xe^{x}dx=xe^{x}-\int e^{x}dx=xe^{x}-e^{x}+C$
+      </div>
+      <div class="paso"><div class="paso-t">Dónde aparecerá</div>
+        En la semana 4, al aplicar el factor integrante: integrales como
+        $\displaystyle\int xe^{x}dx$ salen constantemente.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.3 Fracciones parciales</div>
+  <div class="callout-dark">
+    <h3>La técnica que más se echa de menos</h3>
+    <p>De las tres, esta es la que suele estar más oxidada, y sin embargo aparece en dos momentos
+       clave del curso: al resolver el <strong>modelo logístico</strong> (semana 12) y al calcular
+       <strong>transformadas inversas de Laplace</strong> (semana 13).</p>
+    <p>La idea es descomponer una fracción con denominador factorizable en una suma de fracciones
+       simples, cada una con un solo factor abajo. Así una integral imposible se vuelve una suma de
+       logaritmos.</p>
+  </div>
+
+  <div class="def">
+    Para cada factor lineal distinto $(x-a)$ del denominador, la descomposición aporta un término
+    $\dfrac{A}{x-a}$. Las constantes se hallan con el <strong>método de cubrir</strong>:
+    multiplica ambos lados por $(x-a)$ y evalúa en $x=a$; todos los demás términos se anulan.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Una integral que sin esto no sale</h4>
+    <div class="ejemplo-body">
+      $\displaystyle\int\frac{dx}{x^{2}-4}$
+      <div class="paso"><div class="paso-t">Factorizar y plantear</div>
+        $\dfrac{1}{(x-2)(x+2)}=\dfrac{A}{x-2}+\dfrac{B}{x+2}$
+      </div>
+      <div class="paso"><div class="paso-t">Método de cubrir</div>
+        Multiplicando por $(x-2)$ y evaluando en $x=2$: &nbsp;$A=\dfrac{1}{2+2}=\dfrac14$<br>
+        Multiplicando por $(x+2)$ y evaluando en $x=-2$: &nbsp;$B=\dfrac{1}{-2-2}=-\dfrac14$
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $$\int\frac{dx}{x^{2}-4}=\frac14\ln|x-2|-\frac14\ln|x+2|+C
+          =\frac14\ln\left|\frac{x-2}{x+2}\right|+C$$
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.4 Explora el método de cubrir</div>
+  <div class="viz" data-viz="fracciones">
+    <div class="viz-controls">
+      <label for="fr-c">Fracción</label>
+      <select id="fr-c">
+        <option value="a">1/(x² − 4)</option>
+        <option value="b">1/(x(x−3)) &nbsp;— la del modelo logístico</option>
+        <option value="c">(3x+5)/(x² − x − 2)</option>
+        <option value="d">(s+7)/(s² − s − 6) &nbsp;— la de Laplace</option>
+      </select>
+      <label for="fr-p">Avanzar</label>
+      <input id="fr-p" class="paso" type="range" min="1" max="4" value="1">
+      <span class="paso-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="pasos" style="margin-bottom:.8rem"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Al llegar al paso 4, el lector comprueba numéricamente que la descomposición y la fracción
+    original coinciden. Prueba la opción de Laplace: cada término dará una exponencial al invertir.
+  </p>
+</section>
+
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 1 — Clasificación</h3>
+  <h3 class="card-title">✓ Comprobación 1 — Derivación e integración</h3>
   <div id="chk1"></div>
 </div>
 
-<section class="card" id="s4">
-  <h3 class="card-title">4 · Qué es una solución</h3>
+<!-- ═══════════ 3 ═══════════ -->
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Exponenciales y logaritmos</h3>
 
-  <div class="def">
-    Una función $\phi$ es <strong>solución</strong> de una EDO en un intervalo $I$ si está definida
-    y es suficientemente derivable en $I$, y al sustituirla en la ecuación la convierte en una
-    identidad válida para todo $x\in I$.
-  </div>
-
-  <div class="sub-title">4.1 Verificar es siempre posible</div>
-  <p>Este es el mejor hábito que puedes adquirir en la primera semana. Resolver una EDO puede ser
-     difícil o imposible; <strong>verificar</strong> una solución candidata es siempre mecánico:
-     derivas, sustituyes y miras si la ecuación se cierra.</p>
-  <ol>
-    <li>Escribe el candidato $y$.</li>
-    <li>Calcula las derivadas que la ecuación necesite.</li>
-    <li>Sustituye todo en la ecuación.</li>
-    <li>Simplifica. Si queda $0=0$, es solución. Si queda cualquier otra cosa, no lo es.</li>
-  </ol>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 2 · Dos candidatos, un solo acierto</h4>
-    <div class="ejemplo-body">
-      ¿Cuál de $\;y=e^{2x}\;$ y $\;y=x^{2}\;$ resuelve $\;y'-2y=0$?
-      <div class="paso"><div class="paso-t">Candidato $y=e^{2x}$</div>
-        $y'=2e^{2x}$, y entonces $y'-2y=2e^{2x}-2e^{2x}=0$ ✓ <strong>Es solución.</strong>
-      </div>
-      <div class="paso"><div class="paso-t">Candidato $y=x^{2}$</div>
-        $y'=2x$, y entonces $y'-2y=2x-2x^{2}=2x(1-x)$.<br>
-        Eso no es cero salvo en $x=0$ y $x=1$. <strong>No es solución</strong>, porque una solución
-        debe cumplir la ecuación en todo un intervalo, no en puntos sueltos.
-      </div>
-    </div>
-  </div>
-
-  <div class="sub-title">4.2 Explícitas, implícitas y el intervalo</div>
-  <p>Una solución <strong>explícita</strong> viene despejada, $y=\phi(x)$. Una
-     <strong>implícita</strong> se da como una relación $G(x,y)=0$ de la que no siempre se puede
-     despejar.</p>
-  <div class="ejemplo">
-    <h4>Ejemplo 3 · Una solución implícita y su intervalo</h4>
-    <div class="ejemplo-body">
-      Comprueba que $x^{2}+y^{2}=25$ define soluciones de $\;\dfrac{dy}{dx}=-\dfrac{x}{y}$.
-      <div class="paso"><div class="paso-t">Derivar implícitamente</div>
-        $2x+2y\dfrac{dy}{dx}=0 \Rightarrow \dfrac{dy}{dx}=-\dfrac{x}{y}$ ✓
-      </div>
-      <div class="paso"><div class="paso-t">Pero la circunferencia no es una función</div>
-        $x^2+y^2=25$ no pasa la prueba de la recta vertical. Hay que quedarse con una rama:
-        $y=\sqrt{25-x^{2}}$ (superior) o $y=-\sqrt{25-x^{2}}$ (inferior), cada una en $(-5,5)$.
-      </div>
-      <div class="paso"><div class="paso-t">Por qué el intervalo importa</div>
-        En $x=\pm 5$ se tiene $y=0$, y ahí $-x/y$ no está definido: la ecuación misma se rompe.
-        Por eso el intervalo es <strong>abierto</strong>. Toda solución viene con su intervalo, y
-        omitirlo es una respuesta incompleta.
-      </div>
-    </div>
-  </div>
-
-  <div class="sub-title">4.3 Explora la verificación</div>
-  <div class="viz" data-viz="verificar">
-    <div class="viz-controls">
-      <label for="vf-c">Caso</label>
-      <select id="vf-c">
-        <option value="v1">y' − 2y = 0 &nbsp;con&nbsp; y = e^(2x)</option>
-        <option value="v2">y' − 2y = 0 &nbsp;con&nbsp; y = x²</option>
-        <option value="v3">y'' + y = 0 &nbsp;con&nbsp; y = sen x</option>
-        <option value="v4">y'' + y = 0 &nbsp;con&nbsp; y = eˣ</option>
-        <option value="v5">x·y' + y = 0 &nbsp;con&nbsp; y = 1/x</option>
-        <option value="v6">y' − y/x = 0 &nbsp;con&nbsp; y = 3x</option>
-      </select>
-    </div>
-    <div class="pasos" style="margin-bottom:.8rem"></div>
-    <canvas></canvas>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    La curva es el <em>residuo</em>: lo que queda al pasar todo a un lado de la ecuación. Si el
-    candidato es solución, el residuo se pega al eje horizontal en todo el intervalo. Si no lo es,
-    se despega — y observa que en el caso $y=x^2$ toca el cero en dos puntos aislados sin ser
-    solución, que es justo lo que discutimos en el Ejemplo 2.
-  </p>
-</section>
-
-<div class="card">
-  <h3 class="card-title">✓ Comprobación 2 — Soluciones</h3>
-  <div id="chk2"></div>
-</div>
-
-<section class="card" id="s5">
-  <h3 class="card-title">5 · Solución general y solución particular</h3>
-
-  <div class="def">
-    La <strong>solución general</strong> de una EDO de orden $n$ contiene $n$ constantes arbitrarias
-    y describe una familia de funciones.
-    <br><br>
-    Una <strong>solución particular</strong> se obtiene al fijar esas constantes mediante
-    condiciones adicionales.
-    <br><br>
-    El conjunto
-    $$\left\{\;\frac{dy}{dx}=f(x,y),\qquad y(x_0)=y_0\;\right\}$$
-    se llama <strong>problema de valor inicial</strong> (PVI).
-  </div>
-
-  <p>La razón de que aparezcan constantes es transparente: resolver una EDO implica integrar, y cada
-     integración introduce una constante. Una EDO de orden 2 exige integrar dos veces, y por eso
-     necesita <em>dos</em> condiciones para quedar determinada.</p>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 4 · De la familia a una sola curva</h4>
-    <div class="ejemplo-body">
-      Resuelve $\dfrac{dy}{dx}=2x$ y luego impón $y(1)=5$.
-      <div class="paso"><div class="paso-t">Solución general</div>
-        $y=\displaystyle\int 2x\,dx=x^{2}+C$. Es una familia de parábolas idénticas, desplazadas
-        verticalmente: una por cada valor de $C$.
-      </div>
-      <div class="paso"><div class="paso-t">Aplicar la condición</div>
-        $y(1)=1+C=5 \Rightarrow C=4$, luego $y=x^{2}+4$.
-      </div>
-      <div class="paso"><div class="paso-t">Interpretación geométrica</div>
-        La condición inicial dice «la curva debe pasar por el punto $(1,5)$». Como por cada punto
-        del plano pasa exactamente una parábola de la familia, esa condición selecciona una y
-        descarta las demás.
-      </div>
-    </div>
-  </div>
-
-  <div class="sub-title">5.1 Explora: infinitas soluciones y cómo elegir una</div>
-  <div class="viz" data-viz="familia">
-    <div class="viz-controls">
-      <label for="fa-e">Ecuación</label>
-      <select id="fa-e">
-        <option value="exp">y′ = y &nbsp;→&nbsp; y = C·eˣ</option>
-        <option value="cuad">y′ = 2x &nbsp;→&nbsp; y = x² + C</option>
-        <option value="dec">y′ = −y &nbsp;→&nbsp; y = C·e⁻ˣ</option>
-        <option value="recta">y′ = y/x &nbsp;→&nbsp; y = C·x</option>
-      </select>
-    </div>
-    <canvas></canvas>
-    <div class="viz-readout"></div>
-  </div>
-  <p style="font-size:.86rem;color:var(--muted)">
-    Haz clic en varios puntos del plano y observa que cada uno selecciona una curva distinta de la
-    misma familia. Ninguna de las curvas grises es «la» solución: todas lo son. Lo que las separa es
-    únicamente la condición inicial.
-  </p>
-  <div class="nota">
-    <strong>Prueba esto:</strong> elige $y'=y/x$ y haz clic en dos puntos con la misma abscisa pero
-    distinta ordenada. Luego intenta hacer clic sobre el eje $y$ (donde $x=0$): ahí no se puede
-    determinar $C$, porque todas las rectas de la familia pasan por el origen. Es un primer aviso de
-    que <em>no siempre</em> una condición inicial selecciona una única solución — que es exactamente
-    el tema de la sección siguiente.
-  </div>
-</section>
-
-<section class="card" id="s6">
-  <h3 class="card-title">6 · ¿Siempre hay solución, y es única?</h3>
-
-  <p>Las dos preguntas son legítimas y no tienen respuesta obvia. Antes de invertir horas resolviendo
-     un problema conviene saber si tiene solución y si es la única.</p>
-
-  <div class="def">
-    <strong>Teorema de existencia y unicidad (Picard–Lindelöf).</strong> Considera el problema de
-    valor inicial
-    $$\frac{dy}{dx}=f(x,y),\qquad y(x_0)=y_0$$
-    Si $f$ y $\dfrac{\partial f}{\partial y}$ son continuas en un rectángulo del plano que contenga
-    al punto $(x_0,y_0)$, entonces existe un intervalo alrededor de $x_0$ en el cual el problema
-    tiene <strong>una única</strong> solución.
-  </div>
-
-  <div class="nota">
-    <strong>Léelo con precisión.</strong> El teorema da una condición <em>suficiente</em>, no
-    necesaria: si se cumple, hay unicidad garantizada. Si no se cumple, el teorema simplemente no
-    dice nada — puede haber una solución, ninguna o infinitas. Y la garantía es
-    <strong>local</strong>: vale en algún intervalo alrededor de $x_0$, no necesariamente en todo
-    el eje real.
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Producto</div>$$e^{a+b}=e^{a}e^{b}$$</div>
+    <div class="formula"><div class="lbl">Inversas</div>$$e^{\ln u}=u,\qquad \ln(e^{u})=u$$</div>
+    <div class="formula"><div class="lbl">Logaritmo de producto</div>$$\ln(ab)=\ln a+\ln b$$</div>
+    <div class="formula"><div class="lbl">Exponente</div>$$\ln(a^{n})=n\ln a$$</div>
   </div>
 
   <div class="callout-dark">
-    <h3>Un problema con infinitas soluciones</h3>
-    <p>Considera $\;\dfrac{dy}{dx}=y^{2/3}\;$ con $\;y(0)=0$.</p>
-    <p>La función constante $y\equiv 0$ es solución: su derivada es $0$ y $0^{2/3}=0$ ✓</p>
-    <p>Pero $\;y=\dfrac{x^{3}}{27}\;$ <em>también</em> lo es:
-       $y'=\dfrac{x^{2}}{9}$, y $\left(\dfrac{x^{3}}{27}\right)^{2/3}=\dfrac{x^{2}}{9}$ ✓
-       — y además $y(0)=0$.</p>
-    <p>Y hay infinitas más: para cualquier $c\geq 0$, la función que vale $0$ hasta $x=c$ y luego
-       $\left(\dfrac{x-c}{3}\right)^{3}$ también resuelve el problema.</p>
-    <p><strong>¿Por qué falla la unicidad?</strong> Porque
-       $\dfrac{\partial f}{\partial y}=\dfrac{2}{3}y^{-1/3}$ no está acotada cuando $y$ tiende a $0$:
-       justo en el punto de la condición inicial. La hipótesis del teorema no se cumple, y en efecto
-       la unicidad se pierde.</p>
-    <p>Que exista un caso donde falla es lo que le da contenido al teorema. Si la unicidad fuera
-       automática, no haría falta enunciarlo.</p>
+    <h3>El paso que aparecerá cien veces este semestre</h3>
+    <p>Al separar variables casi siempre se llega a algo de la forma $\ln|y|=kt+C_1$, y hay que
+       despejar $y$. El movimiento es:</p>
+    <p>$$\ln|y|=kt+C_1 \;\Longrightarrow\; |y|=e^{kt+C_1}=e^{C_1}e^{kt}
+       \;\Longrightarrow\; y=Ce^{kt}$$</p>
+    <p>Dos detalles que conviene entender ahora y no discutir cada semana. Primero, $e^{C_1}$ es una
+       constante positiva cualquiera, y al absorber también el signo del valor absoluto, la nueva
+       constante $C$ puede ser <strong>positiva o negativa</strong>. Segundo, permitir además $C=0$
+       recupera la solución constante $y\equiv0$, que se había excluido al dividir entre $y$.</p>
+    <p>Por eso se escribe directamente $y=Ce^{kt}$ sin arrastrar valores absolutos.</p>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 5 · Aplicar el teorema antes de resolver</h4>
+    <h4>Ejemplo 6 · Despejar el tiempo</h4>
     <div class="ejemplo-body">
-      ¿Garantiza el teorema solución única para $\;y'=\dfrac{y}{x}\;$ con (a) $y(1)=2$ y (b) $y(0)=0$?
-      <div class="paso"><div class="paso-t">Identificar $f$ y su derivada parcial</div>
-        $f(x,y)=\dfrac{y}{x}$ &nbsp;·&nbsp; $\dfrac{\partial f}{\partial y}=\dfrac{1}{x}$
+      Si $y=y_0e^{-3t}$, ¿cuándo se reduce a la mitad?
+      <div class="paso"><div class="paso-t">Plantear</div>
+        $y_0e^{-3t}=\dfrac{y_0}{2}$. La cantidad inicial <strong>se cancela</strong>:
+        $e^{-3t}=\dfrac12$
       </div>
-      <div class="paso"><div class="paso-t">(a) En $(1,2)$</div>
-        Ambas son continuas en cualquier rectángulo que no toque $x=0$. El punto $(1,2)$ admite uno,
-        así que <strong>sí</strong> hay solución única: $y=2x$.
+      <div class="paso"><div class="paso-t">Tomar logaritmo</div>
+        $-3t=\ln\dfrac12=-\ln 2 \;\Longrightarrow\; t=\dfrac{\ln 2}{3}\approx0{,}231$
       </div>
-      <div class="paso"><div class="paso-t">(b) En $(0,0)$</div>
-        Ni $f$ ni $\partial f/\partial y$ están definidas en $x=0$. El teorema
-        <strong>no aplica</strong>. Y de hecho falla la unicidad: <em>toda</em> recta $y=Cx$ pasa por
-        el origen y resuelve la ecuación. Es lo que viste en el visualizador de §5.1.
+      <div class="paso"><div class="paso-t">Adelanto</div>
+        Esta es la fórmula de la <em>semivida</em>, y la usarás en la semana 4 con poblaciones,
+        fármacos y datación por carbono-14. Que $y_0$ se cancele es lo que hace que la semivida sea
+        una propiedad del material, no de la muestra.
       </div>
     </div>
   </div>
 </section>
 
+<!-- ═══════════ 4 ═══════════ -->
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Raíces de polinomios y números complejos</h3>
+
+  <div class="nota">
+    <strong>Por qué esto está aquí.</strong> En la semana 9 resolverás ecuaciones como
+    $y''+2y'+5y=0$ proponiendo $y=e^{rx}$. Al sustituir queda $r^{2}+2r+5=0$: una ecuación
+    algebraica de segundo grado. Toda la EDO se reduce a hallar esas raíces — y a saber qué hacer
+    cuando salen complejas.
+  </div>
+
+  <div class="sub-title">4.1 La fórmula y su discriminante</div>
+  <div class="def">
+    Para $ar^{2}+br+c=0$:
+    $$r=\frac{-b\pm\sqrt{b^{2}-4ac}}{2a},\qquad \Delta=b^{2}-4ac$$
+    <table class="tbl" style="margin-top:.6rem">
+      <tr><th>Si…</th><th>Las raíces son</th><th>La solución de la EDO será</th></tr>
+      <tr><td>$\Delta \gt 0$</td><td>Dos reales distintas</td><td>Suma de exponenciales</td></tr>
+      <tr><td>$\Delta = 0$</td><td>Una real doble</td><td>Exponencial y su producto por $x$</td></tr>
+      <tr><td>$\Delta \lt 0$</td><td>Dos complejas conjugadas</td><td>Oscilación: senos y cosenos</td></tr>
+    </table>
+  </div>
+
+  <div class="sub-title">4.2 Números complejos, lo mínimo</div>
+  <div class="def">
+    $i^{2}=-1$. Un complejo es $z=a+bi$, con <em>parte real</em> $a$ y <em>parte imaginaria</em> $b$,
+    y se dibuja como el punto $(a,b)$ del plano.
+    <br><br>
+    Si un polinomio con coeficientes reales tiene una raíz compleja $a+bi$, entonces
+    <strong>$a-bi$ también es raíz</strong>: vienen siempre en pares conjugados.
+  </div>
+
+  <div class="callout-dark">
+    <h3>De dónde salen los senos</h3>
+    <p>La conexión entre exponenciales complejas y funciones trigonométricas es la
+       <strong>fórmula de Euler</strong>:</p>
+    <p>$$e^{i\theta}=\cos\theta+i\operatorname{sen}\theta$$</p>
+    <p>Por eso, cuando la ecuación auxiliar da raíces $r=\alpha\pm\beta i$, la solución
+       $e^{rx}$ se traduce en $e^{\alpha x}(C_1\cos\beta x+C_2\operatorname{sen}\beta x)$: una
+       oscilación de frecuencia $\beta$ cuya amplitud crece o decae según el signo de $\alpha$.</p>
+    <p>Ese es el modelo de un resorte amortiguado y el de un circuito RLC. Sin números complejos, la
+       semana 9 no tendría de dónde sacar las oscilaciones.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · Tres casos, tres comportamientos</h4>
+    <div class="ejemplo-body">
+      <table class="tbl" style="margin:.3rem 0">
+        <tr><th>Ecuación auxiliar</th><th>$\Delta$</th><th>Raíces</th><th>Solución</th></tr>
+        <tr><td>$r^{2}-5r+6=0$</td><td>$1 \gt 0$</td><td>$2$ y $3$</td><td>$C_1e^{2x}+C_2e^{3x}$</td></tr>
+        <tr><td>$r^{2}-4r+4=0$</td><td>$0$</td><td>$2$ doble</td><td>$C_1e^{2x}+C_2xe^{2x}$</td></tr>
+        <tr><td>$r^{2}+2r+5=0$</td><td>$-16 \lt 0$</td><td>$-1\pm2i$</td><td>$e^{-x}(C_1\cos 2x+C_2\operatorname{sen}2x)$</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Comprobación del tercer caso</div>
+        Con $y=e^{-x}\cos 2x$ se verifica que $y''+2y'+5y=0$. Ese cálculo lo harás en la semana 9;
+        hoy basta con que sepas hallar las raíces $-1\pm2i$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.3 Explora las raíces en el plano complejo</div>
+  <div class="viz" data-viz="raices">
+    <div class="viz-controls">
+      <label for="rc-e">Ecuación auxiliar</label>
+      <select id="rc-e">
+        <option value="reales">r² − 5r + 6 = 0</option>
+        <option value="negat">r² + 3r + 2 = 0</option>
+        <option value="doble">r² − 4r + 4 = 0</option>
+        <option value="compl">r² + 4 = 0</option>
+        <option value="complam">r² + 2r + 5 = 0</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Observa que las raíces complejas aparecen siempre <strong>simétricas respecto del eje real</strong>:
+    eso es la conjugación. Y compara «r² + 4 = 0» con «r² + 2r + 5 = 0»: las primeras están sobre el
+    eje imaginario y dan oscilación pura; las segundas se corren a la izquierda y la oscilación se
+    amortigua.
+  </p>
+</section>
+
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 3 — Familias y unicidad</h3>
+  <h3 class="card-title">✓ Comprobación 2 — Exponenciales, raíces y complejos</h3>
+  <div id="chk2"></div>
+</div>
+
+<!-- ═══════════ 5 ═══════════ -->
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Derivadas parciales</h3>
+
+  <div class="nota">
+    <strong>Por qué esto está aquí.</strong> En la semana 7 verás las <em>EDO exactas</em>, y el
+    criterio para reconocerlas es una igualdad entre derivadas parciales. Muchos estudiantes llegan
+    a ese tema sin haber usado nunca una parcial, y el método se vuelve incomprensible por una razón
+    que no tiene nada que ver con las ecuaciones diferenciales.
+  </div>
+
+  <div class="def">
+    Si $z=f(x,y)$ depende de dos variables, la <strong>derivada parcial respecto de $x$</strong> se
+    obtiene derivando como siempre pero <strong>tratando $y$ como una constante</strong>:
+    $$\frac{\partial f}{\partial x}=\lim_{h\to0}\frac{f(x+h,y)-f(x,y)}{h}$$
+    Y análogamente $\dfrac{\partial f}{\partial y}$, congelando $x$.
+  </div>
+
+  <p>No hay reglas nuevas: son las mismas de Cálculo I. Lo único que cambia es <em>qué letra se
+     considera variable</em> mientras derivas.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 8 · Dos parciales de la misma función</h4>
+    <div class="ejemplo-body">
+      Sea $f(x,y)=x^{2}y+3y^{2}$.
+      <div class="paso"><div class="paso-t">Respecto de $x$ (con $y$ constante)</div>
+        El factor $y$ es un número: $\dfrac{\partial f}{\partial x}=2xy$.<br>
+        Y $3y^{2}$ es constante, así que su derivada es <strong>cero</strong>.
+      </div>
+      <div class="paso"><div class="paso-t">Respecto de $y$ (con $x$ constante)</div>
+        Ahora $x^{2}$ es un número: $\dfrac{\partial f}{\partial y}=x^{2}+6y$.
+      </div>
+      <div class="paso"><div class="paso-t">El error típico</div>
+        Olvidar que un término sin la variable de derivación se anula. En
+        $\dfrac{\partial f}{\partial x}$, el término $3y^{2}$ desaparece por completo.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Interpretación geométrica</div>
+  <p>La gráfica de $z=f(x,y)$ es una <strong>superficie</strong>. Fijar $y=b$ equivale a cortarla con
+     un plano vertical, y ese corte es una curva ordinaria. La parcial $\dfrac{\partial f}{\partial x}$
+     es simplemente <strong>la pendiente de esa curva</strong>.</p>
+
+  <div class="viz" data-viz="parciales">
+    <div class="viz-controls">
+      <label for="pc-f">Superficie</label>
+      <select id="pc-f">
+        <option value="silla">z = (x² − y²)/2 &nbsp;silla</option>
+        <option value="parab">z = (x² + y²)/2 &nbsp;paraboloide</option>
+        <option value="prod">z = xy/1,5</option>
+        <option value="plano">z = 0,6x + 0,4y &nbsp;plano</option>
+      </select>
+      <label for="pc-g">Girar la escena</label>
+      <input id="pc-g" class="giro" type="range" min="0" max="628" value="90">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="pc-x">Mover el punto</label>
+      <input id="pc-x" class="px" type="range" min="-90" max="90" value="50">
+      <input id="pc-y" class="py" type="range" min="-90" max="90" value="-50">
+      <span class="pt-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La curva <span style="color:#c68f2e"><strong>dorada</strong></span> es el corte con $y$ fijo y su
+    pendiente es $\partial z/\partial x$; la <span style="color:#b0392c"><strong>roja</strong></span>
+    es el corte con $x$ fijo. Gira la escena para ver que son dos direcciones perpendiculares sobre
+    la misma superficie. En el plano, ambas pendientes son constantes: por eso las parciales no
+    dependen del punto.
+  </p>
+
+  <div class="sub-title">5.2 A qué se va a usar exactamente</div>
+  <div class="callout-dark">
+    <h3>El criterio de exactitud</h3>
+    <p>Una ecuación escrita en la forma $M(x,y)\,dx+N(x,y)\,dy=0$ es <strong>exacta</strong> si
+       $$\frac{\partial M}{\partial y}=\frac{\partial N}{\partial x}$$</p>
+    <p>Comprueba con $M=2xy$ y $N=x^{2}-1$: se tiene $\dfrac{\partial M}{\partial y}=2x$ y
+       $\dfrac{\partial N}{\partial x}=2x$. Coinciden, así que la ecuación
+       $2xy\,dx+(x^{2}-1)\,dy=0$ es exacta.</p>
+    <p>En cambio con $M=x+y$ y $N=xy$ sale $1$ frente a $y$: no coinciden y la ecuación no es exacta.</p>
+    <p>Eso es todo lo que necesitas de parciales para la semana 7. Dos derivadas y una comparación.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Derivadas parciales</h3>
   <div id="chk3"></div>
 </div>
 
@@ -422,30 +488,29 @@ window.MathJax = {
     <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      El crecimiento de un mercado con saturación se modela como
-      $\dfrac{dS}{dt}=kS\!\left(1-\dfrac{S}{M}\right)$: no es lineal, porque $S$ aparece al
-      cuadrado al distribuir. Esa no linealidad es justo lo que hace que la curva se aplane en el
-      techo $M$ en vez de crecer sin límite.</div>
+      El interés compuesto continuo $A=A_0e^{rt}$ sale de resolver $dA/dt=rA$, y despejar el tiempo
+      exige logaritmos. Las fracciones parciales aparecerán al modelar mercados con saturación, donde
+      la integral $\int\frac{dP}{P(M-P)}$ es inevitable.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      El interés compuesto continuo es $\dfrac{dA}{dt}=rA$, una EDO lineal de primer orden cuya
-      solución $A=A_0e^{rt}$ ya conoces. Con aportes periódicos se vuelve
-      $\dfrac{dA}{dt}=rA+d$: sigue siendo lineal, y la resolverás en la semana 3.</div>
+      La depreciación exponencial y el valor presente continuo son aplicaciones directas del bloque 3.
+      Y calcular en cuántos años un activo pierde la mitad de su valor es exactamente el Ejemplo 6 de
+      esta guía.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      La difusión de un virus en una red de $N$ equipos sigue $\dfrac{dI}{dt}=\beta I(N-I)$.
-      La curva en S de los reportes de seguridad es su solución. Y como casi ninguna EDO real tiene
-      solución cerrada, los simuladores la integran numéricamente.</div>
+      Las derivadas parciales son la base del <em>descenso de gradiente</em>, el algoritmo con el que
+      se entrena cualquier modelo de aprendizaje automático: cada parcial dice cuánto cambia el error
+      al mover un parámetro. Aquí las usarás para reconocer ecuaciones exactas, pero el concepto es
+      el mismo.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      Un circuito RC es $R\dfrac{dq}{dt}+\dfrac{q}{C}=V$: lineal, de primer orden. La constante de
-      tiempo $\tau=RC$ sale directamente de su solución y es el número que define cuánto tarda el
-      capacitor en cargarse al 63 %. El circuito RLC añade una segunda derivada y da lugar a la
-      ecuación de la semana 8.</div>
+      Los números complejos del bloque 4 son la herramienta central del análisis de circuitos en
+      corriente alterna: la impedancia es un número complejo, y la fórmula de Euler es la que traduce
+      entre fasores y señales sinusoidales. Aquí verás de dónde salen las oscilaciones en un RLC.</div>
   </div>
 </section>
 
-<section class="card" id="s7">
-  <h3 class="card-title">7 · Práctica final integradora</h3>
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
   <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
-    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    Ocho preguntas que recorren los cinco bloques. Si fallas alguna, la explicación te indica a qué
     sección volver.</p>
   <div id="final"></div>
 </section>
@@ -453,15 +518,15 @@ window.MathJax = {
 <section class="card">
   <h3 class="card-title">Resumen para llevar</h3>
   <ul>
-    <li>Las leyes de la naturaleza se descubren en forma diferencial porque es más fácil observar tasas de cambio que estados absolutos.</li>
-    <li>La incógnita de una EDO es una <strong>función</strong>, y la respuesta general es una familia infinita.</li>
-    <li>El <strong>orden</strong> es el de la derivada más alta; el exponente al que esté elevada no cuenta.</li>
-    <li>La <strong>linealidad</strong> se juzga solo sobre $y$ y sus derivadas: $y'+x^3y=e^{x^2}$ sí es lineal.</li>
-    <li>Una solución debe cumplir la ecuación en todo un <strong>intervalo</strong>, no en puntos sueltos.</li>
-    <li><strong>Verificar por sustitución</strong> siempre es posible, aunque no sepas resolver. Hazlo siempre.</li>
-    <li>Una EDO de orden $n$ tiene $n$ constantes arbitrarias y necesita $n$ condiciones.</li>
-    <li>Picard da unicidad si $f$ y $\partial f/\partial y$ son continuas cerca de $(x_0,y_0)$: condición <em>suficiente</em>, garantía <em>local</em>.</li>
-    <li>$y'=y^{2/3}$ con $y(0)=0$ tiene infinitas soluciones, porque $\partial f/\partial y$ estalla justo ahí.</li>
+    <li>$(e^{kx})'=k\,e^{kx}$ es la regla más usada del semestre: tenla automatizada.</li>
+    <li>Al derivar implícitamente, cada $y$ arrastra un factor $\dfrac{dy}{dx}$.</li>
+    <li>Resolver una EDO casi siempre termina en una integral: si esa se atasca, todo se atasca.</li>
+    <li><strong>Fracciones parciales</strong> con el método de cubrir: multiplica por un factor y evalúa en su raíz.</li>
+    <li>De $\ln|y|=kt+C_1$ se pasa a $y=Ce^{kt}$, con $C$ de cualquier signo, incluido cero.</li>
+    <li>El discriminante decide todo: $\Delta \gt 0$ exponenciales, $\Delta=0$ raíz doble, $\Delta \lt 0$ oscilación.</li>
+    <li>Las raíces complejas vienen en <strong>pares conjugados</strong>, y por Euler producen senos y cosenos.</li>
+    <li>Derivar parcialmente es derivar normal <strong>congelando la otra variable</strong>.</li>
+    <li>Criterio de exactitud: $\dfrac{\partial M}{\partial y}=\dfrac{\partial N}{\partial x}$.</li>
   </ul>
 </section>
 
@@ -469,133 +534,133 @@ window.MathJax = {
 
 <footer>
   <div class="cred-compacto">
-    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/classic" target="_blank" rel="noopener">GeoGebra</a></div>
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://openstax.org/books/calculus-volume-3/pages/4-introduction" target="_blank" rel="noopener">Vol. 3 · Derivadas parciales</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260827b"></script>
-<script src="../assets/viz-edo.js?v=20260827b"></script>
+<script src="../assets/ova.js?v=20260827c"></script>
+<script src="../assets/viz-edo.js?v=20260827c"></script>
 <script>
 OVA.quiz({
   destino: 'chk1',
-  titulo: 'Clasificación · 3 preguntas',
+  titulo: 'Derivación e integración · 3 preguntas',
   items: [
     {
-      etiqueta: 'Orden', nivel: 1,
-      criterio: 'Determinar el orden de una EDO (§3.2)',
-      enunciado: "El orden de la ecuación $(y')^{5}+y''+y=x$ es:",
-      opciones: ['$5$', '$2$', '$1$', '$6$'],
+      etiqueta: 'Regla de la cadena', nivel: 1,
+      criterio: 'Derivar una exponencial compuesta (§1.1)',
+      enunciado: "La derivada de $y=e^{-3x}$ es:",
+      opciones: ['$e^{-3x}$', '$-3e^{-3x}$', '$-3x\\,e^{-3x}$', '$e^{-3}$'],
       correcta: 1,
-      pista: 'El orden lo fija cuál derivada aparece, no a qué potencia esté elevada.',
-      solucion: "La derivada más alta que aparece es $y''$, así que el orden es 2. El exponente 5 sobre $y'$ afecta a la <em>linealidad</em> (la destruye), pero no al orden. Confundir exponente con orden es el error más frecuente del tema."
+      pista: 'Derivada de la externa por derivada de la interna: $(e^{u})\'=e^{u}u\'$.',
+      solucion: "$(e^{kx})'=k\\,e^{kx}$, así que con $k=-3$ sale $-3e^{-3x}$. La opción a) olvida el factor de la interna, que es el descuido más frecuente. Verifica: $y'+3y=-3e^{-3x}+3e^{-3x}=0$, así que $y$ resuelve $y'+3y=0$ — exactamente lo que harás en la semana 2."
     },
     {
-      etiqueta: 'Linealidad', nivel: 2,
-      criterio: 'Identificar cuándo una EDO deja de ser lineal (§3.3)',
-      enunciado: '¿Cuál de estas ecuaciones <strong>no</strong> es lineal?',
+      etiqueta: 'Implícita', nivel: 2,
+      criterio: 'Derivar implícitamente (§1.2)',
+      enunciado: "Derivando implícitamente $x^{2}+y^{2}=25$ se obtiene $\\dfrac{dy}{dx}=$",
+      opciones: ['$-\\dfrac{x}{y}$', '$\\dfrac{x}{y}$', '$-\\dfrac{y}{x}$', '$-2x$'],
+      correcta: 0,
+      pista: 'Recuerda que $y$ es función de $x$: al derivar $y^{2}$ aparece un factor $dy/dx$.',
+      solucion: "$2x+2y\\dfrac{dy}{dx}=0$, de donde $\\dfrac{dy}{dx}=-\\dfrac{x}{y}$. La opción d) es el error de derivar $y^{2}$ como si $y$ fuera constante y olvidar el factor de la cadena. Nota que acabas de obtener una ecuación diferencial a partir de una familia de curvas."
+    },
+    {
+      etiqueta: 'Fracciones parciales', nivel: 3,
+      criterio: 'Descomponer con el método de cubrir (§2.3)',
+      enunciado: "En la descomposición $\\dfrac{1}{x^{2}-4}=\\dfrac{A}{x-2}+\\dfrac{B}{x+2}$, los valores son:",
       opciones: [
-        "$y' + x^{3}y = e^{x^{2}}$",
-        "$x^{2}y'' + \\ln(x)\\,y = \\operatorname{sen} x$",
-        "$y\\,y' + x = 0$",
-        "$y'' - 5y' + 6y = 0$"
+        '$A=1$, $B=-1$',
+        '$A=\\tfrac12$, $B=-\\tfrac12$',
+        '$A=\\tfrac14$, $B=-\\tfrac14$',
+        '$A=\\tfrac14$, $B=\\tfrac14$'
       ],
       correcta: 2,
-      pista: 'Fíjate solo en qué le está pasando a la $y$ y a sus derivadas, no en los coeficientes.',
-      solucion: "En c) hay un producto $y\\cdot y'$ entre la función y su derivada, lo que rompe la linealidad. Las otras tres son lineales aunque los coeficientes se vean complicados: $x^3$, $x^2$, $\\ln x$ y $e^{x^2}$ dependen solo de $x$, y la definición no les impone ninguna restricción."
-    },
-    {
-      etiqueta: 'Linealidad', nivel: 3,
-      criterio: 'Reconocer que la linealidad se juzga solo sobre y (§3.3)',
-      enunciado: "La ecuación $y' + x^{3}y = e^{x^{2}}$ es lineal. ¿Por qué, si contiene $x^3$ y una exponencial?",
-      opciones: [
-        'Porque $x^3$ y $e^{x^2}$ se pueden simplificar',
-        'Porque el orden es 1 y toda EDO de primer orden es lineal',
-        'Porque la exponencial está elevada a un cuadrado',
-        'Porque la linealidad solo restringe a $y$ y sus derivadas, no a los coeficientes ni al término independiente'
-      ],
-      correcta: 3,
-      pista: 'Vuelve a la forma general $a_n(x)y^{(n)}+\\cdots+a_0(x)y=g(x)$ y mira qué papel juega cada pieza.',
-      solucion: "Aquí $a_1(x)=1$, $a_0(x)=x^3$ y $g(x)=e^{x^2}$: todos son funciones de $x$, y la definición les permite ser cualquier cosa. Lo único que se exige es que $y$ e $y'$ aparezcan a la primera potencia, sin productos entre sí y fuera de funciones no lineales. La opción b) es falsa: $y'+y^2=x$ es de primer orden y no es lineal."
+      pista: 'Multiplica por $(x-2)$ y evalúa en $x=2$: queda $A=\\dfrac{1}{2+2}$.',
+      solucion: "Con el método de cubrir: $A=\\dfrac{1}{2+2}=\\dfrac14$ y $B=\\dfrac{1}{-2-2}=-\\dfrac14$. La opción d) pone las dos positivas, pero deben tener signos opuestos para que la suma se cancele lejos del origen. Esta descomposición es la que permite integrar $\\int\\dfrac{dx}{x^{2}-4}$."
     }
   ]
 });
 
 OVA.quiz({
   destino: 'chk2',
-  titulo: 'Soluciones · 3 preguntas',
+  titulo: 'Exponenciales, raíces y complejos · 3 preguntas',
   items: [
     {
-      etiqueta: 'Verificación', nivel: 1,
-      criterio: 'Verificar una solución por sustitución (§4.1)',
-      enunciado: "¿Cuál función es solución de $y'' + y = 0$?",
-      opciones: ['$y = e^{x}$', '$y = x^{2}$', '$y = \\operatorname{sen} x$', '$y = e^{-x}$'],
-      correcta: 2,
-      pista: 'Deriva dos veces cada candidata y súmala con ella misma.',
-      solucion: "Si $y=\\operatorname{sen} x$, entonces $y''=-\\operatorname{sen} x$ y por tanto $y''+y=-\\operatorname{sen}x+\\operatorname{sen}x=0$ ✓. Con $y=e^{x}$ se obtiene $y''+y=2e^{x}\\neq 0$, y lo mismo con $e^{-x}$. Solo las funciones cuya segunda derivada es su propio negativo sirven, y eso caracteriza a senos y cosenos."
-    },
-    {
-      etiqueta: 'Intervalo', nivel: 3,
-      criterio: 'Reconocer que una solución debe cumplir la ecuación en todo un intervalo (§4)',
-      enunciado: "Al sustituir $y=x^{2}$ en $y'-2y=0$ queda $2x-2x^{2}=2x(1-x)$, que vale cero en $x=0$ y $x=1$. ¿Es $y=x^2$ solución?",
-      opciones: [
-        'Sí, porque anula la ecuación en dos puntos',
-        'Sí, pero solo en el intervalo $[0,1]$',
-        'No, porque una solución debe anular la ecuación en todo un intervalo, no en puntos aislados',
-        'No se puede determinar sin una condición inicial'
-      ],
-      correcta: 2,
-      pista: 'Relee la definición de solución: ¿qué se exige, y dónde?',
-      solucion: "La definición exige que la sustitución produzca una identidad válida <strong>para todo $x$ de un intervalo</strong>. Aquí el residuo $2x(1-x)$ solo se anula en dos puntos sueltos y es distinto de cero en todo lo demás, incluido el interior de $[0,1]$: por ejemplo en $x=\\tfrac12$ vale $\\tfrac12$. No es solución en ningún intervalo."
-    },
-    {
-      etiqueta: 'Solución implícita', nivel: 2,
-      criterio: 'Determinar el intervalo de definición de una solución (§4.2)',
-      enunciado: "La relación $x^{2}+y^{2}=25$ define soluciones de $y'=-x/y$. La rama superior $y=\\sqrt{25-x^{2}}$ es solución en:",
-      opciones: ['$[-5,\\,5]$', '$(-5,\\,5)$', '$[0,\\,5]$', '$(-\\infty,+\\infty)$'],
+      etiqueta: 'Despejar', nivel: 2,
+      criterio: 'Pasar de forma logarítmica a exponencial (§3)',
+      enunciado: "De $\\ln|y|=kt+C_1$ se obtiene:",
+      opciones: ['$y=kt+C$', '$y=Ce^{kt}$', '$y=e^{kt}+C$', '$y=\\ln(kt)+C$'],
       correcta: 1,
-      pista: '¿Qué le pasa a la ecuación $y\'=-x/y$ justo en los extremos, donde $y=0$?',
-      solucion: "En $x=\\pm 5$ se tiene $y=0$, y ahí $-x/y$ no está definido: la ecuación misma se rompe. Por eso el intervalo debe ser <strong>abierto</strong>, $(-5,5)$. La opción a) es el error de incluir los extremos por costumbre; toda solución viene con su intervalo y omitirlo deja la respuesta incompleta."
+      pista: 'Exponencia ambos lados y recuerda que $e^{a+b}=e^{a}e^{b}$.',
+      solucion: "$|y|=e^{kt+C_1}=e^{C_1}e^{kt}$, y absorbiendo $e^{C_1}$ y el signo en una sola constante queda $y=Ce^{kt}$. La opción c) suma la constante en vez de multiplicarla, que corresponde a una ecuación distinta. Este paso aparecerá en casi todas las semanas del curso."
+    },
+    {
+      etiqueta: 'Discriminante', nivel: 2,
+      criterio: 'Resolver la ecuación auxiliar (§4.1)',
+      enunciado: "Las raíces de $r^{2}+2r+5=0$ son:",
+      opciones: ['$-1$ y $-5$', '$1\\pm2i$', '$-1\\pm2i$', '$\\pm2i$'],
+      correcta: 2,
+      pista: '$\\Delta=4-20=-16$. Aplica la fórmula cuadrática con $\\sqrt{-16}=4i$.',
+      solucion: "$r=\\dfrac{-2\\pm\\sqrt{-16}}{2}=\\dfrac{-2\\pm4i}{2}=-1\\pm2i$. La opción b) pierde el signo de la parte real, y eso cambia el comportamiento por completo: con $-1$ la oscilación se amortigua, con $+1$ crecería sin límite."
+    },
+    {
+      etiqueta: 'Conjugadas', nivel: 3,
+      criterio: 'Reconocer la propiedad de las raíces complejas (§4.2)',
+      enunciado: 'Si un polinomio con coeficientes reales tiene la raíz $3+2i$, entonces:',
+      opciones: [
+        '$3-2i$ también es raíz',
+        '$-3+2i$ también es raíz',
+        '$2+3i$ también es raíz',
+        'No se puede afirmar nada más'
+      ],
+      correcta: 0,
+      pista: 'Las raíces complejas de polinomios reales aparecen siempre de a pares.',
+      solucion: "El conjugado se obtiene cambiando el signo de la parte <em>imaginaria</em>, dejando la real intacta: $3-2i$. Por eso en el plano complejo las raíces salen simétricas respecto del eje real. La opción b) cambia el signo de la parte real, que es otra cosa."
     }
   ]
 });
 
 OVA.quiz({
   destino: 'chk3',
-  titulo: 'Familias y unicidad · 3 preguntas',
+  titulo: 'Derivadas parciales · 3 preguntas',
   items: [
     {
-      etiqueta: 'General vs particular', nivel: 1,
-      criterio: 'Distinguir solución general de particular (§5)',
-      enunciado: "La solución de $\\dfrac{dy}{dx}=2x$ con $y(1)=5$ es:",
-      opciones: ['$y=x^{2}+C$', '$y=x^{2}+5$', '$y=x^{2}+4$', '$y=2x+3$'],
-      correcta: 2,
-      pista: 'Integra primero y luego sustituye el punto $(1,5)$ para hallar $C$.',
-      solucion: "Integrando: $y=x^2+C$. Con $y(1)=1+C=5$ sale $C=4$, luego $y=x^2+4$. La opción a) es la solución <em>general</em>, que describe infinitas curvas: no responde el problema. La b) es el error de tomar $C=5$ leyendo directamente el valor de $y$ sin restar $x^2=1$."
-    },
-    {
-      etiqueta: 'Número de constantes', nivel: 2,
-      criterio: 'Relacionar el orden con el número de condiciones necesarias (§5)',
-      enunciado: '¿Cuántas condiciones se necesitan para determinar completamente la solución de una EDO de segundo orden?',
-      opciones: ['Dos', 'Una', 'Tres', 'Ninguna, la solución ya es única'],
-      correcta: 0,
-      pista: 'Cada integración introduce una constante. ¿Cuántas veces hay que integrar?',
-      solucion: "Una EDO de orden $n$ exige integrar $n$ veces y su solución general contiene $n$ constantes arbitrarias, así que hacen falta $n$ condiciones. Para orden 2 son dos: por ejemplo $y(0)$ e $y'(0)$ en un problema de valor inicial, o $y(0)$ e $y(1)$ en uno de valor frontera."
-    },
-    {
-      etiqueta: 'Existencia y unicidad', nivel: 3,
-      criterio: 'Aplicar el teorema de Picard y reconocer cuándo falla (§6)',
-      enunciado: "El problema $y'=y^{2/3}$ con $y(0)=0$ tiene infinitas soluciones. ¿Por qué no lo impide el teorema de existencia y unicidad?",
-      opciones: [
-        'Porque $f(x,y)=y^{2/3}$ es discontinua en el origen',
-        'Porque el teorema solo vale para ecuaciones lineales',
-        'Porque la condición inicial está en $x=0$',
-        'Porque $\\partial f/\\partial y = \\tfrac{2}{3}y^{-1/3}$ no está acotada en $y=0$, así que la hipótesis no se cumple'
-      ],
+      etiqueta: 'Calcular', nivel: 2,
+      criterio: 'Calcular una derivada parcial (§5)',
+      enunciado: "Si $f(x,y)=x^{2}y+3y^{2}$, entonces $\\dfrac{\\partial f}{\\partial x}$ es:",
+      opciones: ['$2xy+6y$', '$x^{2}+6y$', '$2xy+3y^{2}$', '$2xy$'],
       correcta: 3,
-      pista: 'El teorema pide dos continuidades. ¿Cuál de las dos falla en $(0,0)$?',
-      solucion: "La función $f(x,y)=y^{2/3}$ <em>sí</em> es continua en el origen, pero su derivada parcial $\\tfrac{2}{3}y^{-1/3}$ se dispara cuando $y\\to 0$. Al no cumplirse la hipótesis, el teorema no garantiza nada — y en efecto la unicidad falla: $y\\equiv 0$ y $y=x^3/27$ resuelven ambas el mismo problema. La opción b) es falsa: el teorema no exige linealidad."
+      pista: 'Trata $y$ como una constante. ¿Cuál es la derivada de $3y^{2}$ respecto de $x$?',
+      solucion: "Con $y$ constante, $x^{2}y$ deriva a $2xy$ y $3y^{2}$ es una constante, así que su derivada es <strong>cero</strong>. La opción c) arrastra el término $3y^{2}$ sin derivarlo, y la b) es la parcial respecto de $y$, no de $x$."
+    },
+    {
+      etiqueta: 'Geometría', nivel: 2,
+      criterio: 'Interpretar geométricamente la parcial (§5.1)',
+      enunciado: 'Geométricamente, $\\dfrac{\\partial f}{\\partial x}$ en un punto es:',
+      opciones: [
+        'La altura de la superficie en ese punto',
+        'La pendiente del corte de la superficie con $y$ fijo',
+        'La pendiente del corte con $x$ fijo',
+        'El área bajo la superficie'
+      ],
+      correcta: 1,
+      pista: 'Derivar respecto de $x$ significa moverse solo en la dirección $x$.',
+      solucion: "Fijar $y=b$ corta la superficie con un plano vertical y produce una curva ordinaria; la parcial respecto de $x$ es su pendiente. La opción c) describe $\\partial f/\\partial y$: son las dos direcciones perpendiculares que muestra el visualizador de §5.1."
+    },
+    {
+      etiqueta: 'Exactitud', nivel: 3,
+      criterio: 'Aplicar el criterio de exactitud (§5.2)',
+      enunciado: "¿Es exacta la ecuación $2xy\\,dx+(x^{2}-1)\\,dy=0$?",
+      opciones: [
+        'No, porque $M$ y $N$ son distintas',
+        'No se puede saber sin resolverla',
+        'Sí, porque $\\partial M/\\partial y=\\partial N/\\partial x=2x$',
+        'Sí, porque ambas son polinomios'
+      ],
+      correcta: 2,
+      pista: 'Calcula $\\partial M/\\partial y$ con $M=2xy$, y $\\partial N/\\partial x$ con $N=x^{2}-1$.',
+      solucion: "$\\dfrac{\\partial}{\\partial y}(2xy)=2x$ y $\\dfrac{\\partial}{\\partial x}(x^{2}-1)=2x$: coinciden, luego es exacta. Contraejemplo útil: con $M=x+y$ y $N=xy$ sale $1$ frente a $y$, que no coinciden. La opción d) es falsa: ser polinomios no garantiza nada."
     }
   ]
 });
@@ -605,111 +670,101 @@ OVA.quiz({
   titulo: 'Práctica final · 8 preguntas',
   items: [
     {
-      etiqueta: 'Modelado', nivel: 1,
-      criterio: 'Traducir un enunciado verbal a una EDO (§1.1)',
-      enunciado: '«La rapidez con que se enfría un cuerpo es proporcional a la diferencia entre su temperatura y la del ambiente $T_a$». La traducción correcta es:',
-      opciones: [
-        '$\\dfrac{dT}{dt}=kT$',
-        '$T = k(T-T_a)$',
-        '$\\dfrac{dT}{dt}=k(T-T_a)$',
-        '$\\dfrac{dT}{dt}=k\\,T_a$'
-      ],
+      etiqueta: 'Verificar', nivel: 2,
+      criterio: 'Verificar una solución por sustitución (§1)',
+      enunciado: "¿Cuál función satisface $y'=2y$?",
+      opciones: ['$y=2x$', '$y=x^{2}$', '$y=e^{2x}$', '$y=2e^{x}$'],
       correcta: 2,
-      pista: '«Rapidez con que se enfría» es una derivada; «proporcional a» es un factor $k$.',
-      solucion: "«Rapidez» se traduce como $dT/dt$ y «proporcional a la diferencia» como $k(T-T_a)$. La opción b) no contiene derivada alguna, así que ni siquiera es una ecuación diferencial. La a) sería válida solo si el ambiente estuviera a cero grados."
+      pista: 'Deriva cada candidata y compárala con el doble de sí misma.',
+      solucion: "$(e^{2x})'=2e^{2x}=2y$ ✓. La opción d) da $y'=2e^{x}=y$, no $2y$: confunde el coeficiente de delante con el del exponente. Es el exponente el que aparece al derivar."
     },
     {
-      etiqueta: 'Clasificación', nivel: 2,
-      criterio: 'Determinar orden y linealidad simultáneamente (§3)',
-      enunciado: "La ecuación $x^{2}y'' + xy' + (x^{2}-4)y = 0$ es:",
+      etiqueta: 'Integrar', nivel: 2,
+      criterio: 'Aplicar integración por partes (§2.2)',
+      enunciado: "$\\displaystyle\\int x\\,e^{x}dx$ es igual a:",
       opciones: [
-        'De orden 2 y no lineal, por los coeficientes con $x$',
-        'De orden 2 y lineal',
-        'De orden 1 y lineal',
-        'De orden 4, por el término $x^{2}$'
+        '$\\dfrac{x^{2}}{2}e^{x}+C$',
+        '$xe^{x}-e^{x}+C$',
+        '$xe^{x}+e^{x}+C$',
+        '$e^{x}+C$'
       ],
       correcta: 1,
-      pista: 'Los coeficientes pueden ser cualquier función de $x$ sin afectar la linealidad.',
-      solucion: "La derivada más alta es $y''$, luego el orden es 2. Y $y$, $y'$, $y''$ aparecen todas a la primera potencia con coeficientes que solo dependen de $x$: es lineal. Se trata de la ecuación de Bessel de orden 2, fundamental en problemas con simetría cilíndrica."
+      pista: 'Por partes con $u=x$ y $dv=e^{x}dx$.',
+      solucion: "$\\int u\\,dv=uv-\\int v\\,du$ da $xe^{x}-\\int e^{x}dx=xe^{x}-e^{x}+C$. La opción a) integra como si $e^{x}$ fuera constante. Puedes comprobarlo derivando: $(xe^{x}-e^{x})'=e^{x}+xe^{x}-e^{x}=xe^{x}$ ✓"
     },
     {
-      etiqueta: 'Verificación', nivel: 2,
-      criterio: 'Verificar una solución que involucra un cociente (§4.1)',
-      enunciado: "¿Es $y=\\dfrac{1}{x}$ solución de $x\\,y' + y = 0$?",
+      etiqueta: 'Sustitución', nivel: 2,
+      criterio: 'Integrar por sustitución (§2.2)',
+      enunciado: "$\\displaystyle\\int 2x\\,e^{x^{2}}dx$ es igual a:",
+      opciones: ['$x^{2}e^{x^{2}}+C$', '$2e^{x^{2}}+C$', '$e^{x^{2}}+C$', '$\\dfrac{e^{x^{2}}}{2x}+C$'],
+      correcta: 2,
+      pista: 'Con $u=x^{2}$ se tiene $du=2x\\,dx$: el factor de delante es justo el $du$.',
+      solucion: "La integral se vuelve $\\int e^{u}du=e^{u}+C=e^{x^{2}}+C$. La opción d) es un error grave: no se puede «dividir entre la derivada» al integrar, como sí se hace al derivar una composición. Verifica derivando: $(e^{x^{2}})'=2xe^{x^{2}}$ ✓"
+    },
+    {
+      etiqueta: 'Semivida', nivel: 3,
+      criterio: 'Despejar el tiempo con logaritmos (§3)',
+      enunciado: "Si $y=y_0e^{-3t}$, ¿cuándo vale la mitad de su valor inicial?",
       opciones: [
-        'No, porque no está definida en $x=0$',
-        'Sí, en cualquier intervalo que no contenga a $x=0$',
-        'No, el residuo da $2/x$',
-        'Solo si se añade una constante'
+        '$t=\\dfrac{\\ln 2}{3}$',
+        '$t=\\dfrac{1}{2}$',
+        '$t=3\\ln 2$',
+        'Depende de $y_0$'
       ],
-      correcta: 1,
-      pista: "Calcula $y'=-1/x^2$ y sustituye.",
-      solucion: "$y'=-\\dfrac{1}{x^{2}}$, y entonces $x\\left(-\\dfrac{1}{x^{2}}\\right)+\\dfrac{1}{x}=-\\dfrac{1}{x}+\\dfrac{1}{x}=0$ ✓. Sí es solución, con la salvedad del intervalo: en $(0,\\infty)$ o en $(-\\infty,0)$, pero no en un intervalo que cruce el origen. La opción a) confunde una restricción de dominio con una descalificación."
-    },
-    {
-      etiqueta: 'Familia de soluciones', nivel: 2,
-      criterio: 'Interpretar geométricamente la solución general (§5)',
-      enunciado: "La solución general de $y'=y$ es $y=Ce^{x}$. Geométricamente, esto representa:",
-      opciones: [
-        'Una única curva exponencial',
-        'Dos curvas, una para $C \\gt 0$ y otra para $C \\lt 0$',
-        'Una recta con pendiente $C$',
-        'Una familia infinita de curvas, una por cada valor de $C$'
-      ],
-      correcta: 3,
-      pista: '¿Cuántos valores puede tomar $C$?',
-      solucion: "Cada valor real de $C$ produce una curva distinta, y todas resuelven la misma ecuación: la solución general es una familia infinita. Incluye también $C=0$, la solución constante $y\\equiv 0$. Una condición inicial elige un miembro y descarta el resto."
-    },
-    {
-      etiqueta: 'Valor inicial', nivel: 2,
-      criterio: 'Resolver un problema de valor inicial (§5)',
-      enunciado: "Si la solución general de una EDO es $y=Ce^{-x}$ y se impone $y(0)=3$, la solución particular es:",
-      opciones: ['$y=3e^{-x}$', '$y=e^{-x}+3$', '$y=3e^{x}$', '$y=-3e^{-x}$'],
       correcta: 0,
-      pista: 'Sustituye $x=0$ recordando que $e^{0}=1$.',
-      solucion: "$y(0)=Ce^{0}=C=3$, luego $y=3e^{-x}$. La opción b) suma la constante en vez de multiplicarla: eso correspondería a una solución general de la forma $y=e^{-x}+C$, que sale de una ecuación distinta."
+      pista: 'Plantea $y_0e^{-3t}=y_0/2$ y observa qué se cancela.',
+      solucion: "La cantidad inicial se cancela, quedando $e^{-3t}=\\tfrac12$, o sea $-3t=-\\ln 2$ y $t=\\dfrac{\\ln 2}{3}\\approx0{,}231$. La opción d) es justo lo contrario de lo que ocurre, y esa independencia de $y_0$ es lo que hace que la semivida sea una propiedad del material."
     },
     {
-      etiqueta: 'Unicidad', nivel: 3,
-      criterio: 'Aplicar el teorema de Picard a un caso concreto (§6)',
-      enunciado: "Para $y'=\\dfrac{y}{x}$ con la condición $y(0)=0$, el teorema de existencia y unicidad:",
+      etiqueta: 'Raíz doble', nivel: 3,
+      criterio: 'Interpretar el discriminante nulo (§4.1)',
+      enunciado: "La ecuación $r^{2}-4r+4=0$ tiene:",
       opciones: [
-        'Garantiza una solución única',
-        'Garantiza que no hay solución',
-        'No aplica, porque $f$ y $\\partial f/\\partial y$ no están definidas en $x=0$',
-        'Aplica, pero solo para $x \\lt 0$'
+        'Dos raíces reales distintas',
+        'Dos raíces complejas conjugadas',
+        'Una raíz real doble, $r=2$',
+        'Ninguna raíz real'
       ],
       correcta: 2,
-      pista: 'El teorema exige continuidad en un rectángulo <em>que contenga</em> al punto inicial.',
-      solucion: "Con $f(x,y)=y/x$, ni $f$ ni $\\partial f/\\partial y=1/x$ existen en $x=0$, así que no hay rectángulo alrededor de $(0,0)$ donde se cumplan las hipótesis: el teorema no dice nada. Y de hecho la unicidad falla, porque toda recta $y=Cx$ pasa por el origen y resuelve la ecuación."
+      pista: 'Calcula $\\Delta=16-16$ y factoriza.',
+      solucion: "$\\Delta=0$ y $r^{2}-4r+4=(r-2)^{2}$, así que $r=2$ con multiplicidad dos. En la semana 9 verás que este caso da la solución $C_1e^{2x}+C_2xe^{2x}$: el factor $x$ extra aparece precisamente porque la raíz está repetida y hacen falta dos soluciones independientes."
     },
     {
-      etiqueta: 'No linealidad', nivel: 3,
-      criterio: 'Reconocer el papel de la linealización en modelos físicos (§3.3)',
-      enunciado: "La ecuación exacta del péndulo es $y''+\\operatorname{sen}(y)=0$, no lineal. En física se estudia $y''+y=0$. ¿Por qué es legítimo el cambio?",
+      etiqueta: 'Euler', nivel: 3,
+      criterio: 'Relacionar raíces complejas con oscilaciones (§4.2)',
+      enunciado: '¿Por qué las raíces complejas producen senos y cosenos en la solución?',
       opciones: [
-        'Porque $\\operatorname{sen}(y)$ y $y$ son iguales',
-        'Porque para ángulos pequeños $\\operatorname{sen}(y)\\approx y$, y la aproximación es buena en ese rango',
-        'Porque la ecuación no lineal no tiene solución',
-        'Porque el seno se puede factorizar'
+        'Por la fórmula de Euler, $e^{i\\theta}=\\cos\\theta+i\\operatorname{sen}\\theta$',
+        'Porque los números complejos no se pueden usar y hay que reemplazarlos',
+        'Porque el discriminante negativo obliga a cambiar de método',
+        'Es una convención sin justificación'
       ],
+      correcta: 0,
+      pista: 'La solución sigue siendo $e^{rx}$; lo que cambia es cómo se escribe cuando $r$ es complejo.',
+      solucion: "Con $r=\\alpha\\pm\\beta i$, la exponencial $e^{rx}$ se descompone vía Euler en $e^{\\alpha x}(\\cos\\beta x\\pm i\\operatorname{sen}\\beta x)$, y combinando el par conjugado se obtiene una solución real oscilante. La parte real $\\alpha$ controla si la amplitud crece o decae; la imaginaria $\\beta$, la frecuencia."
+    },
+    {
+      etiqueta: 'Parciales', nivel: 2,
+      criterio: 'Calcular ambas parciales (§5)',
+      enunciado: "Para $f(x,y)=x^{2}y+3y^{2}$, la parcial $\\dfrac{\\partial f}{\\partial y}$ es:",
+      opciones: ['$2xy$', '$x^{2}+6y$', '$x^{2}+3y$', '$2x+6y$'],
       correcta: 1,
-      pista: 'Piensa en el polinomio de Taylor de $\\operatorname{sen}(y)$ alrededor de cero.',
-      solucion: "Para $y$ pequeño, $\\operatorname{sen}(y)=y-\\tfrac{y^{3}}{6}+\\cdots\\approx y$, y el error es de orden $y^3$: despreciable en ángulos de pocos grados. La ecuación linealizada sí tiene solución elemental. Pero es una <em>aproximación</em> con rango de validez: para amplitudes grandes el péndulo real se desvía notablemente del modelo lineal."
+      pista: 'Ahora es $x$ la que se congela.',
+      solucion: "Con $x$ constante, $x^{2}y$ deriva a $x^{2}$ y $3y^{2}$ a $6y$. La opción c) deriva mal el segundo término, olvidando bajar el exponente. Compara con $\\partial f/\\partial x=2xy$: la misma función da resultados distintos según qué variable se congele."
     },
     {
-      etiqueta: 'Síntesis', nivel: 2,
-      criterio: 'Distinguir la naturaleza de la incógnita en una EDO (§2)',
-      enunciado: '¿Cuál es la diferencia esencial entre resolver $x^{2}-4=0$ y resolver $y\'=2y$?',
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Reconocer el papel del repaso en el curso (§1–§5)',
+      enunciado: '¿Por qué una EDO bien planteada puede quedar sin resolver?',
       opciones: [
-        'La primera es más fácil de calcular',
-        'La segunda requiere calculadora',
-        'En la primera la incógnita es un número; en la segunda es una función',
-        'La segunda no tiene solución exacta'
+        'Porque el método diferencial estaba mal elegido',
+        'Porque las ecuaciones diferenciales rara vez tienen solución',
+        'Porque el método lleva a una integral que no se sabe calcular',
+        'Porque falta la condición inicial'
       ],
       correcta: 2,
-      pista: 'Compara qué tipo de objeto es la respuesta en cada caso.',
-      solucion: "La primera pide números ($x=\\pm2$); la segunda pide una <strong>función</strong>, y de hecho una familia infinita ($y=Ce^{2x}$). Ese cambio en la naturaleza de la incógnita es lo que define a la asignatura. La opción d) es falsa: $y=Ce^{2x}$ es una solución exacta y cerrada."
+      pista: '¿En qué termina casi siempre el proceso de resolver una ecuación diferencial?',
+      solucion: "Separar variables o aplicar el factor integrante desemboca en una integral, y si esa integral se atasca, el problema se atasca aunque el planteamiento diferencial sea impecable. Por eso el bloque 2 de esta guía es el más importante: buena parte de las dificultades del semestre serán de Cálculo II, no de ecuaciones diferenciales."
     }
   ]
 });
