@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 2 · Curvas planas, paramétricas y polares — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827a">
+<title>Guía 2 · Curvas planas, paramétricas y polares — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260827b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 2</h1>
+      <h1>Cálculo Vectorial · Guía 2</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,678 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Curvas planas</a>
+    <a href="#s2">2 · Eliminar el parámetro</a>
+    <a href="#s3">3 · Muchas parametrizaciones</a>
+    <a href="#s4">4 · Coordenadas polares</a>
+    <a href="#s5">5 · Gráficas polares</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 2 · Curvas planas, paramétricas y polares</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 2 · Corte I</div>
+  <h2>Curvas planas, paramétricas y polares</h2>
+  <p>Dos maneras de describir una curva cuando $y=f(x)$ ya no alcanza. La primera añade
+     un parámetro y describe el <em>movimiento</em>; la segunda cambia el sistema de
+     coordenadas y convierte curvas complicadas en ecuaciones sencillas.</p>
+  <div class="chips">
+    <span class="chip">Stewart · Cap. 10.1–10.3</span>
+    <span class="chip">Larson · Cap. 10.2–10.4</span>
+    <span class="chip">Semana 2</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 1 viste que la circunferencia $x^{2}+y^{2}=4$ no es
+  la gráfica de ninguna función: falla la prueba de la recta vertical. Aquí resolvemos ese problema
+  de dos formas distintas, y ninguna consiste en partir la curva en trozos.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Curvas planas y ecuaciones paramétricas</h3>
+
+  <div class="callout-dark">
+    <h3>El problema con $y=f(x)$</h3>
+    <p>Una función asigna un solo $y$ a cada $x$. Eso deja fuera a casi todas las curvas
+       interesantes: circunferencias, elipses, espirales, cualquier trayectoria que se cruce o
+       vuelva sobre sí misma.</p>
+    <p>La salida es dejar de preguntar «¿qué altura tiene la curva en esta abscisa?» y preguntar
+       en cambio «¿dónde está el punto en el instante $t$?». Las dos coordenadas pasan a depender
+       de un <strong>parámetro</strong> común.</p>
+  </div>
+
+  <div class="def">
+    Una <strong>curva paramétrica</strong> en el plano viene dada por
+    $$x=f(t),\qquad y=g(t),\qquad t\in I$$
+    donde $t$ es el <em>parámetro</em> y $I$ su intervalo. Cada valor de $t$ produce un punto
+    $(f(t),g(t))$, y al recorrer $I$ se traza la curva.
+  </div>
+
+  <p>La interpretación más útil es cinemática: $t$ es el tiempo y la curva es la
+     <strong>trayectoria</strong> de un punto que se mueve. Esa lectura es la que se convertirá,
+     en la Guía 3, en funciones vectoriales con velocidad y aceleración.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · La circunferencia, por fin en una sola pieza</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Parametrización</div>
+        $x=2\cos t$, &nbsp; $y=2\operatorname{sen}t$, &nbsp; $t\in[0,2\pi]$
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar que es la circunferencia</div>
+        $x^{2}+y^{2}=4\cos^{2}t+4\operatorname{sen}^{2}t=4(\cos^{2}t+\operatorname{sen}^{2}t)=4$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Qué ganamos</div>
+        Una sola expresión describe la circunferencia entera, sin partirla en rama superior e
+        inferior. Y además sabemos <em>en qué orden</em> se recorre: empieza en $(2,0)$ y avanza en
+        sentido antihorario.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">1.1 Parametrizaciones que conviene reconocer</div>
+  <table class="tbl">
+    <tr><th>Curva</th><th>Parametrización</th><th>Intervalo</th></tr>
+    <tr><td>Recta por $(x_0,y_0)$ con dirección $(a,b)$</td><td>$x=x_0+at$, $y=y_0+bt$</td><td>$t\in\mathbb{R}$</td></tr>
+    <tr><td>Circunferencia de radio $r$</td><td>$x=r\cos t$, $y=r\operatorname{sen}t$</td><td>$[0,2\pi]$</td></tr>
+    <tr><td>Elipse $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$</td><td>$x=a\cos t$, $y=b\operatorname{sen}t$</td><td>$[0,2\pi]$</td></tr>
+    <tr><td>Gráfica de $y=h(x)$</td><td>$x=t$, $y=h(t)$</td><td>Dominio de $h$</td></tr>
+    <tr><td>Cicloide (rueda que gira)</td><td>$x=r(t-\operatorname{sen}t)$, $y=r(1-\cos t)$</td><td>$t\geq0$</td></tr>
+  </table>
+  <p style="font-size:.88rem">La cuarta fila merece atención: <strong>toda</strong> función es un
+     caso particular de curva paramétrica. Lo paramétrico no sustituye a lo que ya sabías, lo
+     contiene.</p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Eliminar el parámetro</h3>
+
+  <p>A veces conviene recuperar la ecuación cartesiana, para reconocer de qué curva se trata.
+     La estrategia depende de la forma de las ecuaciones.</p>
+
+  <table class="tbl">
+    <tr><th>Situación</th><th>Técnica</th></tr>
+    <tr><td>Una ecuación se despeja fácil</td><td>Despejar $t$ y sustituir en la otra</td></tr>
+    <tr><td>Aparecen $\cos t$ y $\operatorname{sen}t$</td><td>Usar $\cos^{2}t+\operatorname{sen}^{2}t=1$</td></tr>
+    <tr><td>Aparecen $\sec t$ y $\tan t$</td><td>Usar $\sec^{2}t-\tan^{2}t=1$</td></tr>
+  </table>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Tres eliminaciones</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">a) Despejando el parámetro</div>
+        $x=t+1$, $y=t^{2}$. De la primera, $t=x-1$; sustituyendo: $y=(x-1)^{2}$.<br>
+        Es una parábola con vértice en $(1,0)$.
+      </div>
+      <div class="paso"><div class="paso-t">b) Con la identidad pitagórica</div>
+        $x=3\cos t$, $y=1{,}6\operatorname{sen}t$. Despejamos $\cos t=\dfrac{x}{3}$ y
+        $\operatorname{sen}t=\dfrac{y}{1{,}6}$, y sumamos los cuadrados:
+        $$\frac{x^{2}}{9}+\frac{y^{2}}{2{,}56}=1$$
+        Una elipse — de las que reconociste en la Guía 1.
+      </div>
+      <div class="paso"><div class="paso-t">c) Con la otra identidad</div>
+        $x=\sec t$, $y=\tan t$. Como $\sec^{2}t-\tan^{2}t=1$, queda $x^{2}-y^{2}=1$:
+        una hipérbola.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>Eliminar el parámetro pierde información</h3>
+    <p>La ecuación cartesiana dice <em>qué</em> curva es, pero se olvida de <em>cómo</em> se recorre:
+       desaparecen el sentido, la rapidez y el punto de partida.</p>
+    <p>Peor aún, puede cambiar el conjunto de puntos. Con $x=\cos t$, $y=\operatorname{sen}t$ y
+       $t\in[0,\pi]$ obtienes solo la <strong>mitad superior</strong> de la circunferencia, pero al
+       eliminar el parámetro sale $x^{2}+y^{2}=1$, que es la circunferencia entera.</p>
+    <p>Por eso, al eliminar el parámetro hay que <strong>comprobar el rango</strong> de $x$ y de $y$
+       que la parametrización realmente alcanza, y restringir la ecuación cartesiana en consecuencia.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Paramétricas</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Una curva, muchas parametrizaciones</h3>
+
+  <p>Esta es la idea que más cuesta y la que más rinde después. Una misma curva admite
+     <strong>infinitas</strong> parametrizaciones, que difieren en cómo se recorre.</p>
+
+  <table class="tbl">
+    <tr><th>Parametrización</th><th>Intervalo</th><th>Curva</th><th>Cómo la recorre</th></tr>
+    <tr><td>$x=2\cos t$, $y=2\operatorname{sen}t$</td><td>$[0,2\pi]$</td><td>$x^{2}+y^{2}=4$</td><td>Antihorario, rapidez 2</td></tr>
+    <tr><td>$x=2\cos 2t$, $y=2\operatorname{sen}2t$</td><td>$[0,\pi]$</td><td>La misma</td><td>Antihorario, rapidez 4</td></tr>
+    <tr><td>$x=2\operatorname{sen}t$, $y=2\cos t$</td><td>$[0,2\pi]$</td><td>La misma</td><td><strong>Horario</strong>, rapidez 2</td></tr>
+  </table>
+
+  <div class="nota">
+    <strong>Cómo comprobar el sentido.</strong> Evalúa en $t=0$ y en un $t$ pequeño, y mira hacia
+    dónde se mueve el punto. En la tercera fila: $t=0$ da $(0,2)$, y $t=0{,}1$ da
+    $(0{,}20,\;1{,}99)$ — se mueve hacia la derecha y baja, o sea en sentido horario.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · La rapidez con que se recorre</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Definición</div>
+        La rapidez es $\;\left|\left(\dfrac{dx}{dt},\dfrac{dy}{dt}\right)\right|
+        =\sqrt{\left(\dfrac{dx}{dt}\right)^{2}+\left(\dfrac{dy}{dt}\right)^{2}}$
+      </div>
+      <div class="paso"><div class="paso-t">Primera parametrización</div>
+        $\dfrac{dx}{dt}=-2\operatorname{sen}t$, $\dfrac{dy}{dt}=2\cos t$, luego
+        rapidez $=\sqrt{4\operatorname{sen}^{2}t+4\cos^{2}t}=2$ constante.
+      </div>
+      <div class="paso"><div class="paso-t">Segunda</div>
+        $\dfrac{dx}{dt}=-4\operatorname{sen}2t$, $\dfrac{dy}{dt}=4\cos 2t$, luego rapidez $=4$:
+        el doble. Tiene sentido, porque da la vuelta completa en la mitad del tiempo.
+      </div>
+      <div class="paso"><div class="paso-t">Por qué importa</div>
+        La curva es la misma pero el <em>movimiento</em> no. Cuando en la Guía 3 hablemos de
+        velocidad y aceleración, esas cantidades dependerán de la parametrización, no solo de la
+        curva. Y en la Guía 4, la longitud de arco será justamente lo que <em>no</em> depende de ella.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 Explora</div>
+  <div class="viz" data-viz="parametricas">
+    <div class="viz-controls">
+      <label for="pm-c">Curva</label>
+      <select id="pm-c">
+        <option value="circ">x=2cos t, y=2sen t</option>
+        <option value="circ2">x=2cos 2t, y=2sen 2t &nbsp;(la misma, más rápido)</option>
+        <option value="horar">x=2sen t, y=2cos t &nbsp;(la misma, al revés)</option>
+        <option value="elip">elipse</option>
+        <option value="parab">x=t+1, y=t²</option>
+        <option value="cicl">cicloide</option>
+        <option value="liss">figura de Lissajous</option>
+      </select>
+      <label for="pm-t">Avanzar t</label>
+      <input id="pm-t" class="tpar" type="range" min="0" max="100" value="35">
+      <span class="t-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Compara las tres primeras opciones: dibujan <strong>exactamente la misma circunferencia</strong>,
+    pero el lector muestra rapideces 2, 4 y 2, y la flecha morada apunta en sentidos opuestos entre
+    la primera y la tercera. En la cicloide, fíjate en que la rapidez se anula justo cuando la curva
+    toca el suelo.
+  </p>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Coordenadas polares</h3>
+
+  <div class="def">
+    En el sistema <strong>polar</strong>, un punto se ubica con dos datos: la distancia $r$ al
+    origen (llamado <em>polo</em>) y el ángulo $\theta$ medido desde el eje polar. Se escribe
+    $(r,\theta)$.
+    <br><br>
+    <strong>De polar a cartesiano:</strong> $\;x=r\cos\theta$, $\;y=r\operatorname{sen}\theta$.<br>
+    <strong>De cartesiano a polar:</strong> $\;r^{2}=x^{2}+y^{2}$, $\;\tan\theta=\dfrac{y}{x}$.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Dos cosas que en polares no funcionan como esperas</h3>
+    <p><strong>Un punto tiene infinitas representaciones.</strong> El mismo punto es $(r,\theta)$,
+       $(r,\theta+2\pi)$, $(r,\theta-2\pi)$… y también $(-r,\theta+\pi)$. En cartesianas cada punto
+       tiene un solo nombre; aquí, infinitos. El origen es el caso extremo: es $(0,\theta)$ para
+       <em>cualquier</em> $\theta$.</p>
+    <p><strong>$r$ puede ser negativo.</strong> Si $r \lt 0$, el punto se marca en la dirección
+       <em>opuesta</em> a $\theta$, a distancia $|r|$. No es una rareza técnica: es lo que produce
+       los rizos interiores de la §5.</p>
+    <p>Y una advertencia de cálculo: $\theta=\arctan(y/x)$ <strong>solo es correcto en el primer y
+       cuarto cuadrante</strong>. En el segundo y tercero hay que sumar $\pi$, porque la arcotangente
+       devuelve valores en $(-\pi/2,\pi/2)$.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Conversión en las dos direcciones</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">a) De polar a cartesiano: $(2,\pi/3)$</div>
+        $x=2\cos\dfrac{\pi}{3}=2\cdot\dfrac12=1$ &nbsp;·&nbsp;
+        $y=2\operatorname{sen}\dfrac{\pi}{3}=2\cdot\dfrac{\sqrt3}{2}=\sqrt3$<br>
+        El punto es $(1,\sqrt3)$.
+      </div>
+      <div class="paso"><div class="paso-t">b) De cartesiano a polar: $(-1,1)$</div>
+        $r=\sqrt{1+1}=\sqrt2$. Y $\tan\theta=\dfrac{1}{-1}=-1$.
+      </div>
+      <div class="paso"><div class="paso-t">Cuidado con el cuadrante</div>
+        La calculadora da $\arctan(-1)=-\dfrac{\pi}{4}$, que está en el <strong>cuarto</strong>
+        cuadrante. Pero $(-1,1)$ está en el <strong>segundo</strong>. Hay que sumar $\pi$:
+        $$\theta=-\frac{\pi}{4}+\pi=\frac{3\pi}{4}$$
+        Comprobación: $\sqrt2\cos\dfrac{3\pi}{4}=-1$ ✓ y $\sqrt2\operatorname{sen}\dfrac{3\pi}{4}=1$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Regla práctica</div>
+        Calcula $r$ y $\theta$, <em>vuelve a convertir</em> a cartesianas y comprueba que recuperas
+        el punto de partida. Es la forma más rápida de detectar un error de cuadrante.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 Convertir ecuaciones</div>
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · $r=2\cos\theta$ es una circunferencia</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Multiplicar por $r$</div>
+        $r^{2}=2r\cos\theta$
+      </div>
+      <div class="paso"><div class="paso-t">Sustituir</div>
+        $r^{2}=x^{2}+y^{2}$ y $r\cos\theta=x$, luego $x^{2}+y^{2}=2x$
+      </div>
+      <div class="paso"><div class="paso-t">Completar el cuadrado</div>
+        $x^{2}-2x+y^{2}=0 \Rightarrow (x-1)^{2}+y^{2}=1$<br>
+        Circunferencia de radio 1 centrada en $(1,0)$ — <em>no</em> en el origen.
+      </div>
+      <div class="paso"><div class="paso-t">El truco</div>
+        Multiplicar por $r$ es la maniobra estándar: convierte $r$ en $r^{2}$ y $\cos\theta$ en
+        $r\cos\theta$, que sí tienen equivalente cartesiano directo. Análogamente,
+        $r=2\operatorname{sen}\theta$ da $x^{2}+(y-1)^{2}=1$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Coordenadas polares</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Gráficas polares</h3>
+
+  <p>La ventaja de las polares es que curvas muy difíciles en cartesianas tienen ecuaciones
+     sencillísimas. Compara: la cardioide es $r=1+\cos\theta$ en polares, y en cartesianas es
+     $\left(x^{2}+y^{2}-x\right)^{2}=x^{2}+y^{2}$.</p>
+
+  <table class="tbl">
+    <tr><th>Ecuación</th><th>Curva</th><th>Cómo reconocerla</th></tr>
+    <tr><td>$r=a$</td><td>Circunferencia centrada en el origen</td><td>$r$ constante</td></tr>
+    <tr><td>$\theta=\alpha$</td><td>Recta por el origen</td><td>$\theta$ constante</td></tr>
+    <tr><td>$r=a\cos\theta$ &nbsp;o&nbsp; $r=a\operatorname{sen}\theta$</td><td>Circunferencia que pasa por el origen</td><td>Radio $a/2$, centro desplazado</td></tr>
+    <tr><td>$r=a(1\pm\cos\theta)$</td><td><strong>Cardioide</strong></td><td>Forma de corazón; $r=0$ en un punto</td></tr>
+    <tr><td>$r=a\cos(n\theta)$</td><td><strong>Rosa</strong></td><td>$n$ impar → $n$ pétalos; $n$ par → $2n$ pétalos</td></tr>
+    <tr><td>$r=a+b\cos\theta$ con $b \gt a$</td><td><strong>Limaçon con rizo</strong></td><td>$r$ se vuelve negativo en un tramo</td></tr>
+    <tr><td>$r=a\theta$</td><td>Espiral de Arquímedes</td><td>$r$ crece proporcionalmente a $\theta$</td></tr>
+  </table>
+
+  <div class="nota">
+    <strong>La regla de los pétalos es contraintuitiva.</strong> Con $n$ <em>impar</em> salen $n$
+    pétalos, y con $n$ <em>par</em> salen $2n$. Así, $r=\cos 3\theta$ tiene 3 pétalos y
+    $r=\cos 2\theta$ tiene 4. La razón es que con $n$ impar la curva se cierra en $[0,\pi]$ y el
+    segundo recorrido repite los mismos pétalos, mientras que con $n$ par hacen falta los
+    $2\pi$ completos y cada mitad aporta pétalos nuevos.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · El limaçon con rizo interior</h4>
+    <div class="ejemplo-body">
+      Analiza $r=1+2\cos\theta$.
+      <div class="paso"><div class="paso-t">¿Dónde se anula $r$?</div>
+        $1+2\cos\theta=0 \Rightarrow \cos\theta=-\dfrac12 \Rightarrow
+        \theta=\dfrac{2\pi}{3}$ y $\theta=\dfrac{4\pi}{3}$
+      </div>
+      <div class="paso"><div class="paso-t">¿Dónde es negativo?</div>
+        Entre esos dos ángulos: $\theta\in\left(\dfrac{2\pi}{3},\dfrac{4\pi}{3}\right)$.
+      </div>
+      <div class="paso"><div class="paso-t">Qué ocurre ahí</div>
+        En $\theta=\pi$ se tiene $r=1+2(-1)=-1$. La dirección $\theta=\pi$ apunta hacia la
+        izquierda, pero como $r \lt 0$ el punto se marca hacia la <strong>derecha</strong>, en
+        $(1,0)$ cartesiano.
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        Ese tramo con $r$ negativo dibuja un <strong>rizo interior</strong> dentro de la curva
+        principal. Si ignoraras los valores negativos de $r$, el rizo desaparecería y la gráfica
+        quedaría incompleta.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Explora las gráficas polares</div>
+  <div class="viz" data-viz="polares">
+    <div class="viz-controls">
+      <label for="po-c">Curva</label>
+      <select id="po-c">
+        <option value="card">cardioide r = 1,4(1+cos θ)</option>
+        <option value="circR">r = 2</option>
+        <option value="circD">r = 2cos θ</option>
+        <option value="rosa3">rosa r = 2,4cos 3θ &nbsp;(3 pétalos)</option>
+        <option value="rosa4">rosa r = 2,4cos 2θ &nbsp;(4 pétalos)</option>
+        <option value="lima">limaçon r = 1+2cos θ &nbsp;(con rizo)</option>
+        <option value="espir">espiral r = 0,32 θ</option>
+      </select>
+      <label for="po-t">Avanzar θ</label>
+      <input id="po-t" class="tpol" type="range" min="0" max="100" value="30">
+      <span class="a-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La línea punteada marca la dirección $\theta$ y el radio dorado la distancia $r$. Elige el
+    limaçon y avanza hasta pasar de $\theta=2\pi/3$: el radio se pone <strong>rojo</strong> y
+    apunta al lado contrario de la línea punteada. Ahí es donde nace el rizo.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Gráficas polares</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Un gráfico de radar —el que compara varios indicadores de desempeño en un mismo diagrama— es
+      literalmente un sistema de coordenadas polares: cada eje es un ángulo $\theta$ fijo y el valor
+      del indicador es $r$. Leer bien esos diagramas exige entender que el área encerrada no es
+      proporcional a la suma de los indicadores.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Las curvas paramétricas describen la evolución conjunta de dos magnitudes en el tiempo: si
+      $x(t)$ son los ingresos y $y(t)$ los costos, la curva $(x(t),y(t))$ muestra la trayectoria del
+      negocio, y los puntos donde cruza la recta $y=x$ son los de equilibrio.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Toda animación por computador es una curva paramétrica: el objeto está en $(x(t),y(t))$ en el
+      fotograma $t$. Y las <em>curvas de Bézier</em>, base del diseño vectorial y de las fuentes
+      tipográficas, son curvas paramétricas polinómicas. Cambiar la parametrización sin cambiar la
+      curva es exactamente lo que hace un ajuste de <em>easing</em>.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El diagrama de radiación de una antena se traza en polares: $r(\theta)$ es la intensidad
+      emitida en la dirección $\theta$. Una antena dipolo da una figura parecida a una rosa de dos
+      pétalos, y una direccional una cardioide. Y las figuras de Lissajous del osciloscopio son
+      curvas paramétricas: comparan dos señales y su forma revela la relación de frecuencias.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Las paramétricas describen curvas que <strong>no son gráficas de funciones</strong>, y además dicen cómo se recorren.</li>
+    <li>Toda función $y=h(x)$ es un caso particular: $x=t$, $y=h(t)$.</li>
+    <li>Para eliminar el parámetro: despejar $t$, o usar $\cos^{2}+\operatorname{sen}^{2}=1$ o $\sec^{2}-\tan^{2}=1$.</li>
+    <li>Al eliminar el parámetro se <strong>pierde</strong> el sentido, la rapidez y a veces parte de la curva: comprueba el rango.</li>
+    <li>Una curva admite <strong>infinitas</strong> parametrizaciones, que difieren en sentido y rapidez.</li>
+    <li>Rapidez $=\sqrt{(dx/dt)^{2}+(dy/dt)^{2}}$.</li>
+    <li>Polar → cartesiano: $x=r\cos\theta$, $y=r\operatorname{sen}\theta$. Al revés, <strong>cuidado con el cuadrante</strong>.</li>
+    <li>Un punto tiene infinitas representaciones polares, y $r$ <strong>puede ser negativo</strong>.</li>
+    <li>Rosas: $n$ impar → $n$ pétalos; $n$ par → $2n$ pétalos.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/7-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Paramétricas y polares</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827a"></script>
+
+<script src="../assets/ova.js?v=20260827b"></script>
+<script src="../assets/viz-vectorial.js?v=20260827b"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Paramétricas · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Eliminar el parámetro', nivel: 2,
+      criterio: 'Eliminar el parámetro despejando (§2)',
+      enunciado: "Las ecuaciones $x=t+1$, $y=t^{2}$ describen la curva cartesiana:",
+      opciones: ['$y=x^{2}-1$', '$y=(x-1)^{2}$', '$y=(x+1)^{2}$', '$y=x^{2}+1$'],
+      correcta: 1,
+      pista: 'Despeja $t$ de la primera ecuación y sustituye en la segunda.',
+      solucion: "De $x=t+1$ sale $t=x-1$, y sustituyendo: $y=(x-1)^{2}$. Es una parábola con vértice en $(1,0)$. La opción a) resultaría de $y=t^{2}-1$, que es otra curva: comprueba sustituyendo $t=1$, donde la parametrización da el punto $(2,1)$ y solo la respuesta correcta lo satisface."
+    },
+    {
+      etiqueta: 'Identidad pitagórica', nivel: 2,
+      criterio: 'Eliminar el parámetro con identidades trigonométricas (§2)',
+      enunciado: "Para $x=3\\cos t$, $y=1{,}6\\operatorname{sen}t$, la ecuación cartesiana es:",
+      opciones: [
+        '$\\dfrac{x^{2}}{9}+\\dfrac{y^{2}}{2{,}56}=1$',
+        '$\\dfrac{x}{3}+\\dfrac{y}{1{,}6}=1$',
+        '$x^{2}+y^{2}=1$',
+        '$\\dfrac{x^{2}}{3}+\\dfrac{y^{2}}{1{,}6}=1$'
+      ],
+      correcta: 0,
+      pista: 'Despeja $\\cos t$ y $\\operatorname{sen}t$, y luego <strong>eleva al cuadrado</strong> antes de sumar.',
+      solucion: "$\\cos t=\\dfrac{x}{3}$ y $\\operatorname{sen}t=\\dfrac{y}{1{,}6}$; al sumar los cuadrados queda $\\dfrac{x^{2}}{9}+\\dfrac{y^{2}}{2{,}56}=1$. La opción d) olvida elevar los denominadores al cuadrado, que es el descuido más común: si $\\cos t = x/3$, entonces $\\cos^2 t = x^2/9$, no $x^2/3$."
+    },
+    {
+      etiqueta: 'Rango', nivel: 3,
+      criterio: 'Reconocer que eliminar el parámetro puede ampliar la curva (§2)',
+      enunciado: "Para $x=\\cos t$, $y=\\operatorname{sen}t$ con $t\\in[0,\\pi]$, eliminar el parámetro da $x^{2}+y^{2}=1$. ¿Es esa la curva completa?",
+      opciones: [
+        'Sí, la circunferencia entera',
+        'No: la parametrización solo recorre la mitad superior',
+        'No: solo recorre el primer cuadrante',
+        'Sí, pero recorrida dos veces'
+      ],
+      correcta: 1,
+      pista: 'Con $t\\in[0,\\pi]$, ¿qué signo tiene $\\operatorname{sen}t$?',
+      solucion: "En $[0,\\pi]$ se tiene $\\operatorname{sen}t\\geq0$, así que $y\\geq0$: solo se traza la semicircunferencia superior, de $(1,0)$ a $(-1,0)$. La ecuación cartesiana describe <em>más</em> puntos de los que la parametrización alcanza. Por eso, al eliminar el parámetro hay que comprobar siempre el rango y restringir en consecuencia."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Coordenadas polares · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Conversión', nivel: 1,
+      criterio: 'Convertir de polar a cartesiano (§4)',
+      enunciado: "El punto polar $\\left(2,\\dfrac{\\pi}{3}\\right)$ en cartesianas es:",
+      opciones: ['$(\\sqrt3,\\,1)$', '$(2,\\,\\pi/3)$', '$(1,\\,\\sqrt3)$', '$(1,\\,1)$'],
+      correcta: 2,
+      pista: '$x=r\\cos\\theta$ y $y=r\\operatorname{sen}\\theta$. Recuerda que $\\cos(\\pi/3)=1/2$.',
+      solucion: "$x=2\\cos\\dfrac{\\pi}{3}=2\\cdot\\dfrac12=1$ y $y=2\\operatorname{sen}\\dfrac{\\pi}{3}=2\\cdot\\dfrac{\\sqrt3}{2}=\\sqrt3$. La opción a) intercambia seno y coseno: $\\cos$ va con $x$ y $\\operatorname{sen}$ con $y$, no al revés."
+    },
+    {
+      etiqueta: 'El cuadrante', nivel: 3,
+      criterio: 'Elegir correctamente el ángulo al convertir a polar (§4)',
+      enunciado: "Para el punto cartesiano $(-1,\\,1)$ se tiene $r=\\sqrt2$. ¿Cuánto vale $\\theta$?",
+      opciones: [
+        '$-\\dfrac{\\pi}{4}$, porque $\\arctan(-1)=-\\dfrac{\\pi}{4}$',
+        '$\\dfrac{3\\pi}{4}$',
+        '$\\dfrac{\\pi}{4}$',
+        '$\\dfrac{5\\pi}{4}$'
+      ],
+      correcta: 1,
+      pista: '¿En qué cuadrante está $(-1,1)$? ¿En cuál devuelve valores la arcotangente?',
+      solucion: "La calculadora da $-\\pi/4$, que está en el <strong>cuarto</strong> cuadrante, pero el punto está en el <strong>segundo</strong>. Hay que sumar $\\pi$: $\\theta=3\\pi/4$. Comprobación: $\\sqrt2\\cos(3\\pi/4)=-1$ ✓. La opción a) es el error clásico de fiarse de la arcotangente sin mirar el cuadrante — daría el punto $(1,-1)$."
+    },
+    {
+      etiqueta: 'Ecuaciones polares', nivel: 2,
+      criterio: 'Convertir una ecuación polar a cartesiana (§4.1)',
+      enunciado: "La ecuación polar $r=2\\cos\\theta$ representa:",
+      opciones: [
+        'Una circunferencia de radio 2 centrada en el origen',
+        'Una recta',
+        'Una cardioide',
+        'Una circunferencia de radio 1 centrada en $(1,0)$'
+      ],
+      correcta: 3,
+      pista: 'Multiplica ambos lados por $r$ y traduce a cartesianas.',
+      solucion: "Multiplicando por $r$: $r^{2}=2r\\cos\\theta$, es decir $x^{2}+y^{2}=2x$. Completando el cuadrado, $(x-1)^{2}+y^{2}=1$: radio 1 y centro desplazado a $(1,0)$, no en el origen. La opción a) confunde esta ecuación con $r=2$, que sí da la circunferencia centrada en el origen."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Gráficas polares · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Rosas', nivel: 2,
+      criterio: 'Aplicar la regla de los pétalos (§5)',
+      enunciado: "¿Cuántos pétalos tiene la rosa $r=\\cos(2\\theta)$?",
+      opciones: ['$2$', '$4$', '$8$', '$1$'],
+      correcta: 1,
+      pista: 'La regla distingue $n$ par de $n$ impar, y no es la que uno esperaría.',
+      solucion: "Con $n$ <strong>par</strong> salen $2n$ pétalos, así que $r=\\cos 2\\theta$ tiene 4. La opción a) aplica la regla al revés. Compáralo con $r=\\cos 3\\theta$, que al ser $n$ impar tiene solo 3: la regla es contraintuitiva y conviene memorizarla con estos dos casos."
+    },
+    {
+      etiqueta: 'Radio negativo', nivel: 3,
+      criterio: 'Interpretar valores negativos de r (§5)',
+      enunciado: "En $r=1+2\\cos\\theta$, ¿para qué valores de $\\theta$ se tiene $r \\lt 0$?",
+      opciones: [
+        'Nunca: $r$ siempre es positivo',
+        'Para $\\theta\\in(0,\\pi)$',
+        'Para $\\theta\\in\\left(\\dfrac{2\\pi}{3},\\dfrac{4\\pi}{3}\\right)$',
+        'Solo en $\\theta=\\pi$'
+      ],
+      correcta: 2,
+      pista: 'Resuelve $1+2\\cos\\theta \\lt 0$, es decir $\\cos\\theta \\lt -1/2$.',
+      solucion: "$\\cos\\theta \\lt -\\dfrac12$ se cumple entre $\\dfrac{2\\pi}{3}$ y $\\dfrac{4\\pi}{3}$. En ese tramo el punto se dibuja en la dirección <em>opuesta</em> a $\\theta$, y eso es lo que genera el rizo interior del limaçon. La opción a) es el error de suponer que $r$ es una distancia y por tanto no negativa."
+    },
+    {
+      etiqueta: 'Sentido del recorrido', nivel: 3,
+      criterio: 'Determinar el sentido de una parametrización (§3)',
+      enunciado: "La parametrización $x=2\\operatorname{sen}t$, $y=2\\cos t$ recorre la circunferencia:",
+      opciones: [
+        'En sentido antihorario, empezando en $(2,0)$',
+        'En sentido horario, empezando en $(0,2)$',
+        'En sentido antihorario, empezando en $(0,2)$',
+        'Solo la mitad de la circunferencia'
+      ],
+      correcta: 1,
+      pista: 'Evalúa en $t=0$ y en un valor pequeño como $t=0{,}1$, y mira hacia dónde se movió.',
+      solucion: "En $t=0$ el punto es $(0,2)$, y en $t=0{,}1$ pasa a $(0{,}20;\\,1{,}99)$: se movió a la derecha y bajó, o sea en sentido <strong>horario</strong>. La opción a) describe la parametrización habitual $x=2\\cos t$, $y=2\\operatorname{sen}t$: intercambiar seno y coseno invierte el sentido del recorrido."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Concepto', nivel: 1,
+      criterio: 'Justificar por qué se usan paramétricas (§1)',
+      enunciado: '¿Por qué la circunferencia $x^{2}+y^{2}=4$ no puede escribirse como $y=f(x)$?',
+      opciones: [
+        'Porque no es continua',
+        'Porque a cada $x$ del interior le corresponden <strong>dos</strong> valores de $y$',
+        'Porque está centrada en el origen',
+        'Porque tiene radio par'
+      ],
+      correcta: 1,
+      pista: '¿Cuántos puntos de la circunferencia tienen abscisa $x=0$?',
+      solucion: "Para $x=0$ hay dos puntos, $(0,2)$ y $(0,-2)$, y una función solo puede asignar un valor. Falla la prueba de la recta vertical que viste en la Guía 1. La parametrización $x=2\\cos t$, $y=2\\operatorname{sen}t$ resuelve el problema sin partir la curva en dos ramas."
+    },
+    {
+      etiqueta: 'Toda función es paramétrica', nivel: 2,
+      criterio: 'Reconocer que las funciones son un caso particular (§1.1)',
+      enunciado: '¿Cómo se parametriza la gráfica de $y=x^{3}-2x$?',
+      opciones: [
+        'No se puede: es una función, no una curva paramétrica',
+        '$x=t^{3}-2t$, $y=t$',
+        '$x=t$, $y=t^{3}-2t$',
+        '$x=\\cos t$, $y=\\operatorname{sen}t$'
+      ],
+      correcta: 2,
+      pista: 'Toma el propio $x$ como parámetro.',
+      solucion: "Basta poner $x=t$ y $y=h(t)$. Toda función es un caso particular de curva paramétrica, así que lo paramétrico no sustituye lo que ya sabías: lo contiene. La opción b) intercambia las componentes y produce la curva reflejada respecto de $y=x$, que es la inversa, no la original."
+    },
+    {
+      etiqueta: 'Rapidez', nivel: 3,
+      criterio: 'Calcular la rapidez de una parametrización (§3)',
+      enunciado: "La rapidez de $x=2\\cos 2t$, $y=2\\operatorname{sen}2t$ es:",
+      opciones: ['$2$', '$4$', '$1$', 'Variable con $t$'],
+      correcta: 1,
+      pista: 'Deriva ambas componentes y calcula $\\sqrt{(dx/dt)^{2}+(dy/dt)^{2}}$.',
+      solucion: "$\\dfrac{dx}{dt}=-4\\operatorname{sen}2t$ y $\\dfrac{dy}{dt}=4\\cos 2t$, luego la rapidez es $\\sqrt{16\\operatorname{sen}^{2}2t+16\\cos^{2}2t}=4$, constante. Es el doble que la de $x=2\\cos t$: la misma circunferencia recorrida en la mitad del tiempo. La curva no determina la rapidez."
+    },
+    {
+      etiqueta: 'Lo que se pierde', nivel: 3,
+      criterio: 'Identificar qué información desaparece al eliminar el parámetro (§2)',
+      enunciado: 'Al eliminar el parámetro de una curva paramétrica, ¿qué información se pierde?',
+      opciones: [
+        'La forma de la curva',
+        'Nada: las dos descripciones son equivalentes',
+        'El sentido del recorrido, la rapidez y a veces parte de la curva',
+        'Las coordenadas de los puntos'
+      ],
+      correcta: 2,
+      pista: 'Tres parametrizaciones distintas pueden dar la misma ecuación cartesiana.',
+      solucion: "La ecuación cartesiana dice <em>qué</em> curva es, pero no <em>cómo</em> se recorre. Las tres parametrizaciones de la §3 dan todas $x^{2}+y^{2}=4$ y difieren en sentido y rapidez. Y con intervalos restringidos puede perderse parte de la curva, como en la Comprobación 1."
+    },
+    {
+      etiqueta: 'Representaciones polares', nivel: 2,
+      criterio: 'Reconocer la no unicidad de las coordenadas polares (§4)',
+      enunciado: '¿Cuántas representaciones polares distintas tiene un punto del plano (distinto del origen)?',
+      opciones: ['Una sola', 'Dos', 'Cuatro', 'Infinitas'],
+      correcta: 3,
+      pista: 'Sumar $2\\pi$ a $\\theta$ da el mismo punto. ¿Y usar $r$ negativo?',
+      solucion: "El mismo punto es $(r,\\theta+2k\\pi)$ para todo entero $k$, y además $(-r,\\theta+\\pi)$ y sus giros. Son infinitas. A diferencia de las cartesianas, donde cada punto tiene un solo nombre. El origen es el caso extremo: es $(0,\\theta)$ para cualquier $\\theta$."
+    },
+    {
+      etiqueta: 'Cardioide', nivel: 2,
+      criterio: 'Reconocer una curva polar por su ecuación (§5)',
+      enunciado: "La curva $r=1+\\cos\\theta$ es:",
+      opciones: [
+        'Una cardioide',
+        'Una circunferencia',
+        'Una espiral',
+        'Una rosa de 4 pétalos'
+      ],
+      correcta: 0,
+      pista: 'Evalúa $r$ en $\\theta=0$ y en $\\theta=\\pi$.',
+      solucion: "La forma $r=a(1\\pm\\cos\\theta)$ es la cardioide, con forma de corazón. Aquí $r(0)=2$ y $r(\\pi)=0$: la curva toca el origen en un punto y se abre al lado opuesto. Nota que $r$ nunca se vuelve negativo, porque $\\cos\\theta\\geq-1$ — por eso no tiene rizo interior, a diferencia del limaçon $r=1+2\\cos\\theta$."
+    },
+    {
+      etiqueta: 'Cicloide', nivel: 3,
+      criterio: 'Interpretar un punto singular de una parametrización (§1.1)',
+      enunciado: "En la cicloide $x=t-\\operatorname{sen}t$, $y=1-\\cos t$, ¿qué ocurre en $t=0$ y $t=2\\pi$?",
+      opciones: [
+        'La curva alcanza su altura máxima',
+        'La curva toca el suelo y su rapidez se anula',
+        'La curva se corta a sí misma',
+        'La parametrización no está definida'
+      ],
+      correcta: 1,
+      pista: 'Evalúa $y$ y luego las dos derivadas en $t=0$.',
+      solucion: "$y=1-\\cos 0=0$: toca el suelo. Y $\\dfrac{dx}{dt}=1-\\cos t=0$, $\\dfrac{dy}{dt}=\\operatorname{sen}t=0$: la rapidez se anula. Es el punto del neumático que en ese instante está en contacto con el asfalto y momentáneamente en reposo. Ahí la curva forma un pico, y por eso en la Guía 3 se exigirá $\\mathbf{r}'\\neq\\mathbf{0}$ para hablar de tangente."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 2,
+      criterio: 'Elegir el sistema de coordenadas adecuado (§5)',
+      enunciado: '¿Cuál es la ventaja principal de las coordenadas polares?',
+      opciones: [
+        'Que evitan usar funciones trigonométricas',
+        'Que cada punto tiene un nombre único',
+        'Que curvas con simetría circular tienen ecuaciones mucho más simples',
+        'Que solo requieren una coordenada'
+      ],
+      correcta: 2,
+      pista: 'Compara $r=1+\\cos\\theta$ con su equivalente cartesiano.',
+      solucion: "La cardioide es $r=1+\\cos\\theta$ en polares y $\\left(x^{2}+y^{2}-x\\right)^{2}=x^{2}+y^{2}$ en cartesianas. Cuando el problema tiene simetría respecto de un punto, las polares lo simplifican radicalmente. La opción b) es justo lo contrario de lo que ocurre, y la a) es falsa: las polares usan trigonometría constantemente."
+    }
+  ]
+});
+</script>
 </body>
 </html>

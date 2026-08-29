@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 3 · Funciones vectoriales — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827a">
+<title>Guía 3 · Funciones vectoriales — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260827b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 3</h1>
+      <h1>Cálculo Vectorial · Guía 3</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,707 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Funciones vectoriales</a>
+    <a href="#s2">2 · Derivación</a>
+    <a href="#s3">3 · Reglas</a>
+    <a href="#s4">4 · Integración</a>
+    <a href="#s5">5 · Velocidad y aceleración</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 3 · Funciones vectoriales</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 3 · Corte I</div>
+  <h2>Funciones vectoriales</h2>
+  <p>Las paramétricas de la Guía 2, ahora en el espacio y empaquetadas en un solo objeto.
+     Todo el cálculo de una variable sigue funcionando — límites, derivadas, integrales — pero
+     ahora la salida es un vector, y eso le da un significado físico inmediato.</p>
+  <div class="chips">
+    <span class="chip">Stewart · Cap. 13.1–13.4</span>
+    <span class="chip">Larson · Cap. 12.1–12.3</span>
+    <span class="chip">Semana 3</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>Novedad en esta guía: gráficas en tres dimensiones.</strong> Los visualizadores traen un
+  deslizador de <em>giro</em>. Úsalo: una escena 3D fija es ambigua —el ojo no sabe qué está
+  delante— y basta rotarla un poco para que la forma se aclare.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Funciones vectoriales</h3>
+
+  <div class="def">
+    Una <strong>función vectorial</strong> asigna a cada número real $t$ un vector:
+    $$\mathbf{r}(t)=\langle f(t),\,g(t),\,h(t)\rangle = f(t)\,\mathbf{i}+g(t)\,\mathbf{j}+h(t)\,\mathbf{k}$$
+    Las funciones $f$, $g$ y $h$ se llaman <em>funciones componentes</em>. Su dominio es la
+    intersección de los tres dominios.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Qué cambia y qué no</h3>
+    <p>Comparado con la Guía 2, no hay ninguna idea nueva: $\mathbf{r}(t)=\langle f(t),g(t)\rangle$
+       es exactamente la curva paramétrica $x=f(t)$, $y=g(t)$. Lo que cambia es la
+       <strong>notación</strong> y con ella el punto de vista.</p>
+    <p>Al empaquetar las componentes en un vector, $\mathbf{r}(t)$ deja de ser «dos ecuaciones» y
+       pasa a ser <strong>una flecha desde el origen hasta el punto</strong>. Y una flecha se puede
+       derivar, integrar, sumar y multiplicar como un objeto único.</p>
+    <p>Además, ahora caben tres componentes. Eso permite curvas que <em>no caben en ningún plano</em>,
+       como la hélice, y ahí es donde la notación vectorial deja de ser cómoda y pasa a ser necesaria.</p>
+  </div>
+
+  <div class="sub-title">1.1 Curvas en el espacio</div>
+  <p>Al recorrer $t$ su intervalo, la punta de $\mathbf{r}(t)$ traza una <strong>curva en el
+     espacio</strong>. Estas son las que conviene reconocer:</p>
+  <table class="tbl">
+    <tr><th>Curva</th><th>Función vectorial</th><th>Observación</th></tr>
+    <tr><td>Recta por $P_0$ con dirección $\mathbf{v}$</td><td>$\mathbf{r}(t)=\mathbf{r}_0+t\,\mathbf{v}$</td><td>Aceleración nula</td></tr>
+    <tr><td>Circunferencia en el plano $z=0$</td><td>$\langle a\cos t,\;a\operatorname{sen}t,\;0\rangle$</td><td>Curva plana</td></tr>
+    <tr><td><strong>Hélice circular</strong></td><td>$\langle a\cos t,\;a\operatorname{sen}t,\;ct\rangle$</td><td>Gira y sube a la vez</td></tr>
+    <tr><td>Cúbica alabeada</td><td>$\langle t,\;t^{2},\;t^{3}\rangle$</td><td>No cabe en ningún plano</td></tr>
+  </table>
+
+  <div class="nota">
+    <strong>La hélice merece atención.</strong> Su sombra sobre el plano $z=0$ es una
+    circunferencia: las componentes $x$ e $y$ giran, mientras $z$ crece linealmente. Es la
+    trayectoria de una partícula cargada en un campo magnético, la forma de un resorte y la del ADN.
+    En el visualizador de §5.1 verás esa sombra dibujada.
+  </div>
+
+  <div class="sub-title">1.2 Límites y continuidad</div>
+  <div class="def">
+    Los límites se calculan <strong>componente a componente</strong>:
+    $$\lim_{t\to a}\mathbf{r}(t)=\left\langle \lim_{t\to a}f(t),\;\lim_{t\to a}g(t),\;\lim_{t\to a}h(t)\right\rangle$$
+    siempre que los tres existan. Y $\mathbf{r}$ es continua en $a$ si sus tres componentes lo son.
+  </div>
+  <p>Esto es lo que hace manejable todo el tema: <strong>no hay teoría nueva que aprender</strong>.
+     Cada operación vectorial se reduce a hacer tres veces lo que ya sabes de Cálculo I.</p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Derivación</h3>
+
+  <div class="def">
+    $$\mathbf{r}'(t)=\lim_{h\to0}\frac{\mathbf{r}(t+h)-\mathbf{r}(t)}{h}
+      =\langle f'(t),\,g'(t),\,h'(t)\rangle$$
+    Es la misma definición de siempre, con vectores en el numerador. Y en la práctica se calcula
+    derivando cada componente por separado.
+  </div>
+
+  <div class="sub-title">2.1 Qué significa geométricamente</div>
+  <p>El numerador $\mathbf{r}(t+h)-\mathbf{r}(t)$ es el vector que va del punto actual al siguiente:
+     una <strong>secante</strong>. Al hacer $h\to0$, esa secante gira hasta apoyarse en la curva.</p>
+  <div class="def">
+    Si $\mathbf{r}'(t)\neq\mathbf{0}$, es un vector <strong>tangente</strong> a la curva en ese
+    punto, y apunta en el sentido en que crece $t$. El <em>vector tangente unitario</em> es
+    $$\mathbf{T}(t)=\frac{\mathbf{r}'(t)}{|\mathbf{r}'(t)|}$$
+  </div>
+  <p style="font-size:.88rem">La condición $\mathbf{r}'\neq\mathbf{0}$ no es un tecnicismo: donde la
+     derivada se anula la curva puede tener un pico. Es justo lo que pasa en la cicloide de la
+     Guía 2 cuando toca el suelo.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · La hélice, derivada</h4>
+    <div class="ejemplo-body">
+      Sea $\mathbf{r}(t)=\langle\cos t,\;\operatorname{sen}t,\;t\rangle$.
+      <div class="paso"><div class="paso-t">Derivar componente a componente</div>
+        $\mathbf{r}'(t)=\langle-\operatorname{sen}t,\;\cos t,\;1\rangle$
+      </div>
+      <div class="paso"><div class="paso-t">Su magnitud</div>
+        $|\mathbf{r}'(t)|=\sqrt{\operatorname{sen}^{2}t+\cos^{2}t+1}=\sqrt{2}$<br>
+        Es <strong>constante</strong>: la partícula recorre la hélice a rapidez uniforme.
+      </div>
+      <div class="paso"><div class="paso-t">Vector tangente unitario</div>
+        $\mathbf{T}(t)=\dfrac{1}{\sqrt2}\langle-\operatorname{sen}t,\;\cos t,\;1\rangle$
+      </div>
+      <div class="paso"><div class="paso-t">Segunda derivada</div>
+        $\mathbf{r}''(t)=\langle-\cos t,\;-\operatorname{sen}t,\;0\rangle$<br>
+        Nota que su tercera componente es cero: apunta horizontalmente, hacia el eje de la hélice.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Reglas de derivación</h3>
+
+  <div class="def">
+    Si $\mathbf{u}$ y $\mathbf{v}$ son derivables y $c$ es un escalar:
+    <div class="formulas" style="margin-top:.6rem">
+      <div class="formula"><div class="lbl">Suma</div>$(\mathbf{u}+\mathbf{v})'=\mathbf{u}'+\mathbf{v}'$</div>
+      <div class="formula"><div class="lbl">Escalar constante</div>$(c\,\mathbf{u})'=c\,\mathbf{u}'$</div>
+      <div class="formula"><div class="lbl">Escalar variable</div>$\big(f(t)\,\mathbf{u}\big)'=f'\mathbf{u}+f\,\mathbf{u}'$</div>
+      <div class="formula"><div class="lbl">Producto punto</div>$(\mathbf{u}\cdot\mathbf{v})'=\mathbf{u}'\cdot\mathbf{v}+\mathbf{u}\cdot\mathbf{v}'$</div>
+      <div class="formula"><div class="lbl">Producto cruz</div>$(\mathbf{u}\times\mathbf{v})'=\mathbf{u}'\times\mathbf{v}+\mathbf{u}\times\mathbf{v}'$</div>
+      <div class="formula"><div class="lbl">Cadena</div>$\big(\mathbf{u}(f(t))\big)'=\mathbf{u}'(f(t))\,f'(t)$</div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>En el producto cruz, el orden no se puede tocar</h3>
+    <p>Todas las reglas se parecen a las de Cálculo I, y por eso son fáciles de recordar. Pero hay
+       una trampa: el producto cruz <strong>no es conmutativo</strong>, así que en
+       $(\mathbf{u}\times\mathbf{v})'=\mathbf{u}'\times\mathbf{v}+\mathbf{u}\times\mathbf{v}'$
+       hay que respetar qué factor va delante en cada término.</p>
+    <p>Escribir $\mathbf{v}\times\mathbf{u}'$ en lugar de $\mathbf{u}'\times\mathbf{v}$ cambia el
+       signo del resultado. En el producto punto no pasa nada de esto, porque sí es conmutativo.</p>
+  </div>
+
+  <div class="sub-title">3.1 Un teorema con mucha consecuencia</div>
+  <div class="def">
+    <strong>Si $|\mathbf{r}(t)|$ es constante, entonces $\mathbf{r}(t)\cdot\mathbf{r}'(t)=0$</strong>
+    para todo $t$: el vector y su derivada son perpendiculares.
+  </div>
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Demostración en tres líneas</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Traducir la hipótesis</div>
+        Si $|\mathbf{r}|=c$ entonces $\mathbf{r}\cdot\mathbf{r}=|\mathbf{r}|^{2}=c^{2}$, una constante.
+      </div>
+      <div class="paso"><div class="paso-t">Derivar los dos lados</div>
+        Por la regla del producto punto:
+        $$\mathbf{r}'\cdot\mathbf{r}+\mathbf{r}\cdot\mathbf{r}'=0
+          \quad\Longrightarrow\quad 2\,\mathbf{r}\cdot\mathbf{r}'=0$$
+      </div>
+      <div class="paso"><div class="paso-t">Concluir</div>
+        $\mathbf{r}\cdot\mathbf{r}'=0$, es decir, son perpendiculares. ∎
+      </div>
+      <div class="paso"><div class="paso-t">Qué significa</div>
+        Si un punto se mueve manteniéndose siempre a la misma distancia del origen —o sea, sobre
+        una esfera— entonces su velocidad es siempre tangente a la esfera. Nunca tiene componente
+        radial, porque si la tuviera se acercaría o se alejaría.<br>
+        El mismo argumento aplicado a $\mathbf{T}\cdot\mathbf{T}=1$ demostrará en la Guía 4 que
+        $\mathbf{T}'$ es perpendicular a $\mathbf{T}$: así nace el vector normal.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Derivación</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Integración</h3>
+
+  <div class="def">
+    También componente a componente:
+    $$\int \mathbf{r}(t)\,dt=\left\langle \int f\,dt,\;\int g\,dt,\;\int h\,dt\right\rangle+\mathbf{C}$$
+    donde $\mathbf{C}$ es un <strong>vector</strong> constante de integración, no un número.
+    Para la integral definida se aplica el teorema fundamental en cada componente.
+  </div>
+
+  <div class="nota">
+    <strong>La constante es un vector.</strong> Es el descuido más frecuente del tema: escribir
+    $+C$ como escalar. Cada componente arrastra su propia constante, así que se necesitan tres, y
+    juntas forman $\mathbf{C}=\langle C_1,C_2,C_3\rangle$. Por eso hace falta una condición inicial
+    <em>vectorial</em> para determinarlas todas.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Recuperar la posición desde la velocidad</h4>
+    <div class="ejemplo-body">
+      Halla $\mathbf{r}(t)$ si $\mathbf{r}'(t)=\langle 2t,\;\operatorname{sen}t,\;e^{t}\rangle$
+      y $\mathbf{r}(0)=\langle 1,\,0,\,1\rangle$.
+      <div class="paso"><div class="paso-t">Integrar cada componente</div>
+        $\displaystyle\int 2t\,dt=t^{2}$ &nbsp;·&nbsp;
+        $\displaystyle\int \operatorname{sen}t\,dt=-\cos t$ &nbsp;·&nbsp;
+        $\displaystyle\int e^{t}dt=e^{t}$<br>
+        Luego $\mathbf{r}(t)=\langle t^{2}+C_1,\;-\cos t+C_2,\;e^{t}+C_3\rangle$
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la condición inicial</div>
+        $\mathbf{r}(0)=\langle C_1,\;-1+C_2,\;1+C_3\rangle=\langle 1,0,1\rangle$<br>
+        De donde $C_1=1$, $C_2=1$, $C_3=0$.
+      </div>
+      <div class="paso"><div class="paso-t">Solución</div>
+        $$\mathbf{r}(t)=\langle t^{2}+1,\;1-\cos t,\;e^{t}\rangle$$
+        Verificación: derivando se recupera $\langle 2t,\operatorname{sen}t,e^{t}\rangle$ ✓ y
+        $\mathbf{r}(0)=\langle1,0,1\rangle$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Ojo con el segundo componente</div>
+        $-\cos 0=-1$, no $0$. Es el descuido que hace fallar el ejercicio: al evaluar en $t=0$ hay
+        que sustituir de verdad, no suponer que cada término se anula.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Velocidad y aceleración</h3>
+
+  <div class="def">
+    Si $\mathbf{r}(t)$ es la posición de una partícula:
+    <div class="formulas" style="margin-top:.6rem">
+      <div class="formula"><div class="lbl">Velocidad</div>$\mathbf{v}(t)=\mathbf{r}'(t)$ — vector, tangente a la trayectoria</div>
+      <div class="formula"><div class="lbl">Rapidez</div>$|\mathbf{v}(t)|$ — escalar, siempre $\geq0$</div>
+      <div class="formula"><div class="lbl">Aceleración</div>$\mathbf{a}(t)=\mathbf{v}'(t)=\mathbf{r}''(t)$ — vector</div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>Aceleración no es «ir más rápido»</h3>
+    <p>En el lenguaje corriente acelerar significa aumentar la rapidez. En física y en esta
+       asignatura significa otra cosa: <strong>que el vector velocidad cambie</strong>, sea en
+       magnitud, en dirección, o en ambas.</p>
+    <p>El ejemplo que lo aclara es la hélice. Su rapidez es $\sqrt2$, constante — la partícula no va
+       ni más rápido ni más despacio nunca. Y sin embargo $\mathbf{a}\neq\mathbf{0}$: hay
+       aceleración porque la <em>dirección</em> del movimiento cambia todo el tiempo.</p>
+    <p>De hecho, en ese caso $\mathbf{v}\cdot\mathbf{a}=0$ siempre. Es el teorema de §3.1 aplicado a
+       $\mathbf{v}$: si $|\mathbf{v}|$ es constante, la aceleración es perpendicular a la velocidad
+       y solo sirve para <em>curvar</em> la trayectoria, nunca para acelerarla.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Movimiento circular uniforme</h4>
+    <div class="ejemplo-body">
+      Sea $\mathbf{r}(t)=\langle 2\cos t,\;2\operatorname{sen}t,\;0\rangle$.
+      <div class="paso"><div class="paso-t">Velocidad y rapidez</div>
+        $\mathbf{v}=\langle-2\operatorname{sen}t,\;2\cos t,\;0\rangle$, con
+        $|\mathbf{v}|=2$ constante.
+      </div>
+      <div class="paso"><div class="paso-t">Aceleración</div>
+        $\mathbf{a}=\langle-2\cos t,\;-2\operatorname{sen}t,\;0\rangle=-\mathbf{r}(t)$
+      </div>
+      <div class="paso"><div class="paso-t">Interpretación</div>
+        La aceleración es exactamente el opuesto del vector posición: apunta <strong>siempre hacia el
+        centro</strong>. Es la aceleración centrípeta, y su magnitud es $|\mathbf{a}|=2$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar la perpendicularidad</div>
+        $\mathbf{v}\cdot\mathbf{a}=(-2\operatorname{sen}t)(-2\cos t)+(2\cos t)(-2\operatorname{sen}t)
+        =4\operatorname{sen}t\cos t-4\operatorname{sen}t\cos t=0$ ✓
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Explora curvas en el espacio</div>
+  <div class="viz" data-viz="curva3d">
+    <div class="viz-controls">
+      <label for="c3-c">Curva</label>
+      <select id="c3-c">
+        <option value="helice">hélice ⟨1,4cos t, 1,4sen t, t/3⟩</option>
+        <option value="circ">circunferencia en z = 0</option>
+        <option value="twist">cúbica alabeada ⟨t, t², t³/3⟩</option>
+        <option value="recta">recta en el espacio</option>
+        <option value="nudo">curva cerrada en el espacio</option>
+      </select>
+      <label for="c3-g">Girar la escena</label>
+      <input id="c3-g" class="giro" type="range" min="0" max="628" value="90">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="c3-t">Avanzar t</label>
+      <input id="c3-t" class="tpos" type="range" min="0" max="100" value="40">
+      <span class="t-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Elige la hélice y avanza $t$: el lector muestra que $|\mathbf{v}|$ <strong>no cambia</strong> y
+    que $\mathbf{v}\cdot\mathbf{a}=0$ siempre. La curva gris punteada del suelo es la sombra sobre
+    el plano $z=0$ — una circunferencia — y explica por qué $x$ e $y$ giran mientras $z$ sube.
+    En la curva cerrada, gira la escena y verás que el cruce aparente se deshace: no se cortan,
+    una pasa por detrás.
+  </p>
+  <div class="nota">
+    <strong>Una aclaración sobre las constantes.</strong> El visualizador usa
+    $\mathbf{r}(t)=\langle 1{,}4\cos t,\;1{,}4\operatorname{sen}t,\;t/3\rangle$ en lugar de la hélice
+    del Ejemplo 1, solo para que la figura quepa mejor en el lienzo. Por eso el lector muestra
+    $|\mathbf{v}|\approx 1{,}44$ y no $\sqrt2$. Las conclusiones son idénticas: la rapidez es
+    constante y $\mathbf{v}\cdot\mathbf{a}=0$, que es lo que importa.
+  </div>
+
+  <div class="sub-title">5.2 Movimiento de un proyectil</div>
+  <p>Si la única fuerza es la gravedad, $\mathbf{a}=\langle0,-g\rangle$ es constante. Integrando dos
+     veces con $\mathbf{r}(0)=\mathbf{0}$ y $\mathbf{v}(0)=\langle v_0\cos\alpha,\;v_0\operatorname{sen}\alpha\rangle$:</p>
+  <div class="formula" style="max-width:520px">
+    $$\mathbf{r}(t)=\left\langle v_0\cos\alpha\;t,\;\;v_0\operatorname{sen}\alpha\;t-\tfrac12 g t^{2}\right\rangle$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Alcance y altura máxima</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Altura máxima: cuando $v_y=0$</div>
+        $v_0\operatorname{sen}\alpha-gt=0 \Rightarrow t=\dfrac{v_0\operatorname{sen}\alpha}{g}$,
+        y sustituyendo: $\;h_{\max}=\dfrac{(v_0\operatorname{sen}\alpha)^{2}}{2g}$
+      </div>
+      <div class="paso"><div class="paso-t">Tiempo de vuelo: cuando $y=0$ otra vez</div>
+        $t\left(v_0\operatorname{sen}\alpha-\tfrac12 gt\right)=0 \Rightarrow
+        t=\dfrac{2v_0\operatorname{sen}\alpha}{g}$ — exactamente el doble del anterior.
+      </div>
+      <div class="paso"><div class="paso-t">Alcance</div>
+        $R=v_0\cos\alpha\cdot\dfrac{2v_0\operatorname{sen}\alpha}{g}
+         =\dfrac{v_0^{2}\operatorname{sen}(2\alpha)}{g}$
+      </div>
+      <div class="paso"><div class="paso-t">Consecuencia clásica</div>
+        Como $\operatorname{sen}(2\alpha)$ alcanza su máximo en $2\alpha=90°$, el alcance máximo se
+        logra con $\alpha=45°$. Y ángulos complementarios —por ejemplo 30° y 60°— dan
+        <em>el mismo</em> alcance, porque $\operatorname{sen}(2\alpha)$ vale lo mismo en ambos.<br>
+        Con $v_0=20$ m/s y $\alpha=45°$: $R=40{,}82$ m y $h_{\max}=10{,}20$ m.
+      </div>
+    </div>
+  </div>
+
+  <div class="viz" data-viz="proyectil">
+    <div class="viz-controls">
+      <label for="py-v">Rapidez inicial</label>
+      <input id="py-v" class="v0" type="range" min="10" max="30" value="20">
+      <span class="v0-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="py-a">Ángulo</label>
+      <input id="py-a" class="ang" type="range" min="15" max="75" value="45">
+      <span class="ang-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="py-t">Avanzar t</label>
+      <input id="py-t" class="tp" type="range" min="0" max="100" value="30">
+      <span class="t-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Fíjate en la flecha roja: <strong>nunca cambia</strong>, porque la aceleración es constante.
+    La dorada sí gira, y su componente horizontal se mantiene fija mientras la vertical pasa de
+    positiva a negativa. Prueba 30° y luego 60°: el mismo alcance con trayectorias muy distintas.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Integración</h3>
+  <div id="chk2"></div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Velocidad y aceleración</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Un vector $\mathbf{r}(t)=\langle \text{ventas}(t),\ \text{costos}(t),\ \text{inventario}(t)\rangle$
+      describe el estado del negocio en el tiempo. Su derivada $\mathbf{r}'(t)$ da las tres tasas de
+      cambio a la vez, y su magnitud mide cuán rápido está cambiando la situación global.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La evolución conjunta de varias cuentas se modela como función vectorial. Integrar
+      $\mathbf{r}'(t)$ desde un balance inicial reconstruye el estado en cualquier fecha — y la
+      constante $\mathbf{C}$ es precisamente el balance de apertura.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Toda animación y todo motor de física trabaja con funciones vectoriales: la posición de un
+      objeto es $\mathbf{r}(t)$ y el motor integra $\mathbf{a}$ para obtener $\mathbf{v}$ y luego
+      $\mathbf{r}$, exactamente como en el Ejemplo 3 pero numéricamente. Y la cámara que orbita
+      una escena recorre una hélice o una circunferencia en el espacio.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Una partícula cargada en un campo magnético uniforme describe <strong>exactamente una
+      hélice</strong>: la fuerza de Lorentz $\mathbf{F}=q\,\mathbf{v}\times\mathbf{B}$ es siempre
+      perpendicular a la velocidad, así que no cambia la rapidez, solo curva la trayectoria. Es el
+      principio del ciclotrón y de los tubos de rayos catódicos.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Una función vectorial es una curva paramétrica empaquetada: misma idea, notación más potente.</li>
+    <li>Límites, derivadas e integrales se calculan <strong>componente a componente</strong>.</li>
+    <li>$\mathbf{r}'(t)$ es tangente a la curva y apunta en el sentido creciente de $t$.</li>
+    <li>En el producto cruz, $(\mathbf{u}\times\mathbf{v})'$ exige <strong>respetar el orden</strong> de los factores.</li>
+    <li>Si $|\mathbf{r}|$ es constante, entonces $\mathbf{r}\cdot\mathbf{r}'=0$: son perpendiculares.</li>
+    <li>La constante de integración es un <strong>vector</strong>, y hace falta una condición inicial vectorial.</li>
+    <li>$\mathbf{v}=\mathbf{r}'$, rapidez $=|\mathbf{v}|$, $\mathbf{a}=\mathbf{r}''$.</li>
+    <li>Puede haber aceleración con rapidez constante: la aceleración <em>curva</em> la trayectoria.</li>
+    <li>Proyectil: alcance $=\dfrac{v_0^{2}\operatorname{sen}(2\alpha)}{g}$, máximo en $\alpha=45°$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/3-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3 · Funciones vectoriales</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827a"></script>
+
+<script src="../assets/ova.js?v=20260827b"></script>
+<script src="../assets/viz-vectorial.js?v=20260827b"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Derivación · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Derivar', nivel: 1,
+      criterio: 'Derivar una función vectorial componente a componente (§2)',
+      enunciado: "Si $\\mathbf{r}(t)=\\langle\\cos t,\\;\\operatorname{sen}t,\\;t\\rangle$, entonces $\\mathbf{r}'(t)$ es:",
+      opciones: [
+        '$\\langle\\operatorname{sen}t,\\;-\\cos t,\\;1\\rangle$',
+        '$\\langle-\\operatorname{sen}t,\\;\\cos t,\\;1\\rangle$',
+        '$\\langle-\\cos t,\\;-\\operatorname{sen}t,\\;0\\rangle$',
+        '$\\langle-\\operatorname{sen}t,\\;\\cos t,\\;0\\rangle$'
+      ],
+      correcta: 1,
+      pista: 'Deriva cada componente por separado. Ojo con la derivada de $t$.',
+      solucion: "$(\\cos t)'=-\\operatorname{sen}t$, $(\\operatorname{sen}t)'=\\cos t$ y $(t)'=1$. La opción c) es la <em>segunda</em> derivada, y la d) olvida que la tercera componente $t$ tiene derivada 1, no 0. La opción a) invierte los signos de las dos primeras."
+    },
+    {
+      etiqueta: 'Rapidez constante', nivel: 3,
+      criterio: 'Calcular la magnitud del vector tangente (§2.1)',
+      enunciado: "Para la hélice $\\mathbf{r}(t)=\\langle\\cos t,\\;\\operatorname{sen}t,\\;t\\rangle$, la magnitud $|\\mathbf{r}'(t)|$ vale:",
+      opciones: ['$1$', '$\\sqrt{2}$', '$t$', 'Depende de $t$'],
+      correcta: 1,
+      pista: '$|\\mathbf{r}\'|=\\sqrt{\\operatorname{sen}^{2}t+\\cos^{2}t+1}$.',
+      solucion: "$\\sqrt{\\operatorname{sen}^{2}t+\\cos^{2}t+1^{2}}=\\sqrt{1+1}=\\sqrt2$, <strong>constante</strong>. La partícula recorre la hélice a rapidez uniforme. La opción d) es la intuición equivocada: aunque la curva suba indefinidamente, la rapidez no cambia."
+    },
+    {
+      etiqueta: 'El teorema', nivel: 3,
+      criterio: 'Aplicar el teorema de la magnitud constante (§3.1)',
+      enunciado: 'Si $|\\mathbf{r}(t)|$ es constante, ¿qué se puede afirmar?',
+      opciones: [
+        'Que $\\mathbf{r}\'(t)=\\mathbf{0}$',
+        'Que la curva es una recta',
+        'Que $\\mathbf{r}(t)$ y $\\mathbf{r}\'(t)$ son perpendiculares',
+        'Que $\\mathbf{r}(t)$ es constante'
+      ],
+      correcta: 2,
+      pista: 'Deriva la identidad $\\mathbf{r}\\cdot\\mathbf{r}=|\\mathbf{r}|^{2}$ usando la regla del producto punto.',
+      solucion: "Derivando $\\mathbf{r}\\cdot\\mathbf{r}=c^{2}$ se obtiene $2\\,\\mathbf{r}\\cdot\\mathbf{r}'=0$, luego son perpendiculares. La opción a) confunde «magnitud constante» con «vector constante»: el vector puede girar manteniendo su longitud, y de hecho eso es exactamente lo que hace sobre una esfera."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Integración · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'La constante', nivel: 2,
+      criterio: 'Reconocer que la constante de integración es vectorial (§4)',
+      enunciado: 'Al integrar una función vectorial, la constante de integración es:',
+      opciones: [
+        'Un vector $\\mathbf{C}=\\langle C_1,C_2,C_3\\rangle$',
+        'Un escalar $C$',
+        'Siempre cero',
+        'Una función de $t$'
+      ],
+      correcta: 0,
+      pista: '¿Cuántas integrales se hacen, y cuántas constantes aparece cada una?',
+      solucion: "Cada componente se integra por separado y aporta su propia constante, así que hacen falta tres. Por eso la condición inicial también debe ser <strong>vectorial</strong>: un solo dato no bastaría para determinar las tres. Escribir $+C$ como escalar es el descuido más frecuente del tema."
+    },
+    {
+      etiqueta: 'PVI vectorial', nivel: 3,
+      criterio: 'Determinar la constante con una condición inicial (§4)',
+      enunciado: "Si $\\mathbf{r}'(t)=\\langle 2t,\\;\\operatorname{sen}t,\\;e^{t}\\rangle$ y $\\mathbf{r}(0)=\\langle 1,0,1\\rangle$, entonces $\\mathbf{r}(t)$ es:",
+      opciones: [
+        '$\\langle t^{2},\\;-\\cos t,\\;e^{t}\\rangle$',
+        '$\\langle t^{2}+1,\\;-\\cos t,\\;e^{t}\\rangle$',
+        '$\\langle t^{2}+1,\\;1-\\cos t,\\;e^{t}\\rangle$',
+        '$\\langle t^{2}+1,\\;1-\\cos t,\\;e^{t}+1\\rangle$'
+      ],
+      correcta: 2,
+      pista: 'Integra y luego evalúa en $t=0$. Cuidado: $-\\cos 0=-1$, no $0$.',
+      solucion: "Integrando: $\\langle t^{2}+C_1,\\;-\\cos t+C_2,\\;e^{t}+C_3\\rangle$. En $t=0$ eso vale $\\langle C_1,\\;-1+C_2,\\;1+C_3\\rangle$, y al igualar a $\\langle1,0,1\\rangle$ sale $C_1=1$, $C_2=1$, $C_3=0$. La opción b) toma $C_2=0$ olvidando que $-\\cos 0=-1$, y daría $\\mathbf{r}(0)=\\langle1,-1,1\\rangle$."
+    },
+    {
+      etiqueta: 'Producto cruz', nivel: 3,
+      criterio: 'Aplicar la regla del producto cruz respetando el orden (§3)',
+      enunciado: "La derivada $(\\mathbf{u}\\times\\mathbf{v})'$ es:",
+      opciones: [
+        '$\\mathbf{u}\'\\times\\mathbf{v}\'$',
+        '$\\mathbf{u}\'\\times\\mathbf{v}+\\mathbf{u}\\times\\mathbf{v}\'$',
+        '$\\mathbf{v}\\times\\mathbf{u}\'+\\mathbf{v}\'\\times\\mathbf{u}$',
+        '$\\mathbf{u}\\times\\mathbf{v}\'-\\mathbf{u}\'\\times\\mathbf{v}$'
+      ],
+      correcta: 1,
+      pista: 'Es la regla del producto de siempre, pero el producto cruz <strong>no</strong> es conmutativo.',
+      solucion: "La estructura es la misma que en Cálculo I, pero hay que respetar qué factor va delante en cada término. La opción c) invierte ambos productos, y como $\\mathbf{a}\\times\\mathbf{b}=-\\mathbf{b}\\times\\mathbf{a}$, el resultado cambia de signo: sería $-(\\mathbf{u}\\times\\mathbf{v})'$."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Velocidad y aceleración · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'El concepto', nivel: 3,
+      criterio: 'Distinguir aceleración de aumento de rapidez (§5)',
+      enunciado: "En la hélice, $|\\mathbf{v}|=\\sqrt2$ es constante y sin embargo $\\mathbf{a}\\neq\\mathbf{0}$. ¿Cómo se explica?",
+      opciones: [
+        'Es un error: si la rapidez no cambia, la aceleración es nula',
+        'La aceleración cambia la <em>dirección</em> del movimiento, no su magnitud',
+        'La aceleración solo actúa en la componente $z$',
+        'La hélice no tiene aceleración bien definida'
+      ],
+      correcta: 1,
+      pista: 'La velocidad es un <em>vector</em>. ¿De cuántas maneras puede cambiar un vector?',
+      solucion: "Acelerar significa que el vector velocidad cambie, sea en magnitud o en dirección. En la hélice solo cambia la dirección, y por eso $\\mathbf{v}\\cdot\\mathbf{a}=0$: la aceleración es perpendicular a la velocidad y solo sirve para curvar la trayectoria. La opción c) es falsa: $\\mathbf{a}=\\langle-\\cos t,-\\operatorname{sen}t,0\\rangle$ tiene tercera componente <em>nula</em>."
+    },
+    {
+      etiqueta: 'Movimiento circular', nivel: 2,
+      criterio: 'Interpretar la aceleración centrípeta (§5)',
+      enunciado: "Para $\\mathbf{r}(t)=\\langle 2\\cos t,\\;2\\operatorname{sen}t,\\;0\\rangle$, la aceleración $\\mathbf{a}(t)$:",
+      opciones: [
+        'Es nula, porque la rapidez es constante',
+        'Apunta en el sentido del movimiento',
+        'Es igual a $-\\mathbf{r}(t)$ y apunta hacia el centro',
+        'Crece con el tiempo'
+      ],
+      correcta: 2,
+      pista: 'Deriva dos veces y compara el resultado con $\\mathbf{r}(t)$.',
+      solucion: "$\\mathbf{a}=\\langle-2\\cos t,\\;-2\\operatorname{sen}t,\\;0\\rangle=-\\mathbf{r}(t)$: el opuesto del vector posición, o sea apuntando siempre al centro. Es la aceleración centrípeta. La opción b) describiría la componente tangencial, que aquí es nula porque la rapidez no cambia."
+    },
+    {
+      etiqueta: 'Proyectil', nivel: 3,
+      criterio: 'Analizar el movimiento de un proyectil (§5.2)',
+      enunciado: 'En el tiro parabólico sin resistencia del aire, la componente <strong>horizontal</strong> de la velocidad:',
+      opciones: [
+        'Disminuye por la gravedad',
+        'Aumenta al caer',
+        'Se anula en el punto más alto',
+        'Permanece constante durante todo el vuelo'
+      ],
+      correcta: 3,
+      pista: '¿En qué dirección apunta la única fuerza que actúa?',
+      solucion: "La aceleración es $\\langle0,-g\\rangle$: solo tiene componente vertical, así que nada modifica la horizontal. $v_x=v_0\\cos\\alpha$ es constante todo el vuelo. La opción c) confunde la componente horizontal con la <em>vertical</em>, que sí se anula en el punto más alto — de hecho esa es la condición que se usa para calcular la altura máxima."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Concepto', nivel: 1,
+      criterio: 'Reconocer la relación con las paramétricas (§1)',
+      enunciado: "¿Qué relación hay entre $\\mathbf{r}(t)=\\langle f(t),g(t)\\rangle$ y las curvas paramétricas de la Guía 2?",
+      opciones: [
+        'Son objetos completamente distintos',
+        'Son lo mismo, con notación vectorial en lugar de dos ecuaciones sueltas',
+        'Las funciones vectoriales solo existen en tres dimensiones',
+        'Las paramétricas son un caso más general'
+      ],
+      correcta: 1,
+      pista: '¿Qué información contiene $\\mathbf{r}(t)$ que no contuviera el par $x=f(t)$, $y=g(t)$?',
+      solucion: "Ninguna información nueva: es la misma curva con otra notación. Lo que cambia es el punto de vista — al empaquetarla en un vector se puede derivar, integrar y multiplicar como un objeto único, y además caben tres componentes. La opción c) es falsa: $\\mathbf{r}(t)=\\langle\\cos t,\\operatorname{sen}t\\rangle$ es perfectamente válida en el plano."
+    },
+    {
+      etiqueta: 'Tangente unitario', nivel: 2,
+      criterio: 'Calcular el vector tangente unitario (§2.1)',
+      enunciado: "Para la hélice $\\mathbf{r}(t)=\\langle\\cos t,\\operatorname{sen}t,t\\rangle$, el vector tangente unitario es:",
+      opciones: [
+        '$\\langle-\\operatorname{sen}t,\\;\\cos t,\\;1\\rangle$',
+        '$\\dfrac{1}{\\sqrt2}\\langle-\\operatorname{sen}t,\\;\\cos t,\\;1\\rangle$',
+        '$\\dfrac{1}{2}\\langle-\\operatorname{sen}t,\\;\\cos t,\\;1\\rangle$',
+        '$\\langle\\cos t,\\;\\operatorname{sen}t,\\;t\\rangle$'
+      ],
+      correcta: 1,
+      pista: '$\\mathbf{T}=\\mathbf{r}\'/|\\mathbf{r}\'|$, y ya calculaste que $|\\mathbf{r}\'|=\\sqrt2$.',
+      solucion: "Dividiendo $\\mathbf{r}'$ entre su magnitud $\\sqrt2$ se obtiene un vector unitario. La opción a) es tangente pero <em>no</em> unitario: su magnitud es $\\sqrt2$. La c) divide entre 2 en lugar de $\\sqrt2$, y el resultado tendría magnitud $\\sqrt2/2$."
+    },
+    {
+      etiqueta: 'Reglas', nivel: 2,
+      criterio: 'Aplicar la regla del producto punto (§3)',
+      enunciado: "La derivada $(\\mathbf{u}\\cdot\\mathbf{v})'$ es:",
+      opciones: [
+        "$\\mathbf{u}'\\cdot\\mathbf{v}+\\mathbf{u}\\cdot\\mathbf{v}'$",
+        "$\\mathbf{u}'\\cdot\\mathbf{v}'$",
+        "$\\mathbf{u}'\\cdot\\mathbf{v}-\\mathbf{u}\\cdot\\mathbf{v}'$",
+        "$(\\mathbf{u}\\cdot\\mathbf{v})\\,(\\mathbf{u}'+\\mathbf{v}')$"
+      ],
+      correcta: 0,
+      pista: 'Es la regla del producto de toda la vida.',
+      solucion: "Idéntica a la de Cálculo I. Y a diferencia del producto cruz, aquí el orden no importa porque el producto punto es conmutativo. El resultado es un <strong>escalar</strong>, no un vector: eso conviene tenerlo presente al usarla en demostraciones como la del teorema de §3.1."
+    },
+    {
+      etiqueta: 'Integración', nivel: 2,
+      criterio: 'Integrar una función vectorial (§4)',
+      enunciado: "$\\displaystyle\\int\\langle 2t,\\;\\cos t,\\;1\\rangle\\,dt$ es:",
+      opciones: [
+        '$\\langle 2,\\;-\\operatorname{sen}t,\\;0\\rangle+\\mathbf{C}$',
+        '$\\langle t^{2},\\;-\\operatorname{sen}t,\\;t\\rangle+\\mathbf{C}$',
+        '$\\langle t^{2},\\;\\operatorname{sen}t,\\;t\\rangle+\\mathbf{C}$',
+        '$\\langle t^{2},\\;\\operatorname{sen}t,\\;t\\rangle+C$'
+      ],
+      correcta: 2,
+      pista: 'Integra cada componente. La primitiva de $\\cos t$ es $\\operatorname{sen}t$.',
+      solucion: "$\\int 2t\\,dt=t^{2}$, $\\int\\cos t\\,dt=\\operatorname{sen}t$ y $\\int1\\,dt=t$. La opción a) <em>deriva</em> en vez de integrar, la b) confunde la primitiva del coseno con la del seno, y la d) escribe la constante como escalar cuando debe ser vectorial."
+    },
+    {
+      etiqueta: 'Cinemática', nivel: 2,
+      criterio: 'Distinguir velocidad, rapidez y aceleración (§5)',
+      enunciado: 'De las tres cantidades $\\mathbf{v}$, $|\\mathbf{v}|$ y $\\mathbf{a}$, ¿cuál es un escalar?',
+      opciones: [
+        'La velocidad $\\mathbf{v}$',
+        'La aceleración $\\mathbf{a}$',
+        'Las tres son vectores',
+        'La rapidez $|\\mathbf{v}|$'
+      ],
+      correcta: 3,
+      pista: 'La barra de valor absoluto convierte un vector en un número.',
+      solucion: "La rapidez es la <em>magnitud</em> de la velocidad: un número no negativo, sin dirección. La velocidad y la aceleración sí son vectores. En el lenguaje corriente «velocidad» y «rapidez» se usan como sinónimos, pero aquí son objetos de naturaleza distinta y conviene no mezclarlos."
+    },
+    {
+      etiqueta: 'Alcance', nivel: 3,
+      criterio: 'Aplicar la fórmula del alcance (§5.2)',
+      enunciado: '¿Con qué ángulo se logra el alcance máximo de un proyectil, y por qué?',
+      opciones: [
+        'Con $90°$, porque la velocidad vertical es máxima',
+        'Con $45°$, porque $\\operatorname{sen}(2\\alpha)$ alcanza su máximo en $2\\alpha=90°$',
+        'Con $30°$, por experimentación',
+        'Depende de $v_0$'
+      ],
+      correcta: 1,
+      pista: 'El alcance es $R=\\dfrac{v_0^{2}\\operatorname{sen}(2\\alpha)}{g}$. ¿Cuándo es máximo el seno?',
+      solucion: "El seno alcanza 1 en $90°$, así que $2\\alpha=90°$ da $\\alpha=45°$. Con $90°$ el proyectil sube verticalmente y cae en el mismo sitio: alcance cero. Y nota que el ángulo óptimo <strong>no depende de $v_0$</strong>, que solo escala el resultado. Además, ángulos complementarios como $30°$ y $60°$ dan el mismo alcance."
+    },
+    {
+      etiqueta: 'Interpretación 3D', nivel: 3,
+      criterio: 'Interpretar la sombra de una curva espacial (§1.1)',
+      enunciado: "La proyección de la hélice $\\langle\\cos t,\\operatorname{sen}t,t\\rangle$ sobre el plano $z=0$ es:",
+      opciones: [
+        'Una circunferencia',
+        'Una recta',
+        'Otra hélice',
+        'Una espiral que se abre'
+      ],
+      correcta: 0,
+      pista: 'Proyectar sobre $z=0$ significa poner la tercera componente en cero.',
+      solucion: "La sombra es $\\langle\\cos t,\\operatorname{sen}t,0\\rangle$: una circunferencia recorrida una y otra vez. Eso explica la estructura de la hélice — $x$ e $y$ giran mientras $z$ crece linealmente. La opción d) describiría $\\langle t\\cos t,\\,t\\operatorname{sen}t,\\,0\\rangle$, cuya sombra sí sería una espiral."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Reconocer la aplicación física del teorema de §3.1 (§5)',
+      enunciado: 'Una partícula cargada en un campo magnético uniforme describe una hélice. La fuerza magnética es siempre perpendicular a la velocidad. ¿Qué implica eso?',
+      opciones: [
+        'Que la partícula se detiene',
+        'Que la trayectoria es una recta',
+        'Que la rapidez no cambia, y la fuerza solo curva la trayectoria',
+        'Que la aceleración es nula'
+      ],
+      correcta: 2,
+      pista: 'Si $\\mathbf{v}\\cdot\\mathbf{a}=0$, ¿qué le ocurre a $|\\mathbf{v}|$?',
+      solucion: "Por el teorema de §3.1 leído al revés: si la aceleración es perpendicular a la velocidad, entonces $|\\mathbf{v}|$ es constante. La fuerza no realiza trabajo y solo cambia la dirección. Es el principio del ciclotrón, y explica por qué la hélice del visualizador tiene rapidez uniforme pese a tener aceleración."
+    }
+  ]
+});
+</script>
 </body>
 </html>
