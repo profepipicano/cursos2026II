@@ -18,5 +18,5 @@ window.OVA_PUBLICADAS = {
   calculo:   [1, 2, 3],
   vectorial: [1, 2, 3],
   metodos:   [1, 2, 3],
-  edo:       [1, 2, 3]
+  edo:       [1, 2, 3, 4]
 };

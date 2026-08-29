@@ -11,7 +11,7 @@
 (function () {
 'use strict';
 
-var AZUL = '#3a6ea5', ORO = '#c68f2e', ROJO = '#b0392c', VERDE = '#1c7a4c';
+var AZUL = '#3a6ea5', ORO = '#c68f2e', ROJO = '#b0392c', VERDE = '#1c7a4c', MORADO = '#7d4f9e';
 function q(host, sel) { return host.querySelector(sel); }
 
 var EDOS = {
@@ -570,6 +570,206 @@ OVA.viz.registrar('lineal', function (host) {
     '<br><span style="color:#8fb4d9">Cambia el valor inicial: la curva verde <em>no se mueve</em>. ' +
     'La condición inicial solo afecta al transitorio, y por eso a largo plazo todas las soluciones ' +
     (cfg.transitorio ? 'terminan igual.' : 'se separan cada vez más.') + '</span>';
+});
+
+/* ══════ S01 · Descomposición en fracciones parciales ══════ */
+var FRAC = {
+  a: { n: '1 / (x² − 4)', den: '(x−2)(x+2)', forma: 'A/(x−2) + B/(x+2)',
+       A: 0.25, B: -0.25, t1: 'x−2', t2: 'x+2',
+       orig: function (x) { return 1 / (x * x - 4); },
+       desc: function (x) { return 0.25 / (x - 2) - 0.25 / (x + 2); },
+       num: '1',
+       cubre: 'Multiplica por (x−2) y evalúa en x=2: A = 1/4. Igual con x=−2: B = −1/4.',
+       usa: 'Aparece al separar variables en la ecuación logística (semana 12).' },
+  b: { n: '1 / (x(x−3))', den: 'x · (x−3)', forma: 'A/x + B/(x−3)',
+       A: -1 / 3, B: 1 / 3, t1: 'x', t2: 'x−3',
+       orig: function (x) { return 1 / (x * (x - 3)); },
+       desc: function (x) { return (-1 / 3) / x + (1 / 3) / (x - 3); },
+       num: '1',
+       cubre: 'En x=0: A = 1/(0−3) = −1/3. En x=3: B = 1/3.',
+       usa: 'Es la forma exacta que sale en el modelo logístico P′ = kP(1 − P/M).' },
+  c: { n: '(3x + 5) / (x² − x − 2)', den: '(x−2)(x+1)', forma: 'A/(x−2) + B/(x+1)',
+       A: 11 / 3, B: -2 / 3, t1: 'x−2', t2: 'x+1',
+       orig: function (x) { return (3 * x + 5) / (x * x - x - 2); },
+       desc: function (x) { return (11 / 3) / (x - 2) + (-2 / 3) / (x + 1); },
+       num: '3x+5',
+       cubre: 'En x=2: A = 11/3. En x=−1: B = 2/(−3) = −2/3.',
+       usa: 'Típica de la transformada inversa de Laplace (semana 13).' },
+  d: { n: '(s + 7) / (s² − s − 6)', den: '(s−3)(s+2)', forma: 'A/(s−3) + B/(s+2)',
+       A: 2, B: -1, t1: 's−3', t2: 's+2',
+       orig: function (s) { return (s + 7) / (s * s - s - 6); },
+       desc: function (s) { return 2 / (s - 3) + (-1) / (s + 2); },
+       num: 's+7',
+       cubre: 'En s=3: A = 10/5 = 2. En s=−2: B = 5/(−5) = −1.',
+       usa: 'Al invertir, cada término da una exponencial: 2e^{3t} − e^{−2t}.' }
+};
+
+OVA.viz.registrar('fracciones', function (host) {
+  var cfg = FRAC[q(host, 'select').value] || FRAC.a;
+  var paso = parseInt(q(host, '.paso').value, 10);
+  q(host, '.paso-val').textContent = 'paso ' + paso + ' de 4';
+
+  var red = function (v) { return Math.round(v * 1000) / 1000; };
+  var pasos = [
+    ['Factorizar el denominador', cfg.num + ' / [ ' + cfg.den + ' ]'],
+    ['Plantear la forma de la descomposición', cfg.forma + '   — un término por cada factor'],
+    ['Hallar las constantes (método de cubrir)', cfg.cubre],
+    ['Resultado', '(' + red(cfg.A) + ')/(' + cfg.t1 + ')   +   (' + red(cfg.B) + ')/(' + cfg.t2 + ')']
+  ];
+  var h = '<div style="font-family:ui-monospace,monospace;font-size:1rem;margin-bottom:.6rem">' +
+          '<strong>' + cfg.n + '</strong></div>';
+  for (var i = 0; i < paso; i++) {
+    h += '<div class="paso"><div class="paso-t">' + (i + 1) + '. ' + pasos[i][0] + '</div>' +
+         '<span style="font-family:ui-monospace,monospace">' + pasos[i][1] + '</span></div>';
+  }
+  q(host, '.pasos').innerHTML = h;
+
+  var lectura = '';
+  if (paso >= 4) {
+    var peor = 0;
+    [0.5, 1.3, 4.1, 5.7, -3.4].forEach(function (v) {
+      var d = Math.abs(cfg.orig(v) - cfg.desc(v));
+      if (isFinite(d)) peor = Math.max(peor, d);
+    });
+    lectura = '<strong style="color:#7fd4a4">Comprobado numéricamente:</strong> la descomposición ' +
+      'coincide con la fracción original en cinco puntos de prueba (desviación máxima ' +
+      peor.toExponential(2) + ').<br>';
+  }
+  q(host, '.viz-readout').innerHTML = lectura +
+    '<span style="color:#8fb4d9">' + cfg.usa + ' &nbsp;El <em>método de cubrir</em> evita resolver ' +
+    'un sistema: multiplica por un factor y evalúa en la raíz que lo anula, y todos los demás ' +
+    'términos desaparecen.</span>';
+});
+
+/* ══════ S01 · Raíces en el plano complejo ══════ */
+var AUX = {
+  reales:  { n: 'r² − 5r + 6 = 0', a: 1, b: -5, c: 6,
+             sol: 'y = C₁e^{2x} + C₂e^{3x}', tipo: 'dos raíces reales distintas' },
+  doble:   { n: 'r² − 4r + 4 = 0', a: 1, b: -4, c: 4,
+             sol: 'y = C₁e^{2x} + C₂x·e^{2x}', tipo: 'una raíz real doble' },
+  compl:   { n: 'r² + 4 = 0', a: 1, b: 0, c: 4,
+             sol: 'y = C₁cos 2x + C₂sen 2x', tipo: 'dos raíces imaginarias puras' },
+  complam: { n: 'r² + 2r + 5 = 0', a: 1, b: 2, c: 5,
+             sol: 'y = e^{−x}(C₁cos 2x + C₂sen 2x)', tipo: 'complejas conjugadas' },
+  negat:   { n: 'r² + 3r + 2 = 0', a: 1, b: 3, c: 2,
+             sol: 'y = C₁e^{−x} + C₂e^{−2x}', tipo: 'dos raíces reales negativas' }
+};
+
+OVA.viz.registrar('raices', function (host) {
+  var cfg = AUX[q(host, 'select').value] || AUX.reales;
+  var D = cfg.b * cfg.b - 4 * cfg.a * cfg.c;
+  var re1, im1, re2, im2;
+  if (D >= 0) {
+    re1 = (-cfg.b + Math.sqrt(D)) / (2 * cfg.a); im1 = 0;
+    re2 = (-cfg.b - Math.sqrt(D)) / (2 * cfg.a); im2 = 0;
+  } else {
+    re1 = re2 = -cfg.b / (2 * cfg.a);
+    im1 = Math.sqrt(-D) / (2 * cfg.a); im2 = -im1;
+  }
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 250, sx: 52, sy: 52 });
+  OVA.ejes(L);
+  var c = L.ctx;
+  c.fillStyle = OVA.color('cv-text'); c.font = '11px ui-monospace,monospace';
+  c.fillText('Re', L.w - 26, L.oy - 8);
+  c.fillText('Im', L.ox + 8, 16);
+  // eje imaginario resaltado
+  c.strokeStyle = 'rgba(125,79,158,.45)'; c.lineWidth = 1.4; c.setLineDash([4, 4]);
+  c.beginPath(); c.moveTo(L.ox, 0); c.lineTo(L.ox, L.h); c.stroke();
+  c.setLineDash([]);
+
+  [[re1, im1], [re2, im2]].forEach(function (r) {
+    OVA.punto(L, r[0], r[1], D < 0 ? '#7d4f9e' : '#c68f2e', false);
+    c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace';
+    var et = D < 0
+      ? (r[0] === 0 ? '' : r[0].toFixed(0)) + (r[1] >= 0 ? '+' : '−') + Math.abs(r[1]).toFixed(0) + 'i'
+      : r[0].toFixed(0);
+    c.fillText(et, L.px(r[0]) + 9, L.py(r[1]) - 8);
+  });
+  if (D < 0) {
+    c.strokeStyle = 'rgba(125,79,158,.55)'; c.lineWidth = 1.2; c.setLineDash([3, 3]);
+    c.beginPath(); c.moveTo(L.px(re1), L.py(im1)); c.lineTo(L.px(re2), L.py(im2)); c.stroke();
+    c.setLineDash([]);
+  }
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;·&nbsp; discriminante Δ = ' + D + '<br>' +
+    'Raíces: <strong>' +
+      (D < 0 ? re1.toFixed(2) + ' ± ' + Math.abs(im1).toFixed(2) + 'i'
+             : re1.toFixed(2) + '  y  ' + re2.toFixed(2)) +
+      '</strong> &nbsp;·&nbsp; ' + cfg.tipo + '<br>' +
+    'Solución de la EDO asociada: <strong style="color:#dba949">' + cfg.sol + '</strong><br>' +
+    '<span style="color:#8fb4d9">' +
+    (D < 0
+      ? 'Las raíces complejas vienen siempre en <strong>pares conjugados</strong> (simétricos ' +
+        'respecto del eje real), y producen <em>oscilaciones</em>. La parte real controla si la ' +
+        'amplitud crece o decae; la imaginaria, la frecuencia.'
+      : 'Con raíces reales la solución es una suma de exponenciales, sin oscilación. ' +
+        'Si ambas son negativas, todo decae hacia cero.') +
+    ' Esto es la semana 9; aquí solo repasas cómo se hallan las raíces.</span>';
+});
+
+/* ══════ S01 · Derivadas parciales sobre una superficie ══════ */
+var SUP = {
+  parab: { f: function (x, y) { return (x * x + y * y) / 2; },
+           fx: function (x, y) { return x; }, fy: function (x, y) { return y; },
+           n: 'z = (x² + y²)/2', fxs: '∂z/∂x = x', fys: '∂z/∂y = y' },
+  silla: { f: function (x, y) { return (x * x - y * y) / 2; },
+           fx: function (x, y) { return x; }, fy: function (x, y) { return -y; },
+           n: 'z = (x² − y²)/2', fxs: '∂z/∂x = x', fys: '∂z/∂y = −y' },
+  prod:  { f: function (x, y) { return x * y / 1.5; },
+           fx: function (x, y) { return y / 1.5; }, fy: function (x, y) { return x / 1.5; },
+           n: 'z = xy/1,5', fxs: '∂z/∂x = y/1,5', fys: '∂z/∂y = x/1,5' },
+  plano: { f: function (x, y) { return 0.6 * x + 0.4 * y; },
+           fx: function () { return 0.6; }, fy: function () { return 0.4; },
+           n: 'z = 0,6x + 0,4y', fxs: '∂z/∂x = 0,6', fys: '∂z/∂y = 0,4' }
+};
+
+OVA.viz.registrar('parciales', function (host) {
+  var cfg = SUP[q(host, 'select').value] || SUP.parab;
+  var th = parseFloat(q(host, '.giro').value) / 100;
+  var a = parseFloat(q(host, '.px').value) / 50;
+  var b = parseFloat(q(host, '.py').value) / 50;
+  q(host, '.giro-val').textContent = 'θ = ' + th.toFixed(2);
+  q(host, '.pt-val').textContent = '(a, b) = (' + a.toFixed(1) + ', ' + b.toFixed(1) + ')';
+
+  var E = OVA.esc3d(host.querySelector('canvas'), { th: th, ph: 0.52 });
+  var pts = E.puntosSuperficie(cfg.f, -2, 2, -2, 2, 10);
+  [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(function (e) {
+    pts.push([e[0] * 2.6, e[1] * 2.6, e[2] * 2.6]);
+    pts.push([-e[0] * 2.4, -e[1] * 2.4, -e[2] * 2.4]);
+  });
+  E.ajustar(pts, 0.88);
+
+  E.ejes(2.6, 2.4);
+  E.superficie(cfg.f, -2, 2, -2, 2, { n: 18 });
+
+  // los dos cortes que pasan por (a,b)
+  E.curva(function (t) { return [t, b, cfg.f(t, b)]; }, -2, 2, ORO, 3.4);
+  E.curva(function (t) { return [a, t, cfg.f(a, t)]; }, -2, 2, ROJO, 3.4);
+
+  // rectas tangentes: sus pendientes SON las derivadas parciales
+  var z0 = cfg.f(a, b), m1 = cfg.fx(a, b), m2 = cfg.fy(a, b), h = 1.1;
+  E.segmento([a - h, b, z0 - h * m1], [a + h, b, z0 + h * m1], '#ffd166');
+  E.segmento([a, b - h, z0 - h * m2], [a, b + h, z0 + h * m2], '#ff9f8a');
+  E.flecha([a, b, z0], [a + h, b, z0 + h * m1], '#ffd166', 3, '∂z/∂x');
+  E.flecha([a, b, z0], [a, b + h, z0 + h * m2], '#ff9f8a', 3, '∂z/∂y');
+  E.punto([a, b, z0], MORADO, 7);
+  E.texto(cfg.n, 10, 18);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;en el punto (' + a.toFixed(1) + ', ' + b.toFixed(1) +
+      ', ' + z0.toFixed(2) + ')<br>' +
+    '<span style="color:#dba949">' + cfg.fxs + ' = <strong>' + m1.toFixed(2) + '</strong></span>' +
+      ' — pendiente de la curva dorada, moviéndose solo en x<br>' +
+    '<span style="color:#f0a58a">' + cfg.fys + ' = <strong>' + m2.toFixed(2) + '</strong></span>' +
+      ' — pendiente de la curva roja, moviéndose solo en y<br>' +
+    '<span style="color:#8fb4d9">Cada curva de color es un <em>corte</em> de la superficie con ' +
+    'una variable congelada. Derivar parcialmente es exactamente eso: tratar la otra variable ' +
+    'como constante y derivar como en Cálculo I. Gira la escena para ver que son dos direcciones ' +
+    'perpendiculares sobre la misma superficie.</span>';
 });
 
 document.addEventListener('DOMContentLoaded', function () {

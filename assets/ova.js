@@ -468,6 +468,68 @@ OVA.esc3d = function (canvas, opts) {
       });
       return this;
     },
+
+    /* ── Superficie z = f(x,y) por el algoritmo del pintor ──────
+       Trocea el dominio en cuadriláteros, los ordena por profundidad
+       con prof() y los pinta de atrás hacia adelante. Así las partes
+       cercanas tapan a las lejanas y la figura se lee bien.
+       opts: {n, base, borde, alfa} */
+    superficie: function (f, x0, x1, y0, y1, opts) {
+        opts = opts || {};
+        var n = opts.n || 16, c = this.ctx, self = this;
+        var quads = [], i, j;
+        for (i = 0; i < n; i++) {
+          for (j = 0; j < n; j++) {
+            var a = x0 + (x1 - x0) * i / n, b = x0 + (x1 - x0) * (i + 1) / n;
+            var u = y0 + (y1 - y0) * j / n, v = y0 + (y1 - y0) * (j + 1) / n;
+            var esq = [[a, u, f(a, u)], [b, u, f(b, u)], [b, v, f(b, v)], [a, v, f(a, v)]];
+            var malo = false, zc = 0;
+            for (var k = 0; k < 4; k++) {
+              if (!isFinite(esq[k][2])) { malo = true; break; }
+              zc += esq[k][2] / 4;
+            }
+            if (malo) continue;
+            var cen = [(a + b) / 2, (u + v) / 2, zc];
+            quads.push({ d: this.prof(cen), e: esq, z: zc });
+          }
+        }
+        if (!quads.length) return this;
+        quads.sort(function (p, q) { return p.d - q.d; });
+        var zs = quads.map(function (q) { return q.z; });
+        var zmin = Math.min.apply(null, zs), zmax = Math.max.apply(null, zs);
+        var oscuro = document.body.classList.contains('dark');
+        var alfa = opts.alfa === undefined ? 1 : opts.alfa;
+        quads.forEach(function (q) {
+          var t = (q.z - zmin) / Math.max(zmax - zmin, 1e-9);
+          var R, G, B;
+          if (oscuro) { R = 40 + 90 * t; G = 70 + 110 * t; B = 110 + 110 * t; }
+          else        { R = 78 + 115 * t; G = 122 + 82 * t; B = 184 + 51 * t; }
+          c.fillStyle = 'rgba(' + (R | 0) + ',' + (G | 0) + ',' + (B | 0) + ',' + alfa + ')';
+          c.strokeStyle = oscuro ? 'rgba(20,40,60,.45)' : 'rgba(255,255,255,.42)';
+          c.lineWidth = 0.6;
+          c.beginPath();
+          for (var k = 0; k < 4; k++) {
+            var p = self.p(q.e[k]);
+            k ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
+          }
+          c.closePath(); c.fill(); c.stroke();
+        });
+        return this;
+      },
+
+    /* Puntos de una superficie, útil para ajustar() el encuadre */
+    puntosSuperficie: function (f, x0, x1, y0, y1, n) {
+        n = n || 12;
+        var pts = [];
+        for (var i = 0; i <= n; i++) {
+          for (var j = 0; j <= n; j++) {
+            var xv = x0 + (x1 - x0) * i / n, yv = y0 + (y1 - y0) * j / n;
+            var zv = f(xv, yv);
+            if (isFinite(zv)) pts.push([xv, yv, zv]);
+          }
+        }
+        return pts;
+      },
     curva: function (fn, t0, t1, color, ancho, n) {
       n = n || 400;
       var c = this.ctx;
