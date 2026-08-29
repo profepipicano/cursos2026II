@@ -74,7 +74,7 @@ GitHub te preguntará si quieres reemplazar el archivo existente. Di que sí.
 ```js
 window.OVA_PUBLICADAS = {
   calculo:   [1, 2, 3],     ←  añade el 2
-  vectorial: [1],
+  vectorial: [1, 2, 3],
   metodos:   [1, 2, 3],
   edo:       [1, 2, 3]
 };
@@ -190,8 +190,8 @@ sigue estos pasos en orden:
 Todas las páginas enlazan los archivos con un sufijo de versión:
 
 ```html
-<link rel="stylesheet" href="../assets/ova.css?v=20260827a">
-<script src="../assets/viz-vectorial.js?v=20260827a"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260827b">
+<script src="../assets/viz-vectorial.js?v=20260827b"></script>
 ```
 
 Ese `?v=` obliga al navegador a descargar el archivo de nuevo en lugar de usar el que tiene
@@ -237,3 +237,30 @@ y la mención del pie compacto.
 
 Está escrita a mano en el pie de `index.html`. Conviene actualizarla cada vez que publiques
 una guía nueva: al estudiante le indica si lo que está viendo es lo más reciente.
+
+---
+
+## 9. Gráficas en tres dimensiones
+
+Desde la Guía 3 de Cálculo Vectorial, el motor incluye `OVA.esc3d()`: una escena 3D con
+proyección **ortográfica**, escrita a mano y **sin dependencias externas**. Se eligió ortográfica
+y no en perspectiva porque en matemáticas conviene que las rectas paralelas se vean paralelas
+y las longitudes sean comparables.
+
+```js
+var E = OVA.esc3d(canvas, { th: 0.9, ph: 0.5 });   // azimut e inclinación
+E.ajustar(listaDePuntos3D);                        // encuadre automático
+E.ejes(2.5).sombra(r, t0, t1).curva(r, t0, t1, color, 3);
+E.flecha(P, Q, color, 3, 'v').punto(P, color);
+```
+
+**Lo que hace bien.** Encuadra solo (probado sin desbordes en 18 orientaciones), dibuja la sombra
+sobre el plano z = 0 para dar profundidad, y funciona en modo oscuro.
+
+**Su limitación, y conviene tenerla presente.** No hay eliminación de líneas ocultas: cuando la
+curva pasa por detrás de un eje o de sí misma, se dibuja encima. Para curvas basta con girar la
+escena, y por eso todos los visualizadores 3D llevan deslizador de giro.
+
+**Cuando lleguen las superficies (semana 6)** habrá que añadir el algoritmo del pintor: trocear
+la superficie en cuadriláteros, ordenarlos con `E.prof()` —que ya está implementada— y pintarlos
+de atrás hacia adelante.
