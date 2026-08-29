@@ -76,7 +76,7 @@ window.OVA_PUBLICADAS = {
   calculo:   [1, 2, 3],     ←  añade el 2
   vectorial: [1, 2, 3],
   metodos:   [1, 2, 3],
-  edo:       [1, 2, 3]
+  edo:       [1, 2, 3, 4]
 };
 ```
 
@@ -190,8 +190,8 @@ sigue estos pasos en orden:
 Todas las páginas enlazan los archivos con un sufijo de versión:
 
 ```html
-<link rel="stylesheet" href="../assets/ova.css?v=20260827b">
-<script src="../assets/viz-vectorial.js?v=20260827b"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<script src="../assets/viz-vectorial.js?v=20260827c"></script>
 ```
 
 Ese `?v=` obliga al navegador a descargar el archivo de nuevo en lugar de usar el que tiene
@@ -264,3 +264,24 @@ escena, y por eso todos los visualizadores 3D llevan deslizador de giro.
 **Cuando lleguen las superficies (semana 6)** habrá que añadir el algoritmo del pintor: trocear
 la superficie en cuadriláteros, ordenarlos con `E.prof()` —que ya está implementada— y pintarlos
 de atrás hacia adelante.
+
+---
+
+## 10. Superficies en 3D
+
+`OVA.esc3d()` incluye `superficie(f, x0,x1, y0,y1, opts)`, que dibuja z = f(x,y) con el
+**algoritmo del pintor**: trocea el dominio en cuadriláteros, los ordena por profundidad con
+`prof()` y los pinta de atrás hacia adelante, de modo que lo cercano tapa lo lejano.
+
+```js
+var E = OVA.esc3d(canvas, { th: giro, ph: 0.52 });
+E.ajustar(E.puntosSuperficie(f, -2, 2, -2, 2, 10));
+E.ejes(2.6).superficie(f, -2, 2, -2, 2, { n: 18 });
+```
+
+Con una malla de 18×18 son 324 cuadriláteros y unas 2 600 operaciones de dibujo: **8 ms por
+redibujado**, así que el deslizador de giro se mueve con fluidez. El color de cada cuadrilátero
+depende de su altura, y se adapta al modo oscuro.
+
+Esto resuelve la limitación que quedó anotada en la §9: ya hay eliminación de superficies ocultas
+para mallas. Las curvas siguen dibujándose encima, que es lo deseable cuando representan un corte.
