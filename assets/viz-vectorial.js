@@ -703,6 +703,168 @@ OVA.viz.registrar('proyectil', function (host) {
     'porque sen(2α) llega a 1.</span>';
 });
 
+/* ══════ S04 · Curvatura y triedro móvil ══════ */
+var CURV = {
+  helice: { r: function (t) { return [Math.cos(t), Math.sin(t), t / 2]; },
+            t0: 0, t1: 9.4248, n: 'r(t) = ⟨cos t, sen t, t/2⟩',
+            com: 'hélice: curvatura constante, como una circunferencia estirada' },
+  circ:   { r: function (t) { return [1.8 * Math.cos(t), 1.8 * Math.sin(t), 0]; },
+            t0: 0, t1: 6.2832, n: 'circunferencia de radio 1,8',
+            com: 'κ = 1/a constante: el círculo osculador es la propia circunferencia' },
+  parab:  { r: function (t) { return [t, t * t / 2, 0]; },
+            t0: -2, t1: 2, n: 'r(t) = ⟨t, t²/2, 0⟩  (parábola)',
+            com: 'curvatura máxima en el vértice y decreciente al alejarse' },
+  recta:  { r: function (t) { return [t, 0.6 * t, 0.35 * t]; },
+            t0: -2.2, t1: 2.2, n: 'recta en el espacio',
+            com: 'κ = 0: una recta no se curva, y el círculo osculador tiene radio infinito' }
+};
+
+function derNum(r, t, k) {
+  var d = 1e-4, A = r(t - d), B = r(t + d), C0 = r(t);
+  if (k === 1) return [(B[0]-A[0])/(2*d), (B[1]-A[1])/(2*d), (B[2]-A[2])/(2*d)];
+  return [(B[0]-2*C0[0]+A[0])/(d*d), (B[1]-2*C0[1]+A[1])/(d*d), (B[2]-2*C0[2]+A[2])/(d*d)];
+}
+function cruz(u, v) {
+  return [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+}
+function norma(u) { return Math.hypot(u[0], u[1], u[2]); }
+function unit(u) { var n = norma(u); return n > 1e-12 ? [u[0]/n, u[1]/n, u[2]/n] : [0,0,0]; }
+
+OVA.viz.registrar('curvatura', function (host) {
+  var cfg = CURV[q(host, 'select').value] || CURV.helice;
+  var th = parseFloat(q(host, '.giro').value) / 100;
+  var frac = parseFloat(q(host, '.tpos').value) / 100;
+  var tv = cfg.t0 + (cfg.t1 - cfg.t0) * frac;
+  q(host, '.giro-val').textContent = 'θ = ' + th.toFixed(2);
+  q(host, '.t-val').textContent = 't = ' + tv.toFixed(2);
+
+  var P = cfg.r(tv), d1 = derNum(cfg.r, tv, 1), d2 = derNum(cfg.r, tv, 2);
+  var T = unit(d1);
+  var cr = cruz(d1, d2);
+  var kap = norma(cr) / Math.pow(norma(d1), 3);
+  var rho = kap > 1e-9 ? 1 / kap : Infinity;
+  var B = unit(cr), N = unit(cruz(B, T));
+
+  var E = OVA.esc3d(host.querySelector('canvas'), { th: th, ph: 0.5 });
+  var pts = [];
+  for (var i = 0; i <= 120; i++) {
+    var Q = cfg.r(cfg.t0 + (cfg.t1 - cfg.t0) * i / 120);
+    pts.push(Q); pts.push([Q[0], Q[1], 0]);
+  }
+  [[1,0,0],[0,1,0],[0,0,1]].forEach(function (e) {
+    pts.push([e[0]*2.4, e[1]*2.4, e[2]*2.4]); pts.push([-e[0]*1.1, -e[1]*1.1, -e[2]*1.1]);
+  });
+  [T, N, B].forEach(function (u) { pts.push([P[0]+u[0], P[1]+u[1], P[2]+u[2]]); });
+  if (isFinite(rho) && rho < 6) {
+    var C1 = [P[0]+rho*N[0], P[1]+rho*N[1], P[2]+rho*N[2]];
+    for (var s = 0; s <= 24; s++) {
+      var an = 2*Math.PI*s/24;
+      pts.push([C1[0]-rho*Math.cos(an)*N[0]+rho*Math.sin(an)*T[0],
+                C1[1]-rho*Math.cos(an)*N[1]+rho*Math.sin(an)*T[1],
+                C1[2]-rho*Math.cos(an)*N[2]+rho*Math.sin(an)*T[2]]);
+    }
+  }
+  E.ajustar(pts, 0.88);
+  E.ejes(2.4);
+  E.sombra(cfg.r, cfg.t0, cfg.t1);
+
+  // círculo osculador
+  if (isFinite(rho) && rho < 6) {
+    var C2 = [P[0]+rho*N[0], P[1]+rho*N[1], P[2]+rho*N[2]];
+    E.curva(function (s) {
+      return [C2[0]-rho*Math.cos(s)*N[0]+rho*Math.sin(s)*T[0],
+              C2[1]-rho*Math.cos(s)*N[1]+rho*Math.sin(s)*T[1],
+              C2[2]-rho*Math.cos(s)*N[2]+rho*Math.sin(s)*T[2]];
+    }, 0, 6.2832, 'rgba(198,143,46,.75)', 2);
+    E.punto(C2, 'rgba(198,143,46,.9)', 4);
+  }
+  E.curva(cfg.r, cfg.t0, cfg.t1, AZUL, 3);
+  E.flecha(P, [P[0]+T[0], P[1]+T[1], P[2]+T[2]], ORO, 3, 'T');
+  E.flecha(P, [P[0]+N[0], P[1]+N[1], P[2]+N[2]], ROJO, 3, 'N');
+  E.flecha(P, [P[0]+B[0], P[1]+B[1], P[2]+B[2]], VERDE, 3, 'B');
+  E.punto(P, MORADO, 6);
+  E.texto(cfg.n, 10, 18);
+
+  var tn = T[0]*N[0]+T[1]*N[1]+T[2]*N[2];
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;en t = ' + tv.toFixed(2) + '<br>' +
+    'Curvatura κ = <strong style="color:#dba949">' + kap.toFixed(5) + '</strong>' +
+      ' &nbsp;·&nbsp; radio de curvatura ρ = 1/κ = <strong>' +
+      (isFinite(rho) ? rho.toFixed(4) : '∞') + '</strong><br>' +
+    'Triedro: |T| = ' + norma(T).toFixed(4) + ', |N| = ' + norma(N).toFixed(4) +
+      ', |B| = ' + norma(B).toFixed(4) + ' &nbsp;·&nbsp; T·N = ' + tn.toExponential(2) + '<br>' +
+    '<span style="color:#8fb4d9">' + cfg.com + '. El círculo dorado es el <em>osculador</em>: ' +
+    'la circunferencia que mejor imita la curva en ese punto. Cuanto más cerrada la curva, ' +
+    'menor su radio. Gira la escena para ver que T, N y B son mutuamente perpendiculares.</span>';
+});
+
+/* ══════ S04 · Límite de un campo escalar: depende del camino ══════ */
+var CAMPO = {
+  diff: { f: function (x, y) { var d = x*x + y*y; return d < 1e-14 ? 0 : (x*x - y*y) / d; },
+          n: 'f(x,y) = (x² − y²)/(x² + y²)',
+          caminos: [['y = 0', function (s) { return [s, 0]; }, 1],
+                    ['x = 0', function (s) { return [0, s]; }, -1],
+                    ['y = x', function (s) { return [s, s]; }, 0]],
+          existe: false,
+          com: 'Tres caminos, tres límites distintos: 1, −1 y 0. El límite NO existe.' },
+  prod: { f: function (x, y) { var d = x*x + y*y; return d < 1e-14 ? 0 : x*y / d; },
+          n: 'f(x,y) = xy/(x² + y²)',
+          caminos: [['y = 0', function (s) { return [s, 0]; }, 0],
+                    ['y = x', function (s) { return [s, s]; }, 0.5],
+                    ['y = −x', function (s) { return [s, -s]; }, -0.5]],
+          existe: false,
+          com: 'Por los ejes da 0, pero por y = x da 1/2. El límite NO existe.' },
+  ok:   { f: function (x, y) { var d = x*x + y*y; return d < 1e-14 ? 0 : x*x*y / d; },
+          n: 'f(x,y) = x²y/(x² + y²)',
+          caminos: [['y = 0', function (s) { return [s, 0]; }, 0],
+                    ['x = 0', function (s) { return [0, s]; }, 0],
+                    ['y = x', function (s) { return [s, s]; }, 0]],
+          existe: true,
+          com: 'Aquí SÍ existe y vale 0, pero probar caminos no lo demuestra: hace falta acotar.' }
+};
+
+OVA.viz.registrar('campoescalar', function (host) {
+  var cfg = CAMPO[q(host, 'select').value] || CAMPO.diff;
+  var th = parseFloat(q(host, '.giro').value) / 100;
+  q(host, '.giro-val').textContent = 'θ = ' + th.toFixed(2);
+
+  var E = OVA.esc3d(host.querySelector('canvas'), { th: th, ph: 0.5 });
+  var pts = E.puntosSuperficie(cfg.f, -1.5, 1.5, -1.5, 1.5, 10);
+  [[1,0,0],[0,1,0],[0,0,1]].forEach(function (e) {
+    pts.push([e[0]*2, e[1]*2, e[2]*2]); pts.push([-e[0]*1.8, -e[1]*1.8, -e[2]*1.8]);
+  });
+  E.ajustar(pts, 0.86);
+  E.ejes(2, 1.8);
+  E.superficie(cfg.f, -1.5, 1.5, -1.5, 1.5, { n: 20, alfa: 0.92 });
+
+  var cols = [ORO, ROJO, VERDE];
+  cfg.caminos.forEach(function (cm, i) {
+    E.curva(function (s) {
+      var p = cm[1](s);
+      return [p[0], p[1], cfg.f(p[0], p[1])];
+    }, 0.02, 1.45, cols[i], 3.2);
+  });
+  E.punto([0, 0, 0], MORADO, 6);
+  E.texto(cfg.n, 10, 18);
+
+  var filas = cfg.caminos.map(function (cm, i) {
+    var p = cm[1](1e-4);
+    return '<span style="color:' + ['#dba949','#f0a58a','#7fd4a4'][i] + '">■ por ' + cm[0] +
+      '</span>: f → <strong>' + cfg.f(p[0], p[1]).toFixed(4) + '</strong>';
+  }).join(' &nbsp;·&nbsp; ');
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> &nbsp;cuando (x,y) → (0,0)<br>' + filas + '<br>' +
+    (cfg.existe
+      ? '<strong style="color:#7fd4a4">Los tres coinciden.</strong> '
+      : '<strong style="color:#f0a58a">No coinciden ⟹ el límite no existe.</strong> ') +
+    cfg.com +
+    '<br><span style="color:#8fb4d9">En una variable solo había dos caminos, izquierda y derecha. ' +
+    'En dos variables hay <em>infinitos</em>, y el límite debe dar lo mismo por todos. Por eso ' +
+    'encontrar dos caminos discrepantes basta para negar, pero ninguna cantidad de caminos ' +
+    'coincidentes basta para afirmar.</span>';
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[data-viz]').forEach(function (h) {
     h.addEventListener('input', function () { OVA.viz.redibujar(); });

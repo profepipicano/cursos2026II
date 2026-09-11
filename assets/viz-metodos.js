@@ -742,6 +742,195 @@ OVA.viz.registrar('costo', function (host) {
     'por mil. Las dos curvas cúbicas son casi indistinguibles; la factorial se despega y no vuelve.</span>';
 });
 
+/* ══════ S04 · Factorización LU paso a paso ══════ */
+var SISLU = {
+  a: { n: '2x+y−z=8 ; −3x−y+2z=−11 ; −2x+y+2z=−3',
+       M: [[2,1,-1],[-3,-1,2],[-2,1,2]], b: [8,-11,-3], sol: [2,3,-1] },
+  b: { n: 'x+y+z=6 ; 2x−y+3z=9 ; 3x+2y−2z=1',
+       M: [[1,1,1],[2,-1,3],[3,2,-2]], b: [6,9,1], sol: [1,2,3] },
+  c: { n: '4x−2y+z=11 ; −2x+4y−2z=−16 ; x−2y+4z=17',
+       M: [[4,-2,1],[-2,4,-2],[1,-2,4]], b: [11,-16,17], sol: [1,-2,3] }
+};
+
+function fmtN(v) {
+  if (Math.abs(v) < 1e-10) return '0';
+  var r = Math.round(v * 1000) / 1000;
+  return (Math.abs(r - Math.round(r)) < 1e-9) ? String(Math.round(r)) : r.toFixed(3);
+}
+
+OVA.viz.registrar('lu', function (host) {
+  var cfg = SISLU[q(host, 'select').value] || SISLU.a;
+  var n = cfg.M.length;
+  var U = cfg.M.map(function (f) { return f.slice(); });
+  var Lm = [];
+  for (var i = 0; i < n; i++) { Lm.push([]); for (var j = 0; j < n; j++) Lm[i].push(i === j ? 1 : 0); }
+  var pasos = [];
+  for (var k = 0; k < n; k++) {
+    for (var i2 = k + 1; i2 < n; i2++) {
+      if (Math.abs(U[i2][k]) < 1e-12) continue;
+      var f = U[i2][k] / U[k][k];
+      Lm[i2][k] = f;                                   // el multiplicador SE GUARDA
+      for (var c2 = k; c2 < n; c2++) U[i2][c2] -= f * U[k][c2];
+      pasos.push({ txt: 'F' + (i2+1) + ' → F' + (i2+1) + ' − (' + fmtN(f) + ')·F' + (k+1) +
+                        '   ·   se guarda ℓ' + (i2+1) + (k+1) + ' = ' + fmtN(f),
+                   U: U.map(function (g) { return g.slice(); }),
+                   L: Lm.map(function (g) { return g.slice(); }), piv: k, fila: i2 });
+    }
+  }
+  var sl = q(host, '.paso'); sl.max = pasos.length;
+  var p = Math.min(parseInt(sl.value, 10), pasos.length);
+  q(host, '.paso-val').textContent = 'paso ' + p + ' de ' + pasos.length;
+  var Uv = p === 0 ? cfg.M : pasos[p-1].U;
+  var Lv = p === 0 ? Lm.map(function(g,i){return g.map(function(_,j){return i===j?1:0;});})
+                   : pasos[p-1].L;
+
+  var tabla = function (M, titulo, resalta) {
+    var t = '<div style="flex:1;min-width:160px"><div style="font-weight:700;font-size:.82rem;' +
+            'margin-bottom:.25rem;color:var(--muted)">' + titulo + '</div>' +
+            '<table class="tbl" style="margin:0;font-size:.84rem;text-align:center">';
+    for (var r = 0; r < n; r++) {
+      t += '<tr>';
+      for (var c = 0; c < n; c++) {
+        var est = Math.abs(M[r][c]) < 1e-10 ? 'color:var(--muted);opacity:.4' : '';
+        if (resalta && r > c) est += ';background:rgba(198,143,46,.22);font-weight:700';
+        t += '<td style="text-align:center;' + est + '">' + fmtN(M[r][c]) + '</td>';
+      }
+      t += '</tr>';
+    }
+    return t + '</table></div>';
+  };
+  q(host, '.matriz').innerHTML = '<div style="display:flex;gap:1rem;flex-wrap:wrap">' +
+    tabla(Lv, 'L  (multiplicadores)', true) + tabla(Uv, 'U  (triangular superior)', false) + '</div>';
+
+  var hh = '';
+  for (var i3 = Math.max(0, p - 3); i3 < p; i3++) {
+    hh += '<div class="paso"><div class="paso-t">Paso ' + (i3+1) + '</div>' +
+          '<span style="font-family:ui-monospace,monospace">' + pasos[i3].txt + '</span></div>';
+  }
+  q(host, '.pasos').innerHTML = hh || '<p style="color:var(--muted);font-size:.88rem">' +
+    'L empieza como la identidad. Avanza y verás que cada multiplicador, en vez de descartarse, ' +
+    'se guarda en su posición de L.</p>';
+
+  // comprobación L·U = A
+  var prod = [];
+  for (var r2 = 0; r2 < n; r2++) {
+    prod.push([]);
+    for (var c3 = 0; c3 < n; c3++) {
+      var s = 0;
+      for (var m = 0; m < n; m++) s += Lv[r2][m] * Uv[m][c3];
+      prod[r2].push(s);
+    }
+  }
+  var err = 0;
+  for (var r3 = 0; r3 < n; r3++) for (var c4 = 0; c4 < n; c4++)
+    err = Math.max(err, Math.abs(prod[r3][c4] - cfg.M[r3][c4]));
+
+  var det = 1;
+  for (var d = 0; d < n; d++) det *= Uv[d][d];
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>L · U = A</strong> en todo momento — desviación máxima <strong>' +
+      err.toExponential(2) + '</strong> ' +
+      (err < 1e-9 ? '<span style="color:#7fd4a4">✓</span>' : '') + '<br>' +
+    (p >= pasos.length
+      ? 'Factorización completa. &nbsp;det A = producto de la diagonal de U = <strong>' +
+        fmtN(det) + '</strong><br>'
+      : '') +
+    '<span style="color:#8fb4d9">Es la <em>misma</em> eliminación de Gauss de la Guía 3. ' +
+    'La única diferencia: el multiplicador, en vez de tirarse a la basura, se guarda en L. ' +
+    'Eso permite resolver después cualquier b sin repetir la eliminación.</span>';
+});
+
+/* ══════ S04 · Cholesky y matrices definidas positivas ══════ */
+var CHOL = {
+  a: { n: 'clásica', M: [[4,12,-16],[12,37,-43],[-16,-43,98]] },
+  b: { n: 'tridiagonal', M: [[4,-2,0],[-2,5,-2],[0,-2,5]] },
+  c: { n: 'NO definida positiva', M: [[1,2,0],[2,1,0],[0,0,3]] },
+  d: { n: 'no simétrica', M: [[2,1,0],[3,4,1],[0,1,3]] }
+};
+
+OVA.viz.registrar('cholesky', function (host) {
+  var cfg = CHOL[q(host, 'select').value] || CHOL.a;
+  var M = cfg.M, n = M.length;
+
+  // ¿es simétrica?
+  var sim = true;
+  for (var i = 0; i < n; i++) for (var j = 0; j < n; j++)
+    if (Math.abs(M[i][j] - M[j][i]) > 1e-12) sim = false;
+
+  // menores principales
+  var menores = [];
+  for (var k = 1; k <= n; k++) {
+    var sub = [];
+    for (var r = 0; r < k; r++) { sub.push([]); for (var c = 0; c < k; c++) sub[r].push(M[r][c]); }
+    menores.push(det_(sub, k));
+  }
+  var dp = sim && menores.every(function (v) { return v > 1e-12; });
+
+  function det_(A, k) {
+    if (k === 1) return A[0][0];
+    if (k === 2) return A[0][0]*A[1][1] - A[0][1]*A[1][0];
+    return A[0][0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1])
+         - A[0][1]*(A[1][0]*A[2][2]-A[1][2]*A[2][0])
+         + A[0][2]*(A[1][0]*A[2][1]-A[1][1]*A[2][0]);
+  }
+
+  var Lc = null, err = null;
+  if (dp) {
+    Lc = []; for (var a = 0; a < n; a++) { Lc.push([]); for (var b = 0; b < n; b++) Lc[a].push(0); }
+    for (var i2 = 0; i2 < n; i2++) {
+      for (var j2 = 0; j2 <= i2; j2++) {
+        var s = 0;
+        for (var m = 0; m < j2; m++) s += Lc[i2][m] * Lc[j2][m];
+        Lc[i2][j2] = (i2 === j2) ? Math.sqrt(M[i2][i2] - s) : (M[i2][j2] - s) / Lc[j2][j2];
+      }
+    }
+    err = 0;
+    for (var r2 = 0; r2 < n; r2++) for (var c2 = 0; c2 < n; c2++) {
+      var v = 0;
+      for (var m2 = 0; m2 < n; m2++) v += Lc[r2][m2] * Lc[c2][m2];
+      err = Math.max(err, Math.abs(v - M[r2][c2]));
+    }
+  }
+
+  var tabla = function (A, titulo) {
+    var t = '<div style="flex:1;min-width:150px"><div style="font-weight:700;font-size:.82rem;' +
+            'margin-bottom:.25rem;color:var(--muted)">' + titulo + '</div>' +
+            '<table class="tbl" style="margin:0;font-size:.84rem;text-align:center">';
+    for (var r = 0; r < n; r++) {
+      t += '<tr>';
+      for (var c = 0; c < n; c++)
+        t += '<td style="text-align:center;' +
+             (Math.abs(A[r][c]) < 1e-10 ? 'color:var(--muted);opacity:.4' : '') + '">' +
+             fmtN(A[r][c]) + '</td>';
+      t += '</tr>';
+    }
+    return t + '</table></div>';
+  };
+  q(host, '.matriz').innerHTML = '<div style="display:flex;gap:1rem;flex-wrap:wrap">' +
+    tabla(M, 'A') + (Lc ? tabla(Lc, 'L  (Cholesky)') : '') + '</div>';
+
+  var marca = function (ok, txt) {
+    return '<div style="margin:.12rem 0">' +
+      (ok ? '<span style="color:#7fd4a4">✓</span> ' : '<span style="color:#f0a58a">✗</span> ') +
+      txt + '</div>';
+  };
+  q(host, '.viz-readout').innerHTML =
+    marca(sim, '<strong>1.</strong> A es simétrica') +
+    marca(dp, '<strong>2.</strong> Menores principales positivos: ' +
+          menores.map(fmtN).join(', ')) +
+    (dp
+      ? '<div style="margin-top:.4rem"><strong style="color:#7fd4a4">Cholesky existe.</strong> ' +
+        'Comprobación L·Lᵀ = A: desviación máxima ' + err.toExponential(2) + '</div>'
+      : '<div style="margin-top:.4rem"><strong style="color:#f0a58a">Cholesky no aplica.</strong> ' +
+        (sim ? 'Es simétrica pero no definida positiva: al calcular la diagonal aparecería la raíz ' +
+               'de un número negativo.'
+             : 'No es simétrica, y Cholesky exige simetría antes que nada.') + '</div>') +
+    '<span style="color:#8fb4d9">Cholesky cuesta la mitad que LU (≈ n³/6 frente a n³/3) porque ' +
+    'aprovecha la simetría: calcula solo la mitad de la matriz. Pero exige que se cumplan ' +
+    'las dos condiciones.</span>';
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[data-viz]').forEach(function (h) {
     h.addEventListener('input', function () { OVA.viz.redibujar(); });

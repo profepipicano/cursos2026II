@@ -581,6 +581,135 @@ OVA.viz.registrar('asintotas', function (host) {
     'y verás dos horizontales distintas.</span>';
 });
 
+/* ══════ S04 · La secante que se convierte en tangente ══════ */
+var SEC = {
+  cuad: { f: function (x) { return x * x - 3 * x; }, d: function (x) { return 2 * x - 3; },
+          n: 'f(x) = x² − 3x', dn: "f'(x) = 2x − 3", a: 2 },
+  cub:  { f: function (x) { return (x * x * x - 2 * x) / 3; },
+          d: function (x) { return (3 * x * x - 2) / 3; },
+          n: 'f(x) = (x³ − 2x)/3', dn: "f'(x) = (3x² − 2)/3", a: 1.4 },
+  raiz: { f: function (x) { return 2 * Math.sqrt(Math.max(x, 0)); },
+          d: function (x) { return 1 / Math.sqrt(Math.max(x, 1e-9)); },
+          n: 'f(x) = 2√x', dn: "f'(x) = 1/√x", a: 2.2 },
+  seno: { f: function (x) { return 2 * Math.sin(x); }, d: function (x) { return 2 * Math.cos(x); },
+          n: 'f(x) = 2sen x', dn: "f'(x) = 2cos x", a: 0.9 }
+};
+
+OVA.viz.registrar('secante', function (host) {
+  var cfg = SEC[ctrl(host, 'select').value] || SEC.cuad;
+  var hh = parseFloat(ctrl(host, '.hh').value) / 100;
+  ctrl(host, '.h-val').textContent = 'h = ' + hh.toFixed(3);
+  var a = cfg.a;
+
+  var L = OVA.lienzo(ctrl(host, 'canvas'), { sx: 52, sy: 34 });
+  L.ox = L.w / 2 - a * L.sx * 0.35;
+  OVA.ejes(L);
+  var c = L.ctx;
+  OVA.curva(L, cfg.f, AZUL, 3);
+
+  var fa = cfg.f(a), fb = cfg.f(a + hh);
+  var mSec = (fb - fa) / hh, mTan = cfg.d(a);
+
+  // recta tangente (referencia fija)
+  c.strokeStyle = 'rgba(198,143,46,.55)'; c.lineWidth = 2; c.setLineDash([7, 5]);
+  c.beginPath();
+  c.moveTo(0, L.py(fa + mTan * ((0 - L.ox) / L.sx - a)));
+  c.lineTo(L.w, L.py(fa + mTan * ((L.w - L.ox) / L.sx - a)));
+  c.stroke(); c.setLineDash([]);
+
+  // recta secante
+  c.strokeStyle = ROJO; c.lineWidth = 2.6;
+  c.beginPath();
+  c.moveTo(0, L.py(fa + mSec * ((0 - L.ox) / L.sx - a)));
+  c.lineTo(L.w, L.py(fa + mSec * ((L.w - L.ox) / L.sx - a)));
+  c.stroke();
+
+  // triángulo Δx, Δy
+  c.strokeStyle = 'rgba(150,167,181,.9)'; c.lineWidth = 1.4; c.setLineDash([4, 4]);
+  c.beginPath();
+  c.moveTo(L.px(a), L.py(fa)); c.lineTo(L.px(a + hh), L.py(fa));
+  c.lineTo(L.px(a + hh), L.py(fb)); c.stroke(); c.setLineDash([]);
+  c.fillStyle = OVA.color('cv-text'); c.font = '11px ui-monospace,monospace';
+  c.fillText('h', (L.px(a) + L.px(a + hh)) / 2 - 4, L.py(fa) + 15);
+  c.fillText('Δy', L.px(a + hh) + 6, (L.py(fa) + L.py(fb)) / 2);
+
+  OVA.punto(L, a, fa, ORO);
+  OVA.punto(L, a + hh, fb, ROJO);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  ctrl(host, '.viz-readout').innerHTML =
+    'Punto fijo <span style="color:#dba949">(' + a.toFixed(2) + ', ' + fa.toFixed(3) + ')</span>' +
+    ' &nbsp;·&nbsp; punto móvil <span style="color:#f0a58a">(' + (a + hh).toFixed(3) + ', ' +
+      fb.toFixed(3) + ')</span><br>' +
+    'Pendiente de la <span style="color:#f0a58a">secante</span> = ' +
+      '<strong>' + mSec.toFixed(6) + '</strong> = (' + fb.toFixed(4) + ' − ' + fa.toFixed(4) +
+      ') / ' + hh.toFixed(3) + '<br>' +
+    'Pendiente de la <span style="color:#dba949">tangente</span> = ' + cfg.dn +
+      ' en x=' + a + ' &nbsp;→&nbsp; <strong>' + mTan.toFixed(6) + '</strong><br>' +
+    'Diferencia: <strong>' + Math.abs(mSec - mTan).toExponential(3) + '</strong><br>' +
+    '<span style="color:#8fb4d9">Reduce h y observa cómo la recta roja gira hasta apoyarse en la ' +
+    'dorada. La derivada <em>es</em> ese límite: no una fórmula nueva, sino el número al que se ' +
+    'acerca el cociente cuando h se hace pequeño.</span>';
+});
+
+/* ══════ S04 · Derivabilidad frente a continuidad ══════ */
+var DER = {
+  abs:  { f: function (x) { return Math.abs(x); }, a: 0, n: 'f(x) = |x|',
+          izq: -1, der: 1, cont: true, deriv: false,
+          diag: 'Continua pero <strong>no derivable</strong>: los cocientes laterales valen −1 y 1. ' +
+                'La gráfica tiene un pico y no hay una única recta tangente.' },
+  raiz: { f: function (x) { return Math.cbrt(x); }, a: 0, n: 'f(x) = ∛x',
+          izq: Infinity, der: Infinity, cont: true, deriv: false,
+          diag: 'Continua pero <strong>no derivable</strong>: el cociente se dispara a +∞. ' +
+                'La tangente existe, pero es <em>vertical</em>, y una recta vertical no tiene pendiente.' },
+  salto:{ f: function (x) { return x < 0 ? x - 1 : x + 1; }, a: 0, n: 'f(x) = x−1 si x<0 ; x+1 si x≥0',
+          izq: Infinity, der: null, cont: false, deriv: false,
+          diag: '<strong>Ni continua ni derivable.</strong> Hay un salto, y donde no hay ' +
+                'continuidad no puede haber derivada: el cociente se dispara.' },
+  suave:{ f: function (x) { return x * x; }, a: 0, n: 'f(x) = x²',
+          izq: 0, der: 0, cont: true, deriv: true,
+          diag: '<strong style="color:#7fd4a4">Continua y derivable.</strong> Los dos cocientes ' +
+                'laterales valen 0 y coinciden: hay una única recta tangente, horizontal.' }
+};
+
+OVA.viz.registrar('derivabilidad', function (host) {
+  var cfg = DER[ctrl(host, 'select').value] || DER.abs;
+  var hh = Math.pow(10, -parseInt(ctrl(host, '.acerca').value, 10));
+  ctrl(host, '.acerca-val').textContent = 'h = ' + hh.toExponential(0);
+
+  var L = OVA.lienzo(ctrl(host, 'canvas'), { sx: 60, sy: 44 });
+  OVA.ejes(L);
+  var c = L.ctx;
+  OVA.curva(L, function (x) { return x < cfg.a ? cfg.f(x) : NaN; }, AZUL, 3);
+  OVA.curva(L, function (x) { return x > cfg.a ? cfg.f(x) : NaN; }, AZUL, 3);
+
+  var fa = cfg.f(cfg.a);
+  var qi = (cfg.f(cfg.a - hh) - fa) / (-hh), qd = (cfg.f(cfg.a + hh) - fa) / hh;
+  // secantes laterales
+  [[-hh, ROJO], [hh, VERDE]].forEach(function (par) {
+    var m = (cfg.f(cfg.a + par[0]) - fa) / par[0];
+    if (!isFinite(m)) return;
+    c.strokeStyle = par[1]; c.lineWidth = 2.4;
+    c.beginPath();
+    c.moveTo(0, L.py(fa + m * ((0 - L.ox) / L.sx - cfg.a)));
+    c.lineTo(L.w, L.py(fa + m * ((L.w - L.ox) / L.sx - cfg.a)));
+    c.stroke();
+  });
+  OVA.punto(L, cfg.a, fa, ORO);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  var fmt = function (v) { return isFinite(v) ? v.toFixed(4) : (v > 0 ? '→ ∞' : '→ −∞'); };
+  ctrl(host, '.viz-readout').innerHTML =
+    'Cociente por la <span style="color:#f0a58a">izquierda</span>: <strong>' + fmt(qi) + '</strong>' +
+    ' &nbsp;·&nbsp; por la <span style="color:#7fd4a4">derecha</span>: <strong>' + fmt(qd) +
+      '</strong><br>' + cfg.diag +
+    '<br><span style="color:#8fb4d9">Reduce h: si los dos cocientes convergen al mismo número, ' +
+    'la función es derivable. <strong>Derivable siempre implica continua, pero no al revés</strong>, ' +
+    'y |x| es el contraejemplo clásico.</span>';
+});
+
 /* ── Enlazar controles: cualquier cambio redibuja ───────── */
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[data-viz]').forEach(function (host) {
