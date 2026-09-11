@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 4 · Factorización LU y Cholesky — Métodos Numéricos · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 4 · Factorización LU y Cholesky — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260911a">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Semana 4</h1>
+      <h1>Métodos Numéricos · Guía 4</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,624 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · El problema</a>
+    <a href="#s2">2 · Factorización LU</a>
+    <a href="#s3">3 · Resolver con LU</a>
+    <a href="#s4">4 · Cholesky</a>
+    <a href="#s5">5 · Cuál usar</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 4 · Factorización LU y Cholesky</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 4 · Corte I</div>
+  <h2>Factorización LU y Cholesky</h2>
+  <p>La misma eliminación de Gauss de la semana pasada, pero guardando lo que antes se tiraba.
+     Ese cambio aparentemente menor permite resolver muchos sistemas con la misma matriz al precio
+     de uno solo — y es la razón de que toda biblioteca numérica seria factorice en vez de eliminar.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 10–11</span>
+    <span class="chip">Burden · Cap. 6.5–6.6</span>
+    <span class="chip">Semana 4</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 3 eliminaste el sistema $2x+y-z=8$, $-3x-y+2z=-11$,
+  $-2x+y+2z=-3$ usando los multiplicadores $f_{21}=-\tfrac32$, $f_{31}=-1$ y $f_{32}=4$. Esos tres
+  números, que allí se usaron y se descartaron, son <strong>exactamente</strong> el contenido de la
+  matriz $L$ de esta guía.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · El problema que resuelve la factorización</h3>
+
+  <div class="callout-dark">
+    <h3>Un desperdicio que salta a la vista</h3>
+    <p>Supón que debes resolver $A\mathbf{x}=\mathbf{b}$ para la <em>misma</em> matriz $A$ pero con
+       veinte vectores $\mathbf{b}$ distintos. Es lo habitual: una estructura sometida a veinte
+       cargas, un circuito con veinte entradas, una simulación con veinte pasos de tiempo.</p>
+    <p>Con eliminación de Gauss habría que repetir el proceso completo veinte veces, a
+       $\approx n^{3}/3$ operaciones cada una.</p>
+    <p>Pero mira lo que ocurre: <strong>la eliminación solo depende de $A$</strong>. Los
+       multiplicadores que se calculan no dependen para nada de $\mathbf{b}$. Se está repitiendo
+       veinte veces un trabajo idéntico.</p>
+    <p>La factorización guarda ese trabajo una sola vez y lo reutiliza.</p>
+  </div>
+
+  <div class="def">
+    <strong>Factorizar</strong> una matriz es escribirla como producto de matrices más simples.
+    La factorización <strong>LU</strong> descompone
+    $$A = L\,U$$
+    con $L$ triangular <em>inferior</em> con unos en la diagonal, y $U$ triangular <em>superior</em>.
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Cómo se obtiene la factorización LU</h3>
+
+  <div class="callout-dark">
+    <h3>Ya la calculaste la semana pasada sin saberlo</h3>
+    <p>La matriz $U$ es simplemente <strong>la forma triangular superior</strong> a la que llega la
+       eliminación de Gauss. Nada nuevo.</p>
+    <p>Y la matriz $L$ se construye poniendo un 1 en cada posición de la diagonal y colocando cada
+       multiplicador $f_{ik}$ en la posición $(i,k)$ que le corresponde.</p>
+    <p>Es decir: el algoritmo es <em>idéntico</em> al de Gauss. La única diferencia es que el
+       multiplicador, en vez de usarse y descartarse, se guarda en el hueco que la eliminación
+       acaba de dejar vacío. No cuesta ni una operación aritmética adicional.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · LU del sistema de la Guía 3</h4>
+    <div class="ejemplo-body">
+      Factoriza $A=\begin{pmatrix}2&1&-1\\-3&-1&2\\-2&1&2\end{pmatrix}$.
+      <div class="paso"><div class="paso-t">1. Eliminar la primera columna</div>
+        $f_{21}=\dfrac{-3}{2}=-\dfrac32$ &nbsp;y&nbsp; $f_{31}=\dfrac{-2}{2}=-1$.<br>
+        Aplicando $F_2\to F_2-f_{21}F_1$ y $F_3\to F_3-f_{31}F_1$:
+        $$\begin{pmatrix}2&1&-1\\0&\tfrac12&\tfrac12\\0&2&1\end{pmatrix}$$
+      </div>
+      <div class="paso"><div class="paso-t">2. Eliminar la segunda columna</div>
+        $f_{32}=\dfrac{2}{\;\tfrac12\;}=4$, y tras $F_3\to F_3-4F_2$:
+        $$U=\begin{pmatrix}2&1&-1\\0&\tfrac12&\tfrac12\\0&0&-1\end{pmatrix}$$
+      </div>
+      <div class="paso"><div class="paso-t">3. Armar $L$ con los multiplicadores</div>
+        $$L=\begin{pmatrix}1&0&0\\-\tfrac32&1&0\\-1&4&1\end{pmatrix}$$
+      </div>
+      <div class="paso"><div class="paso-t">4. Comprobar</div>
+        Multiplicando $L\,U$ se recupera $A$ exactamente. <strong>Siempre conviene verificarlo</strong>:
+        es una comprobación barata que detecta cualquier error de signo en los multiplicadores.
+      </div>
     </div>
   </div>
+
+  <div class="nota">
+    <strong>Cuidado con el signo.</strong> El multiplicador se define $f_{ik}=\dfrac{a_{ik}}{a_{kk}}$
+    y la operación es $F_i\to F_i-f_{ik}F_k$. En $L$ se guarda $f_{ik}$ <em>tal cual</em>, con su
+    signo. Guardar $-f_{ik}$ es el error más frecuente, y se detecta de inmediato al comprobar
+    $LU=A$.
+  </div>
+
+  <div class="sub-title">2.1 Un beneficio adicional: el determinante</div>
+  <p>Como $\det(LU)=\det L\cdot\det U$ y el determinante de una triangular es el producto de su
+     diagonal, con $\det L=1$ queda:</p>
+  <div class="formula" style="max-width:420px">$$\det A=\prod_{i=1}^{n}u_{ii}$$</div>
+  <p>En el Ejemplo 1: $\det A = 2\cdot\tfrac12\cdot(-1)=-1$. Es el método estándar para calcular
+     determinantes grandes: $O(n^{3})$ en vez del $O(n!)$ de la expansión por cofactores que
+     condenamos en la Guía 3.</p>
+
+  <div class="sub-title">2.2 Explora la factorización paso a paso</div>
+  <div class="viz" data-viz="lu">
+    <div class="viz-controls">
+      <label for="lu-s">Sistema</label>
+      <select id="lu-s">
+        <option value="a">el de la Guía 3</option>
+        <option value="b">x+y+z=6 ; 2x−y+3z=9 ; 3x+2y−2z=1</option>
+        <option value="c">4x−2y+z=11 ; −2x+4y−2z=−16 ; x−2y+4z=17</option>
+      </select>
+      <label for="lu-p">Avanzar</label>
+      <input id="lu-p" class="paso" type="range" min="0" max="5" value="0">
+      <span class="paso-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="matriz" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <div class="pasos" style="margin-bottom:.8rem"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Las casillas doradas de $L$ son los multiplicadores que se van guardando. El lector comprueba
+    en cada paso que $L\cdot U=A$ sigue cumpliéndose: la factorización es correcta desde el primer
+    momento, no solo al final.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Factorización LU</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Resolver el sistema con la factorización</h3>
+
+  <div class="def">
+    Con $A=LU$, el sistema $A\mathbf{x}=\mathbf{b}$ se convierte en $LU\mathbf{x}=\mathbf{b}$.
+    Llamando $\mathbf{y}=U\mathbf{x}$, se resuelve en <strong>dos etapas</strong>:
+    <br><br>
+    <strong>1.</strong> $L\mathbf{y}=\mathbf{b}$ por <em>sustitución hacia adelante</em>
+    (la primera fila tiene una sola incógnita).<br>
+    <strong>2.</strong> $U\mathbf{x}=\mathbf{y}$ por <em>sustitución hacia atrás</em>
+    (la última fila tiene una sola incógnita).
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Las dos sustituciones</h4>
+    <div class="ejemplo-body">
+      Con la $L$ y la $U$ del Ejemplo 1, resuelve para $\mathbf{b}=(8,-11,-3)$.
+      <div class="paso"><div class="paso-t">Etapa 1 · $L\mathbf{y}=\mathbf{b}$, hacia adelante</div>
+        $y_1=8$<br>
+        $-\tfrac32(8)+y_2=-11 \Rightarrow y_2=-11+12=1$<br>
+        $-1(8)+4(1)+y_3=-3 \Rightarrow y_3=-3+8-4=1$<br>
+        Luego $\mathbf{y}=(8,\,1,\,1)$.
+      </div>
+      <div class="paso"><div class="paso-t">Etapa 2 · $U\mathbf{x}=\mathbf{y}$, hacia atrás</div>
+        $-z=1 \Rightarrow z=-1$<br>
+        $\tfrac12 y+\tfrac12(-1)=1 \Rightarrow y=3$<br>
+        $2x+3-(-1)=8 \Rightarrow x=2$<br>
+        Solución: $(2,\,3,\,-1)$ — la misma que dio Gauss en la Guía 3, como debe ser.
+      </div>
+      <div class="paso"><div class="paso-t">El ahorro</div>
+        Cada sustitución cuesta $\approx n^{2}/2$ operaciones, así que resolver para un nuevo
+        $\mathbf{b}$ cuesta $\approx n^{2}$ en total. Frente a las $n^{3}/3$ de repetir la
+        eliminación, el ahorro crece con $n$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 Cuánto se ahorra en realidad</div>
+  <table class="tbl">
+    <tr><th>Tarea</th><th>Costo</th><th>Con $n=1000$</th></tr>
+    <tr><td>Factorizar $A=LU$ (una sola vez)</td><td>$\approx n^{3}/3$</td><td>$3{,}3\times10^{8}$</td></tr>
+    <tr><td>Resolver para <em>cada</em> $\mathbf{b}$</td><td>$\approx n^{2}$</td><td>$10^{6}$</td></tr>
+    <tr><td>Repetir Gauss para cada $\mathbf{b}$</td><td>$\approx n^{3}/3$</td><td>$3{,}3\times10^{8}$</td></tr>
+  </table>
+  <p>Con $n=1000$, resolver un sistema adicional cuesta <strong>330 veces menos</strong> si ya se
+     tiene la factorización. Con veinte vectores $\mathbf{b}$, la diferencia es entre hacer el
+     trabajo pesado una vez o veinte.</p>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Factorización de Cholesky</h3>
+
+  <p>Cuando la matriz tiene estructura, conviene aprovecharla. Muchísimos problemas de ingeniería
+     producen matrices <strong>simétricas y definidas positivas</strong>, y para ellas existe una
+     factorización que cuesta la mitad.</p>
+
+  <div class="def">
+    Una matriz $A$ es <strong>definida positiva</strong> si es simétrica y todos sus
+    <em>menores principales</em> —los determinantes de las submatrices de las esquinas superiores
+    izquierdas— son positivos.
+    <br><br>
+    En ese caso existe una única $L$ triangular inferior con diagonal positiva tal que
+    $$A = L\,L^{T}$$
+  </div>
+
+  <p>Nota la economía: en LU hacían falta dos matrices, mientras que aquí <strong>una sola basta</strong>,
+     porque la otra es su transpuesta. Ese es exactamente el origen del ahorro.</p>
+
+  <div class="sub-title">4.1 Las fórmulas</div>
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Diagonal</div>$$\ell_{jj}=\sqrt{a_{jj}-\sum_{k=1}^{j-1}\ell_{jk}^{2}}$$</div>
+    <div class="formula"><div class="lbl">Debajo de la diagonal</div>$$\ell_{ij}=\frac{a_{ij}-\sum_{k=1}^{j-1}\ell_{ik}\ell_{jk}}{\ell_{jj}}$$</div>
+  </div>
+  <p style="font-size:.88rem">La raíz cuadrada de la primera fórmula es la que exige que la matriz
+     sea definida positiva: si el radicando saliera negativo, el método se detendría.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Cholesky de una matriz $3\times3$</h4>
+    <div class="ejemplo-body">
+      Factoriza $A=\begin{pmatrix}4&12&-16\\12&37&-43\\-16&-43&98\end{pmatrix}$.
+      <div class="paso"><div class="paso-t">1. Verificar las condiciones</div>
+        Es simétrica ✓ y sus menores principales son $4$, $4$ y $36$: todos positivos ✓
+      </div>
+      <div class="paso"><div class="paso-t">2. Primera columna</div>
+        $\ell_{11}=\sqrt{4}=2$ &nbsp;·&nbsp; $\ell_{21}=\dfrac{12}{2}=6$ &nbsp;·&nbsp;
+        $\ell_{31}=\dfrac{-16}{2}=-8$
+      </div>
+      <div class="paso"><div class="paso-t">3. Segunda columna</div>
+        $\ell_{22}=\sqrt{37-6^{2}}=\sqrt{1}=1$ &nbsp;·&nbsp;
+        $\ell_{32}=\dfrac{-43-(-8)(6)}{1}=\dfrac{-43+48}{1}=5$
+      </div>
+      <div class="paso"><div class="paso-t">4. Tercera columna</div>
+        $\ell_{33}=\sqrt{98-(-8)^{2}-5^{2}}=\sqrt{98-64-25}=\sqrt{9}=3$
+      </div>
+      <div class="paso"><div class="paso-t">5. Resultado</div>
+        $$L=\begin{pmatrix}2&0&0\\6&1&0\\-8&5&3\end{pmatrix}$$
+        Comprobación: $L\,L^{T}=A$ ✓
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>Cuándo falla, y por qué eso es útil</h3>
+    <p>Si la matriz no es definida positiva, en algún momento aparece la raíz de un número negativo
+       y el algoritmo se detiene. Con $\begin{pmatrix}1&2\\2&1\end{pmatrix}$, cuyo determinante es
+       $-3$, el segundo paso pediría $\sqrt{1-4}$.</p>
+    <p>Lejos de ser un defecto, eso convierte a Cholesky en un <strong>test</strong>: si la
+       factorización se completa, la matriz era definida positiva. Es la forma más barata de
+       averiguarlo, porque el método lo comprueba mientras calcula.</p>
+    <p>Y a diferencia de la eliminación gaussiana, Cholesky <strong>no necesita pivoteo</strong>:
+       se demuestra que para matrices definidas positivas es estable tal cual. Esa es otra ventaja
+       práctica nada menor.</p>
+  </div>
+
+  <div class="viz" data-viz="cholesky">
+    <div class="viz-controls">
+      <label for="ch-m">Matriz</label>
+      <select id="ch-m">
+        <option value="a">simétrica definida positiva</option>
+        <option value="b">tridiagonal</option>
+        <option value="c">simétrica NO definida positiva</option>
+        <option value="d">no simétrica</option>
+      </select>
+    </div>
+    <div class="matriz" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Las dos primeras opciones cumplen las condiciones y la factorización se completa. Prueba las dos
+    últimas y el lector te dirá cuál de los dos requisitos falla en cada caso.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Cholesky</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Cuál usar</h3>
+
+  <table class="tbl">
+    <tr><th></th><th>Gauss</th><th>LU</th><th>Cholesky</th></tr>
+    <tr><td>Exige</td><td>Nada</td><td>Nada</td><td>Simétrica y definida positiva</td></tr>
+    <tr><td>Costo</td><td>$\approx n^{3}/3$</td><td>$\approx n^{3}/3$</td><td>$\approx n^{3}/6$</td></tr>
+    <tr><td>Resolver otro $\mathbf{b}$</td><td>Repetir todo</td><td>$\approx n^{2}$</td><td>$\approx n^{2}$</td></tr>
+    <tr><td>Necesita pivoteo</td><td>Sí</td><td>Sí</td><td><strong>No</strong></td></tr>
+    <tr><td>Almacena</td><td>—</td><td>Dos matrices</td><td>Una sola</td></tr>
+  </table>
+
+  <div class="nota">
+    <strong>Regla práctica.</strong> Si la matriz es simétrica y definida positiva, usa Cholesky:
+    es el doble de rápido, ocupa la mitad de memoria y no necesita pivoteo. En cualquier otro caso,
+    LU. Y Gauss a secas solo si vas a resolver un único sistema y no piensas reutilizar la matriz.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Dónde aparecen estas matrices</h3>
+    <p>Las matrices simétricas definidas positivas no son una rareza de laboratorio. Aparecen
+       sistemáticamente en:</p>
+    <p><strong>Mínimos cuadrados.</strong> Las ecuaciones normales $A^{T}A\,\mathbf{x}=A^{T}\mathbf{b}$
+       tienen matriz $A^{T}A$, que es simétrica y definida positiva siempre que $A$ tenga columnas
+       independientes. Eso es la semana 11.</p>
+    <p><strong>Análisis estructural.</strong> Las matrices de rigidez del método de elementos finitos
+       son simétricas definidas positivas por razones físicas: representan energía, que no puede ser
+       negativa.</p>
+    <p><strong>Estadística.</strong> Toda matriz de covarianza lo es, y Cholesky es el método
+       estándar para generar datos correlacionados en simulación.</p>
+    <p>Por eso conviene reconocerlas: cuando aparecen, hay la mitad de trabajo esperando.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Comparación de métodos</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      En un modelo de Leontief, la matriz de coeficientes técnicos no cambia de un mes a otro, pero
+      sí lo hace el vector de demanda final. Factorizar una vez y resolver para cada escenario es
+      exactamente el caso de uso de LU: el análisis de sensibilidad se vuelve barato.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Al distribuir costos entre departamentos con servicios recíprocos, la matriz de reparto es
+      fija y solo cambian los costos directos de cada periodo. Con LU se factoriza una vez al año y
+      cada cierre mensual cuesta una fracción del trabajo.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      <code>scipy.linalg.lu_factor</code> y <code>cholesky</code> existen precisamente por esto, y
+      toda biblioteca de álgebra lineal las ofrece. En aprendizaje automático, las ecuaciones
+      normales de la regresión lineal se resuelven con Cholesky, no con Gauss: la matriz
+      $A^{T}A$ siempre es simétrica definida positiva.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La matriz de conductancias del análisis nodal es simétrica y definida positiva cuando el
+      circuito solo tiene elementos pasivos, por una razón física: representa disipación de
+      potencia. SPICE detecta esa estructura y usa Cholesky, que además le ahorra el pivoteo.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>$U$ es la forma triangular de Gauss; $L$ guarda los <strong>multiplicadores</strong> con su signo.</li>
+    <li>Factorizar no cuesta ni una operación más que eliminar: solo se guarda lo que antes se tiraba.</li>
+    <li>Resolver es en dos etapas: $L\mathbf{y}=\mathbf{b}$ hacia adelante, $U\mathbf{x}=\mathbf{y}$ hacia atrás.</li>
+    <li>Con la factorización hecha, cada nuevo $\mathbf{b}$ cuesta $\approx n^{2}$ en vez de $n^{3}/3$.</li>
+    <li>$\det A$ es el producto de la diagonal de $U$: el método estándar en $O(n^{3})$.</li>
+    <li><strong>Cholesky</strong> exige simétrica <em>y</em> definida positiva, y da $A=LL^{T}$.</li>
+    <li>Cuesta $\approx n^{3}/6$: la mitad que LU, porque calcula una sola matriz.</li>
+    <li>Cholesky <strong>no necesita pivoteo</strong> y sirve de test de definición positiva.</li>
+    <li>Aparecen en mínimos cuadrados, elementos finitos y matrices de covarianza.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2</a> · <a href="https://www.geogebra.org/m/YCZa8TAH" target="_blank" rel="noopener">GeoGebra · Matrices</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260911a"></script>
+<script src="../assets/viz-metodos.js?v=20260911a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Factorización LU · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Qué es L', nivel: 2,
+      criterio: 'Reconocer el contenido de la matriz L (§2)',
+      enunciado: 'En la factorización $A=LU$, la matriz $L$ contiene:',
+      opciones: [
+        'Los multiplicadores de la eliminación, con unos en la diagonal',
+        'La matriz triangular a la que llega Gauss',
+        'Los pivotes de cada paso',
+        'La inversa de $A$'
+      ],
+      correcta: 0,
+      pista: '¿Qué número se calculaba en cada paso de la eliminación y luego se descartaba?',
+      solucion: "Cada multiplicador $f_{ik}$ se guarda en la posición $(i,k)$, y la diagonal se llena con unos. La opción b) describe a $U$. Lo notable es que el algoritmo es <strong>idéntico</strong> al de Gauss: la única diferencia es que el multiplicador se guarda en vez de tirarse, sin costar una sola operación adicional."
+    },
+    {
+      etiqueta: 'Calcular L', nivel: 3,
+      criterio: 'Obtener las entradas de L (§2)',
+      enunciado: "Al eliminar $A=\\begin{pmatrix}2&1&-1\\\\-3&-1&2\\\\-2&1&2\\end{pmatrix}$ se usan $f_{21}=-\\tfrac32$, $f_{31}=-1$ y $f_{32}=4$. La matriz $L$ es:",
+      opciones: [
+        '$\\begin{pmatrix}1&0&0\\\\\\tfrac32&1&0\\\\1&-4&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}1&-\\tfrac32&-1\\\\0&1&4\\\\0&0&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}1&0&0\\\\-\\tfrac32&1&0\\\\-1&4&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}2&0&0\\\\-3&\\tfrac12&0\\\\-2&2&-1\\end{pmatrix}$'
+      ],
+      correcta: 2,
+      pista: 'Cada $f_{ik}$ va en la posición $(i,k)$, <strong>con su signo</strong>, y la diagonal lleva unos.',
+      solucion: "$f_{21}$ va en la posición $(2,1)$, $f_{31}$ en $(3,1)$ y $f_{32}$ en $(3,2)$, todos con su signo tal cual. La opción a) invierte los signos — el error más frecuente — y la b) los coloca en la parte <em>superior</em>, que corresponde a $U$. Comprobar $LU=A$ detecta ambos al instante."
+    },
+    {
+      etiqueta: 'Determinante', nivel: 2,
+      criterio: 'Calcular el determinante desde la factorización (§2.1)',
+      enunciado: "Si $U$ tiene diagonal $\\left(2,\\;\\tfrac12,\\;-1\\right)$, entonces $\\det A$ vale:",
+      opciones: ['$\\tfrac32$', '$-1$', '$0$', '$1$'],
+      correcta: 1,
+      pista: '$\\det L=1$ porque su diagonal es de unos, así que $\\det A=\\det U$.',
+      solucion: "$\\det A=\\det L\\cdot\\det U=1\\cdot\\left(2\\cdot\\tfrac12\\cdot(-1)\\right)=-1$. La opción a) suma en vez de multiplicar. Este es el método estándar para determinantes grandes: $O(n^{3})$, frente al $O(n!)$ de la expansión por cofactores que descartamos en la Guía 3."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Cholesky · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Condiciones', nivel: 2,
+      criterio: 'Enunciar los requisitos de Cholesky (§4)',
+      enunciado: 'Cholesky solo se puede aplicar si la matriz es:',
+      opciones: [
+        'Triangular',
+        'Cuadrada, sin más',
+        'Simétrica y definida positiva',
+        'Diagonal dominante'
+      ],
+      correcta: 2,
+      pista: 'Son dos condiciones, y la segunda se verifica con los menores principales.',
+      solucion: "Hacen falta ambas. La simetría es lo que permite que una sola matriz $L$ baste, y la definición positiva garantiza que las raíces cuadradas de las fórmulas tengan radicando positivo. Si falla alguna, el algoritmo se detiene."
+    },
+    {
+      etiqueta: 'Calcular', nivel: 3,
+      criterio: 'Aplicar las fórmulas de Cholesky (§4.1)',
+      enunciado: "Para $A=\\begin{pmatrix}4&12&-16\\\\12&37&-43\\\\-16&-43&98\\end{pmatrix}$, el valor de $\\ell_{22}$ es:",
+      opciones: ['$37$', '$6$', '$\\sqrt{37}$', '$1$'],
+      correcta: 3,
+      pista: '$\\ell_{22}=\\sqrt{a_{22}-\\ell_{21}^{2}}$, y ya sabes que $\\ell_{21}=12/2=6$.',
+      solucion: "$\\ell_{22}=\\sqrt{37-6^{2}}=\\sqrt{1}=1$. La opción c) olvida restar $\\ell_{21}^{2}$, que es justamente lo que hace no trivial a la fórmula: cada entrada depende de las ya calculadas en su misma fila."
+    },
+    {
+      etiqueta: 'Cuando falla', nivel: 3,
+      criterio: 'Interpretar el fallo de Cholesky (§4)',
+      enunciado: "Al aplicar Cholesky a $\\begin{pmatrix}1&2\\\\2&1\\end{pmatrix}$ aparece $\\sqrt{1-4}$. ¿Qué indica eso?",
+      opciones: [
+        'Que hay un error de cálculo',
+        'Que la matriz no es definida positiva, y por tanto Cholesky no aplica',
+        'Que hay que usar pivoteo',
+        'Que el sistema no tiene solución'
+      ],
+      correcta: 1,
+      pista: 'Calcula el determinante de esa matriz: ¿es positivo?',
+      solucion: "Su determinante es $-3 \\lt 0$, así que no es definida positiva pese a ser simétrica. La raíz de un negativo es precisamente el aviso. Lejos de ser un defecto, eso convierte a Cholesky en un <strong>test</strong>: si la factorización se completa, la matriz cumplía las condiciones. La opción d) es falsa: el sistema puede tener solución perfectamente, solo que hay que resolverlo con LU."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Comparación de métodos · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'El ahorro', nivel: 3,
+      criterio: 'Justificar la ventaja de factorizar (§3.1)',
+      enunciado: 'Hay que resolver $A\\mathbf{x}=\\mathbf{b}$ con la misma $A$ y veinte vectores $\\mathbf{b}$ distintos. ¿Por qué conviene LU?',
+      opciones: [
+        'Porque LU es más preciso que Gauss',
+        'Porque el trabajo pesado depende solo de $A$ y se hace una vez; cada $\\mathbf{b}$ cuesta después $\\approx n^{2}$',
+        'Porque LU no necesita pivoteo',
+        'Porque ocupa menos memoria'
+      ],
+      correcta: 1,
+      pista: '¿Dependen los multiplicadores del vector $\\mathbf{b}$?',
+      solucion: "La eliminación depende <em>solo</em> de $A$, así que repetirla veinte veces es repetir veinte veces el mismo cálculo. Factorizando una vez, cada nuevo $\\mathbf{b}$ cuesta dos sustituciones, $\\approx n^{2}$. La opción c) es falsa: LU sí necesita pivoteo; quien no lo necesita es Cholesky."
+    },
+    {
+      etiqueta: 'Costo relativo', nivel: 2,
+      criterio: 'Comparar el costo de LU y Cholesky (§5)',
+      enunciado: 'Frente a LU, la factorización de Cholesky cuesta aproximadamente:',
+      opciones: ['El doble', 'Lo mismo', 'La mitad', 'Diez veces menos'],
+      correcta: 2,
+      pista: 'Compara $n^{3}/3$ con $n^{3}/6$.',
+      solucion: "$\\dfrac{n^{3}/6}{n^{3}/3}=\\dfrac12$: la mitad. El ahorro viene de la simetría — al ser $A=LL^{T}$, basta calcular una matriz en vez de dos. Por eso, cuando una matriz es simétrica definida positiva, usar LU desperdicia la mitad del trabajo."
+    },
+    {
+      etiqueta: 'Pivoteo', nivel: 3,
+      criterio: 'Reconocer que Cholesky no requiere pivoteo (§5)',
+      enunciado: '¿Cuál de estos métodos <strong>no</strong> necesita pivoteo?',
+      opciones: ['Gauss', 'LU', 'Cholesky', 'Los tres lo necesitan'],
+      correcta: 2,
+      pista: 'Piensa en qué tiene de especial una matriz definida positiva.',
+      solucion: "Se demuestra que para matrices simétricas definidas positivas el algoritmo de Cholesky es estable sin intercambiar filas: los pivotes nunca se vuelven peligrosamente pequeños. Es una ventaja práctica importante, porque el pivoteo obliga a llevar la cuenta de las permutaciones. Gauss y LU sí lo necesitan, como viste en la Guía 3."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Definición', nivel: 1,
+      criterio: 'Identificar la forma de L y U (§1)',
+      enunciado: 'En $A=LU$, las matrices $L$ y $U$ son respectivamente:',
+      opciones: [
+        'Triangular superior e inferior',
+        'Triangular inferior y superior',
+        'Ambas diagonales',
+        'Ambas simétricas'
+      ],
+      correcta: 1,
+      pista: 'La inicial de cada letra viene del inglés: <em>lower</em> y <em>upper</em>.',
+      solucion: "$L$ es <em>lower</em> (inferior) con unos en la diagonal, y $U$ es <em>upper</em> (superior). Esa forma es la que permite resolver por sustitución: $L$ hacia adelante y $U$ hacia atrás, porque cada una tiene una fila con una sola incógnita en un extremo."
+    },
+    {
+      etiqueta: 'Dos etapas', nivel: 2,
+      criterio: 'Ordenar las dos sustituciones (§3)',
+      enunciado: 'Para resolver $LU\\mathbf{x}=\\mathbf{b}$ se procede:',
+      opciones: [
+        'Primero $U\\mathbf{x}=\\mathbf{b}$ y luego $L\\mathbf{y}=\\mathbf{x}$',
+        'Resolviendo $LU$ como una sola matriz',
+        'Primero $L\\mathbf{y}=\\mathbf{b}$ hacia adelante, luego $U\\mathbf{x}=\\mathbf{y}$ hacia atrás',
+        'Invirtiendo $L$ y multiplicando'
+      ],
+      correcta: 2,
+      pista: 'Define $\\mathbf{y}=U\\mathbf{x}$ y sustituye en la ecuación.',
+      solucion: "Con $\\mathbf{y}=U\\mathbf{x}$ queda $L\\mathbf{y}=\\mathbf{b}$, que se resuelve hacia adelante porque la primera fila de $L$ tiene una sola incógnita. Después $U\\mathbf{x}=\\mathbf{y}$ hacia atrás. La opción d) es correcta en teoría pero pésima en la práctica: invertir cuesta mucho más que sustituir."
+    },
+    {
+      etiqueta: 'Sustitución', nivel: 3,
+      criterio: 'Ejecutar la sustitución hacia adelante (§3)',
+      enunciado: "Con $L=\\begin{pmatrix}1&0&0\\\\-\\tfrac32&1&0\\\\-1&4&1\\end{pmatrix}$ y $\\mathbf{b}=(8,-11,-3)$, el valor de $y_2$ es:",
+      opciones: ['$-11$', '$1$', '$-23$', '$12$'],
+      correcta: 1,
+      pista: 'De la primera fila sale $y_1=8$. Ahora usa la segunda.',
+      solucion: "$-\\tfrac32(8)+y_2=-11$, es decir $-12+y_2=-11$, de donde $y_2=1$. La opción a) toma el término independiente sin restar la contribución de $y_1$: ese es justamente el paso que hace «hacia adelante» a la sustitución."
+    },
+    {
+      etiqueta: 'Costo', nivel: 2,
+      criterio: 'Comparar costos con y sin factorización (§3.1)',
+      enunciado: 'Con la factorización ya calculada y $n=1000$, resolver para un nuevo $\\mathbf{b}$ es aproximadamente:',
+      opciones: [
+        'Igual de caro que repetir Gauss',
+        'Unas 330 veces más barato',
+        'Diez veces más barato',
+        'Gratis'
+      ],
+      correcta: 1,
+      pista: 'Compara $n^{2}$ con $n^{3}/3$ para $n=1000$.',
+      solucion: "$\\dfrac{n^{3}/3}{n^{2}}=\\dfrac{n}{3}=333$. El ahorro <strong>crece con el tamaño</strong>: para $n=100$ sería 33 veces, y para $n=10\\,000$ sería 3 333. Por eso toda biblioteca numérica separa la factorización de la resolución en dos funciones distintas."
+    },
+    {
+      etiqueta: 'Definida positiva', nivel: 2,
+      criterio: 'Verificar si una matriz admite Cholesky (§4)',
+      enunciado: "¿Cuál de estas matrices simétricas admite factorización de Cholesky?",
+      opciones: [
+        '$\\begin{pmatrix}1&2\\\\2&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$',
+        '$\\begin{pmatrix}-1&0\\\\0&-1\\end{pmatrix}$',
+        '$\\begin{pmatrix}4&2\\\\2&3\\end{pmatrix}$'
+      ],
+      correcta: 3,
+      pista: 'Comprueba los menores principales: el primer elemento y el determinante.',
+      solucion: "En d) los menores son $4$ y $4(3)-2(2)=8$, ambos positivos ✓. En a) el determinante es $-3$; en b) el primer menor es $0$; y en c) el primer menor es $-1$. Las tres fallan, aunque todas sean simétricas: la simetría sola no basta."
+    },
+    {
+      etiqueta: 'Cuál usar', nivel: 3,
+      criterio: 'Elegir el método adecuado (§5)',
+      enunciado: 'Tienes una matriz simétrica definida positiva de $2\\,000\\times2\\,000$ y cincuenta vectores $\\mathbf{b}$. ¿Qué conviene?',
+      opciones: [
+        'Repetir eliminación de Gauss cincuenta veces',
+        'Factorizar con Cholesky una vez y hacer cincuenta pares de sustituciones',
+        'Calcular $A^{-1}$ y multiplicar',
+        'Usar la regla de Cramer'
+      ],
+      correcta: 1,
+      pista: 'Aprovecha las dos cosas: la estructura de la matriz y la repetición de vectores.',
+      solucion: "Cholesky aprovecha la simetría (mitad de costo) y la factorización se reutiliza en los cincuenta sistemas. La opción c) es peor: invertir cuesta más que factorizar y además empeora la precisión. Y la d) sería astronómica, como vimos en la Guía 3."
+    },
+    {
+      etiqueta: 'Dónde aparecen', nivel: 2,
+      criterio: 'Reconocer contextos con matrices definidas positivas (§5)',
+      enunciado: '¿En cuál de estos problemas aparece naturalmente una matriz simétrica definida positiva?',
+      opciones: [
+        'Las ecuaciones normales $A^{T}A\\mathbf{x}=A^{T}\\mathbf{b}$ de mínimos cuadrados',
+        'Cualquier sistema lineal',
+        'Los sistemas sin solución',
+        'Los sistemas con determinante cero'
+      ],
+      correcta: 0,
+      pista: 'Piensa en la estructura del producto $A^{T}A$.',
+      solucion: "$A^{T}A$ es simétrica siempre, y definida positiva si $A$ tiene columnas independientes. Por eso la regresión lineal se resuelve con Cholesky y no con Gauss. Lo verás en la semana 11. También aparecen en matrices de rigidez y de covarianza."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Relacionar LU con la eliminación de la Guía 3 (§2)',
+      enunciado: '¿Cuánto trabajo aritmético adicional cuesta obtener $L$ mientras se hace la eliminación?',
+      opciones: [
+        'El doble que la eliminación sola',
+        'Un 50 % más',
+        'Ninguno: los multiplicadores ya se calculan, solo se guardan',
+        'No se puede obtener durante la eliminación'
+      ],
+      correcta: 2,
+      pista: '¿Hay que <em>calcular</em> algo nuevo, o solo no tirar lo que ya se calculó?',
+      solucion: "Los multiplicadores se calculan igualmente para poder eliminar. Guardarlos es una escritura en memoria, no una operación aritmética, y además caben justo en los huecos que la eliminación deja en ceros. La factorización LU es, literalmente, eliminación de Gauss que no desperdicia información."
+    }
+  ]
+});
+</script>
 </body>
 </html>
