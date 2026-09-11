@@ -73,9 +73,9 @@ GitHub te preguntará si quieres reemplazar el archivo existente. Di que sí.
 
 ```js
 window.OVA_PUBLICADAS = {
-  calculo:   [1, 2, 3],     ←  añade el 2
-  vectorial: [1, 2, 3],
-  metodos:   [1, 2, 3],
+  calculo:   [1, 2, 3, 4],     ←  añade el 2
+  vectorial: [1, 2, 3, 4],
+  metodos:   [1, 2, 3, 4],
   edo:       [1, 2, 3, 4]
 };
 ```
@@ -190,8 +190,8 @@ sigue estos pasos en orden:
 Todas las páginas enlazan los archivos con un sufijo de versión:
 
 ```html
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
-<script src="../assets/viz-vectorial.js?v=20260827c"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260911a">
+<script src="../assets/viz-vectorial.js?v=20260911a"></script>
 ```
 
 Ese `?v=` obliga al navegador a descargar el archivo de nuevo en lugar de usar el que tiene
