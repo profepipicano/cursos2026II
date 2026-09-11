@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 5 · Proyecto de curso — Métodos Numéricos · UNIAJC</title>
+<link rel="stylesheet" href="../assets/ova.css?v=20260911b">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Métodos Numéricos · Semana 5</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · El proyecto</a>
+    <a href="#s2">2 · La propuesta</a>
+    <a href="#s3">3 · Cronograma</a>
+    <a href="#s4">4 · Sustentación</a>
+    <a href="#s5">5 · Antes de entregar</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Semana 5 · Corte I · Evaluación</div>
+  <h2>Proyecto de curso: propuesta y sustentación</h2>
+  <p>La evaluación del Corte I no es un examen escrito: es la <strong>entrega y sustentación de la
+     propuesta</strong> del proyecto que desarrollarás durante todo el semestre. Esta página resume
+     lo esencial y te da la plantilla lista para trabajar.</p>
+  <div class="chips">
+    <span class="chip">Peso: 50 % de la nota del corte</span>
+    <span class="chip">Grupos de máximo 4</span>
+    <span class="chip">Entrega + sustentación</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">📄</span>
+  <h3>Descarga la plantilla del documento</h3>
+  <p>Un archivo de Word con las diez secciones de la propuesta ya creadas —portada en formato APA,
+     títulos, la tabla del cronograma lista para llenar, referencias y la declaración de IA— con
+     texto de ayuda en cada apartado. Ábrelo y solo tienes que escribir tu contenido.</p>
+  <div class="acciones">
+    <a class="btn" href="Plantilla_Propuesta_Proyecto.docx" download>Descargar plantilla (.docx)</a>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>Esta página resume; el documento oficial manda.</strong> Aquí tienes lo esencial para
+  trabajar rápido, pero la <em>Guía del Proyecto de Curso</em> en PDF que entregó el docente es el
+  documento normativo. Ante cualquier diferencia, vale lo que dice el PDF.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · En qué consiste el proyecto</h3>
+
+  <p>Cada grupo elige un <strong>problema real</strong>, preferiblemente de su área de ingeniería, y
+     lo resuelve aplicando métodos numéricos del curso, <strong>implementados por el propio grupo</strong>.
+     El proyecto se desarrolla durante todo el semestre y se entrega en tres momentos, uno por corte.</p>
+
+  <table class="tbl">
+    <tr><th>Corte</th><th>Semana</th><th>Entrega</th><th>Qué se espera</th></tr>
+    <tr><td>1</td><td>5</td><td><strong>Propuesta</strong></td><td>Documento de propuesta y su sustentación</td></tr>
+    <tr><td>2</td><td>10</td><td><strong>Avance</strong></td><td>Lo comprometido en el cronograma: código funcional y resultados parciales</td></tr>
+    <tr><td>3</td><td>15</td><td><strong>Proyecto terminado</strong></td><td>Documento final, código y demostración del programa</td></tr>
+  </table>
+
+  <div class="sub-title">1.1 Reglas del grupo</div>
+  <ul>
+    <li>Máximo <strong>4 integrantes</strong>. Los grupos se mantienen todo el semestre.</li>
+    <li>La nota es <strong>grupal</strong>: todos reciben la misma calificación en cada corte.</li>
+    <li>Todos deben conocer el proyecto <strong>completo</strong> —problema, métodos, código y
+        resultados—, no solo la parte que implementaron. En la sustentación, cualquiera puede
+        recibir preguntas sobre cualquier parte.</li>
+  </ul>
+
+  <div class="sub-title">1.2 Tema y herramienta</div>
+  <p>El tema es <strong>libre</strong>, con una sola condición: el problema debe resolverse con
+     métodos numéricos del curso. Se recomienda integrar métodos de más de una unidad e incluir un
+     análisis de errores o de convergencia.</p>
+  <p><strong>Python</strong> es la herramienta recomendada; también se acepta Java. Las librerías
+     como NumPy o SciPy pueden usarse para graficar, leer datos o <em>validar</em>, pero
+     <strong>no</strong> para reemplazar la implementación de los métodos: esa es tuya.</p>
+
+  <div class="callout-dark">
+    <h3>Ideas de proyecto, según tu programa</h3>
+    <p>El tema es libre, pero si no sabes por dónde empezar, aquí tienes un cruce entre los ejemplos
+       del docente y las cuatro carreras:</p>
+    <p><strong>Sistemas.</strong> Simular el sistema solar resolviendo las ecuaciones del movimiento
+       planetario (EDO, Runge-Kutta), o modelar la propagación de un virus en una red ajustando el
+       modelo a datos reales (regresión + EDO).</p>
+    <p><strong>Electrónica.</strong> Analizar un circuito de varias mallas mediante sistemas lineales
+       (LU, Gauss-Seidel), o hallar el punto de operación de un circuito con diodos resolviendo una
+       ecuación no lineal (Newton-Raphson).</p>
+    <p><strong>Administración y Contaduría.</strong> Ajustar un modelo de crecimiento poblacional o
+       de demanda a datos reales (regresión, linealización), o estimar el valor de un flujo o un
+       consumo a partir de datos discretos (integración numérica).</p>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · El documento de propuesta</h3>
+
+  <p>En la semana 5 cada grupo entrega y sustenta el documento de propuesta. Debe tener estas
+     <strong>diez secciones</strong> — que son exactamente las que trae la plantilla:</p>
+
+  <table class="tbl">
+    <tr><th>Sección</th><th>Qué debe contener</th></tr>
+    <tr><td><strong>Portada</strong></td><td>Título, integrantes, curso, docente, institución y fecha, en formato APA.</td></tr>
+    <tr><td><strong>Título</strong></td><td>Claro y específico: que deje ver el problema y, si es posible, el enfoque numérico.</td></tr>
+    <tr><td><strong>Introducción</strong></td><td>Contexto del problema, qué se va a desarrollar y el alcance general.</td></tr>
+    <tr><td><strong>Planteamiento del problema</strong></td><td>Qué se quiere calcular, simular o predecir; con qué datos; y por qué es un problema. Puede cerrar con una pregunta problema.</td></tr>
+    <tr><td><strong>Justificación</strong></td><td>Por qué vale la pena, y por qué requiere métodos numéricos (no tiene solución analítica, o esta es impráctica).</td></tr>
+    <tr><td><strong>Objetivos</strong></td><td>Un objetivo general y entre 3 y 4 específicos, en infinitivo, ubicables en semanas concretas.</td></tr>
+    <tr><td><strong>Marco de referencia</strong></td><td>Breve: el modelo matemático y los métodos que se usarán, con justificación corta.</td></tr>
+    <tr><td><strong>Metodología</strong></td><td>Etapas, lenguaje, origen de los datos, forma de validar y reparto de responsabilidades.</td></tr>
+    <tr><td><strong>Cronograma</strong></td><td>Tabla semana a semana, de la 5 a la 15, con el avance de la 10 y el producto final de la 15.</td></tr>
+    <tr><td><strong>Resultados esperados</strong></td><td>Qué se espera obtener: programa, gráficas, tablas, comparaciones.</td></tr>
+    <tr><td><strong>Referencias</strong></td><td>En APA 7.ª edición. Mínimo, las fuentes del modelo y de los métodos.</td></tr>
+    <tr><td><strong>Declaración de uso de IA</strong></td><td>Qué herramientas se usaron, para qué y cómo se verificaron los resultados.</td></tr>
+  </table>
+
+  <p style="font-size:.9rem;color:var(--muted)">
+    Extensión sugerida: entre 6 y 10 páginas, sin contar portada, referencias y anexos.</p>
+
+  <div class="callout-dark">
+    <h3>El error más común: objetivos que no caben en el cronograma</h3>
+    <p>El punto donde más propuestas flaquean es la coherencia entre <strong>objetivos</strong> y
+       <strong>cronograma</strong>. Cada objetivo específico debe poder ubicarse en semanas
+       concretas. Si escribes «implementar Runge-Kutta» pero tu cronograma no reserva tiempo para
+       ello, o lo reserva antes de que el tema se vea en clase, hay una incoherencia que el jurado
+       detectará de inmediato.</p>
+    <p>La prueba es simple: lee cada objetivo específico y pregúntate <em>«¿en qué semanas hago
+       esto?»</em>. Si no puedes señalarlas en tu propia tabla, el objetivo sobra o el cronograma
+       está incompleto.</p>
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · El cronograma y el orden de los temas</h3>
+
+  <p>El cronograma es <strong>tu compromiso con el curso</strong>. En el corte 2 se evalúa, entre
+     otras cosas, si cumpliste lo que prometiste. Por eso conviene ser realista: <em>es mejor
+     prometer menos y cumplir</em>.</p>
+
+  <div class="callout-dark">
+    <h3>Advertencia: no comprometas trabajo antes de tiempo</h3>
+    <p>Puedes proponer un proyecto que use temas aún no vistos, <strong>siempre que el cronograma
+       ubique ese trabajo después de que el tema se trate en clase</strong>. Los métodos numéricos
+       se desarrollan a lo largo del semestre:</p>
+    <table class="tbl" style="margin-top:.6rem">
+      <tr><th>Corte</th><th>Temas disponibles</th></tr>
+      <tr><td>1 · sem. 1-5</td><td>Errores, Taylor, sistemas lineales (Gauss, Cramer), LU y Cholesky</td></tr>
+      <tr><td>2 · sem. 6-10</td><td>Condicionamiento, Jacobi y Gauss-Seidel, ecuaciones no lineales (bisección, Newton), sistemas no lineales</td></tr>
+      <tr><td>3 · sem. 11-15</td><td>Regresión, integración y diferenciación numérica, EDO (Euler, Runge-Kutta)</td></tr>
+    </table>
+    <p style="margin-top:.6rem">Ejemplo concreto: si tu proyecto necesita Runge-Kutta, ese trabajo
+       va en las semanas 11-14, no antes — porque el tema se ve en la semana 14. Ubicarlo en la
+       semana 7 sería comprometerte con algo que aún no sabes hacer.</p>
+  </div>
+
+  <div class="sub-title">3.1 La estructura del cronograma</div>
+  <p>La plantilla trae la tabla ya armada, de la semana 5 a la 15, con las tres semanas de corte
+     marcadas. Tú rellenas las semanas intermedias. Un esqueleto razonable:</p>
+  <ul>
+    <li><strong>Semana 5:</strong> entrega y sustentación de la propuesta (corte 1).</li>
+    <li><strong>Semanas 6-9:</strong> modelado, implementación del primer método, pruebas con casos
+        de solución conocida.</li>
+    <li><strong>Semana 10:</strong> presentación del avance (corte 2) — código funcional y
+        resultados parciales.</li>
+    <li><strong>Semanas 11-14:</strong> métodos restantes, validación, análisis de errores,
+        redacción del documento final.</li>
+    <li><strong>Semana 15:</strong> entrega y sustentación final (corte 3).</li>
+  </ul>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · La sustentación</h3>
+
+  <div class="def">
+    La sustentación se realiza en la semana del corte, en la fecha que se programe en clase.
+    <br><br>
+    <strong>10 minutos</strong> máximo de exposición y <strong>5 minutos</strong> de preguntas.
+    El tiempo es estricto: ensayen antes.
+    <br><br>
+    Deben asistir <strong>todos</strong> los integrantes, y cualquiera puede recibir preguntas
+    sobre cualquier parte del proyecto.
+  </div>
+
+  <p>En el corte 1 se presenta: el problema, por qué es relevante, qué métodos se usarán, cómo se va
+     a trabajar y el cronograma. En los cortes 2 y 3 hay que <strong>mostrar el programa
+     funcionando</strong>.</p>
+
+  <div class="callout-dark">
+    <h3>Consejos para que los 10 minutos rindan</h3>
+    <p><strong>Repartan la exposición.</strong> Con cuatro integrantes y diez minutos, cada uno
+       tiene unos dos minutos y medio. Definan quién dice qué y ensáyenlo con reloj: la causa número
+       uno de malas sustentaciones es pasarse del tiempo y que el jurado corte a mitad de una idea.</p>
+    <p><strong>No lean las diapositivas.</strong> Las diapositivas son apoyo visual, no el guion.
+       Pongan en ellas el problema, un diagrama, el cronograma y los resultados esperados; el resto
+       lo dicen ustedes.</p>
+    <p><strong>Preparen las preguntas previsibles.</strong> «¿Por qué eligieron ese método y no
+       otro?», «¿cómo van a validar los resultados?», «¿qué pasa si el método no converge?». Tener
+       estas respuestas listas transmite dominio del tema.</p>
+    <p><strong>Todos deben poder responder por todo.</strong> Es la regla del grupo. Repasen juntos
+       el proyecto completo antes de la sustentación, incluido el código: nadie quiere ser quien no
+       sabe explicar la parte que hizo otro.</p>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Antes de entregar: autoevaluación</h3>
+
+  <p>Revisa tu propuesta con esta lista antes de subirla. Si respondes «no» o «no sé» a alguna, hay
+     algo que ajustar.</p>
+
+  <div class="def">
+    <strong>Coherencia</strong>
+    <br>☐ ¿El título deja ver el problema y el enfoque numérico?
+    <br>☐ ¿Cada objetivo específico se puede ubicar en semanas concretas del cronograma?
+    <br>☐ ¿Los resultados esperados responden a los objetivos?
+    <br>☐ ¿El problema realmente <em>necesita</em> métodos numéricos, y lo justificas?
+    <br><br>
+    <strong>Cronograma</strong>
+    <br>☐ ¿Cada tema está ubicado <em>después</em> de que se ve en clase?
+    <br>☐ ¿Está claro qué se entrega en la semana 10 y qué en la 15?
+    <br>☐ ¿Es realista, o prometiste más de lo que el grupo puede cumplir?
+    <br><br>
+    <strong>Método y validación</strong>
+    <br>☐ ¿Los métodos numéricos los implementa el grupo (no una librería)?
+    <br>☐ ¿Definiste cómo vas a validar los resultados?
+    <br>☐ ¿El proyecto integra métodos de más de una unidad?
+    <br><br>
+    <strong>Formato y forma</strong>
+    <br>☐ ¿Están las diez secciones completas?
+    <br>☐ ¿Las referencias siguen APA 7.ª edición?
+    <br>☐ ¿Incluiste la declaración de uso de IA?
+    <br>☐ ¿El documento tiene entre 6 y 10 páginas (sin portada, referencias ni anexos)?
+  </div>
+
+  <div class="nota">
+    <strong>Sobre la declaración de IA.</strong> El uso de herramientas de IA está permitido siempre
+    que se declare de forma explícita: qué se usó, para qué y cómo verificaron los resultados. Esto
+    incluye este mismo OVA, que fue generado con asistencia de IA. Declararlo bien no resta puntos;
+    <em>no</em> declararlo se considera falta de honestidad académica. La plantilla trae un ejemplo
+    de cómo redactar esa declaración.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>La evaluación del corte es la <strong>propuesta del proyecto</strong>: documento más sustentación, 50 % de la nota.</li>
+    <li>Grupos de máximo 4; nota grupal; todos deben poder sustentar todo.</li>
+    <li>Tema libre, resuelto con métodos numéricos <strong>implementados por el grupo</strong>.</li>
+    <li>Diez secciones en el documento; la plantilla las trae listas.</li>
+    <li>Cada objetivo específico debe caber en semanas concretas del <strong>cronograma</strong>.</li>
+    <li>Ubica cada tema <strong>después</strong> de que se vea en clase.</li>
+    <li>Sustentación: 10 min de exposición estrictos, todos presentes, todos responden.</li>
+    <li>Declara el uso de IA —incluido este OVA— de forma explícita.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://normas-apa.org/" target="_blank" rel="noopener">Normas APA 7.ª edición</a> · <a href="https://www.python.org/" target="_blank" rel="noopener">Python</a></div>
+    <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
+    <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
+  </div>
+</footer>
+
+<script src="../assets/ova.js?v=20260911b"></script>
+</body>
+</html>
