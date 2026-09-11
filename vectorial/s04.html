@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 4 · Longitud de arco, curvatura y campos escalares — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 4 · Longitud de arco, curvatura y campos escalares — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260911a">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 4</h1>
+      <h1>Cálculo Vectorial · Guía 4</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,658 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Longitud de arco</a>
+    <a href="#s2">2 · Curvatura</a>
+    <a href="#s3">3 · Triedro móvil</a>
+    <a href="#s4">4 · Campos escalares</a>
+    <a href="#s5">5 · Límite y continuidad</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 4 · Longitud de arco, curvatura y campos escalares</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 4 · Corte I</div>
+  <h2>Longitud de arco, curvatura y campos escalares</h2>
+  <p>Dos mitades que cierran un corte y abren el siguiente. Primero terminamos el estudio de las
+     curvas midiendo lo que <em>no</em> depende de la parametrización. Después damos el salto que
+     define el resto del curso: funciones de varias variables.</p>
+  <div class="chips">
+    <span class="chip">Stewart · Cap. 13.3 y 14.1–14.2</span>
+    <span class="chip">Larson · Cap. 12.5 y 13.1–13.2</span>
+    <span class="chip">Semana 4</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 2 viste que una misma circunferencia admite
+  parametrizaciones con rapideces 2 y 4. Surge una pregunta natural: si la rapidez depende de cómo
+  se recorra, ¿hay algo que <em>no</em> dependa? Sí: la longitud y la curvatura. De eso trata la
+  primera mitad.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Longitud de arco</h3>
+
+  <div class="callout-dark">
+    <h3>De dónde sale la fórmula</h3>
+    <p>Para medir una curva, se la aproxima por una poligonal: se toman puntos sobre ella y se suman
+       las distancias entre consecutivos. Cuantos más puntos, mejor la aproximación.</p>
+    <p>Cada tramo mide aproximadamente $|\mathbf{r}'(t)|\,\Delta t$ — rapidez por tiempo, o sea
+       distancia. Al sumar y tomar el límite, esa suma de Riemann se convierte en una integral.</p>
+    <p>Es la misma construcción que las sumas de rectángulos de Cálculo, aplicada a distancias en
+       vez de a áreas.</p>
+  </div>
+
+  <div class="def">
+    La <strong>longitud de arco</strong> de $\mathbf{r}(t)$ entre $t=a$ y $t=b$ es
+    $$L=\int_a^b \left|\mathbf{r}'(t)\right|dt
+       =\int_a^b \sqrt{\left(\tfrac{dx}{dt}\right)^{2}+\left(\tfrac{dy}{dt}\right)^{2}
+                       +\left(\tfrac{dz}{dt}\right)^{2}}\;dt$$
+    Es decir: <em>la integral de la rapidez</em>.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Longitud de una vuelta de hélice</h4>
+    <div class="ejemplo-body">
+      Halla la longitud de $\mathbf{r}(t)=\langle\cos t,\;\operatorname{sen}t,\;t\rangle$ para
+      $t\in[0,2\pi]$.
+      <div class="paso"><div class="paso-t">1. Rapidez</div>
+        $\mathbf{r}'=\langle-\operatorname{sen}t,\;\cos t,\;1\rangle$, luego
+        $|\mathbf{r}'|=\sqrt{\operatorname{sen}^{2}t+\cos^{2}t+1}=\sqrt2$ — constante, como viste en
+        la Guía 3.
+      </div>
+      <div class="paso"><div class="paso-t">2. Integrar</div>
+        $L=\displaystyle\int_0^{2\pi}\sqrt2\,dt=2\pi\sqrt2\approx \mathbf{8{,}8858}$
+      </div>
+      <div class="paso"><div class="paso-t">3. Comprobación de sensatez</div>
+        La sombra de la hélice es una circunferencia de radio 1, cuya longitud es $2\pi\approx6{,}28$.
+        La hélice además sube $2\pi$ en altura. Por Pitágoras, «desenrollada» mide
+        $\sqrt{(2\pi)^{2}+(2\pi)^{2}}=2\pi\sqrt2$ ✓ Coincide exactamente.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">1.1 Lo que no depende de la parametrización</div>
+  <div class="nota">
+    <strong>Aquí está la respuesta a la pregunta de la Guía 2.</strong> Con
+    $\langle 2\cos t,2\operatorname{sen}t\rangle$ en $[0,2\pi]$ la rapidez es 2 y la integral da
+    $4\pi$. Con $\langle 2\cos 2t,2\operatorname{sen}2t\rangle$ en $[0,\pi]$ la rapidez es 4, pero
+    el intervalo es la mitad: la integral vuelve a dar $4\pi$.
+    <br><br>
+    La rapidez depende de cómo se recorra; <strong>la longitud, no</strong>. Es una propiedad
+    geométrica de la curva.
+  </div>
+
+  <div class="sub-title">1.2 La función longitud de arco</div>
+  <p>Fijando el extremo inferior se obtiene una función que mide cuánta curva se ha recorrido:</p>
+  <div class="formula" style="max-width:400px">$$s(t)=\int_a^t\left|\mathbf{r}'(u)\right|du
+    \qquad\Longrightarrow\qquad \frac{ds}{dt}=\left|\mathbf{r}'(t)\right|$$</div>
+  <p>Esa derivada sale del teorema fundamental del cálculo, y dice algo razonable: la rapidez con
+     que se acumula longitud <em>es</em> la rapidez. Para la hélice, $s(t)=\sqrt2\,t$.</p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Curvatura</h3>
+
+  <div class="callout-dark">
+    <h3>¿Cómo se mide «cuánto se curva» algo?</h3>
+    <p>Una recta no se curva nada. Una circunferencia pequeña se curva mucho más que una grande.
+       La intuición es clara, pero hace falta un número.</p>
+    <p>La idea correcta: mirar cuán rápido <strong>cambia de dirección</strong> la curva. Como
+       $\mathbf{T}$ es el vector tangente unitario —su longitud siempre es 1—, lo único que puede
+       cambiar en él es la dirección. Así que $|\mathbf{T}'|$ mide exactamente el giro.</p>
+    <p>Falta un detalle: hay que dividir entre la rapidez, porque si no, recorrer la misma curva más
+       rápido daría más curvatura. Y la curvatura debe ser propiedad de la curva, no del recorrido.</p>
+  </div>
+
+  <div class="def">
+    La <strong>curvatura</strong> es
+    $$\kappa=\frac{\left|\mathbf{T}'(t)\right|}{\left|\mathbf{r}'(t)\right|}
+      \qquad\text{o, más cómoda para calcular,}\qquad
+      \kappa=\frac{\left|\mathbf{r}'\times\mathbf{r}''\right|}{\left|\mathbf{r}'\right|^{3}}$$
+    El <strong>radio de curvatura</strong> es $\rho=\dfrac{1}{\kappa}$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Tres curvaturas de referencia</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">a) Una recta</div>
+        Si $\mathbf{r}(t)=\mathbf{r}_0+t\mathbf{v}$, entonces $\mathbf{r}''=\mathbf{0}$ y el producto
+        cruz se anula: $\kappa=0$. Una recta no se curva, y su radio de curvatura es infinito.
+      </div>
+      <div class="paso"><div class="paso-t">b) Una circunferencia de radio $a$</div>
+        Con $\mathbf{r}=\langle a\cos t,a\operatorname{sen}t,0\rangle$ sale
+        $$\kappa=\frac{1}{a}$$
+        Cuanto mayor el radio, menor la curvatura. Y el radio de curvatura es $\rho=a$: el propio
+        radio. Este resultado es el que da sentido al nombre.
+      </div>
+      <div class="paso"><div class="paso-t">c) La hélice $\langle\cos t,\operatorname{sen}t,t\rangle$</div>
+        $\mathbf{r}'\times\mathbf{r}''=\langle\operatorname{sen}t,\;-\cos t,\;1\rangle$, de módulo
+        $\sqrt2$, y $|\mathbf{r}'|^{3}=2\sqrt2$. Por tanto
+        $$\kappa=\frac{\sqrt2}{2\sqrt2}=\frac12$$
+        Constante, y su radio de curvatura es 2 — mayor que el radio 1 de la hélice, porque al subir
+        la curva se «estira» y se curva menos que la circunferencia que proyecta.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>La curvatura no es constante en general.</strong> Para la parábola
+    $\mathbf{r}(t)=\langle t,\,t^{2}/2,\,0\rangle$ sale
+    $\kappa(t)=\dfrac{1}{\left(1+t^{2}\right)^{3/2}}$, que vale 1 en el vértice y decrece hacia cero
+    al alejarse. Tiene sentido: la parábola es más cerrada en el vértice y cada vez más parecida a
+    una recta en las ramas.
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · El triedro móvil</h3>
+
+  <div class="def">
+    En cada punto de una curva se definen tres vectores unitarios mutuamente perpendiculares:
+    <br><br>
+    <strong>Tangente:</strong> $\mathbf{T}=\dfrac{\mathbf{r}'}{|\mathbf{r}'|}$ — apunta en el sentido del movimiento.<br>
+    <strong>Normal principal:</strong> $\mathbf{N}=\dfrac{\mathbf{T}'}{|\mathbf{T}'|}$ — apunta hacia el lado al que se curva.<br>
+    <strong>Binormal:</strong> $\mathbf{B}=\mathbf{T}\times\mathbf{N}$ — perpendicular a los dos anteriores.
+  </div>
+
+  <p>¿Por qué $\mathbf{N}$ es perpendicular a $\mathbf{T}$? Por el teorema de la Guía 3: como
+     $|\mathbf{T}|=1$ es constante, se cumple $\mathbf{T}\cdot\mathbf{T}'=0$. Aquel resultado, que
+     entonces pareció una curiosidad, es lo que hace posible construir el triedro.</p>
+
+  <div class="sub-title">3.1 El círculo osculador</div>
+  <div class="def">
+    El <strong>círculo osculador</strong> en un punto es la circunferencia de radio $\rho=1/\kappa$
+    cuyo centro está en $\mathbf{r}+\rho\,\mathbf{N}$ y que yace en el plano de $\mathbf{T}$ y
+    $\mathbf{N}$.
+  </div>
+  <p>Es la circunferencia que mejor imita a la curva ahí: coincide en posición, en dirección y en
+     curvatura. El nombre viene del latín <em>osculari</em>, besar — la circunferencia «besa» la
+     curva.</p>
+
+  <div class="sub-title">3.2 Explora</div>
+  <div class="viz" data-viz="curvatura">
+    <div class="viz-controls">
+      <label for="cv-c">Curva</label>
+      <select id="cv-c">
+        <option value="helice">hélice ⟨cos t, sen t, t/2⟩</option>
+        <option value="circ">circunferencia de radio 1,8</option>
+        <option value="parab">parábola ⟨t, t²/2, 0⟩</option>
+        <option value="recta">recta en el espacio</option>
+      </select>
+      <label for="cv-g">Girar la escena</label>
+      <input id="cv-g" class="giro" type="range" min="0" max="628" value="90">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="cv-t">Avanzar t</label>
+      <input id="cv-t" class="tpos" type="range" min="0" max="100" value="40">
+      <span class="t-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Elige la circunferencia: el círculo osculador coincide exactamente con ella y $\rho$ vale su
+    radio. Luego la parábola y avanza $t$: verás cómo el círculo se agranda al alejarse del vértice,
+    porque la curva se aplana. En la recta desaparece — el radio sería infinito.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Longitud y curvatura</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Campos escalares</h3>
+
+  <div class="callout-dark">
+    <h3>El salto que define el resto del curso</h3>
+    <p>Hasta aquí las funciones iban de $\mathbb{R}$ a $\mathbb{R}^{3}$: <em>un</em> número entraba
+       y salía un vector. Ahora invertimos la dirección: entran <em>varios</em> números y sale uno
+       solo.</p>
+    <p>Es lo natural en cualquier aplicación. La temperatura de una placa depende de <em>dos</em>
+       coordenadas. La utilidad de una empresa depende de varios productos. La presión en la
+       atmósfera depende de tres coordenadas y del tiempo.</p>
+    <p>De la semana 6 en adelante, todo el curso trata de estas funciones: derivarlas, hallar sus
+       máximos, integrarlas. Esta sección es la puerta de entrada.</p>
+  </div>
+
+  <div class="def">
+    Un <strong>campo escalar</strong> (o función de varias variables) es una función
+    $f:D\subseteq\mathbb{R}^{n}\to\mathbb{R}$ que asigna a cada punto un número real.
+    <br><br>
+    Para $n=2$ se escribe $z=f(x,y)$, y su gráfica es una <strong>superficie</strong> en el espacio.
+  </div>
+
+  <div class="sub-title">4.1 Dominio y curvas de nivel</div>
+  <p>El dominio es ahora una <em>región del plano</em>, no un intervalo. Las restricciones son las
+     mismas de siempre: no dividir entre cero, no sacar raíz par de negativos, no tomar logaritmo de
+     números no positivos.</p>
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Dominio de un campo escalar</h4>
+    <div class="ejemplo-body">
+      Halla el dominio de $f(x,y)=\sqrt{9-x^{2}-y^{2}}$.
+      <div class="paso"><div class="paso-t">Imponer la restricción</div>
+        El radicando debe ser no negativo: $9-x^{2}-y^{2}\geq0$, es decir $x^{2}+y^{2}\leq9$.
+      </div>
+      <div class="paso"><div class="paso-t">Describirlo</div>
+        El dominio es el <strong>disco cerrado</strong> de radio 3 centrado en el origen. No es un
+        intervalo: es una región bidimensional.
+      </div>
+      <div class="paso"><div class="paso-t">La gráfica</div>
+        Elevando al cuadrado, $z^{2}=9-x^{2}-y^{2}$, o sea $x^{2}+y^{2}+z^{2}=9$ con $z\geq0$: la
+        <em>semiesfera superior</em> de radio 3.
+      </div>
+    </div>
+  </div>
+
+  <p>Una <strong>curva de nivel</strong> es el conjunto donde $f(x,y)=k$. Es el mismo recurso de los
+     mapas topográficos, donde cada línea une puntos de igual altura, y de los mapas del tiempo con
+     sus isotermas. También lo viste en la Guía 2 de Ecuaciones Diferenciales: las isoclinas son
+     curvas de nivel del campo de pendientes.</p>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Límite y continuidad en dos variables</h3>
+
+  <div class="def">
+    $\displaystyle\lim_{(x,y)\to(a,b)}f(x,y)=L$ significa que $f(x,y)$ se acerca a $L$ cuando el
+    punto $(x,y)$ se acerca a $(a,b)$ <strong>por cualquier camino</strong>.
+    <br><br>
+    Y $f$ es <strong>continua</strong> en $(a,b)$ si el límite existe y coincide con $f(a,b)$ —
+    las mismas tres condiciones de la Guía 3 de Cálculo.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Aquí hay infinitos caminos, no dos</h3>
+    <p>En una variable solo había dos formas de acercarse a un punto: por la izquierda y por la
+       derecha. Bastaba comparar dos límites laterales.</p>
+    <p>En el plano hay <strong>infinitas</strong> maneras de acercarse a $(a,b)$: por rectas de
+       cualquier pendiente, por parábolas, por espirales. Y el límite debe dar lo mismo por
+       <em>todas</em>.</p>
+    <p>Eso tiene una consecuencia asimétrica que conviene entender bien:</p>
+    <p><strong>Para negar</strong> un límite basta encontrar <em>dos</em> caminos que den valores
+       distintos.<br>
+       <strong>Para afirmarlo</strong>, ninguna cantidad finita de caminos alcanza: hace falta un
+       argumento que cubra todos, normalmente una acotación.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Un límite que no existe</h4>
+    <div class="ejemplo-body">
+      Estudia $\displaystyle\lim_{(x,y)\to(0,0)}\frac{x^{2}-y^{2}}{x^{2}+y^{2}}$.
+      <div class="paso"><div class="paso-t">Por el eje $x$ (con $y=0$)</div>
+        $\dfrac{x^{2}-0}{x^{2}+0}=1$ para todo $x\neq0$, así que el límite por ese camino es $1$.
+      </div>
+      <div class="paso"><div class="paso-t">Por el eje $y$ (con $x=0$)</div>
+        $\dfrac{0-y^{2}}{0+y^{2}}=-1$, así que por ese camino el límite es $-1$.
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        Dos caminos, dos valores distintos: <strong>el límite no existe</strong>. Y por la recta
+        $y=x$ daría $0$, un tercer valor.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Uno que sí existe, y cómo demostrarlo</h4>
+    <div class="ejemplo-body">
+      Estudia $\displaystyle\lim_{(x,y)\to(0,0)}\frac{x^{2}y}{x^{2}+y^{2}}$.
+      <div class="paso"><div class="paso-t">Probar caminos</div>
+        Por $y=0$ da $0$; por $x=0$ da $0$; por $y=x$ da
+        $\dfrac{x^{3}}{2x^{2}}=\dfrac{x}{2}\to0$. Todo apunta a que el límite es $0$ — pero
+        <em>esto no lo demuestra</em>.
+      </div>
+      <div class="paso"><div class="paso-t">Acotar</div>
+        Como $x^{2}\leq x^{2}+y^{2}$, se tiene $\dfrac{x^{2}}{x^{2}+y^{2}}\leq1$, y por tanto
+        $$\left|\frac{x^{2}y}{x^{2}+y^{2}}\right|
+          =\frac{x^{2}}{x^{2}+y^{2}}\cdot|y|\;\leq\;|y|$$
+      </div>
+      <div class="paso"><div class="paso-t">Concluir</div>
+        Cuando $(x,y)\to(0,0)$ se tiene $|y|\to0$, así que la expresión queda atrapada entre
+        $-|y|$ y $|y|$ y el límite es $\mathbf{0}$. Es el teorema del emparedado de la Guía 2 de
+        Cálculo, ahora en dos variables.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Explora los caminos</div>
+  <div class="viz" data-viz="campoescalar">
+    <div class="viz-controls">
+      <label for="ce-f">Campo escalar</label>
+      <select id="ce-f">
+        <option value="diff">(x² − y²)/(x² + y²) &nbsp;no existe</option>
+        <option value="prod">xy/(x² + y²) &nbsp;no existe</option>
+        <option value="ok">x²y/(x² + y²) &nbsp;sí existe</option>
+      </select>
+      <label for="ce-g">Girar la escena</label>
+      <input id="ce-g" class="giro" type="range" min="0" max="628" value="90">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Cada curva de color es un camino distinto subiendo por la superficie hacia el origen. En los dos
+    primeros casos llegan a alturas diferentes, y ahí se ve por qué el límite no puede existir: la
+    superficie no se cierra en un punto, sino que llega «rasgada». Gira la escena para verlo desde
+    varios ángulos.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Campos escalares</h3>
+  <div id="chk2"></div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Límites en dos variables</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La utilidad de una empresa con dos líneas de producto es un campo escalar $U(x,y)$, y sus
+      curvas de nivel son las <em>curvas de isoutilidad</em>: combinaciones distintas de producción
+      que rinden lo mismo. A partir de la semana 8 hallarás su máximo.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El valor presente de un flujo depende de la tasa y del plazo: $VP(r,n)$ es un campo escalar.
+      Sus curvas de nivel muestran qué combinaciones de tasa y plazo dan el mismo valor, que es
+      exactamente lo que se compara al evaluar alternativas de inversión.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La curvatura es la base del diseño de trayectorias en robótica y videojuegos: un robot no
+      puede seguir una curva cuyo radio de curvatura sea menor que su radio de giro. Y la función de
+      pérdida de un modelo es un campo escalar de miles de variables, cuyo mínimo se busca por
+      descenso de gradiente.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El potencial eléctrico es un campo escalar, y sus curvas de nivel son las
+      <em>equipotenciales</em> que aparecen en todo diagrama de campo. Y la curvatura importa en el
+      trazado de pistas de circuito impreso: curvas demasiado cerradas provocan reflexiones de la
+      señal a alta frecuencia.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>$L=\displaystyle\int_a^b|\mathbf{r}'(t)|\,dt$: la longitud es <strong>la integral de la rapidez</strong>.</li>
+    <li>La rapidez depende de la parametrización; la <strong>longitud no</strong>.</li>
+    <li>$\dfrac{ds}{dt}=|\mathbf{r}'(t)|$ por el teorema fundamental del cálculo.</li>
+    <li>$\kappa=\dfrac{|\mathbf{r}'\times\mathbf{r}''|}{|\mathbf{r}'|^{3}}$ mide cuán rápido cambia de dirección la curva.</li>
+    <li>Recta: $\kappa=0$. Circunferencia de radio $a$: $\kappa=1/a$. Hélice: constante.</li>
+    <li>El <strong>círculo osculador</strong> tiene radio $\rho=1/\kappa$ y centro en $\mathbf{r}+\rho\mathbf{N}$.</li>
+    <li>$\mathbf{N}\perp\mathbf{T}$ porque $|\mathbf{T}|=1$: es el teorema de la Guía 3.</li>
+    <li>Un <strong>campo escalar</strong> $z=f(x,y)$ tiene por gráfica una superficie y por dominio una región del plano.</li>
+    <li>Dos caminos discrepantes <strong>niegan</strong> un límite; ninguna cantidad de caminos coincidentes lo <strong>afirma</strong>.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260911a"></script>
+<script src="../assets/viz-vectorial.js?v=20260911a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Longitud y curvatura · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Longitud de arco', nivel: 2,
+      criterio: 'Calcular la longitud de una curva (§1)',
+      enunciado: "La longitud de $\\mathbf{r}(t)=\\langle\\cos t,\\operatorname{sen}t,t\\rangle$ en $[0,2\\pi]$ es:",
+      opciones: ['$2\\pi$', '$4\\pi$', '$2\\pi\\sqrt2\\approx8{,}886$', '$\\sqrt2$'],
+      correcta: 2,
+      pista: 'La rapidez es constante e igual a $\\sqrt2$. Integrar una constante es multiplicar.',
+      solucion: "$L=\\int_0^{2\\pi}\\sqrt2\\,dt=2\\pi\\sqrt2\\approx8{,}886$. La opción a) es la longitud de la <em>sombra</em>, la circunferencia de radio 1. Comprobación: la hélice desenrollada es la hipotenusa de un triángulo de catetos $2\\pi$ y $2\\pi$, cuya medida es $2\\pi\\sqrt2$ ✓"
+    },
+    {
+      etiqueta: 'Invarianza', nivel: 3,
+      criterio: 'Reconocer qué depende de la parametrización (§1.1)',
+      enunciado: 'La misma circunferencia se recorre con rapidez 2 en $[0,2\\pi]$ y con rapidez 4 en $[0,\\pi]$. ¿Qué ocurre con la longitud?',
+      opciones: [
+        'Es $4\\pi$ en ambos casos: la longitud no depende de la parametrización',
+        'Se duplica en el segundo caso',
+        'Se reduce a la mitad en el segundo caso',
+        'No se puede calcular sin conocer el radio'
+      ],
+      correcta: 0,
+      pista: 'La segunda va al doble de rapidez pero durante la mitad del tiempo.',
+      solucion: "Rapidez 2 durante $2\\pi$ da $4\\pi$; rapidez 4 durante $\\pi$ da $4\\pi$ también. La rapidez depende de <em>cómo</em> se recorra, pero la longitud es una propiedad <strong>geométrica</strong> de la curva. Esa es la respuesta a la pregunta que quedó abierta en la Guía 2."
+    },
+    {
+      etiqueta: 'Curvatura', nivel: 2,
+      criterio: 'Calcular la curvatura de una circunferencia (§2)',
+      enunciado: 'La curvatura de una circunferencia de radio 4 es:',
+      opciones: ['$4$', '$16$', '$0$', '$\\dfrac14$'],
+      correcta: 3,
+      pista: 'Para una circunferencia de radio $a$, la curvatura es $1/a$.',
+      solucion: "$\\kappa=\\dfrac{1}{a}=\\dfrac14$. Cuanto mayor el radio, <em>menos</em> se curva — por eso la Tierra parece plana localmente. Y el radio de curvatura $\\rho=1/\\kappa=4$ recupera el radio original, que es lo que da sentido al nombre."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Campos escalares · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Dominio', nivel: 2,
+      criterio: 'Hallar el dominio de un campo escalar (§4.1)',
+      enunciado: "El dominio de $f(x,y)=\\sqrt{9-x^{2}-y^{2}}$ es:",
+      opciones: [
+        'El disco $x^{2}+y^{2}\\leq9$',
+        'Todo $\\mathbb{R}^{2}$',
+        'La circunferencia $x^{2}+y^{2}=9$',
+        'El intervalo $[-3,3]$'
+      ],
+      correcta: 0,
+      pista: 'El radicando de una raíz par debe ser no negativo.',
+      solucion: "Se exige $9-x^{2}-y^{2}\\geq0$, es decir $x^{2}+y^{2}\\leq9$: el disco cerrado de radio 3. La opción c) toma solo el borde, pero los puntos interiores también sirven. Y la d) describe un intervalo, cuando el dominio es ahora una <strong>región del plano</strong>."
+    },
+    {
+      etiqueta: 'Gráfica', nivel: 2,
+      criterio: 'Identificar la superficie de un campo escalar (§4)',
+      enunciado: "La gráfica de $z=f(x,y)$ es:",
+      opciones: [
+        'Una curva en el plano',
+        'Una superficie en el espacio',
+        'Una curva en el espacio',
+        'Un conjunto de puntos aislados'
+      ],
+      correcta: 1,
+      pista: 'Cada par $(x,y)$ del dominio produce una altura $z$. ¿Qué objeto forman todos esos puntos?',
+      solucion: "Los puntos $(x,y,f(x,y))$ forman una <strong>superficie</strong>: un objeto bidimensional dentro del espacio tridimensional. La opción c) describiría una función vectorial $\\mathbf{r}(t)$ como las de la Guía 3, donde entra un solo parámetro. Aquí entran dos, y por eso sale una superficie."
+    },
+    {
+      etiqueta: 'Curvas de nivel', nivel: 2,
+      criterio: 'Interpretar una curva de nivel (§4.1)',
+      enunciado: 'Una curva de nivel de $f(x,y)$ es el conjunto de puntos donde:',
+      opciones: [
+        'La función se anula',
+        '$f(x,y)=k$ para una constante $k$',
+        'La función no está definida',
+        'Las dos variables son iguales'
+      ],
+      correcta: 1,
+      pista: 'Piensa en las curvas de un mapa topográfico: ¿qué tienen en común los puntos de una misma línea?',
+      solucion: "Es el conjunto donde $f$ toma un valor constante, igual que las líneas de altura de un mapa topográfico o las isotermas de un mapa del tiempo. La opción a) es solo el caso particular $k=0$. Ya usaste esta idea sin el nombre: las <em>isoclinas</em> de Ecuaciones Diferenciales son curvas de nivel del campo de pendientes."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Límites en dos variables · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Negar un límite', nivel: 2,
+      criterio: 'Usar dos caminos para negar un límite (§5)',
+      enunciado: "Para $f(x,y)=\\dfrac{x^{2}-y^{2}}{x^{2}+y^{2}}$, ¿qué valor da el límite por el eje $y$ (es decir, con $x=0$)?",
+      opciones: ['$1$', '$0$', '$-1$', 'No está definido'],
+      correcta: 2,
+      pista: 'Sustituye $x=0$ y simplifica.',
+      solucion: "Con $x=0$ queda $\\dfrac{-y^{2}}{y^{2}}=-1$ para todo $y\\neq0$. Por el eje $x$ daría $+1$, así que los dos caminos discrepan y <strong>el límite no existe</strong>. Encontrar dos caminos con valores distintos es la forma estándar de negar un límite en varias variables."
+    },
+    {
+      etiqueta: 'La asimetría', nivel: 3,
+      criterio: 'Entender por qué probar caminos no demuestra existencia (§5)',
+      enunciado: 'Si el límite da $0$ por cinco caminos distintos, ¿se puede concluir que el límite es $0$?',
+      opciones: [
+        'Sí, con cinco caminos basta',
+        'No: hay infinitos caminos y habría que cubrirlos todos, normalmente acotando',
+        'Sí, si los cinco son rectas',
+        'Solo si la función es continua'
+      ],
+      correcta: 1,
+      pista: 'En el plano, ¿de cuántas maneras se puede uno acercar a un punto?',
+      solucion: "Probar caminos sirve para <strong>negar</strong>, nunca para <strong>afirmar</strong>. Existen funciones cuyo límite es $0$ por toda recta y sin embargo no existe, porque falla por alguna parábola. Para afirmar hace falta un argumento que cubra todos los caminos, y lo habitual es acotar como en el Ejemplo 5."
+    },
+    {
+      etiqueta: 'Acotación', nivel: 3,
+      criterio: 'Demostrar un límite por acotación (§5)',
+      enunciado: "Para probar que $\\displaystyle\\lim_{(x,y)\\to(0,0)}\\frac{x^{2}y}{x^{2}+y^{2}}=0$ se usa la desigualdad:",
+      opciones: [
+        '$\\left|\\dfrac{x^{2}y}{x^{2}+y^{2}}\\right|\\leq|y|$',
+        '$\\left|\\dfrac{x^{2}y}{x^{2}+y^{2}}\\right|\\leq|x|$',
+        '$\\left|\\dfrac{x^{2}y}{x^{2}+y^{2}}\\right|\\geq1$',
+        'Ninguna: basta con probar tres caminos'
+      ],
+      correcta: 0,
+      pista: '¿Cuánto vale como máximo el factor $\\dfrac{x^{2}}{x^{2}+y^{2}}$?',
+      solucion: "Como $x^{2}\\leq x^{2}+y^{2}$, ese factor es a lo sumo $1$, y queda $\\left|\\dfrac{x^{2}}{x^{2}+y^{2}}\\cdot y\\right|\\leq|y|\\to0$. Es el teorema del emparedado de la Guía 2 de Cálculo, ahora en dos variables. La opción d) confunde evidencia con demostración."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Concepto', nivel: 1,
+      criterio: 'Reconocer la fórmula de longitud de arco (§1)',
+      enunciado: 'La longitud de arco de una curva es la integral de:',
+      opciones: ['La posición', 'La rapidez $|\\mathbf{r}\'(t)|$', 'La aceleración', 'La curvatura'],
+      correcta: 1,
+      pista: 'Distancia = rapidez × tiempo, sumado sobre todos los instantes.',
+      solucion: "Cada tramo mide aproximadamente $|\\mathbf{r}'(t)|\\,\\Delta t$, y al sumar y pasar al límite se obtiene $\\int_a^b|\\mathbf{r}'|dt$. Es la misma construcción de las sumas de Riemann, aplicada a distancias en vez de a áreas."
+    },
+    {
+      etiqueta: 'Curvatura de una recta', nivel: 2,
+      criterio: 'Calcular la curvatura de una recta (§2)',
+      enunciado: 'La curvatura de una recta en el espacio vale:',
+      opciones: ['$1$', 'Depende de su pendiente', '$0$', 'Infinito'],
+      correcta: 2,
+      pista: 'Si $\\mathbf{r}(t)=\\mathbf{r}_0+t\\mathbf{v}$, ¿cuánto vale $\\mathbf{r}\'\'$?',
+      solucion: "La segunda derivada es $\\mathbf{0}$, así que el producto cruz $\\mathbf{r}'\\times\\mathbf{r}''$ se anula y $\\kappa=0$: una recta no cambia de dirección. La opción d) confunde curvatura con <em>radio</em> de curvatura, que sí es infinito para una recta."
+    },
+    {
+      etiqueta: 'Radio de curvatura', nivel: 2,
+      criterio: 'Relacionar curvatura y radio (§2)',
+      enunciado: 'Si una curva tiene $\\kappa=0{,}25$ en un punto, su radio de curvatura ahí es:',
+      opciones: ['$0{,}25$', '$4$', '$0{,}0625$', '$2$'],
+      correcta: 1,
+      pista: '$\\rho=1/\\kappa$.',
+      solucion: "$\\rho=\\dfrac{1}{0{,}25}=4$. El círculo osculador en ese punto tiene radio 4: es la circunferencia que mejor imita la curva ahí. La opción a) confunde las dos cantidades, que son recíprocas la una de la otra."
+    },
+    {
+      etiqueta: 'Triedro', nivel: 3,
+      criterio: 'Justificar la perpendicularidad de T y N (§3)',
+      enunciado: '¿Por qué $\\mathbf{N}$ es siempre perpendicular a $\\mathbf{T}$?',
+      opciones: [
+        'Por definición del producto cruz',
+        'Porque $|\\mathbf{T}|=1$ es constante, y entonces $\\mathbf{T}\\cdot\\mathbf{T}\'=0$',
+        'Porque la curva está en un plano',
+        'No siempre lo son'
+      ],
+      correcta: 1,
+      pista: 'Recuerda el teorema de la Guía 3 sobre vectores de magnitud constante.',
+      solucion: "Es el teorema de la Guía 3: si $|\\mathbf{T}|$ es constante, derivando $\\mathbf{T}\\cdot\\mathbf{T}=1$ se obtiene $\\mathbf{T}\\cdot\\mathbf{T}'=0$. Como $\\mathbf{N}$ es $\\mathbf{T}'$ normalizado, hereda la perpendicularidad. Aquel resultado, que pareció una curiosidad, es lo que hace posible construir el triedro."
+    },
+    {
+      etiqueta: 'Círculo osculador', nivel: 2,
+      criterio: 'Ubicar el círculo osculador (§3.1)',
+      enunciado: 'El círculo osculador de una circunferencia de radio 3, en cualquiera de sus puntos, es:',
+      opciones: [
+        'Un círculo de radio $1/3$',
+        'Un punto',
+        'La propia circunferencia',
+        'Un círculo de radio 9'
+      ],
+      correcta: 2,
+      pista: 'Para la circunferencia, $\\kappa=1/3$. ¿Cuánto vale entonces $\\rho$?',
+      solucion: "$\\kappa=\\tfrac13$ y $\\rho=3$, y el centro queda en $\\mathbf{r}+3\\mathbf{N}$, que es el centro de la circunferencia. Así que el círculo osculador <strong>coincide con ella misma</strong> — razonable, porque nada imita mejor a una circunferencia que ella misma."
+    },
+    {
+      etiqueta: 'Campos escalares', nivel: 2,
+      criterio: 'Distinguir campo escalar de función vectorial (§4)',
+      enunciado: '¿Cuál es la diferencia entre $\\mathbf{r}(t)$ de la Guía 3 y $f(x,y)$ de esta guía?',
+      opciones: [
+        'Son lo mismo con otra notación',
+        '$\\mathbf{r}$ recibe un número y devuelve un vector; $f$ recibe varios números y devuelve uno',
+        '$f$ solo existe en dos dimensiones',
+        '$\\mathbf{r}$ no se puede derivar'
+      ],
+      correcta: 1,
+      pista: 'Fíjate en qué entra y qué sale en cada caso.',
+      solucion: "Van en direcciones opuestas: $\\mathbf{r}:\\mathbb{R}\\to\\mathbb{R}^{3}$ traza una curva, y $f:\\mathbb{R}^{2}\\to\\mathbb{R}$ define una superficie. Ese cambio de dirección es el que marca el resto del curso: de la semana 6 en adelante todo trata de campos escalares."
+    },
+    {
+      etiqueta: 'Continuidad', nivel: 2,
+      criterio: 'Aplicar la definición de continuidad en dos variables (§5)',
+      enunciado: "Para que $f$ sea continua en $(a,b)$ hace falta que:",
+      opciones: [
+        'Solo que $f(a,b)$ exista',
+        'Solo que el límite exista',
+        'Que $f(a,b)$ exista, el límite exista y coincidan',
+        'Que $f$ sea un polinomio'
+      ],
+      correcta: 2,
+      pista: 'Son las mismas tres condiciones de la Guía 3 de Cálculo, trasladadas al plano.',
+      solucion: "Las tres condiciones son idénticas a las de una variable: existencia del valor, existencia del límite, e igualdad. Lo único que cambia es que ahora el límite debe darse <em>por todos los caminos</em>, lo que lo hace bastante más exigente de verificar."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Relacionar rapidez, longitud y curvatura (§1–§2)',
+      enunciado: 'De estas tres cantidades, ¿cuál <strong>sí</strong> depende de la parametrización elegida?',
+      opciones: [
+        'La longitud de arco',
+        'La curvatura',
+        'El radio de curvatura',
+        'La rapidez $|\\mathbf{r}\'(t)|$'
+      ],
+      correcta: 3,
+      pista: 'Recuerda las tres parametrizaciones de la circunferencia de la Guía 2.',
+      solucion: "La rapidez sí cambia: valía 2 o 4 para la misma circunferencia. La longitud, la curvatura y el radio son propiedades <strong>geométricas</strong> de la curva. Por eso la definición de $\\kappa$ divide entre $|\\mathbf{r}'|$: sin ese cociente, recorrer más rápido daría más curvatura, lo cual no tendría sentido."
+    }
+  ]
+});
+</script>
 </body>
 </html>
