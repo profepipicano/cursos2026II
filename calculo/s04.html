@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 4 · Concepto de derivada — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 4 · Concepto de derivada — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260911a">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 4</h1>
+      <h1>Cálculo · Guía 4</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,610 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Razón de cambio</a>
+    <a href="#s2">2 · Definición</a>
+    <a href="#s3">3 · Recta tangente</a>
+    <a href="#s4">4 · Derivabilidad</a>
+    <a href="#s5">5 · Reglas básicas</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 4 · Concepto de derivada</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 4 · Corte I</div>
+  <h2>Concepto de derivada</h2>
+  <p>Aquí converge todo lo anterior. El cociente incremental que apareció en la Guía 1 tenía la
+     forma $0/0$; la Guía 2 enseñó a resolver esas indeterminaciones; y la Guía 3 explicó cuándo
+     existe el límite. Con esas tres piezas, la derivada sale sola.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 2.1–2.3</span>
+    <span class="chip">Stewart · Cap. 3.1–3.2</span>
+    <span class="chip">Semana 4</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 1 calculaste que el cociente incremental de
+  $f(x)=x^{2}-3x$ vale $2x+h-3$, y en la práctica final de la Guía 2 tomaste su límite cuando
+  $h\to0$ y obtuviste $2x-3$. <strong>Eso era la derivada.</strong> Esta guía le pone nombre y la
+  convierte en herramienta.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Razón de cambio</h3>
+
+  <div class="callout-dark">
+    <h3>Dos preguntas que resultan ser la misma</h3>
+    <p>Un móvil recorre $s(t)$ metros en $t$ segundos. Entre $t=2$ y $t=5$ su
+       <strong>velocidad media</strong> es $\dfrac{s(5)-s(2)}{5-2}$: el cambio dividido entre el
+       tiempo que tardó.</p>
+    <p>Pero, ¿cuál es su velocidad <em>en el instante</em> $t=2$? Ahí el intervalo tiene longitud
+       cero y el cociente da $\dfrac{0}{0}$. La pregunta parece mal planteada.</p>
+    <p>Por otro lado, la pendiente de la recta que une dos puntos de una curva es
+       $\dfrac{f(b)-f(a)}{b-a}$. ¿Cuál es la pendiente <em>en un punto</em>? El mismo $\dfrac00$.</p>
+    <p>Las dos preguntas tienen exactamente la misma forma matemática, y la misma respuesta:
+       <strong>tomar el límite cuando el intervalo se encoge</strong>.</p>
+  </div>
+
+  <div class="def">
+    La <strong>razón de cambio promedio</strong> de $f$ entre $a$ y $a+h$ es
+    $$\frac{f(a+h)-f(a)}{h}$$
+    y se llama <em>cociente incremental</em> o <em>cociente de Newton</em>.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · De la velocidad media a la instantánea</h4>
+    <div class="ejemplo-body">
+      Un objeto se mueve según $s(t)=t^{2}-4t$ metros.
+      <div class="paso"><div class="paso-t">Velocidad media entre $t=2$ y $t=2+h$</div>
+        $\dfrac{s(2+h)-s(2)}{h}=\dfrac{\left[(2+h)^{2}-4(2+h)\right]-(-4)}{h}
+         =\dfrac{h^{2}}{h}=h$
+      </div>
+      <div class="paso"><div class="paso-t">Valores concretos</div>
+        Entre $t=2$ y $t=3$: velocidad media $1$ m/s. Entre $2$ y $2{,}1$: $0{,}1$ m/s.
+        Entre $2$ y $2{,}01$: $0{,}01$ m/s.
+      </div>
+      <div class="paso"><div class="paso-t">Velocidad instantánea</div>
+        $\displaystyle\lim_{h\to0}h=0$. En $t=2$ el objeto está <strong>momentáneamente en
+        reposo</strong>: es el instante en que deja de retroceder y empieza a avanzar.
+      </div>
+      <div class="paso"><div class="paso-t">Lo que hace posible el cálculo</div>
+        El cociente daba $0/0$ al sustituir, pero tras simplificar quedó $h$, que sí admite
+        sustitución. Es exactamente la técnica de factorización de la Guía 2.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · La definición de derivada</h3>
+
+  <div class="def">
+    La <strong>derivada</strong> de $f$ en $a$ es
+    $$f'(a)=\lim_{h\to0}\frac{f(a+h)-f(a)}{h}$$
+    siempre que ese límite exista. Cuando existe, se dice que $f$ es <em>derivable</em> en $a$.
+    <br><br>
+    Notaciones equivalentes: $\;f'(x)$, $\;\dfrac{dy}{dx}$, $\;\dfrac{df}{dx}$, $\;D_xf$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Derivar por definición, tres veces</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">a) $f(x)=x^{2}$</div>
+        $\dfrac{(x+h)^{2}-x^{2}}{h}=\dfrac{2xh+h^{2}}{h}=2x+h \;\longrightarrow\; \mathbf{2x}$
+      </div>
+      <div class="paso"><div class="paso-t">b) $f(x)=\dfrac1x$</div>
+        $\dfrac{1}{h}\left(\dfrac{1}{x+h}-\dfrac1x\right)
+         =\dfrac{1}{h}\cdot\dfrac{-h}{x(x+h)}=\dfrac{-1}{x(x+h)}
+         \;\longrightarrow\; \mathbf{-\dfrac{1}{x^{2}}}$<br>
+        Es la fracción compleja de la §4.3 de la Guía 2.
+      </div>
+      <div class="paso"><div class="paso-t">c) $f(x)=\sqrt{x}$</div>
+        Multiplicando por el conjugado:
+        $\dfrac{\sqrt{x+h}-\sqrt{x}}{h}=\dfrac{1}{\sqrt{x+h}+\sqrt{x}}
+         \;\longrightarrow\; \mathbf{\dfrac{1}{2\sqrt{x}}}$<br>
+        Es la racionalización de la §4.2 de la Guía 2.
+      </div>
+      <div class="paso"><div class="paso-t">El patrón</div>
+        Los tres cocientes dan $0/0$ al sustituir, y los tres se resuelven con una técnica que ya
+        conocías. La derivada no exige matemática nueva: exige <strong>saber calcular límites</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.1 Explora: la secante que se vuelve tangente</div>
+  <div class="viz" data-viz="secante">
+    <div class="viz-controls">
+      <label for="sc-f">Función</label>
+      <select id="sc-f">
+        <option value="cuad">f(x) = x² − 3x &nbsp;en a=2</option>
+        <option value="cub">f(x) = (x³ − 2x)/3 &nbsp;en a=1,4</option>
+        <option value="raiz">f(x) = 2√x &nbsp;en a=2,2</option>
+        <option value="seno">f(x) = 2sen x &nbsp;en a=0,9</option>
+      </select>
+      <label for="sc-h">Reducir h</label>
+      <input id="sc-h" class="hh" type="range" min="1" max="200" value="120">
+      <span class="h-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La recta roja pasa por dos puntos; la dorada punteada es la tangente. Reduce $h$ y observa en el
+    lector cómo la diferencia entre ambas pendientes se hace cada vez más pequeña. La derivada
+    <em>es</em> ese límite.
+  </p>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Interpretación geométrica: la recta tangente</h3>
+
+  <div class="def">
+    La <strong>recta tangente</strong> a $y=f(x)$ en el punto $(a,f(a))$ es
+    $$y=f(a)+f'(a)(x-a)$$
+    Su pendiente es $f'(a)$.
+  </div>
+
+  <div class="nota">
+    <strong>Qué significa «tangente» aquí.</strong> En geometría elemental, una recta tangente a una
+    circunferencia la toca en un solo punto. Esa idea <em>no</em> se generaliza: la tangente a
+    $y=\operatorname{sen}x$ en el origen es $y=x$, y esa recta corta la curva en infinitos puntos.
+    La definición correcta es la del límite de secantes.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Hallar una recta tangente</h4>
+    <div class="ejemplo-body">
+      Halla la tangente a $f(x)=x^{3}-2x$ en $x=2$.
+      <div class="paso"><div class="paso-t">1. Punto de tangencia</div>
+        $f(2)=8-4=4$, así que el punto es $(2,4)$.
+      </div>
+      <div class="paso"><div class="paso-t">2. Pendiente</div>
+        $f'(x)=3x^{2}-2$ (por las reglas de la §5), luego $f'(2)=12-2=10$.
+      </div>
+      <div class="paso"><div class="paso-t">3. Escribir la recta</div>
+        $y=4+10(x-2)$, o en forma explícita $y=10x-16$.
+      </div>
+      <div class="paso"><div class="paso-t">Conexión con Métodos Numéricos</div>
+        Esta misma recta, igualada a cero, da un paso del método de Newton-Raphson. Es el Ejemplo 3
+        de la Guía 1 de Métodos Numéricos: ahí lo viste sin saber que era una derivada.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 La derivada como función</div>
+  <p>Hasta aquí $f'(a)$ era un número asociado a un punto. Pero si se calcula para todo $a$ del
+     dominio, se obtiene una <strong>nueva función</strong> $f'$, que a cada $x$ le asigna la
+     pendiente de $f$ ahí. Esa es la razón de que existan reglas de derivación: en vez de repetir el
+     límite para cada punto, se obtiene una fórmula válida para todos.</p>
+  <table class="tbl">
+    <tr><th>Si $f'(x)$ es…</th><th>La función $f$…</th></tr>
+    <tr><td>Positiva</td><td>Crece</td></tr>
+    <tr><td>Negativa</td><td>Decrece</td></tr>
+    <tr><td>Cero</td><td>Tiene tangente horizontal</td></tr>
+  </table>
+  <p style="font-size:.88rem">Esa tabla es la base del análisis gráfico de la semana 9.</p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Definición y tangente</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Derivabilidad y continuidad</h3>
+
+  <div class="def">
+    <strong>Teorema.</strong> Si $f$ es derivable en $a$, entonces $f$ es continua en $a$.
+    <br><br>
+    El recíproco es <strong>falso</strong>: hay funciones continuas que no son derivables.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Tres formas de no ser derivable</h3>
+    <p><strong>Pico.</strong> En $f(x)=|x|$ los cocientes laterales valen $-1$ y $1$: no coinciden,
+       así que el límite no existe. La función es perfectamente continua, pero no hay una única
+       recta tangente en el vértice.</p>
+    <p><strong>Tangente vertical.</strong> En $f(x)=\sqrt[3]{x}$ el cociente se dispara a $+\infty$.
+       Hay tangente, pero es vertical, y una recta vertical no tiene pendiente.</p>
+    <p><strong>Discontinuidad.</strong> Donde la función salta, el cociente se dispara. Por eso el
+       teorema va en un solo sentido: <em>sin continuidad no puede haber derivada</em>, pero la
+       continuidad por sí sola no alcanza.</p>
+    <p>La lectura útil: derivable es una condición <strong>más fuerte</strong> que continua.
+       Significa que la gráfica, además de no romperse, es <em>suave</em>.</p>
+  </div>
+
+  <div class="viz" data-viz="derivabilidad">
+    <div class="viz-controls">
+      <label for="dv-f">Función</label>
+      <select id="dv-f">
+        <option value="abs">f(x) = |x| &nbsp;pico</option>
+        <option value="raiz">f(x) = ∛x &nbsp;tangente vertical</option>
+        <option value="salto">a trozos con salto</option>
+        <option value="suave">f(x) = x² &nbsp;derivable</option>
+      </select>
+      <label for="dv-a">Acercar</label>
+      <input id="dv-a" class="acerca" type="range" min="1" max="6" value="2">
+      <span class="acerca-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Las dos rectas de colores son las secantes por la izquierda y por la derecha. En $x^{2}$ se
+    funden en una sola al acercar; en $|x|$ se quedan a $-1$ y $1$ por más que reduzcas $h$. Esa es
+    la diferencia entre derivable y no derivable, vista con los ojos.
+  </p>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Reglas básicas de derivación</h3>
+
+  <p>Derivar por definición es instructivo pero lento. Las reglas siguientes se demuestran <em>una
+     sola vez</em> a partir del límite, y luego se aplican mecánicamente.</p>
+
+  <div class="formulas">
+    <div class="formula"><div class="lbl">Constante</div>$$(c)'=0$$</div>
+    <div class="formula"><div class="lbl">Potencia</div>$$(x^{n})'=n\,x^{n-1}$$</div>
+    <div class="formula"><div class="lbl">Múltiplo</div>$$(c\,f)'=c\,f'$$</div>
+    <div class="formula"><div class="lbl">Suma y resta</div>$$(f\pm g)'=f'\pm g'$$</div>
+    <div class="formula"><div class="lbl">Exponencial</div>$$(e^{x})'=e^{x}$$</div>
+    <div class="formula"><div class="lbl">Trigonométricas</div>$$(\operatorname{sen}x)'=\cos x,\;(\cos x)'=-\operatorname{sen}x$$</div>
+  </div>
+
+  <div class="nota">
+    <strong>La regla de la potencia vale para cualquier exponente real</strong>, no solo enteros.
+    Por eso $\sqrt{x}=x^{1/2}$ deriva a $\tfrac12x^{-1/2}=\dfrac{1}{2\sqrt x}$, que coincide con lo
+    calculado por definición en el Ejemplo 2c. Y $\dfrac1x=x^{-1}$ deriva a
+    $-x^{-2}=-\dfrac{1}{x^{2}}$, igual que en el 2b.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Aplicación económica: el costo marginal</h4>
+    <div class="ejemplo-body">
+      El costo de producir $x$ unidades es $C(x)=0{,}01x^{2}+5x+500$ pesos.
+      <div class="paso"><div class="paso-t">Derivar</div>
+        $C'(x)=0{,}02x+5$
+      </div>
+      <div class="paso"><div class="paso-t">Evaluar en $x=100$</div>
+        $C'(100)=2+5=\mathbf{7}$ pesos por unidad.
+      </div>
+      <div class="paso"><div class="paso-t">Qué significa</div>
+        El <strong>costo marginal</strong> es la razón de cambio del costo: aproximadamente lo que
+        cuesta producir <em>la unidad 101</em>. Nota que $500$ es el costo fijo y desaparece al
+        derivar — no depende de cuánto se produzca, así que no afecta al margen.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobación</div>
+        $C(101)-C(100)=7{,}01$. La derivada dio $7$: la aproximación es excelente porque el
+        intervalo es de una sola unidad.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Derivadas de orden superior</div>
+  <p>La derivada de $f'$ se llama <strong>segunda derivada</strong>, $f''$. Con $s(t)$ la posición:
+     $s'$ es la velocidad y $s''$ la aceleración. En la semana 9 usarás $f''$ para decidir si un
+     punto crítico es máximo o mínimo.</p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Derivabilidad</h3>
+  <div id="chk2"></div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Reglas y aplicaciones</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El <em>costo marginal</em> $C'(x)$ y el <em>ingreso marginal</em> $R'(x)$ son derivadas, y la
+      utilidad se maximiza justo donde se igualan. Ese resultado —producir hasta que el ingreso
+      marginal iguale al costo marginal— es el criterio central de la microeconomía, y sale de
+      derivar $U(x)=R(x)-C(x)$ e igualar a cero.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La depreciación es la razón de cambio del valor de un activo. En línea recta esa razón es
+      constante, y por eso la derivada del valor es un número fijo. En depreciación acelerada la
+      derivada cambia con el tiempo, y eso explica por qué el gasto es mayor en los primeros años.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      El descenso de gradiente —la base del entrenamiento de modelos— avanza en la dirección
+      contraria a la derivada. Y en gráficos, la derivada de la trayectoria de un objeto es su
+      velocidad: es lo que ya viste en Cálculo Vectorial con funciones vectoriales.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Las tres leyes fundamentales de los componentes son derivadas: la corriente en un capacitor es
+      $i=C\dfrac{dv}{dt}$ y el voltaje en un inductor es $v=L\dfrac{di}{dt}$. Por eso los circuitos
+      se describen con ecuaciones diferenciales, y por eso esta semana es requisito para esa
+      asignatura.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Velocidad instantánea y pendiente en un punto son <strong>el mismo problema</strong>: un límite de la forma $0/0$.</li>
+    <li>$f'(a)=\displaystyle\lim_{h\to0}\frac{f(a+h)-f(a)}{h}$, cuando ese límite existe.</li>
+    <li>Derivar por definición usa las técnicas de la Guía 2: factorizar, racionalizar, simplificar.</li>
+    <li>Recta tangente: $y=f(a)+f'(a)(x-a)$.</li>
+    <li>«Tangente» <strong>no</strong> significa «toca en un solo punto»: significa límite de secantes.</li>
+    <li><strong>Derivable ⟹ continua</strong>, pero no al revés. $|x|$ es el contraejemplo.</li>
+    <li>Tres formas de fallar: pico, tangente vertical y discontinuidad.</li>
+    <li>$(x^{n})'=nx^{n-1}$ vale para <strong>todo</strong> exponente real, incluidos $\tfrac12$ y $-1$.</li>
+    <li>El costo fijo desaparece al derivar: no afecta al costo marginal.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/3-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1 · Derivadas</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260911a"></script>
+<script src="../assets/viz-calculo.js?v=20260911a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Definición y tangente · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Por definición', nivel: 2,
+      criterio: 'Calcular una derivada con el cociente incremental (§2)',
+      enunciado: "Para $f(x)=x^{2}$, el cociente $\\dfrac{f(x+h)-f(x)}{h}$ se simplifica a:",
+      opciones: ['$2x+h$', '$2x$', '$h$', '$2x+h^{2}$'],
+      correcta: 0,
+      pista: 'Desarrolla $(x+h)^{2}$, resta $x^{2}$ y divide entre $h$ <em>antes</em> de tomar el límite.',
+      solucion: "$(x+h)^{2}-x^{2}=2xh+h^{2}$, y al dividir entre $h$ queda $2x+h$. La opción b) es el <em>límite</em> del cociente, no el cociente mismo: la distinción importa porque el cociente todavía depende de $h$, y es justo al hacer $h\\to0$ cuando se obtiene la derivada $2x$."
+    },
+    {
+      etiqueta: 'Recta tangente', nivel: 2,
+      criterio: 'Escribir la ecuación de la recta tangente (§3)',
+      enunciado: "La recta tangente a $f(x)=x^{3}-2x$ en $x=2$ es:",
+      opciones: [
+        '$y=10x-16$',
+        '$y=4+10x$',
+        '$y=10(x-2)$',
+        '$y=4+2(x-10)$'
+      ],
+      correcta: 0,
+      pista: 'Calcula $f(2)$ y $f\'(2)$, y sustituye en $y=f(a)+f\'(a)(x-a)$.',
+      solucion: "$f(2)=4$ y $f'(2)=3(4)-2=10$, luego $y=4+10(x-2)=10x-16$. La opción c) olvida el término $f(2)$: esa recta pasa por $(2,0)$ y no toca la curva. La b) suma el punto sin restar $a$ dentro del paréntesis."
+    },
+    {
+      etiqueta: 'Interpretación', nivel: 3,
+      criterio: 'Interpretar la derivada como razón de cambio (§1)',
+      enunciado: "Si $s(t)=t^{2}-4t$ es la posición de un móvil, ¿qué ocurre en $t=2$?",
+      opciones: [
+        'El móvil alcanza su velocidad máxima',
+        'El móvil está momentáneamente en reposo',
+        'El móvil regresa al origen',
+        'La posición es máxima'
+      ],
+      correcta: 1,
+      pista: 'Calcula $s\'(t)=2t-4$ y evalúa en $t=2$.',
+      solucion: "$s'(2)=0$: la velocidad instantánea es cero, así que el móvil está momentáneamente detenido. Es el instante en que deja de retroceder y empieza a avanzar. La opción d) confundiría el mínimo con un máximo: como $s''=2 \gt 0$, la posición ahí es <em>mínima</em>."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Derivabilidad · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'El teorema', nivel: 2,
+      criterio: 'Relacionar derivabilidad con continuidad (§4)',
+      enunciado: '¿Cuál afirmación es correcta?',
+      opciones: [
+        'Continua implica derivable',
+        'Derivable implica continua',
+        'Son condiciones equivalentes',
+        'No hay relación entre ambas'
+      ],
+      correcta: 1,
+      pista: 'Piensa en $|x|$ en el origen: ¿es continua? ¿es derivable?',
+      solucion: "La implicación va en un solo sentido: sin continuidad no puede haber derivada, pero la continuidad no basta. $|x|$ es continua en $0$ y no derivable ahí, lo que refuta a) y c). Derivable es una condición <strong>más fuerte</strong>: significa que la gráfica, además de no romperse, es suave."
+    },
+    {
+      etiqueta: 'El pico', nivel: 3,
+      criterio: 'Explicar por qué |x| no es derivable en 0 (§4)',
+      enunciado: "¿Por qué $f(x)=|x|$ no es derivable en $x=0$?",
+      opciones: [
+        'Porque no está definida en $0$',
+        'Porque no es continua en $0$',
+        'Porque los cocientes laterales valen $-1$ y $1$, y no coinciden',
+        'Porque su gráfica es una recta'
+      ],
+      correcta: 2,
+      pista: 'Calcula $\\dfrac{|0+h|-0}{h}$ para $h$ positivo y para $h$ negativo.',
+      solucion: "Con $h \\gt 0$ el cociente vale $1$; con $h \\lt 0$ vale $-1$. Al no coincidir los laterales, el límite no existe — es el teorema de la Guía 2. Las opciones a) y b) son falsas: $|0|=0$ y la función es perfectamente continua. Justamente por eso sirve de contraejemplo."
+    },
+    {
+      etiqueta: 'Tangente vertical', nivel: 3,
+      criterio: 'Reconocer el caso de derivada infinita (§4)',
+      enunciado: "Para $f(x)=\\sqrt[3]{x}$ en $x=0$, el cociente incremental tiende a $+\\infty$. Esto significa que:",
+      opciones: [
+        'No hay recta tangente en ese punto',
+        'La función no es continua ahí',
+        'La tangente existe pero es vertical, y una recta vertical no tiene pendiente',
+        'La derivada vale infinito'
+      ],
+      correcta: 2,
+      pista: 'Una recta vertical, ¿qué pendiente tiene?',
+      solucion: "Geométricamente sí hay tangente: es el eje $y$. Pero una recta vertical no tiene pendiente definida, y la derivada <em>es</em> una pendiente, así que $f'(0)$ no existe. La opción d) trata $\\infty$ como si fuera un número: decir que el límite es infinito describe <em>cómo</em> no existe, no que exista."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Reglas y aplicaciones · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Exponente fraccionario', nivel: 2,
+      criterio: 'Aplicar la regla de la potencia con exponente no entero (§5)',
+      enunciado: "La derivada de $f(x)=\\sqrt{x}$ es:",
+      opciones: [
+        '$2\\sqrt{x}$',
+        '$\\dfrac{1}{\\sqrt{x}}$',
+        '$\\dfrac{1}{2\\sqrt{x}}$',
+        '$-\\dfrac{1}{2}x^{-3/2}$'
+      ],
+      correcta: 2,
+      pista: 'Escribe $\\sqrt{x}=x^{1/2}$ y aplica $(x^{n})\'=nx^{n-1}$.',
+      solucion: "$\\left(x^{1/2}\\right)'=\\tfrac12x^{-1/2}=\\dfrac{1}{2\\sqrt{x}}$, que coincide con lo obtenido por definición en el Ejemplo 2c. La opción b) olvida el factor $\\tfrac12$, y la d) es la <em>segunda</em> derivada. La regla de la potencia vale para <strong>todo</strong> exponente real, no solo enteros."
+    },
+    {
+      etiqueta: 'Costo marginal', nivel: 3,
+      criterio: 'Interpretar la derivada en contexto económico (§5)',
+      enunciado: "Si $C(x)=0{,}01x^{2}+5x+500$, el costo marginal en $x=100$ es:",
+      opciones: ['$1\\,600$', '$5$', '$7$', '$500$'],
+      correcta: 2,
+      pista: 'El costo marginal es $C\'(x)$, no $C(x)$.',
+      solucion: "$C'(x)=0{,}02x+5$, luego $C'(100)=7$ pesos por unidad. La opción a) evalúa $C(100)$, que es el costo <em>total</em>, no el marginal. Nota que el costo fijo $500$ desaparece al derivar: no depende de cuánto se produzca, así que no afecta al margen."
+    },
+    {
+      etiqueta: 'Segunda derivada', nivel: 2,
+      criterio: 'Identificar el significado físico de f\'\' (§5.1)',
+      enunciado: 'Si $s(t)$ es la posición de un móvil, ¿qué representa $s\'\'(t)$?',
+      opciones: [
+        'La distancia recorrida',
+        'La aceleración',
+        'La velocidad',
+        'La posición inicial'
+      ],
+      correcta: 1,
+      pista: 'La primera derivada de la posición es la velocidad. ¿Y la derivada de la velocidad?',
+      solucion: "$s'$ es la velocidad y $s''=(s')'$ es su razón de cambio: la <strong>aceleración</strong>. Es la misma cadena que viste en Cálculo Vectorial con $\\mathbf{r}$, $\\mathbf{v}$ y $\\mathbf{a}$, solo que aquí en una dimensión."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Concepto', nivel: 1,
+      criterio: 'Reconocer la forma indeterminada del cociente (§1)',
+      enunciado: '¿Por qué el cociente incremental necesita un límite y no basta con sustituir $h=0$?',
+      opciones: [
+        'Porque $h$ debe ser positivo',
+        'Porque la función podría no estar definida',
+        'Porque el resultado sería negativo',
+        'Porque al sustituir $h=0$ da la forma indeterminada $0/0$'
+      ],
+      correcta: 3,
+      pista: '¿Qué vale el numerador $f(a+h)-f(a)$ cuando $h=0$?',
+      solucion: "Con $h=0$ el numerador vale $f(a)-f(a)=0$ y el denominador también: la forma $0/0$ de la Guía 2. Por eso hay que simplificar algebraicamente primero y sustituir después. Toda la maquinaria de límites existe precisamente para resolver este tipo de cociente."
+    },
+    {
+      etiqueta: 'Por definición', nivel: 3,
+      criterio: 'Derivar 1/x con el cociente incremental (§2)',
+      enunciado: "Derivando $f(x)=\\dfrac1x$ por definición se obtiene:",
+      opciones: ['$\\dfrac{1}{x^{2}}$', '$-\\dfrac{1}{x^{2}}$', '$-\\dfrac1x$', '$\\ln x$'],
+      correcta: 1,
+      pista: 'Combina $\\dfrac{1}{x+h}-\\dfrac1x$ en una sola fracción antes de dividir entre $h$.',
+      solucion: "El numerador se combina en $\\dfrac{-h}{x(x+h)}$, y al dividir entre $h$ queda $\\dfrac{-1}{x(x+h)}\\to-\\dfrac{1}{x^{2}}$. El signo negativo tiene sentido geométrico: $1/x$ es decreciente en todo su dominio, así que su derivada debe ser negativa siempre."
+    },
+    {
+      etiqueta: 'Reglas', nivel: 2,
+      criterio: 'Aplicar las reglas básicas (§5)',
+      enunciado: "La derivada de $f(x)=4x^{3}-7x+9$ es:",
+      opciones: [
+        '$12x^{2}-7$',
+        '$12x^{2}-7x$',
+        '$12x^{2}-7+9$',
+        '$4x^{2}-7$'
+      ],
+      correcta: 0,
+      pista: 'Deriva término a término. ¿Cuánto vale la derivada de una constante?',
+      solucion: "$(4x^{3})'=12x^{2}$, $(-7x)'=-7$ y $(9)'=0$. La opción c) arrastra la constante sin derivarla — una constante tiene derivada cero porque no cambia. La d) olvida multiplicar por el exponente."
+    },
+    {
+      etiqueta: 'Tangente', nivel: 3,
+      criterio: 'Hallar dónde la tangente es horizontal (§3.1)',
+      enunciado: "¿En qué puntos la curva $f(x)=x^{3}-3x$ tiene tangente horizontal?",
+      opciones: [
+        'Solo en $x=0$',
+        'En ningún punto',
+        'En $x=1$ y $x=-1$',
+        'En $x=3$ y $x=-3$'
+      ],
+      correcta: 2,
+      pista: 'Tangente horizontal significa pendiente cero: resuelve $f\'(x)=0$.',
+      solucion: "$f'(x)=3x^{2}-3=0$ da $x^{2}=1$, es decir $x=\\pm1$. La opción a) confunde con el punto donde $f$ vale cero, que es otra cosa. Estos puntos, donde la derivada se anula, son los <em>puntos críticos</em> que estudiarás en la semana 9."
+    },
+    {
+      etiqueta: 'Derivabilidad', nivel: 2,
+      criterio: 'Identificar dónde falla la derivabilidad (§4)',
+      enunciado: '¿Cuál de estas funciones es continua en $x=0$ pero <strong>no</strong> derivable ahí?',
+      opciones: [
+        '$f(x)=|x|$',
+        '$f(x)=x^{2}$',
+        '$f(x)=\\dfrac1x$',
+        '$f(x)=e^{x}$'
+      ],
+      correcta: 0,
+      pista: 'Busca la que tenga un pico en el origen.',
+      solucion: "$|x|$ es continua en $0$ pero tiene un pico: los cocientes laterales valen $-1$ y $1$. La opción c) ni siquiera está definida en $0$, así que no es continua ahí — falla la primera condición, no la derivabilidad. Las otras dos son suaves en todo $\\mathbb{R}$."
+    },
+    {
+      etiqueta: 'Signo', nivel: 2,
+      criterio: 'Relacionar el signo de la derivada con el crecimiento (§3.1)',
+      enunciado: 'Si $f\'(x) \\lt 0$ en un intervalo, entonces en ese intervalo $f$:',
+      opciones: ['Crece', 'Es constante', 'Es negativa', 'Decrece'],
+      correcta: 3,
+      pista: 'La derivada es la pendiente. ¿Qué hace una curva con pendiente negativa?',
+      solucion: "Pendiente negativa significa que la curva baja: $f$ decrece. La opción d) confunde el signo de $f'$ con el de $f$: la función puede tomar valores positivos mientras decrece, como $f(x)=10-x$ en $[0,5]$."
+    },
+    {
+      etiqueta: 'Notación', nivel: 1,
+      criterio: 'Reconocer las notaciones equivalentes (§2)',
+      enunciado: '¿Cuál de estas expresiones <strong>no</strong> denota la derivada de $y=f(x)$?',
+      opciones: ["$f'(x)$", '$\\dfrac{dy}{dx}$', '$\\dfrac{\\Delta y}{\\Delta x}$', '$D_xf$'],
+      correcta: 2,
+      pista: 'Una de ellas es un cociente de incrementos <em>finitos</em>.',
+      solucion: "$\\dfrac{\\Delta y}{\\Delta x}$ es la razón de cambio <strong>promedio</strong> sobre un intervalo de longitud no nula: es el cociente incremental, no su límite. Las otras tres sí denotan la derivada. La diferencia entre $\\Delta$ y $d$ es exactamente el paso al límite."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Conectar la derivada con Métodos Numéricos (§3)',
+      enunciado: "La tangente a $f$ en $x_0$, igualada a cero, da $x=x_0-\\dfrac{f(x_0)}{f'(x_0)}$. ¿Qué es esa expresión?",
+      opciones: [
+        'La segunda derivada',
+        'Un paso del método de Newton-Raphson para hallar raíces',
+        'La integral de $f$',
+        'El costo marginal'
+      ],
+      correcta: 1,
+      pista: 'Si la tangente corta el eje $x$ cerca de donde lo hace la curva, ¿para qué sirve ese corte?',
+      solucion: "Es exactamente un paso de Newton-Raphson: se aproxima la curva por su tangente y se toma el corte de esta con el eje como nueva estimación de la raíz. Lo viste en la Guía 1 de Métodos Numéricos sin llamarlo derivada, y lo formalizarás allí en la semana 8."
+    }
+  ]
+});
+</script>
 </body>
 </html>
