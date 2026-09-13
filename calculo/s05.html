@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 5 · Evaluación de corte — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Cálculo · Semana 5</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#reglas">Cómo es la evaluación</a>
+    <a href="#e1">Ejercicio 1</a>
+    <a href="#e2">Ejercicio 2</a>
+    <a href="#e3">Ejercicio 3</a>
+    <a href="#e4">Ejercicio 4</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Semana 5 · Corte I · Evaluación</div>
+  <h2>Evaluación de corte: resolución y sustentación</h2>
+  <p>Esta evaluación reúne los temas de las semanas 1 a 4 —funciones, límites, continuidad y
+     derivada— en cuatro ejercicios orientados a la <strong>Contaduría Pública</strong>. Se resuelve
+     en grupo y se sustenta en vivo.</p>
+  <div class="chips">
+    <span class="chip">Grupos de hasta 4</span>
+    <span class="chip">4 ejercicios</span>
+    <span class="chip">Sustentación con horario asignado</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">⏱</span>
+  <h3>Lee primero las reglas de la evaluación</h3>
+  <p>El horario, las cámaras y las condiciones de calificación son parte de la nota. Un grupo que
+     llega tarde o hace uso indebido de la IA obtiene <strong>cero</strong>. Revisa la sección de
+     abajo antes de empezar a resolver.</p>
+</div>
+
+<section class="card" id="reglas">
+  <h3 class="card-title">Cómo es la evaluación</h3>
+
+  <ol>
+    <li><strong>Grupos.</strong> Se forman grupos de <strong>hasta 4 estudiantes</strong> para esta
+        actividad.</li>
+    <li><strong>Los ejercicios.</strong> Esta guía contiene <strong>4 ejercicios</strong> sobre los
+        temas de las semanas 1 a 4: uno teórico de cálculo directo y tres contextualizados a la
+        Contaduría Pública. El grupo los resuelve completos.</li>
+    <li><strong>Material de apoyo.</strong> Cada grupo debe tener listo algún material para exponer
+        el día de la evaluación: los ejercicios desarrollados a mano y escaneados o fotografiados en
+        un PDF, diapositivas, un documento de Word, o cualquier medio que ayude a presentar.</li>
+    <li><strong>Horario asignado.</strong> A cada grupo se le asigna un horario, con
+        <strong>15 minutos</strong> de diferencia a partir de la hora de inicio de clase. Ingresen
+        unos minutos antes para estar listos <em>a la hora en punto</em>.</li>
+    <li><strong>Puntualidad y cámaras.</strong> Llegada la hora, el grupo debe haber ingresado ya al
+        enlace de clase, con las <strong>cámaras encendidas</strong> y preparado para exponer.</li>
+    <li><strong>Responsabilidad grupal.</strong> Todos los integrantes son responsables de
+        <em>todos</em> los ejercicios. Se puede preguntar a cualquier miembro sobre cualquier
+        ejercicio, y de ahí sale la nota del grupo.</li>
+    <li><strong>Calificación de cero.</strong> Si un grupo no llega a la hora asignada, o se observa
+        <strong>uso indebido de la IA</strong> durante la exposición, la calificación es
+        automáticamente <strong>cero</strong>.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>Qué significa «todos responden por todo»</h3>
+    <p>La nota no es la suma de partes: es una nota de grupo que sale de preguntar a cualquiera sobre
+       cualquier ejercicio. No sirve que cada quien domine solo «su» ejercicio. Repartan el trabajo
+       para resolver, pero <strong>repasen juntos los cuatro</strong> antes de la sustentación, de
+       modo que cualquiera pueda explicar cualquiera.</p>
+    <p>Y sobre la IA: pueden usarla para <em>estudiar</em> y preparar, pero durante la exposición se
+       evalúa lo que ustedes entienden y saben hacer. Si al preguntarles se nota que están leyendo
+       una respuesta generada en el momento en vez de razonar, eso es uso indebido.</p>
+  </div>
+</section>
+
+<section class="card" id="e1">
+  <h3 class="card-title">Ejercicio 1 · Teórico (cálculo directo)</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Resuelve cada apartado mostrando el procedimiento, no solo el resultado. Estos son cálculos
+    directos de los conceptos de las semanas 2 a 4.</p>
+
+  <div class="def">
+    <strong>a)</strong> Calcula el límite &nbsp;$\displaystyle\lim_{x\to2}\dfrac{x^{2}-5x+6}{x-2}$.
+    <br><br>
+    <strong>b)</strong> Calcula el límite &nbsp;$\displaystyle\lim_{x\to0}\dfrac{\sqrt{x+4}-2}{x}$.
+    &nbsp;<span style="color:var(--muted);font-size:.88rem">(Sugerencia: racionaliza.)</span>
+    <br><br>
+    <strong>c)</strong> Halla la derivada de $f(x)=x^{2}-4x$ <strong>usando la definición</strong>
+    $f'(x)=\displaystyle\lim_{h\to0}\dfrac{f(x+h)-f(x)}{h}$, no las reglas.
+    <br><br>
+    <strong>d)</strong> Halla la ecuación de la recta tangente a $g(x)=x^{3}-2x+1$ en el punto de
+    abscisa $x=1$.
+  </div>
+
+  <div class="nota">
+    <strong>Qué se evalúa.</strong> En (a) y (b), reconocer la indeterminación $\tfrac00$ y resolverla
+    con la técnica adecuada. En (c), aplicar la <em>definición</em> de derivada, no la regla de la
+    potencia. En (d), combinar el valor de la función y su derivada en la fórmula de la tangente.
+  </div>
+</section>
+
+<section class="card" id="e2">
+  <h3 class="card-title">Ejercicio 2 · Contaduría · Análisis marginal</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Una empresa produce y vende $x$ unidades de un artículo. Su <strong>costo total</strong> (en
+    miles de pesos) es $C(x)=\tfrac12x^{2}+10x+200$, y su <strong>ingreso total</strong> es
+    $R(x)=50x-\tfrac12x^{2}$.</p>
+
+  <div class="def">
+    <strong>a)</strong> Halla el <strong>costo marginal</strong> $C'(x)$ y evalúalo en $x=20$.
+    Interpreta qué significa ese número.
+    <br><br>
+    <strong>b)</strong> Halla el <strong>ingreso marginal</strong> $R'(x)$ y evalúalo en $x=20$.
+    <br><br>
+    <strong>c)</strong> La utilidad es $U(x)=R(x)-C(x)$. Determina el nivel de producción $x$ que
+    <strong>maximiza la utilidad</strong>. &nbsp;<span style="color:var(--muted);font-size:.88rem">(Deriva, iguala a cero y verifica que sea un máximo.)</span>
+    <br><br>
+    <strong>d)</strong> Calcula la utilidad máxima $U(x)$ en ese nivel de producción.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> El costo marginal es aproximadamente lo que cuesta producir <em>una
+    unidad más</em>; el ingreso marginal, lo que aporta venderla. La utilidad se maximiza donde
+    ambos se igualan — un principio central de la microeconomía que aquí sale de derivar.
+  </div>
+</section>
+
+<section class="card" id="e3">
+  <h3 class="card-title">Ejercicio 3 · Contaduría · Costo medio y comportamiento a largo plazo</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    El costo total de producir $x$ unidades es $C(x)=1200+8x$ (en miles de pesos), donde $1200$ es
+    el <strong>costo fijo</strong> y $8$ el costo variable por unidad. El <strong>costo medio</strong>
+    es $\bar{C}(x)=\dfrac{C(x)}{x}$.</p>
+
+  <div class="def">
+    <strong>a)</strong> Escribe la expresión de $\bar{C}(x)$ y calcula $\bar{C}(100)$.
+    <br><br>
+    <strong>b)</strong> Calcula $\bar{C}(300)$ y compara con el resultado anterior. ¿El costo medio
+    sube o baja al producir más?
+    <br><br>
+    <strong>c)</strong> Calcula $\displaystyle\lim_{x\to\infty}\bar{C}(x)$ e interpreta el resultado:
+    ¿hacia qué valor tiende el costo medio, y por qué tiene sentido económico?
+    <br><br>
+    <strong>d)</strong> ¿Es $\bar{C}(x)$ continua en $x=0$? Analiza qué ocurre con el costo medio
+    cuando la producción se acerca a cero, y relaciónalo con el concepto de asíntota.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> La asíntota horizontal $y=8$ dice que, por más que se produzca, el
+    costo medio nunca baja del costo variable unitario: el costo fijo se «diluye» pero no
+    desaparece. La asíntota vertical en $x=0$ refleja que producir una cantidad diminuta carga con
+    todo el costo fijo.
+  </div>
+</section>
+
+<section class="card" id="e4">
+  <h3 class="card-title">Ejercicio 4 · Contaduría · Interés continuo y tarifa a trozos</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Este ejercicio combina una función definida a trozos con el límite que define el interés
+    compuesto continuo.</p>
+
+  <div class="def">
+    <strong>a)</strong> Una tarifa de servicio se cobra así: $\;T(x)=\begin{cases}0{,}05x,&x\leq1000\\
+    50+0{,}03(x-1000),&x\gt1000\end{cases}$ &nbsp;(en pesos, según el consumo $x$).
+    ¿Es $T$ <strong>continua</strong> en $x=1000$? Justifica con los límites laterales y el valor de
+    la función.
+    <br><br>
+    <strong>b)</strong> El interés compuesto continuo surge del límite
+    $\displaystyle\lim_{n\to\infty}\left(1+\dfrac{r}{n}\right)^{n}=e^{r}$. Explica brevemente qué
+    representa $n$ y por qué «capitalizar continuamente» corresponde a tomar ese límite.
+    <br><br>
+    <strong>c)</strong> Un capital de $\$1\,000$ se invierte al $6\,\%$ anual compuesto
+    <strong>continuamente</strong>. Usando $A=Pe^{rt}$, calcula el monto acumulado a los $5$ años.
+    <br><br>
+    <strong>d)</strong> Para ese mismo capital, la tasa de crecimiento instantánea es
+    $\dfrac{dA}{dt}$. Halla su valor en $t=0$ e interpreta qué representa.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> El apartado (a) es continuidad de una función a trozos, tal como se
+    ve en tarifas reales de servicios públicos. El resto conecta el límite del número $e$ con la
+    fórmula del interés continuo — uno de los usos más directos del cálculo en finanzas.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Antes de la sustentación</h3>
+  <ul>
+    <li>Resuelvan los <strong>cuatro</strong> ejercicios completos, con procedimiento.</li>
+    <li>Preparen el material de apoyo (PDF escaneado, diapositivas o Word) para mostrar durante la exposición.</li>
+    <li>Repasen juntos los cuatro ejercicios: <strong>cualquiera puede ser preguntado sobre cualquiera</strong>.</li>
+    <li>Confirmen su horario asignado e ingresen al enlace unos minutos antes, con la cámara lista.</li>
+    <li>Tengan a mano cómo llegaron a cada resultado: en la sustentación importa el razonamiento, no solo la respuesta.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
+    <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
+    <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
+  </div>
+</footer>
+
+<script src="../assets/ova.js?v=20260911c"></script>
+</body>
+</html>
