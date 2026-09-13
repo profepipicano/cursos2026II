@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 5 · Evaluación de corte — Ecuaciones Diferenciales · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Ecuaciones Diferenciales · Semana 5</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#reglas">Cómo es la evaluación</a>
+    <a href="#e1">Ejercicio 1</a>
+    <a href="#e2">Ejercicio 2</a>
+    <a href="#e3">Ejercicio 3</a>
+    <a href="#e4">Ejercicio 4</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Semana 5 · Corte I · Evaluación</div>
+  <h2>Evaluación de corte: resolución y sustentación</h2>
+  <p>Cuatro ejercicios sobre los temas de las semanas 1 a 4 —repaso, introducción a las EDO,
+     variables separables, y crecimiento y EDO lineales— orientados a <strong>Ingeniería de
+     Sistemas y Electrónica</strong>. Se resuelve en grupo y se sustenta en vivo.</p>
+  <div class="chips">
+    <span class="chip">Grupos de hasta 4</span>
+    <span class="chip">4 ejercicios</span>
+    <span class="chip">Sustentación con horario asignado</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">⏱</span>
+  <h3>Lee primero las reglas de la evaluación</h3>
+  <p>El horario, las cámaras y las condiciones de calificación son parte de la nota. Un grupo que
+     llega tarde o hace uso indebido de la IA obtiene <strong>cero</strong>. Revisa la sección de
+     abajo antes de empezar a resolver.</p>
+</div>
+
+<section class="card" id="reglas">
+  <h3 class="card-title">Cómo es la evaluación</h3>
+
+  <ol>
+    <li><strong>Grupos.</strong> Se forman grupos de <strong>hasta 4 estudiantes</strong> para esta
+        actividad.</li>
+    <li><strong>Los ejercicios.</strong> Esta guía contiene <strong>4 ejercicios</strong> sobre los
+        temas de las semanas 1 a 4: uno teórico de cálculo directo y tres contextualizados a la
+        ingeniería. El grupo los resuelve completos.</li>
+    <li><strong>Material de apoyo.</strong> Cada grupo debe tener listo algún material para exponer
+        el día de la evaluación: los ejercicios desarrollados a mano y escaneados o fotografiados en
+        un PDF, diapositivas, un documento de Word, o cualquier medio que ayude a presentar.</li>
+    <li><strong>Horario asignado.</strong> A cada grupo se le asigna un horario, con
+        <strong>15 minutos</strong> de diferencia a partir de la hora de inicio de clase. Ingresen
+        unos minutos antes para estar listos <em>a la hora en punto</em>.</li>
+    <li><strong>Puntualidad y cámaras.</strong> Llegada la hora, el grupo debe haber ingresado ya al
+        enlace de clase, con las <strong>cámaras encendidas</strong> y preparado para exponer.</li>
+    <li><strong>Responsabilidad grupal.</strong> Todos los integrantes son responsables de
+        <em>todos</em> los ejercicios. Se puede preguntar a cualquier miembro sobre cualquier
+        ejercicio, y de ahí sale la nota del grupo.</li>
+    <li><strong>Calificación de cero.</strong> Si un grupo no llega a la hora asignada, o se observa
+        <strong>uso indebido de la IA</strong> durante la exposición, la calificación es
+        automáticamente <strong>cero</strong>.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>Qué significa «todos responden por todo»</h3>
+    <p>La nota no es la suma de partes: es una nota de grupo que sale de preguntar a cualquiera sobre
+       cualquier ejercicio. No sirve que cada quien domine solo «su» ejercicio. Repartan el trabajo
+       para resolver, pero <strong>repasen juntos los cuatro</strong> antes de la sustentación, de
+       modo que cualquiera pueda explicar cualquiera.</p>
+    <p>Y sobre la IA: pueden usarla para <em>estudiar</em> y preparar, pero durante la exposición se
+       evalúa lo que ustedes entienden y saben hacer. Si al preguntarles se nota que están leyendo
+       una respuesta generada en el momento en vez de razonar, eso es uso indebido.</p>
+  </div>
+</section>
+
+<section class="card" id="e1">
+  <h3 class="card-title">Ejercicio 1 · Teórico (cálculo directo)</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Resuelve cada apartado mostrando el procedimiento. Son cálculos directos de los conceptos de las
+    semanas 1 a 4.</p>
+
+  <div class="def">
+    <strong>a)</strong> <strong>Verifica</strong> que $y=\cos 2x$ es solución de la ecuación
+    diferencial $y''+4y=0$.
+    <br><br>
+    <strong>b)</strong> Resuelve el problema de valor inicial $\;y'=xy,\;\;y(0)=1\;$ por
+    <strong>variables separables</strong>.
+    <br><br>
+    <strong>c)</strong> Resuelve $\;y'+y=x,\;\;y(0)=1\;$ usando el <strong>factor integrante</strong>.
+    <br><br>
+    <strong>d)</strong> Para la ecuación $y''+3y'+2y=e^{x}$, indica su <strong>orden</strong> y si es
+    <strong>lineal</strong>. Justifica.
+  </div>
+
+  <div class="nota">
+    <strong>Qué se evalúa.</strong> En (a), verificar una solución por sustitución. En (b), el método
+    de separación de variables con una condición inicial. En (c), el factor integrante $\mu=e^{\int
+    P\,dx}$. En (d), clasificar por orden y linealidad — recordando que la linealidad se juzga solo
+    sobre $y$ y sus derivadas.
+  </div>
+</section>
+
+<section class="card" id="e2">
+  <h3 class="card-title">Ejercicio 2 · Electrónica · Carga de un capacitor (circuito RC)</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Un circuito RC en serie tiene resistencia $R=1000\ \Omega$, capacitancia $C=0{,}001$ F y una
+    fuente $E=12$ V. La carga $q(t)$ del capacitor obedece
+    $\dfrac{dq}{dt}+\dfrac{q}{RC}=\dfrac{E}{R}$, con $q(0)=0$.</p>
+
+  <div class="def">
+    <strong>a)</strong> Calcula la <strong>constante de tiempo</strong> $\tau=RC$ del circuito.
+    <br><br>
+    <strong>b)</strong> Resuelve la ecuación diferencial y comprueba que la solución es
+    $q(t)=CE\left(1-e^{-t/RC}\right)$. &nbsp;<span style="color:var(--muted);font-size:.88rem">(Es lineal: usa el factor integrante.)</span>
+    <br><br>
+    <strong>c)</strong> ¿A qué valor tiende la carga cuando $t\to\infty$? Calcula ese valor final
+    $q(\infty)$.
+    <br><br>
+    <strong>d)</strong> Demuestra que en $t=\tau$ la carga alcanza aproximadamente el
+    <strong>$63\,\%$</strong> de su valor final.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> El circuito RC es el ejemplo canónico de EDO lineal de primer orden.
+    La constante de tiempo $\tau=RC$ determina qué tan rápido se carga el capacitor: a los $5\tau$
+    está prácticamente cargado. Es un número de diseño que usarás en toda la carrera.
+  </div>
+</section>
+
+<section class="card" id="e3">
+  <h3 class="card-title">Ejercicio 3 · Sistemas · Enfriamiento de un componente</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Un componente electrónico se apaga a $100\,°$C y se deja enfriar en un ambiente a $25\,°$C. Su
+    temperatura obedece la <strong>ley de enfriamiento de Newton</strong>,
+    $\dfrac{dT}{dt}=k(T-25)$, con $T(0)=100$. A los $10$ minutos, la temperatura es $60\,°$C.</p>
+
+  <div class="def">
+    <strong>a)</strong> Verifica que $T(t)=25+75\,e^{kt}$ resuelve la ecuación y cumple la condición
+    inicial $T(0)=100$. &nbsp;<span style="color:var(--muted);font-size:.88rem">(Es separable; puedes deducirla o verificarla.)</span>
+    <br><br>
+    <strong>b)</strong> Usa el dato $T(10)=60$ para hallar la constante $k$. Deja el resultado en
+    términos de un logaritmo.
+    <br><br>
+    <strong>c)</strong> ¿Qué signo tiene $k$, y qué significa físicamente ese signo?
+    <br><br>
+    <strong>d)</strong> Con el $k$ hallado, estima la temperatura del componente a los
+    $20$ minutos. &nbsp;<span style="color:var(--muted);font-size:.88rem">(Puedes dejar la expresión o dar el valor aproximado.)</span>
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> La gestión térmica es crítica en electrónica: un componente que no
+    disipa calor a tiempo se daña. La ley de enfriamiento de Newton es una EDO separable de primer
+    orden, y su constante $k$ caracteriza qué tan rápido el componente cede calor al ambiente.
+  </div>
+</section>
+
+<section class="card" id="e4">
+  <h3 class="card-title">Ejercicio 4 · Sistemas · Crecimiento de usuarios de una aplicación</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    El número de usuarios de una aplicación crece exponencialmente según $\dfrac{dP}{dt}=kP$, donde
+    $t$ está en meses. Se observa que el número de usuarios <strong>se duplica cada 4 meses</strong>.</p>
+
+  <div class="def">
+    <strong>a)</strong> A partir de la condición «se duplica en 4 meses», determina el valor de la
+    constante $k$.
+    <br><br>
+    <strong>b)</strong> ¿Por qué factor se multiplica el número de usuarios al cabo de
+    <strong>12 meses</strong>? Justifica con la solución.
+    <br><br>
+    <strong>c)</strong> Escribe la solución general de $\dfrac{dP}{dt}=kP$ y explica por qué este
+    modelo describe un crecimiento exponencial.
+    <br><br>
+    <strong>d)</strong> Si la aplicación arranca con $500$ usuarios, ¿en cuántos meses
+    (aproximadamente) alcanzará los $10\,000$ usuarios?
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> El crecimiento exponencial modela bien la fase inicial de adopción de
+    un producto digital, y la «ley de Moore» del hardware. Pero solo la fase inicial: cuando el
+    mercado se satura, el modelo deja de valer y hay que pasar a uno logístico (semana 12). Un buen
+    ingeniero sabe hasta dónde llega su modelo.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Antes de la sustentación</h3>
+  <ul>
+    <li>Resuelvan los <strong>cuatro</strong> ejercicios completos, con procedimiento.</li>
+    <li>Preparen el material de apoyo (PDF escaneado, diapositivas o Word) para mostrar durante la exposición.</li>
+    <li>Repasen juntos los cuatro ejercicios: <strong>cualquiera puede ser preguntado sobre cualquiera</strong>.</li>
+    <li>Confirmen su horario asignado e ingresen al enlace unos minutos antes, con la cámara lista.</li>
+    <li>Tengan a mano cómo llegaron a cada resultado: en la sustentación importa el razonamiento, no solo la respuesta.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/classic" target="_blank" rel="noopener">GeoGebra</a></div>
+    <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
+    <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
+  </div>
+</footer>
+
+<script src="../assets/ova.js?v=20260911c"></script>
+</body>
+</html>
