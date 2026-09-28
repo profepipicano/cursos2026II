@@ -717,4 +717,278 @@ document.addEventListener('DOMContentLoaded', function () {
     host.addEventListener('change', function () { OVA.viz.redibujar(); });
   });
 });
+
+function q(host, sel) { return host.querySelector(sel); }
+
+/* ══════════ S06 · Regla de la cadena: función compuesta ══════════ */
+var CADENA = {
+  pot:  { g: function (x) { return x*x + 1; }, gp: function (x) { return 2*x; },
+          fu: function (u) { return Math.pow(u, 3); }, fpu: function (u) { return 3*u*u; },
+          nf: 'f(u) = u³', ng: 'g(x) = x² + 1', ny: 'y = (x²+1)³',
+          nd: "y' = 3(x²+1)²·2x = 6x(x²+1)²", x0: 0.8 },
+  sen:  { g: function (x) { return 3*x; }, gp: function () { return 3; },
+          fu: function (u) { return Math.sin(u); }, fpu: function (u) { return Math.cos(u); },
+          nf: 'f(u) = sen u', ng: 'g(x) = 3x', ny: 'y = sen(3x)',
+          nd: "y' = cos(3x)·3 = 3cos(3x)", x0: 0.5 },
+  exp:  { g: function (x) { return x*x; }, gp: function (x) { return 2*x; },
+          fu: function (u) { return Math.exp(u); }, fpu: function (u) { return Math.exp(u); },
+          nf: 'f(u) = eᵘ', ng: 'g(x) = x²', ny: 'y = e^{x²}',
+          nd: "y' = e^{x²}·2x = 2x·e^{x²}", x0: 0.7 },
+  raiz: { g: function (x) { return x*x + 1; }, gp: function (x) { return 2*x; },
+          fu: function (u) { return Math.sqrt(u); }, fpu: function (u) { return 0.5/Math.sqrt(u); },
+          nf: 'f(u) = √u', ng: 'g(x) = x² + 1', ny: 'y = √(x²+1)',
+          nd: "y' = x/√(x²+1)", x0: 1.2 }
+};
+
+OVA.viz.registrar('cadena', function (host) {
+  var cfg = CADENA[q(host, 'select').value] || CADENA.pot;
+  var x0 = parseFloat(q(host, '.punto').value);
+  q(host, '.punto-val').textContent = 'x = ' + x0.toFixed(2);
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 300, sx: 46, sy: 30 });
+  OVA.ejes(L);
+  var Y = function (x) { return cfg.fu(cfg.g(x)); };
+  OVA.curva(L, Y, AZUL, 3);
+  var c = L.ctx;
+
+  // punto y recta tangente con pendiente por la cadena
+  var u0 = cfg.g(x0), y0 = cfg.fu(u0);
+  var m = cfg.fpu(u0) * cfg.gp(x0);   // regla de la cadena
+  c.strokeStyle = 'rgba(176,57,44,.85)'; c.lineWidth = 2;
+  c.beginPath();
+  c.moveTo(L.px(x0 - 2), L.py(y0 - 2*m));
+  c.lineTo(L.px(x0 + 2), L.py(y0 + 2*m));
+  c.stroke();
+  OVA.punto(L, x0, y0, ROJO);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.ny, 10, 18);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.ny + '</strong> como composición: primero ' +
+    '<span style="color:#8fb4d9">' + cfg.ng + '</span>, luego ' +
+    '<span style="color:#dba949">' + cfg.nf + '</span><br>' +
+    'En x = ' + x0.toFixed(2) + ': la función interna vale g(x) = ' + u0.toFixed(3) +
+    ', y la pendiente de la tangente es<br>' +
+    "<strong>y' = f'(g(x))·g'(x) = " + cfg.fpu(u0).toFixed(3) + ' × ' +
+      cfg.gp(x0).toFixed(3) + ' = ' + m.toFixed(3) + '</strong><br>' +
+    '<span style="color:#8fb4d9">La regla de la cadena multiplica dos tasas: cuánto cambia la ' +
+    'salida por unidad de la interna, por cuánto cambia la interna por unidad de x. Fórmula general: ' +
+    '<strong>' + cfg.nd + '</strong>.</span>';
+});
+
+/* ══════════ S07 · Derivación implícita: tangente a una curva ══════════ */
+var IMPLICITA = {
+  circ: { n: 'x² + y² = 25', F: function (x, y) { return x*x + y*y - 25; },
+          // y' = -Fx/Fy = -(2x)/(2y) = -x/y
+          yp: function (x, y) { return -x / y; },
+          curva: function (t) { return [5*Math.cos(t), 5*Math.sin(t)]; }, ta: 0, tb: 6.2832,
+          px: 3, py: 4, lim: 7,
+          nd: "y' = −x/y" },
+  elipse: { n: 'x²/9 + y²/4 = 1', F: function (x, y) { return x*x/9 + y*y/4 - 1; },
+          yp: function (x, y) { return -(4*x) / (9*y); },
+          curva: function (t) { return [3*Math.cos(t), 2*Math.sin(t)]; }, ta: 0, tb: 6.2832,
+          px: 3*Math.cos(0.9), py: 2*Math.sin(0.9), lim: 4,
+          nd: "y' = −4x/(9y)" },
+  astro: { n: 'x^{2/3} + y^{2/3} = 4  (astroide)',
+          F: function (x, y) { return Math.cbrt(x*x) + Math.cbrt(y*y) - 4; },
+          yp: function (x, y) { return -Math.cbrt(y / x); },
+          curva: function (t) { return [8*Math.pow(Math.cos(t),3), 8*Math.pow(Math.sin(t),3)]; },
+          ta: 0, tb: 6.2832, px: 8*Math.pow(Math.cos(0.9),3), py: 8*Math.pow(Math.sin(0.9),3), lim: 9,
+          nd: "y' = −∛(y/x)" }
+};
+
+OVA.viz.registrar('implicita', function (host) {
+  var cfg = IMPLICITA[q(host, 'select').value] || IMPLICITA.circ;
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 320 });
+  L.sx = L.w / (2.2 * cfg.lim); L.sy = L.sx;   // isótropo
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // dibujar la curva por su parametrización
+  c.strokeStyle = AZUL; c.lineWidth = 2.6; c.beginPath();
+  var primero = true;
+  for (var t = cfg.ta; t <= cfg.tb; t += (cfg.tb - cfg.ta) / 400) {
+    var P = cfg.curva(t);
+    var px = L.px(P[0]), py = L.py(P[1]);
+    primero ? (c.moveTo(px, py), primero = false) : c.lineTo(px, py);
+  }
+  c.closePath(); c.stroke();
+
+  // punto y tangente
+  var m = cfg.yp(cfg.px, cfg.py);
+  c.strokeStyle = 'rgba(176,57,44,.9)'; c.lineWidth = 2;
+  var dx = cfg.lim * 0.7;
+  c.beginPath();
+  c.moveTo(L.px(cfg.px - dx), L.py(cfg.py - dx*m));
+  c.lineTo(L.px(cfg.px + dx), L.py(cfg.py + dx*m));
+  c.stroke();
+  OVA.punto(L, cfg.px, cfg.py, VERDE);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · no se puede despejar y como una sola función, ' +
+    'pero la derivación implícita da la pendiente en cualquier punto.<br>' +
+    'En el punto (' + cfg.px.toFixed(2) + ', ' + cfg.py.toFixed(2) + '): ' +
+    '<strong style="color:#b0392c">y\' = ' + m.toFixed(3) + '</strong><br>' +
+    '<span style="color:#8fb4d9">Derivando ambos lados respecto de x y tratando y como función de x ' +
+    '(cadena), se despeja y\'. Aquí <strong>' + cfg.nd + '</strong>. La recta roja es tangente a la ' +
+    'curva en el punto verde.</span>';
+});
+
+/* ══════════ S08 · Optimización: el problema de la caja ══════════ */
+OVA.viz.registrar('optimiza', function (host) {
+  var lado = parseFloat(q(host, 'select').value);       // lado del cartón cuadrado
+  var xcut = parseFloat(q(host, '.corte').value);        // corte de esquina
+  var maxc = lado / 2;
+  if (xcut > maxc - 0.05) xcut = maxc - 0.05;
+  q(host, '.corte-val').textContent = 'corte x = ' + xcut.toFixed(2);
+
+  var V = function (x) { return x * Math.pow(lado - 2*x, 2); };
+  var xopt = lado / 6;                                   // óptimo exacto
+  var Vopt = V(xopt);
+
+  // panel izquierdo: curva de volumen
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 300, sx: q(host,'canvas').clientWidth/(1.25*maxc), sy: 1 });
+  L.oy = L.h - 30; L.ox = 40;
+  L.sy = (L.h - 50) / (Vopt * 1.15);
+  OVA.ejes(L);
+  OVA.curva(L, V, AZUL, 3);
+  var c = L.ctx;
+  // óptimo
+  OVA.punto(L, xopt, Vopt, VERDE);
+  c.strokeStyle = 'rgba(28,122,76,.45)'; c.setLineDash([4,4]); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(L.px(xopt), L.py(0)); c.lineTo(L.px(xopt), L.py(Vopt)); c.stroke();
+  c.setLineDash([]);
+  // punto actual
+  OVA.punto(L, xcut, V(xcut), ORO);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText('V(x) = x(' + lado + '−2x)²', 48, 18);
+  var Vpx = Math.pow(lado - 2*xcut, 2) + xcut*2*(lado - 2*xcut)*(-2);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Caja sin tapa</strong> a partir de un cartón ' + lado + '×' + lado +
+    ': se cortan esquinas de lado x y se doblan las solapas.<br>' +
+    'Volumen: V(x) = x(' + lado + '−2x)². Con el corte actual x = ' + xcut.toFixed(2) +
+    ': V = <strong style="color:#c68f2e">' + V(xcut).toFixed(1) + '</strong>, ' +
+    "y la pendiente V'(x) = <strong>" + Vpx.toFixed(1) + '</strong>.<br>' +
+    '<span style="color:#8fb4d9">El volumen máximo se alcanza donde <strong>V\'(x) = 0</strong>: ' +
+    'en x = ' + xopt.toFixed(3) + ' (un tercio de la mitad del lado), con ' +
+    'V = <strong style="color:#1c7a4c">' + Vopt.toFixed(1) + '</strong>. ' +
+    'Mueve el corte y observa cómo la pendiente se anula justo en el máximo.</span>';
+});
+
+/* ══════════ S09 · Análisis gráfico: f, f', f'' alineadas ══════════ */
+var ANALISIS = {
+  cubica: { f: function (x) { return x*x*x - 3*x*x + 2; },
+            fp: function (x) { return 3*x*x - 6*x; },
+            fpp: function (x) { return 6*x - 6; },
+            n: 'f(x) = x³ − 3x² + 2', crit: [0, 2], infl: [1] },
+  cuartica: { f: function (x) { return x*x*x*x - 4*x*x; },
+            fp: function (x) { return 4*x*x*x - 8*x; },
+            fpp: function (x) { return 12*x*x - 8; },
+            n: 'f(x) = x⁴ − 4x²', crit: [-Math.sqrt(2), 0, Math.sqrt(2)],
+            infl: [-Math.sqrt(2/3), Math.sqrt(2/3)] },
+  seno: { f: function (x) { return Math.sin(x); },
+            fp: function (x) { return Math.cos(x); },
+            fpp: function (x) { return -Math.sin(x); },
+            n: 'f(x) = sen x', crit: [-Math.PI/2, Math.PI/2], infl: [0] }
+};
+
+OVA.viz.registrar('analisis', function (host) {
+  var cfg = ANALISIS[q(host, 'select').value] || ANALISIS.cubica;
+  var ver = q(host, '.capa').value;   // 'f' | 'fp' | 'fpp' | 'todas'
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 340, sx: 46, sy: 24 });
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  if (ver === 'f' || ver === 'todas') OVA.curva(L, cfg.f, AZUL, 3);
+  if (ver === 'fp' || ver === 'todas') OVA.curva(L, cfg.fp, VERDE, 2.2);
+  if (ver === 'fpp' || ver === 'todas') OVA.curva(L, cfg.fpp, ORO, 2.2);
+
+  // marcar críticos (f'=0) e inflexiones (f''=0)
+  cfg.crit.forEach(function (xc) {
+    OVA.punto(L, xc, cfg.f(xc), ROJO);
+    c.strokeStyle = 'rgba(176,57,44,.35)'; c.setLineDash([3,3]); c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(L.px(xc), 0); c.lineTo(L.px(xc), L.h); c.stroke(); c.setLineDash([]);
+  });
+  cfg.infl.forEach(function (xi) {
+    OVA.punto(L, xi, cfg.f(xi), MORADO, true);
+  });
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+  // leyenda
+  c.font = '11px ui-monospace,monospace';
+  c.fillStyle = AZUL;   c.fillText('— f', L.w - 60, 20);
+  c.fillStyle = VERDE;  c.fillText("— f'", L.w - 60, 36);
+  c.fillStyle = ORO;    c.fillText("— f''", L.w - 60, 52);
+
+  var critTxt = cfg.crit.map(function (x) {
+    var tipo = cfg.fpp(x) > 0 ? 'mín' : cfg.fpp(x) < 0 ? 'máx' : '?';
+    return 'x=' + x.toFixed(2) + ' (' + tipo + ')';
+  }).join(', ');
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong><br>' +
+    'Puntos críticos (donde f\'=0, líneas rojas): <strong>' + critTxt + '</strong><br>' +
+    'Inflexiones (donde f\'\'=0, puntos morados): <strong>' +
+      cfg.infl.map(function (x){return 'x='+x.toFixed(2);}).join(', ') + '</strong><br>' +
+    '<span style="color:#8fb4d9">Donde <strong style="color:#1c7a4c">f\' (verde)</strong> cruza cero, ' +
+    'f tiene un máximo o mínimo. El signo de <strong style="color:#c68f2e">f\'\' (naranja)</strong> ' +
+    'ahí decide cuál: f\'\'&lt;0 es máximo (cóncava hacia abajo), f\'\'&gt;0 es mínimo. Donde f\'\' cruza ' +
+    'cero cambia la concavidad: es un punto de inflexión.</span>';
+});
+
+/* ══════════ S09 · Elasticidad de la demanda ══════════ */
+OVA.viz.registrar('elasticidad', function (host) {
+  var a = parseFloat(q(host, 'select').value);   // pendiente de la demanda q = 100 - a·p
+  var p0 = parseFloat(q(host, '.precio').value);
+  var qmax = 100, pmax = qmax / a;
+  if (p0 > pmax - 1) p0 = pmax - 1;
+  q(host, '.precio-val').textContent = 'p = ' + p0.toFixed(0);
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 300 });
+  L.ox = 44; L.oy = L.h - 30;
+  L.sx = (L.w - 60) / (pmax * 1.05);
+  L.sy = (L.h - 50) / (qmax * 1.1);
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // recta de demanda
+  var dem = function (p) { return qmax - a*p; };
+  c.strokeStyle = AZUL; c.lineWidth = 2.6;
+  c.beginPath(); c.moveTo(L.px(0), L.py(dem(0))); c.lineTo(L.px(pmax), L.py(0)); c.stroke();
+
+  // punto de elasticidad unitaria: E=-1 en p = 50/a  (mitad del intercepto)
+  var pu = pmax / 2;
+  OVA.punto(L, pu, dem(pu), VERDE);
+  c.strokeStyle = 'rgba(28,122,76,.4)'; c.setLineDash([4,4]); c.lineWidth = 1.3;
+  c.beginPath(); c.moveTo(L.px(pu), L.py(0)); c.lineTo(L.px(pu), L.py(dem(pu))); c.stroke();
+  c.setLineDash([]);
+
+  // punto actual
+  var q0 = dem(p0);
+  var E = (-a) * p0 / q0;   // elasticidad = (dq/dp)(p/q)
+  OVA.punto(L, p0, q0, ORO);
+
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace';
+  c.fillText('q = ' + qmax + ' − ' + a + 'p', 52, 18);
+  c.fillStyle = VERDE; c.font = '10px ui-monospace,monospace';
+  c.fillText('|E|=1', L.px(pu) - 12, L.py(dem(pu)) - 8);
+
+  var tipo = Math.abs(E) > 1 ? 'elástica' : Math.abs(E) < 1 ? 'inelástica' : 'unitaria';
+  var col = Math.abs(E) > 1 ? '#b0392c' : Math.abs(E) < 1 ? '#3a6ea5' : '#1c7a4c';
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Demanda q = ' + qmax + ' − ' + a + 'p</strong> · elasticidad E = (dq/dp)·(p/q)<br>' +
+    'En p = ' + p0.toFixed(0) + ': q = ' + q0.toFixed(0) + ', y ' +
+    'E = (−' + a + ')·(' + p0.toFixed(0) + '/' + q0.toFixed(0) + ') = ' +
+    '<strong style="color:' + col + '">' + E.toFixed(2) + '</strong> → demanda <strong style="color:' +
+    col + '">' + tipo + '</strong><br>' +
+    '<span style="color:#8fb4d9">|E|&gt;1 (precios altos): subir el precio baja el ingreso — demanda ' +
+    'elástica. |E|&lt;1 (precios bajos): subir el precio sube el ingreso — inelástica. En el punto ' +
+    'medio (verde) |E|=1: ahí el ingreso es máximo. Mueve el precio y cruza ese punto.</span>';
+});
+
 })();
