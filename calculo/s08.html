@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 8 · Aplicaciones de la derivada — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 8 · Aplicaciones de la derivada — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 8</h1>
+      <h1>Cálculo · Guía 8</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,382 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · La derivada aplicada</a>
+    <a href="#s2">2 · Razón de cambio</a>
+    <a href="#s3">3 · Máximos y mínimos</a>
+    <a href="#s4">4 · Optimización</a>
+    <a href="#s5">5 · Método general</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 8 · Aplicaciones de la derivada</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 8 · Corte II</div>
+  <h2>Aplicaciones de la derivada</h2>
+  <p>Ya sabes derivar casi cualquier función. Ahora la derivada deja de ser un ejercicio de cálculo
+     y se convierte en herramienta: para medir cómo se relacionan velocidades de cambio, y para
+     encontrar el mejor valor posible —el máximo beneficio, el mínimo costo, el mayor volumen—.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 3.1–3.7</span>
+    <span class="chip">Stewart · Cap. 4.1–4.7</span>
+    <span class="chip">Semana 8</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La derivada nació en la Guía 4 como la pendiente de la recta
+  tangente y la razón de cambio instantánea. Aquí cosechas esa idea: donde la pendiente es cero, la
+  función deja de crecer o decrecer, y eso es justo lo que define un máximo o un mínimo.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · De la pendiente al significado</h3>
+
+  <div class="callout-dark">
+    <h3>Dos grandes usos</h3>
+    <p>La derivada mide una tasa de cambio. De ahí salen dos aplicaciones centrales:</p>
+    <p><strong>Razón de cambio relacionada</strong>: cuando varias cantidades cambian con el tiempo y
+       están ligadas por una ecuación, sus velocidades de cambio también lo están. Si sabes una,
+       puedes hallar las otras.</p>
+    <p><strong>Optimización</strong>: en un máximo o un mínimo, la función deja de crecer o decrecer
+       por un instante, así que su derivada vale cero. Buscar los ceros de la derivada localiza los
+       valores óptimos.</p>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Razón de cambio relacionada</h3>
+
+  <div class="def">
+    Si dos o más variables dependen del tiempo y están ligadas por una ecuación, derivar esa
+    ecuación respecto de $t$ (con la regla de la cadena) relaciona sus <strong>tasas de cambio</strong>
+    $\dfrac{dx}{dt}$, $\dfrac{dy}{dt}$, etc.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · La escalera que resbala</h4>
+    <div class="ejemplo-body">
+      Una escalera de 5 m está apoyada en una pared. La base se aleja del muro a $1$ m/s. ¿A qué
+      velocidad baja el extremo superior cuando la base está a 3 m?
+      <div class="paso"><div class="paso-t">Ecuación que liga las variables</div>
+        Por Pitágoras, $x^{2}+y^{2}=25$, donde $x$ es la distancia de la base al muro e $y$ la altura
+        del extremo superior.
+      </div>
+      <div class="paso"><div class="paso-t">Derivar respecto del tiempo</div>
+        $2x\dfrac{dx}{dt}+2y\dfrac{dy}{dt}=0\;\Rightarrow\;\dfrac{dy}{dt}=-\dfrac{x}{y}\dfrac{dx}{dt}$
+      </div>
+      <div class="paso"><div class="paso-t">Sustituir los datos</div>
+        Cuando $x=3$, $y=\sqrt{25-9}=4$. Con $\dfrac{dx}{dt}=1$:
+        $\dfrac{dy}{dt}=-\dfrac{3}{4}(1)=-0{,}75$ m/s.
+      </div>
+      <div class="paso"><div class="paso-t">Interpretar</div>
+        El signo negativo indica que $y$ <em>disminuye</em>: el extremo superior baja a $0{,}75$ m/s
+        en ese instante. La velocidad cambia según la posición: la misma ecuación de la derivación
+        implícita de la Guía 7, ahora con el tiempo.
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · El globo esférico</h4>
+    <div class="ejemplo-body">
+      Un globo se infla y su radio crece a $2$ cm/s. ¿A qué ritmo aumenta su volumen cuando $r=5$ cm?
+      <div class="paso"><div class="paso-t">Ecuación y derivada</div>
+        $V=\dfrac{4}{3}\pi r^{3}$, luego $\dfrac{dV}{dt}=4\pi r^{2}\dfrac{dr}{dt}$ (regla de la cadena).
+      </div>
+      <div class="paso"><div class="paso-t">Sustituir</div>
+        $\dfrac{dV}{dt}=4\pi(5)^{2}(2)=200\pi\approx628$ cm³/s.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Razón de cambio</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Máximos y mínimos</h3>
+
+  <div class="callout-dark">
+    <h3>Donde la pendiente se anula</h3>
+    <p>En la cima de una colina o en el fondo de un valle, el terreno es momentáneamente horizontal.
+       Igual con las funciones: en un máximo o un mínimo local, la recta tangente es horizontal, así
+       que <strong>$f'(x)=0$</strong>. Esos puntos se llaman <em>críticos</em>.</p>
+    <p>Pero $f'(x)=0$ no dice por sí solo si es máximo o mínimo. Para eso está la segunda derivada:
+       si $f''\lt0$ la curva es cóncava hacia abajo (una cima, máximo); si $f''\gt0$ es cóncava
+       hacia arriba (un valle, mínimo).</p>
+  </div>
+
+  <div class="def">
+    <strong>Criterio de la segunda derivada.</strong> Si $f'(c)=0$:
+    <br>• $f''(c)\lt0$ ⟹ $c$ es un <strong>máximo</strong> local.
+    <br>• $f''(c)\gt0$ ⟹ $c$ es un <strong>mínimo</strong> local.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Clasificar los críticos de $f(x)=x^{3}-3x^{2}+2$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Hallar los críticos</div>
+        $f'(x)=3x^{2}-6x=3x(x-2)=0\;\Rightarrow\;x=0$ o $x=2$.
+      </div>
+      <div class="paso"><div class="paso-t">Clasificar con $f''(x)=6x-6$</div>
+        $f''(0)=-6\lt0$: máximo en $x=0$. &nbsp; $f''(2)=6\gt0$: mínimo en $x=2$.
+      </div>
+      <div class="paso"><div class="paso-t">Valores</div>
+        Máximo local en $(0,2)$, mínimo local en $(2,-2)$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Optimización</h3>
+
+  <div class="callout-dark">
+    <h3>El mejor valor posible</h3>
+    <p>Optimizar es encontrar el máximo o el mínimo de una cantidad sujeta a una restricción: el
+       máximo volumen con cierto material, el mínimo costo para cierta producción, el máximo ingreso
+       a cierto precio. La receta: expresar la cantidad como función de una variable, derivar,
+       igualar a cero, y verificar.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · La caja de volumen máximo</h4>
+    <div class="ejemplo-body">
+      De un cartón cuadrado de $12\times12$ se cortan cuadrados de lado $x$ en las esquinas, y se
+      doblan las solapas para formar una caja sin tapa. ¿Qué corte $x$ da el volumen máximo?
+      <div class="paso"><div class="paso-t">Expresar el volumen</div>
+        La base mide $(12-2x)$ por lado y la altura es $x$: $V(x)=x(12-2x)^{2}$, con $0\lt x\lt6$.
+      </div>
+      <div class="paso"><div class="paso-t">Derivar e igualar a cero</div>
+        $V'(x)=12x^{2}-96x+144=12(x-2)(x-6)=0\;\Rightarrow\;x=2$ o $x=6$.
+      </div>
+      <div class="paso"><div class="paso-t">Elegir la solución válida</div>
+        $x=6$ daría base cero (volumen nulo), así que se descarta. Queda $x=2$. Como
+        $V''(2)\lt0$, es un máximo.
+      </div>
+      <div class="paso"><div class="paso-t">Respuesta</div>
+        Con $x=2$: $V=2\cdot(12-4)^{2}=2\cdot64=128$ cm³. Es el volumen máximo posible.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 Explora la optimización</div>
+  <div class="viz" data-viz="optimiza">
+    <div class="viz-controls">
+      <label for="op-l">Lado del cartón</label>
+      <select id="op-l">
+        <option value="12">12 × 12</option>
+        <option value="18">18 × 18</option>
+        <option value="24">24 × 24</option>
+      </select>
+      <label for="op-c">Corte de esquina</label>
+      <input id="op-c" class="corte" type="range" min="0.3" max="8" step="0.1" value="2">
+      <span class="corte-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Mueve el corte y observa la curva de volumen. El máximo (punto verde) está siempre donde la
+    pendiente $V'(x)$ se anula, en un tercio de la mitad del lado. Antes de ahí el volumen crece;
+    después, decrece.
+  </p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · El corral de área máxima</h4>
+    <div class="ejemplo-body">
+      Con 100 m de cerca se quiere encerrar un corral rectangular de área máxima. ¿Qué dimensiones?
+      <div class="paso"><div class="paso-t">Plantear</div>
+        Perímetro: $2x+2y=100$, luego $y=50-x$. Área: $A(x)=x(50-x)=50x-x^{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Optimizar</div>
+        $A'(x)=50-2x=0\;\Rightarrow\;x=25$. Entonces $y=25$: un cuadrado.
+      </div>
+      <div class="paso"><div class="paso-t">Respuesta</div>
+        $25\times25$ m, con área $625$ m². Entre todos los rectángulos de perímetro fijo, el cuadrado
+        maximiza el área.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Optimización</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Método general de optimización</h3>
+  <ol>
+    <li><strong>Identifica</strong> qué cantidad se quiere maximizar o minimizar.</li>
+    <li><strong>Exprésala</strong> como función de una sola variable, usando la restricción para
+        eliminar las demás.</li>
+    <li><strong>Deriva</strong> e iguala a cero para hallar los puntos críticos.</li>
+    <li><strong>Verifica</strong> con la segunda derivada (o analizando el signo de $f'$) que es el
+        máximo o mínimo buscado.</li>
+    <li><strong>Comprueba los extremos</strong> del dominio: a veces el óptimo está en la frontera,
+        no en un punto crítico interior.</li>
+  </ol>
+
+  <div class="nota">
+    <strong>El paso que más se olvida.</strong> Igualar la derivada a cero da <em>candidatos</em>,
+    no la respuesta. Siempre hay que verificar cuál es máximo y cuál mínimo, y descartar soluciones
+    sin sentido físico (como el corte $x=6$ que anulaba la caja).
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El nivel de producción que maximiza la ganancia se halla derivando la función de utilidad e
+      igualando a cero. Es el mismo método de la caja, aplicado a decisiones de negocio: producir
+      hasta donde la derivada de la ganancia se anula.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Minimizar el costo total de inventario (costo de pedido más costo de almacenamiento) es un
+      problema de optimización clásico: se deriva el costo respecto de la cantidad de pedido y se
+      iguala a cero para hallar el lote económico óptimo.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Entrenar un modelo es minimizar una función de error: se buscan los parámetros donde la
+      derivada (el gradiente) es cero. Las razones de cambio relacionadas aparecen al analizar cómo
+      el rendimiento de un sistema depende de recursos que varían juntos.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La máxima transferencia de potencia a una carga se obtiene derivando la potencia respecto de
+      la resistencia de carga e igualando a cero: resulta que la carga debe igualar la resistencia
+      interna de la fuente. Optimización pura aplicada a circuitos.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Razón de cambio relacionada</strong>: deriva la ecuación que liga las variables respecto de $t$.</li>
+    <li>Escalera: $\dfrac{dy}{dt}=-\dfrac{x}{y}\dfrac{dx}{dt}$; globo: $\dfrac{dV}{dt}=4\pi r^{2}\dfrac{dr}{dt}$.</li>
+    <li><strong>Puntos críticos</strong>: donde $f'(x)=0$, la tangente es horizontal.</li>
+    <li><strong>Criterio de la 2ª derivada</strong>: $f''\lt0$ máximo, $f''\gt0$ mínimo.</li>
+    <li><strong>Optimizar</strong>: expresar en una variable → derivar → igualar a cero → verificar.</li>
+    <li>Caja $12\times12$: máximo en $x=2$, $V=128$. Corral de 100 m: cuadrado $25\times25$, $A=625$.</li>
+    <li>Igualar a cero da candidatos; siempre hay que <strong>verificar</strong> y revisar la frontera.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-calculo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: "chk1", titulo: "Razón de cambio · 3 preguntas",
+  items: [
+    { etiqueta: "La idea", nivel: 2, criterio: "Entender razones relacionadas (§2)",
+      enunciado: "En un problema de razón de cambio relacionada, ¿qué se hace con la ecuación que liga las variables?",
+      opciones: ["se deriva respecto del tiempo $t$", "se iguala a cero", "se grafica", "se resuelve para $x$"],
+      correcta: 0, pista: "Las variables dependen del tiempo.",
+      solucion: "Se deriva respecto de $t$ usando la regla de la cadena, lo que relaciona las tasas de cambio $dx/dt$, $dy/dt$, etc. Así, conociendo una, se hallan las otras." },
+    { etiqueta: "Escalera", nivel: 3, criterio: "Resolver el problema de la escalera (§2)",
+      enunciado: "Una escalera de 5 m resbala; su base se aleja a 1 m/s. Cuando $x=3$ (con $y=4$), ¿a qué velocidad baja el extremo superior?",
+      opciones: ["$-1{,}33$ m/s", "$-3$ m/s", "$-0{,}75$ m/s", "$-1$ m/s"],
+      correcta: 2, pista: "$dy/dt=-(x/y)(dx/dt)=-(3/4)(1)$.",
+      solucion: "De $x^2+y^2=25$: $dy/dt=-(x/y)(dx/dt)=-(3/4)(1)=-0{,}75$ m/s. El signo negativo indica que baja. La opción c) invierte la fracción $x/y$." },
+    { etiqueta: "Globo", nivel: 3, criterio: "Resolver el problema del globo (§2)",
+      enunciado: "Un globo esférico se infla con $dr/dt=2$ cm/s. Cuando $r=5$, $\\dfrac{dV}{dt}$ vale:",
+      opciones: ["$50\\pi$", "$4\\pi$", "$100\\pi$", "$200\\pi$"],
+      correcta: 3, pista: "$dV/dt=4\\pi r^2\\,(dr/dt)=4\\pi(25)(2)$.",
+      solucion: "De $V=\\tfrac43\\pi r^3$: $dV/dt=4\\pi r^2(dr/dt)=4\\pi(25)(2)=200\\pi\\approx628$ cm³/s. La opción a) olvida el factor $2$ de $dr/dt$." }
+  ]
+});
+OVA.quiz({
+  destino: "chk2", titulo: "Optimización · 3 preguntas",
+  items: [
+    { etiqueta: "Críticos", nivel: 2, criterio: "Localizar máximos y mínimos (§3)",
+      enunciado: "En un máximo o mínimo local de una función derivable, ¿qué vale la derivada?",
+      opciones: ["es máxima", "vale cero", "es negativa", "no existe"],
+      correcta: 1, pista: "La tangente es horizontal.",
+      solucion: "En un máximo o mínimo local la tangente es horizontal, así que $f'(x)=0$. Esos puntos se llaman críticos. (Un máximo puede tener $f'$ grande antes y después, pero cero justo ahí.)" },
+    { etiqueta: "Clasificar", nivel: 3, criterio: "Usar el criterio de la 2ª derivada (§3)",
+      enunciado: "Si $f'(c)=0$ y $f''(c)\\gt0$, entonces $c$ es un:",
+      opciones: ["mínimo local", "punto de inflexión", "no se puede saber", "máximo local"],
+      correcta: 0, pista: "$f''\\gt0$ es cóncava hacia arriba (forma de taza).",
+      solucion: "$f''(c)>0$ significa cóncava hacia arriba (forma de taza), así que el punto crítico es un mínimo local. Si fuera $f''(c)<0$ sería máximo." },
+    { etiqueta: "La caja", nivel: 3, criterio: "Resolver la optimización de la caja (§4)",
+      enunciado: "De un cartón $12\\times12$ se cortan esquinas de lado $x$ para una caja. El volumen máximo se da en:",
+      opciones: ["$x=3$", "$x=6$", "$x=2$", "$x=4$"],
+      correcta: 2, pista: "$V'(x)=12(x-2)(x-6)=0$; descarta la que anula el volumen.",
+      solucion: "$V=x(12-2x)^2$, $V'=12(x-2)(x-6)=0$ da $x=2$ o $x=6$. Pero $x=6$ anula la base (volumen cero), así que el máximo es $x=2$, con $V=128$ cm³." }
+  ]
+});
+OVA.quiz({
+  destino: "final", titulo: "Práctica final · 8 preguntas",
+  items: [
+    { etiqueta: "Dos usos", nivel: 1, criterio: "Reconocer las aplicaciones (§1)",
+      enunciado: "¿Cuáles son las dos grandes aplicaciones de la derivada de esta guía?",
+      opciones: ["graficar y tabular", "factorizar y simplificar", "sumar y restar", "razón de cambio relacionada y optimización"],
+      correcta: 3, pista: "Una liga velocidades; la otra busca el mejor valor.",
+      solucion: "Razón de cambio relacionada (ligar velocidades de cambio de variables conectadas) y optimización (hallar el máximo o mínimo buscando $f'=0$)." },
+    { etiqueta: "Escalera", nivel: 2, criterio: "Interpretar el signo (§2)",
+      enunciado: "En el problema de la escalera, el signo negativo de $dy/dt$ significa que:",
+      opciones: ["la escalera crece", "el extremo superior baja", "la base se acerca", "no hay movimiento"],
+      correcta: 1, pista: "$y$ es la altura del extremo superior.",
+      solucion: "$dy/dt<0$ significa que $y$ (la altura del extremo superior) disminuye: el extremo baja mientras la base se aleja. El signo es información física, no un error." },
+    { etiqueta: "Críticos", nivel: 2, criterio: "Definir punto crítico (§3)",
+      enunciado: "Los puntos críticos de $f(x)=x^{3}-3x^{2}+2$ están en:",
+      opciones: ["$x=0$ y $x=2$", "$x=3$", "$x=-2$", "$x=1$"],
+      correcta: 0, pista: "$f'(x)=3x^2-6x=3x(x-2)=0$.",
+      solucion: "$f'(x)=3x^2-6x=3x(x-2)=0$ da $x=0$ y $x=2$. En $x=1$ está la inflexión (donde $f''=0$), no un crítico." },
+    { etiqueta: "Clasificar", nivel: 3, criterio: "Clasificar críticos (§3)",
+      enunciado: "Para $f(x)=x^{3}-3x^{2}+2$ con $f''(x)=6x-6$, el punto $x=0$ es:",
+      opciones: ["no es crítico", "un mínimo", "un máximo", "una inflexión"],
+      correcta: 2, pista: "Evalúa $f''(0)$ y mira el signo.",
+      solucion: "$f''(0)=-6<0$: cóncava hacia abajo, así que $x=0$ es un máximo local, en $(0,2)$. En $x=2$, $f''(2)=6>0$, es mínimo." },
+    { etiqueta: "Corral", nivel: 3, criterio: "Resolver el corral (§4)",
+      enunciado: "Con 100 m de cerca, el rectángulo de área máxima es:",
+      opciones: ["$20\\times30$", "$5\\times45$", "$10\\times40$", "$25\\times25$ (cuadrado)"],
+      correcta: 3, pista: "$A=x(50-x)$, máximo donde $A'=50-2x=0$.",
+      solucion: "$2x+2y=100\\Rightarrow y=50-x$; $A=x(50-x)$, y $A'=50-2x=0$ da $x=25$, $y=25$: un cuadrado de área $625$ m². El cuadrado siempre maximiza el área con perímetro fijo." },
+    { etiqueta: "Método", nivel: 2, criterio: "Ordenar el método (§5)",
+      enunciado: "En optimización, tras igualar la derivada a cero, ¿qué falta siempre hacer?",
+      opciones: ["nada, ya está", "verificar que es máximo/mínimo y revisar la frontera", "graficar", "derivar otra vez sin motivo"],
+      correcta: 1, pista: "Igualar a cero da candidatos, no la respuesta final.",
+      solucion: "Igualar $f'=0$ da candidatos; hay que verificar con la 2ª derivada cuál es máximo o mínimo, descartar soluciones sin sentido, y revisar los extremos del dominio (a veces el óptimo está en la frontera)." },
+    { etiqueta: "Razón", nivel: 3, criterio: "Aplicar la cadena en el tiempo (§2)",
+      enunciado: "Si el área de un círculo crece y $A=\\pi r^{2}$, entonces $dA/dt$ es:",
+      opciones: ["$2\\pi r\\,(dr/dt)$", "$\\pi r^{2}$", "$2r$", "$2\\pi r$"],
+      correcta: 0, pista: "Deriva respecto de $t$: cadena.",
+      solucion: "$\\dfrac{dA}{dt}=2\\pi r\\dfrac{dr}{dt}$ por la regla de la cadena. La opción a) es solo $dA/dr$, sin la tasa $dr/dt$ que conecta con el tiempo." },
+    { etiqueta: "Volumen", nivel: 2, criterio: "Confirmar el volumen máximo (§4)",
+      enunciado: "En la caja óptima del cartón $12\\times12$ (corte $x=2$), el volumen máximo es:",
+      opciones: ["$96$", "$64$", "$128$", "$144$"],
+      correcta: 2, pista: "$V=x(12-2x)^2$ con $x=2$: $2\\cdot 8^2$.",
+      solucion: "$V(2)=2(12-4)^2=2\\cdot64=128$ cm³. Es el mayor volumen posible; cualquier otro corte da menos." }
+  ]
+});
+</script>
 </body>
 </html>

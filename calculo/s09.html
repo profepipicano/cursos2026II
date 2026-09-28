@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 9 · Análisis gráfico y aplicaciones económicas — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 9 · Análisis gráfico y aplicaciones económicas — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 9</h1>
+      <h1>Cálculo · Guía 9</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,404 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Qué dice f'</a>
+    <a href="#s2">2 · Qué dice f''</a>
+    <a href="#s3">3 · Análisis completo</a>
+    <a href="#s4">4 · Análisis marginal</a>
+    <a href="#s5">5 · Elasticidad</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 9 · Análisis gráfico y aplicaciones económicas</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 9 · Corte II</div>
+  <h2>Análisis gráfico y aplicaciones económicas</h2>
+  <p>Esta guía cierra el corte reuniendo todo: usar la primera y segunda derivada para dibujar y
+     entender una función completa, y aplicar la derivada al mundo económico —costo marginal,
+     ingreso marginal, elasticidad— el lenguaje del análisis empresarial.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 3.3–3.6</span>
+    <span class="chip">Stewart · Cap. 4.3</span>
+    <span class="chip">Semana 9</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 8 usó $f'=0$ para hallar máximos y mínimos. Aquí
+  exprimimos las derivadas al máximo: el <em>signo</em> de $f'$ dice dónde crece la función, y el de
+  $f''$ dice cómo se curva. Juntas permiten trazar la gráfica sin tabular cientos de puntos.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Qué dice la primera derivada</h3>
+
+  <div class="callout-dark">
+    <h3>El signo de f' es crecimiento</h3>
+    <p>La derivada es la pendiente. Si $f'(x)\gt0$, la pendiente es positiva y la función
+       <strong>crece</strong>. Si $f'(x)\lt0$, decrece. Y donde $f'$ cambia de signo, la función
+       pasa de crecer a decrecer (un máximo) o al revés (un mínimo).</p>
+    <p>Por eso los puntos críticos separan la recta en intervalos de crecimiento y decrecimiento:
+       basta mirar el signo de $f'$ en cada tramo.</p>
+  </div>
+
+  <div class="def">
+    <strong>Criterio de la primera derivada.</strong> En un intervalo:
+    <br>• $f'\gt0$ ⟹ $f$ creciente. &nbsp;&nbsp; • $f'\lt0$ ⟹ $f$ decreciente.
+    <br>Si $f'$ cambia de $+$ a $-$ en $c$: máximo local. De $-$ a $+$: mínimo local.
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Qué dice la segunda derivada</h3>
+
+  <div class="callout-dark">
+    <h3>El signo de f'' es concavidad</h3>
+    <p>La segunda derivada mide cómo cambia la pendiente. Si $f''\gt0$, la pendiente aumenta y la
+       curva se abre hacia arriba (<strong>cóncava hacia arriba</strong>, forma de taza). Si
+       $f''\lt0$, se abre hacia abajo (forma de campana).</p>
+    <p>Donde $f''$ cambia de signo, la curva cambia de concavidad: es un <strong>punto de
+       inflexión</strong>. Ahí la curva pasa de taza a campana o viceversa.</p>
+  </div>
+
+  <div class="def">
+    <strong>Concavidad.</strong> • $f''\gt0$ ⟹ cóncava hacia arriba. &nbsp; • $f''\lt0$ ⟹ cóncava
+    hacia abajo. &nbsp; Donde $f''$ cambia de signo hay un <strong>punto de inflexión</strong>.
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Análisis gráfico completo</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Analizar $f(x)=x^{3}-3x^{2}+2$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Primera derivada: crecimiento</div>
+        $f'(x)=3x^{2}-6x=3x(x-2)$. Críticos en $x=0$ y $x=2$. Signo: $f'\gt0$ para $x\lt0$
+        (crece), $f'\lt0$ entre 0 y 2 (decrece), $f'\gt0$ para $x\gt2$ (crece).
+      </div>
+      <div class="paso"><div class="paso-t">Segunda derivada: concavidad</div>
+        $f''(x)=6x-6=6(x-1)$. Negativa para $x\lt1$ (cóncava abajo), positiva para $x\gt1$
+        (cóncava arriba). Inflexión en $x=1$.
+      </div>
+      <div class="paso"><div class="paso-t">Clasificar los críticos</div>
+        $f''(0)=-6\lt0$: máximo en $(0,2)$. $f''(2)=6\gt0$: mínimo en $(2,-2)$.
+      </div>
+      <div class="paso"><div class="paso-t">Trazar</div>
+        Sube hasta el máximo $(0,2)$, baja pasando por la inflexión $(1,0)$, llega al mínimo
+        $(2,-2)$ y vuelve a subir. Todo el comportamiento sale de $f'$ y $f''$, sin tabular.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">3.1 f, f' y f'' juntas</div>
+  <div class="viz" data-viz="analisis">
+    <div class="viz-controls">
+      <label for="an-f">Función</label>
+      <select id="an-f">
+        <option value="cubica">f = x³ − 3x² + 2</option>
+        <option value="cuartica">f = x⁴ − 4x²</option>
+        <option value="seno">f = sen x</option>
+      </select>
+      <label for="an-c">Mostrar</label>
+      <select id="an-c" class="capa">
+        <option value="todas">f, f' y f''</option>
+        <option value="f">solo f</option>
+        <option value="fp">solo f'</option>
+        <option value="fpp">solo f''</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Observa la alineación: donde <span style="color:#1c7a4c">f' (verde)</span> cruza el eje, f tiene
+    un máximo o mínimo (líneas rojas). Donde <span style="color:#c68f2e">f'' (naranja)</span> cruza
+    el eje, f cambia de concavidad (punto morado, inflexión).
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Análisis gráfico</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Análisis marginal</h3>
+
+  <div class="callout-dark">
+    <h3>«Marginal» significa «derivada»</h3>
+    <p>En economía, <em>marginal</em> es el efecto de producir o vender <strong>una unidad más</strong>.
+       Eso es exactamente la derivada: la tasa de cambio instantánea. El costo marginal es la derivada
+       del costo; el ingreso marginal, la derivada del ingreso.</p>
+    <p>Y aquí reaparece la optimización de la Guía 8: la ganancia se maximiza donde su derivada es
+       cero, es decir, donde el ingreso marginal iguala al costo marginal. Producir una unidad más
+       solo conviene mientras lo que ingresa supere lo que cuesta.</p>
+  </div>
+
+  <div class="def">
+    Si $C(q)$ es el costo de producir $q$ unidades, el <strong>costo marginal</strong> es $C'(q)$.
+    Si $R(q)$ es el ingreso, el <strong>ingreso marginal</strong> es $R'(q)$. La ganancia
+    $P=R-C$ se maximiza donde $P'=0$, o sea donde $R'(q)=C'(q)$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Costo e ingreso marginales</h4>
+    <div class="ejemplo-body">
+      Sea el costo $C(q)=q^{2}+10q+300$ y el ingreso $R(q)=100q-q^{2}$.
+      <div class="paso"><div class="paso-t">Costo marginal</div>
+        $C'(q)=2q+10$. Producir la unidad 21 (en $q=20$) cuesta $C'(20)=50$.
+      </div>
+      <div class="paso"><div class="paso-t">Ingreso marginal</div>
+        $R'(q)=100-2q$.
+      </div>
+      <div class="paso"><div class="paso-t">Cantidad de ganancia máxima</div>
+        Igualar $R'=C'$: $100-2q=2q+10\Rightarrow4q=90\Rightarrow q=22{,}5$. En ese nivel, cada
+        unidad extra deja de ser rentable.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Elasticidad de la demanda</h3>
+
+  <div class="callout-dark">
+    <h3>¿Cuánto responde la cantidad al precio?</h3>
+    <p>La <strong>elasticidad</strong> mide la sensibilidad de la cantidad demandada ante cambios de
+       precio: el cambio porcentual en la cantidad dividido por el cambio porcentual en el precio.
+       Se calcula con la derivada de la demanda.</p>
+    <p>Su valor decide una pregunta clave de negocio: ¿subir el precio aumenta o reduce el ingreso?
+       Si la demanda es muy sensible (elástica), subir el precio espanta tantos clientes que el
+       ingreso baja. Si es poco sensible (inelástica), subir el precio aumenta el ingreso.</p>
+  </div>
+
+  <div class="def">
+    <strong>Elasticidad.</strong> Para una demanda $q(p)$:
+    $$E=\frac{dq}{dp}\cdot\frac{p}{q}$$
+    • $|E|\gt1$: demanda <strong>elástica</strong> (muy sensible). &nbsp;
+    • $|E|\lt1$: <strong>inelástica</strong>. &nbsp; • $|E|=1$: unitaria (ingreso máximo).
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Elasticidad de $q=100-2p$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Fórmula</div>
+        $\dfrac{dq}{dp}=-2$, así que $E=-2\cdot\dfrac{p}{q}=\dfrac{-2p}{100-2p}$.
+      </div>
+      <div class="paso"><div class="paso-t">En $p=10$ (precio bajo)</div>
+        $q=80$, $E=\dfrac{-20}{80}=-0{,}25$. $|E|\lt1$: inelástica. Subir el precio aumenta el ingreso.
+      </div>
+      <div class="paso"><div class="paso-t">En $p=40$ (precio alto)</div>
+        $q=20$, $E=\dfrac{-80}{20}=-4$. $|E|\gt1$: elástica. Subir el precio reduce el ingreso.
+      </div>
+      <div class="paso"><div class="paso-t">En $p=25$ (punto medio)</div>
+        $q=50$, $E=-1$: elasticidad unitaria. Ahí el ingreso es máximo.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 Explora la elasticidad</div>
+  <div class="viz" data-viz="elasticidad">
+    <div class="viz-controls">
+      <label for="el-a">Demanda</label>
+      <select id="el-a">
+        <option value="2">q = 100 − 2p</option>
+        <option value="4">q = 100 − 4p</option>
+        <option value="1">q = 100 − p</option>
+      </select>
+      <label for="el-p">Precio p</label>
+      <input id="el-p" class="precio" type="range" min="1" max="90" step="1" value="25">
+      <span class="precio-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    En el punto medio de la recta de demanda (verde) la elasticidad es unitaria y el ingreso es
+    máximo. A precios más bajos la demanda es inelástica; a precios más altos, elástica. Mueve el
+    precio y cruza ese punto.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Economía marginal y elasticidad</h3>
+  <div id="chk2"></div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Síntesis del corte</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La elasticidad guía la política de precios: para un producto inelástico (como un bien básico),
+      subir el precio aumenta ingresos; para uno elástico (un lujo con sustitutos), conviene bajar
+      el precio. El análisis marginal decide el nivel óptimo de producción.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El punto donde el ingreso marginal iguala al costo marginal marca el nivel de producción más
+      rentable. Y el análisis gráfico de la función de utilidad —dónde es positiva, dónde cruza cero—
+      identifica el punto de equilibrio y los rangos de operación con y sin ganancia, el núcleo del
+      análisis costo-volumen-utilidad.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      El análisis de f' y f'' es la base de la optimización que entrena modelos: el gradiente (f')
+      indica la dirección de mejora y la curvatura (f'') cómo de rápido converge. La elasticidad
+      aparece en modelos de precios dinámicos y sistemas de recomendación.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El análisis gráfico de f' y f'' caracteriza la respuesta de un sistema: máximos de sobreimpulso,
+      inflexiones en la transición. Los conceptos marginales se trasladan a la eficiencia: cuánta
+      salida extra se obtiene por unidad extra de potencia de entrada.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Signo de $f'$</strong>: positivo crece, negativo decrece; cambio de signo = máximo o mínimo.</li>
+    <li><strong>Signo de $f''$</strong>: positivo cóncava arriba, negativo cóncava abajo; cambio = inflexión.</li>
+    <li>Con $f'$ y $f''$ se traza la gráfica completa sin tabular.</li>
+    <li><strong>Marginal = derivada</strong>: costo marginal $C'(q)$, ingreso marginal $R'(q)$.</li>
+    <li>La ganancia se maximiza donde <strong>$R'(q)=C'(q)$</strong> (ingreso marginal = costo marginal).</li>
+    <li><strong>Elasticidad</strong> $E=\dfrac{dq}{dp}\dfrac{p}{q}$: $|E|\gt1$ elástica, $|E|\lt1$ inelástica, $|E|=1$ ingreso máximo.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-calculo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: "chk1", titulo: "Análisis gráfico · 3 preguntas",
+  items: [
+    { etiqueta: "Signo de f'", nivel: 2, criterio: "Leer crecimiento (§1)",
+      enunciado: "Si $f'(x)\\gt0$ en un intervalo, la función:",
+      opciones: ["crece", "es constante", "tiene un máximo", "decrece"],
+      correcta: 0, pista: "La derivada es la pendiente.",
+      solucion: "$f'>0$ significa pendiente positiva, así que $f$ crece en ese intervalo. Si fuera $f'<0$, decrecería." },
+    { etiqueta: "Signo de f''", nivel: 2, criterio: "Leer concavidad (§2)",
+      enunciado: "Si $f''(x)\\gt0$, la gráfica es:",
+      opciones: ["una recta", "discontinua", "cóncava hacia arriba (taza)", "cóncava hacia abajo (campana)"],
+      correcta: 2, pista: "La pendiente va aumentando.",
+      solucion: "$f''>0$ significa que la pendiente aumenta: la curva se abre hacia arriba, en forma de taza (cóncava hacia arriba). $f''<0$ sería forma de campana." },
+    { etiqueta: "Inflexión", nivel: 2, criterio: "Definir punto de inflexión (§2)",
+      enunciado: "Un punto de inflexión es donde:",
+      opciones: ["$f=0$", "la función es máxima", "$f'=0$", "$f''$ cambia de signo (cambia la concavidad)"],
+      correcta: 3, pista: "Cambia la forma de la curvatura.",
+      solucion: "En un punto de inflexión $f''$ cambia de signo, y la curva pasa de cóncava hacia arriba a hacia abajo (o viceversa). Donde $f'=0$ hay críticos, que es distinto." }
+  ]
+});
+OVA.quiz({
+  destino: "chk2", titulo: "Economía marginal y elasticidad · 3 preguntas",
+  items: [
+    { etiqueta: "Marginal", nivel: 2, criterio: "Entender lo marginal (§4)",
+      enunciado: "En economía, el costo marginal es:",
+      opciones: ["el costo total", "la derivada del costo, $C'(q)$", "el costo dividido por $q$", "siempre constante"],
+      correcta: 1, pista: "«Marginal» = efecto de una unidad más = derivada.",
+      solucion: "El costo marginal es $C'(q)$, la derivada del costo: mide cuánto cuesta producir una unidad más. 'Marginal' siempre significa derivada en economía." },
+    { etiqueta: "Ganancia máx", nivel: 3, criterio: "Condición de ganancia máxima (§4)",
+      enunciado: "La ganancia $P=R-C$ se maximiza cuando:",
+      opciones: ["$R'(q)=C'(q)$ (ingreso marginal = costo marginal)", "$C'=0$", "$q=0$", "$R=C$"],
+      correcta: 0, pista: "$P'=R'-C'=0$.",
+      solucion: "$P'=R'-C'=0$ implica $R'(q)=C'(q)$: la ganancia es máxima cuando el ingreso marginal iguala al costo marginal. Producir más allá deja de ser rentable." },
+    { etiqueta: "Elasticidad", nivel: 3, criterio: "Clasificar la elasticidad (§5)",
+      enunciado: "Si $|E|\\gt1$, la demanda es:",
+      opciones: ["constante", "inelástica", "elástica (subir el precio reduce el ingreso)", "unitaria"],
+      correcta: 2, pista: "$|E|\\gt1$: muy sensible al precio.",
+      solucion: "$|E|>1$ es demanda elástica: la cantidad responde mucho al precio, así que subir el precio espanta tantos clientes que el ingreso baja. Con $|E|<1$ (inelástica) ocurre lo contrario." }
+  ]
+});
+OVA.quiz({
+  destino: "chk3", titulo: "Síntesis del corte · 3 preguntas",
+  items: [
+    { etiqueta: "Alineación", nivel: 3, criterio: "Relacionar f' con máximos (§3)",
+      enunciado: "En la gráfica de $f$, donde $f'$ cruza el eje horizontal, $f$ tiene:",
+      opciones: ["una asíntota", "un cero", "una inflexión", "un máximo o un mínimo"],
+      correcta: 3, pista: "$f'=0$ en esos cruces.",
+      solucion: "Donde $f'$ cruza cero, la pendiente de $f$ es cero: un máximo o un mínimo. Donde $f''$ cruza cero, en cambio, hay una inflexión." },
+    { etiqueta: "Elasticidad", nivel: 3, criterio: "Calcular elasticidad (§5)",
+      enunciado: "Para $q=100-2p$, la elasticidad en $p=25$ (donde $q=50$) es:",
+      opciones: ["$-0{,}25$", "$-1$ (unitaria)", "$-4$", "$-2$"],
+      correcta: 1, pista: "$E=(dq/dp)(p/q)=(-2)(25/50)$.",
+      solucion: "$E=(-2)\\cdot\\dfrac{25}{50}=-1$: elasticidad unitaria. En el punto medio de la recta de demanda el ingreso es máximo. En $p=10$ sería $-0{,}25$ y en $p=40$ sería $-4$." },
+    { etiqueta: "Concepto", nivel: 2, criterio: "Conectar todo el corte (§3–5)",
+      enunciado: "El análisis de $f'$ y $f''$ y el análisis marginal comparten que todos:",
+      opciones: ["usan derivadas para extraer información", "requieren graficar a mano", "solo aplican a polinomios", "ignoran el contexto"],
+      correcta: 0, pista: "¿Qué herramienta está detrás de todo el corte?",
+      solucion: "Todo el corte se basa en la derivada: el signo de $f'$ y $f''$ describe la forma de la gráfica, y las derivadas del costo e ingreso dan las cantidades marginales. La derivada es la herramienta común." }
+  ]
+});
+OVA.quiz({
+  destino: "final", titulo: "Práctica final · 8 preguntas",
+  items: [
+    { etiqueta: "Crecimiento", nivel: 2, criterio: "Leer intervalos de crecimiento (§1)",
+      enunciado: "Para $f(x)=x^{3}-3x^{2}+2$ (con $f'=3x(x-2)$), ¿dónde decrece $f$?",
+      opciones: ["nunca", "para $x\\lt0$", "entre $x=0$ y $x=2$", "para $x\\gt2$"],
+      correcta: 2, pista: "$f'\\lt0$ donde $3x(x-2)$ es negativo.",
+      solucion: "$f'=3x(x-2)<0$ cuando $0<x<2$ (un factor positivo y otro negativo): ahí $f$ decrece. Fuera de ese intervalo $f'>0$ y crece." },
+    { etiqueta: "Concavidad", nivel: 2, criterio: "Hallar inflexión (§2)",
+      enunciado: "Para $f(x)=x^{3}-3x^{2}+2$ (con $f''=6x-6$), la inflexión está en:",
+      opciones: ["$x=2$", "$x=3$", "$x=0$", "$x=1$"],
+      correcta: 3, pista: "$f''=6x-6=0$.",
+      solucion: "$f''=6x-6=0$ da $x=1$: ahí cambia la concavidad (de campana a taza). En $(1,0)$ está la inflexión." },
+    { etiqueta: "Marginal", nivel: 2, criterio: "Calcular costo marginal (§4)",
+      enunciado: "Si $C(q)=q^{2}+10q+300$, el costo marginal $C'(q)$ es:",
+      opciones: ["$q+10$", "$2q+10$", "$q^{2}+10$", "$2q+300$"],
+      correcta: 1, pista: "Deriva el costo.",
+      solucion: "$C'(q)=2q+10$. La constante $300$ (costo fijo) desaparece al derivar: no afecta el costo marginal." },
+    { etiqueta: "Ingreso", nivel: 2, criterio: "Calcular ingreso marginal (§4)",
+      enunciado: "Si $R(q)=100q-q^{2}$, el ingreso marginal $R'(q)$ es:",
+      opciones: ["$100-2q$", "$100-q$", "$-2q$", "$100q$"],
+      correcta: 0, pista: "Deriva el ingreso.",
+      solucion: "$R'(q)=100-2q$. El ingreso marginal decrece al aumentar $q$: cada unidad extra ingresa menos que la anterior." },
+    { etiqueta: "Ganancia", nivel: 3, criterio: "Hallar cantidad óptima (§4)",
+      enunciado: "Con $C'=2q+10$ y $R'=100-2q$, la ganancia se maximiza en:",
+      opciones: ["$q=50$", "$q=10$", "$q=22{,}5$", "$q=45$"],
+      correcta: 2, pista: "Iguala $R'=C'$.",
+      solucion: "Igualando $100-2q=2q+10$: $90=4q$, $q=22{,}5$. En ese nivel el ingreso marginal iguala al costo marginal y la ganancia es máxima." },
+    { etiqueta: "Elasticidad", nivel: 3, criterio: "Interpretar elasticidad (§5)",
+      enunciado: "Para $q=100-2p$, en $p=10$ ($q=80$) la elasticidad $E=-0{,}25$ significa que:",
+      opciones: ["no hay demanda", "el precio es óptimo", "la demanda es elástica", "la demanda es inelástica; subir el precio aumenta el ingreso"],
+      correcta: 3, pista: "$|E|\\lt1$ es inelástica.",
+      solucion: "$|E|=0{,}25<1$: inelástica. La cantidad responde poco al precio, así que subir el precio aumenta el ingreso. Ocurre a precios bajos, lejos del punto medio." },
+    { etiqueta: "Elasticidad", nivel: 2, criterio: "Ubicar el ingreso máximo (§5)",
+      enunciado: "¿En qué punto de la recta de demanda el ingreso es máximo?",
+      opciones: ["donde $|E|\\gt1$", "donde $|E|=1$ (elasticidad unitaria)", "donde $|E|\\lt1$", "en el precio más alto"],
+      correcta: 1, pista: "El punto medio de la recta.",
+      solucion: "El ingreso es máximo donde la elasticidad es unitaria ($|E|=1$), en el punto medio de la recta de demanda. A un lado es elástica, al otro inelástica." },
+    { etiqueta: "Síntesis", nivel: 2, criterio: "Cerrar el corte (§1–5)",
+      enunciado: "¿Qué permiten $f'$ y $f''$ juntas?",
+      opciones: ["trazar la gráfica completa sin tabular cientos de puntos", "nada útil", "solo derivar más rápido", "solo hallar ceros"],
+      correcta: 0, pista: "Crecimiento + concavidad = forma completa.",
+      solucion: "$f'$ da los intervalos de crecimiento y los extremos; $f''$ da la concavidad y las inflexiones. Con ambas se traza la forma completa de la gráfica sin tabular." }
+  ]
+});
+</script>
 </body>
 </html>

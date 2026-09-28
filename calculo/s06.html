@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 6 · Producto, cociente y regla de la cadena — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 6 · Producto, cociente y regla de la cadena — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 6</h1>
+      <h1>Cálculo · Guía 6</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,404 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Por qué no basta sumar</a>
+    <a href="#s2">2 · Regla del producto</a>
+    <a href="#s3">3 · Regla del cociente</a>
+    <a href="#s4">4 · Regla de la cadena</a>
+    <a href="#s5">5 · Combinando reglas</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 6 · Producto, cociente y regla de la cadena</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 6 · Corte II</div>
+  <h2>Producto, cociente y regla de la cadena</h2>
+  <p>La Guía 4 dio las reglas básicas: la derivada de una suma es la suma de las derivadas. Pero
+     un producto no se deriva multiplicando derivadas, ni un cociente dividiéndolas. Esta guía
+     completa el arsenal con las tres reglas que permiten derivar casi cualquier función.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 2.3–2.4</span>
+    <span class="chip">Stewart · Cap. 3.2–3.4</span>
+    <span class="chip">Semana 6</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 4 aprendiste que $(x^{n})'=nx^{n-1}$ y que la
+  derivada respeta sumas y múltiplos constantes. Eso deriva polinomios, pero no una función como
+  $x^{2}\cos x$ o $\sqrt{x^{2}+1}$. Aquí están las reglas que sí.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Por qué el producto no se deriva multiplicando</h3>
+
+  <div class="callout-dark">
+    <h3>Una trampa tentadora</h3>
+    <p>La suma se porta bien: $(f+g)'=f'+g'$. Sería cómodo que el producto hiciera lo mismo, que
+       $(f\cdot g)'$ fuera $f'\cdot g'$. Pero es falso, y basta un ejemplo para verlo.</p>
+    <p>Toma $f(x)=x$ y $g(x)=x$, así que $f\cdot g=x^{2}$. Sabemos que $(x^{2})'=2x$. Pero
+       $f'\cdot g'=1\cdot1=1\neq2x$. La regla ingenua falla estrepitosamente.</p>
+    <p>La razón es intuitiva: cuando dos cantidades cambian a la vez, el cambio del producto tiene
+       <em>dos</em> contribuciones —una por cada factor que varía— y hay que sumarlas. Eso es
+       exactamente lo que dice la regla del producto.</p>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Regla del producto</h3>
+
+  <div class="def">
+    <strong>Regla del producto.</strong> Si $f$ y $g$ son derivables,
+    $$(f\cdot g)'=f'\cdot g+f\cdot g'$$
+    «La derivada del primero por el segundo, más el primero por la derivada del segundo.»
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Derivar $x^{2}\cos x$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Identificar los factores</div>
+        $f=x^{2}$ (con $f'=2x$) y $g=\cos x$ (con $g'=-\sin x$).
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la regla</div>
+        $(x^{2}\cos x)'=2x\cos x+x^{2}(-\sin x)=2x\cos x-x^{2}\sin x$
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Con valores: $(3x^{2}+1)(x^{3}-2)$ en $x=1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Derivar por la regla</div>
+        Con $f=3x^{2}+1$ ($f'=6x$) y $g=x^{3}-2$ ($g'=3x^{2}$):<br>
+        $\big[(3x^{2}+1)(x^{3}-2)\big]'=6x(x^{3}-2)+(3x^{2}+1)(3x^{2})$
+      </div>
+      <div class="paso"><div class="paso-t">Evaluar en $x=1$</div>
+        $6(1)(1-2)+(3+1)(3)=6(-1)+4(3)=-6+12=6$
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Regla del producto</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Regla del cociente</h3>
+
+  <div class="def">
+    <strong>Regla del cociente.</strong> Si $f$ y $g$ son derivables y $g\neq0$,
+    $$\left(\frac{f}{g}\right)'=\frac{f'\cdot g-f\cdot g'}{g^{2}}$$
+    «Derivada del de arriba por el de abajo, menos el de arriba por la derivada del de abajo, todo
+    sobre el de abajo al cuadrado.» El orden importa: el signo menos no es simétrico.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Derivar $\dfrac{2x+1}{x-3}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Identificar</div>
+        $f=2x+1$ ($f'=2$), $g=x-3$ ($g'=1$).
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la regla</div>
+        $\dfrac{2(x-3)-(2x+1)(1)}{(x-3)^{2}}=\dfrac{2x-6-2x-1}{(x-3)^{2}}=\dfrac{-7}{(x-3)^{2}}$
+      </div>
+      <div class="paso"><div class="paso-t">Interpretar</div>
+        El numerador quedó constante ($-7$), así que la derivada es siempre negativa: la función
+        decrece en todo su dominio. El denominador al cuadrado es siempre positivo, lo que confirma
+        el signo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Regla del cociente</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Regla de la cadena</h3>
+
+  <div class="callout-dark">
+    <h3>La reina de las reglas</h3>
+    <p>La mayoría de las funciones reales son <em>composiciones</em>: una función dentro de otra.
+       $\sqrt{x^{2}+1}$ es «elevar al cuadrado y sumar uno», y luego «sacar raíz». $\sin(3x)$ es
+       «multiplicar por 3» y luego «tomar seno». Para derivarlas hace falta la regla de la cadena.</p>
+    <p>La idea: la tasa de cambio total es el <strong>producto</strong> de las tasas de cada eslabón.
+       Si $y$ cambia 3 veces más rápido que $u$, y $u$ cambia 2 veces más rápido que $x$, entonces
+       $y$ cambia $3\times2=6$ veces más rápido que $x$.</p>
+  </div>
+
+  <div class="def">
+    <strong>Regla de la cadena.</strong> Si $y=f(g(x))$, entonces
+    $$\frac{dy}{dx}=f'(g(x))\cdot g'(x)$$
+    «Deriva la función de afuera (dejando el interior intacto) y multiplica por la derivada del
+    interior.» En notación de Leibniz: $\dfrac{dy}{dx}=\dfrac{dy}{du}\cdot\dfrac{du}{dx}$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Derivar $(x^{2}+1)^{5}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Ver la composición</div>
+        Función de afuera: $f(u)=u^{5}$. Función de adentro: $u=g(x)=x^{2}+1$.
+      </div>
+      <div class="paso"><div class="paso-t">Derivar afuera, dejar el interior</div>
+        $f'(u)=5u^{4}$, así que $f'(g(x))=5(x^{2}+1)^{4}$.
+      </div>
+      <div class="paso"><div class="paso-t">Multiplicar por la derivada del interior</div>
+        $g'(x)=2x$, luego $\big[(x^{2}+1)^{5}\big]'=5(x^{2}+1)^{4}\cdot2x=10x(x^{2}+1)^{4}$
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Tres casos rápidos</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\sin(3x)$</div>
+        Afuera $\sin$, adentro $3x$: $\cos(3x)\cdot3=3\cos(3x)$.
+      </div>
+      <div class="paso"><div class="paso-t">$e^{x^{2}}$</div>
+        Afuera $e^{u}$ (que es su propia derivada), adentro $x^{2}$: $e^{x^{2}}\cdot2x=2x\,e^{x^{2}}$.
+      </div>
+      <div class="paso"><div class="paso-t">$\sqrt{x^{2}+1}$</div>
+        Afuera $\sqrt{u}=u^{1/2}$ (derivada $\tfrac12u^{-1/2}$), adentro $x^{2}+1$:
+        $\dfrac{1}{2\sqrt{x^{2}+1}}\cdot2x=\dfrac{x}{\sqrt{x^{2}+1}}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 La cadena, en imagen</div>
+  <div class="viz" data-viz="cadena">
+    <div class="viz-controls">
+      <label for="cd-f">Función compuesta</label>
+      <select id="cd-f">
+        <option value="pot">y = (x²+1)³</option>
+        <option value="sen">y = sen(3x)</option>
+        <option value="exp">y = e^(x²)</option>
+        <option value="raiz">y = √(x²+1)</option>
+      </select>
+      <label for="cd-p">Punto x</label>
+      <input id="cd-p" class="punto" type="range" min="-2" max="2" step="0.05" value="0.8">
+      <span class="punto-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La pendiente de la tangente (recta roja) se calcula multiplicando las dos tasas: la de la función
+    externa evaluada en el interior, por la del interior. Mueve el punto y observa cómo la regla de
+    la cadena predice exactamente esa pendiente.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Regla de la cadena</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Combinando las reglas</h3>
+
+  <p>Las funciones reales suelen mezclar varias reglas. La clave es identificar la estructura
+     principal —¿es un producto, un cociente o una composición?— y aplicar esa regla primero,
+     derivando cada parte con la regla que le toque.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Derivar $x\sqrt{x^{2}+1}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Estructura principal: es un producto</div>
+        $f=x$ ($f'=1$) y $g=\sqrt{x^{2}+1}$. La derivada de $g$ pide la regla de la cadena.
+      </div>
+      <div class="paso"><div class="paso-t">Derivar $g$ con la cadena</div>
+        $g'=\dfrac{x}{\sqrt{x^{2}+1}}$ (como en el Ejemplo 5).
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la regla del producto</div>
+        $\left(x\sqrt{x^{2}+1}\right)'=1\cdot\sqrt{x^{2}+1}+x\cdot\dfrac{x}{\sqrt{x^{2}+1}}
+        =\sqrt{x^{2}+1}+\dfrac{x^{2}}{\sqrt{x^{2}+1}}$
+      </div>
+      <div class="paso"><div class="paso-t">Simplificar (opcional)</div>
+        Con común denominador: $\dfrac{(x^{2}+1)+x^{2}}{\sqrt{x^{2}+1}}=\dfrac{2x^{2}+1}{\sqrt{x^{2}+1}}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Estrategia general.</strong> Pregúntate siempre: «¿cuál es la última operación que
+    haría si evaluara esta función en un número?». Esa operación externa define la regla principal.
+    En $x\sqrt{x^{2}+1}$ lo último es multiplicar, así que manda el producto. En $\sqrt{x^{2}+1}$ lo
+    último es la raíz, así que manda la cadena.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Si el ingreso es precio por cantidad, $I(x)=p(x)\cdot x$, y el precio depende de la cantidad
+      vendida, derivar el ingreso exige la regla del producto. El ingreso marginal no es solo el
+      precio: incluye el efecto de que vender más baja el precio.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El valor presente de un flujo, $VP=F(1+i)^{-n}$, se deriva respecto de la tasa $i$ con la regla
+      de la cadena: $\dfrac{dVP}{di}=-nF(1+i)^{-n-1}$, que es negativa (si sube la tasa, baja el valor).
+      Así se mide la sensibilidad del valor de un activo ante cambios en la tasa de interés.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La regla de la cadena es el corazón del algoritmo de <em>retropropagación</em> que entrena
+      redes neuronales: el error se propaga hacia atrás multiplicando las derivadas de cada capa,
+      eslabón por eslabón, exactamente como en la cadena que ves aquí.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      En una señal $v(t)=A\sin(\omega t)$, la corriente por un condensador es proporcional a
+      $dv/dt$, que sale por la regla de la cadena: $A\omega\cos(\omega t)$. El factor $\omega$ que
+      aparece explica por qué las señales rápidas producen más corriente.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Producto no se deriva multiplicando</strong>: $(fg)'\neq f'g'$. La regla correcta es $(fg)'=f'g+fg'$.</li>
+    <li><strong>Cociente</strong>: $\left(\dfrac{f}{g}\right)'=\dfrac{f'g-fg'}{g^{2}}$, con el signo menos y el orden que importan.</li>
+    <li><strong>Cadena</strong>: para $f(g(x))$, deriva afuera dejando el interior, y multiplica por la derivada del interior.</li>
+    <li>La cadena multiplica tasas: $\dfrac{dy}{dx}=\dfrac{dy}{du}\cdot\dfrac{du}{dx}$.</li>
+    <li>Al combinar, identifica la <strong>última operación</strong> para saber qué regla manda.</li>
+    <li>Casos clave: $(u^{n})'=nu^{n-1}u'$, $(\sin u)'=\cos u\cdot u'$, $(e^{u})'=e^{u}\cdot u'$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/3-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-calculo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: "chk1", titulo: "Regla del producto · 3 preguntas",
+  items: [
+    { etiqueta: "La regla", nivel: 2, criterio: "Aplicar la regla del producto (§2)",
+      enunciado: "¿Cuál es la derivada de $f\\cdot g$?",
+      opciones: ["$f'\\cdot g + f\\cdot g'$", "$f'\\cdot g - f\\cdot g'$", "$f\\cdot g'$", "$f'\\cdot g'$"],
+      correcta: 0, pista: "Cada factor aporta un término al cambio del producto.",
+      solucion: "La regla del producto es $(fg)'=f'g+fg'$. Multiplicar las derivadas (opción a) es el error clásico: con $f=g=x$ daría $1$, pero $(x^2)'=2x$. El signo es más, no menos." },
+    { etiqueta: "Aplicar", nivel: 2, criterio: "Derivar un producto concreto (§2)",
+      enunciado: "La derivada de $x^{2}\\cos x$ es:",
+      opciones: ["$2x\\cos x$", "$-2x\\sin x$", "$2x\\cos x - x^{2}\\sin x$", "$2x(-\\sin x)$"],
+      correcta: 2, pista: "Primero por derivada del segundo, más derivada del primero por el segundo.",
+      solucion: "Con $f=x^2$ ($f'=2x$) y $g=\\cos x$ ($g'=-\\sin x$): $(x^2\\cos x)'=2x\\cos x+x^2(-\\sin x)=2x\\cos x-x^2\\sin x$. Las opciones a y d dan solo un término de los dos." },
+    { etiqueta: "Con valores", nivel: 3, criterio: "Evaluar la derivada de un producto (§2)",
+      enunciado: "Para $(3x^{2}+1)(x^{3}-2)$, la derivada evaluada en $x=1$ vale:",
+      opciones: ["$12$", "$-6$", "$0$", "$6$"],
+      correcta: 3, pista: "Deriva por la regla y sustituye: $6x(x^3-2)+(3x^2+1)(3x^2)$ en $x=1$.",
+      solucion: "$6(1)(1-2)+(3+1)(3)=6(-1)+4(3)=-6+12=6$. La opción d) se queda con el primer término y la c) con el segundo; hay que sumarlos." }
+  ]
+});
+OVA.quiz({
+  destino: "chk2", titulo: "Regla del cociente · 3 preguntas",
+  items: [
+    { etiqueta: "La regla", nivel: 2, criterio: "Recordar la regla del cociente (§3)",
+      enunciado: "La derivada de $\\dfrac{f}{g}$ es:",
+      opciones: ["$\\dfrac{f'}{g'}$", "$\\dfrac{f'g-fg'}{g^{2}}$", "$\\dfrac{fg'-f'g}{g^{2}}$", "$\\dfrac{f'g+fg'}{g^{2}}$"],
+      correcta: 1, pista: "Derivada de arriba por abajo, menos arriba por derivada de abajo, sobre abajo al cuadrado.",
+      solucion: "$\\left(\\dfrac{f}{g}\\right)'=\\dfrac{f'g-fg'}{g^2}$. El orden del numerador importa: la opción d) tiene el signo invertido, y la a) suma en vez de restar." },
+    { etiqueta: "Aplicar", nivel: 3, criterio: "Derivar un cociente concreto (§3)",
+      enunciado: "La derivada de $\\dfrac{2x+1}{x-3}$ es:",
+      opciones: ["$\\dfrac{-7}{(x-3)^{2}}$", "$\\dfrac{7}{(x-3)^{2}}$", "$2$", "$\\dfrac{2}{(x-3)^{2}}$"],
+      correcta: 0, pista: "Numerador: $2(x-3)-(2x+1)(1)$.",
+      solucion: "$\\dfrac{2(x-3)-(2x+1)}{(x-3)^2}=\\dfrac{2x-6-2x-1}{(x-3)^2}=\\dfrac{-7}{(x-3)^2}$. El signo negativo indica que la función decrece en todo su dominio." },
+    { etiqueta: "Interpretar", nivel: 2, criterio: "Leer el signo de la derivada (§3)",
+      enunciado: "Si $\\dfrac{2x+1}{x-3}$ tiene derivada $\\dfrac{-7}{(x-3)^{2}}$, la función:",
+      opciones: ["es constante", "crece en todo su dominio", "decrece en todo su dominio", "tiene un máximo"],
+      correcta: 2, pista: "El numerador es negativo y el denominador siempre positivo.",
+      solucion: "El denominador $(x-3)^2$ es siempre positivo y el numerador es $-7$, así que la derivada es siempre negativa: la función decrece en todo su dominio (salvo en $x=3$, donde no está definida)." }
+  ]
+});
+OVA.quiz({
+  destino: "chk3", titulo: "Regla de la cadena · 3 preguntas",
+  items: [
+    { etiqueta: "La idea", nivel: 2, criterio: "Entender la composición (§4)",
+      enunciado: "La regla de la cadena sirve para derivar:",
+      opciones: ["productos", "constantes", "sumas de funciones", "una función compuesta $f(g(x))$"],
+      correcta: 3, pista: "Una función dentro de otra.",
+      solucion: "La cadena deriva composiciones $f(g(x))$: una función aplicada al resultado de otra, como $\\sqrt{x^2+1}$ o $\\sin(3x)$. Sumas y productos tienen sus propias reglas." },
+    { etiqueta: "Aplicar", nivel: 2, criterio: "Derivar por la cadena (§4)",
+      enunciado: "La derivada de $(x^{2}+1)^{5}$ es:",
+      opciones: ["$5(x^{2}+1)^{4}$", "$10x(x^{2}+1)^{4}$", "$5(2x)^{4}$", "$(x^{2}+1)^{4}\\cdot2x$"],
+      correcta: 1, pista: "Deriva la potencia (deja el interior) y multiplica por la derivada del interior $2x$.",
+      solucion: "Afuera $u^5$ da $5u^4$, evaluado en el interior: $5(x^2+1)^4$. Por la derivada del interior $2x$: $5(x^2+1)^4\\cdot2x=10x(x^2+1)^4$. La opción a) olvida multiplicar por $2x$." },
+    { etiqueta: "Trig", nivel: 2, criterio: "Cadena con funciones trigonométricas (§4)",
+      enunciado: "La derivada de $\\sin(3x)$ es:",
+      opciones: ["$3\\cos(3x)$", "$\\cos(3)$", "$3\\sin(3x)$", "$\\cos(3x)$"],
+      correcta: 0, pista: "Derivada del seno por la derivada del interior $3x$.",
+      solucion: "Afuera $\\sin$ da $\\cos(3x)$; por la derivada del interior $3$: $3\\cos(3x)$. La opción a) olvida el factor $3$ que aporta el interior." }
+  ]
+});
+OVA.quiz({
+  destino: "final", titulo: "Práctica final · 8 preguntas",
+  items: [
+    { etiqueta: "Producto", nivel: 1, criterio: "Reconocer la regla correcta (§1)",
+      enunciado: "¿Es cierto que $(fg)'=f'g'$?",
+      opciones: ["Solo para polinomios", "Sí, siempre", "No, la regla correcta es $f'g+fg'$", "Solo si $f=g$"],
+      correcta: 2, pista: "Prueba con $f=g=x$.",
+      solucion: "Es falso: con $f=g=x$ daría $1$, pero $(x^2)'=2x$. La regla correcta es $(fg)'=f'g+fg'$, que sí da $2x$." },
+    { etiqueta: "Cociente", nivel: 3, criterio: "Derivar un cociente (§3)",
+      enunciado: "La derivada de $\\dfrac{x}{x^{2}+1}$ es:",
+      opciones: ["$\\dfrac{x^{2}+1}{(x^{2}+1)^{2}}$", "$1$", "$\\dfrac{1}{2x}$", "$\\dfrac{1-x^{2}}{(x^{2}+1)^{2}}$"],
+      correcta: 3, pista: "$\\dfrac{1\\cdot(x^2+1)-x\\cdot 2x}{(x^2+1)^2}$.",
+      solucion: "$\\dfrac{(x^2+1)-x(2x)}{(x^2+1)^2}=\\dfrac{x^2+1-2x^2}{(x^2+1)^2}=\\dfrac{1-x^2}{(x^2+1)^2}$." },
+    { etiqueta: "Cadena", nivel: 2, criterio: "Cadena con exponencial (§4)",
+      enunciado: "La derivada de $e^{x^{2}}$ es:",
+      opciones: ["$e^{x^{2}}$", "$2x\\,e^{x^{2}}$", "$e^{2x}$", "$x^{2}e^{x^{2}-1}$"],
+      correcta: 1, pista: "La exponencial es su propia derivada; multiplica por la derivada del exponente.",
+      solucion: "Afuera $e^u$ da $e^{x^2}$; por la derivada del interior $2x$: $2x\\,e^{x^2}$. La opción a) olvida el factor del interior." },
+    { etiqueta: "Cadena", nivel: 3, criterio: "Cadena con raíz (§4)",
+      enunciado: "La derivada de $\\sqrt{x^{2}+1}$ es:",
+      opciones: ["$\\dfrac{x}{\\sqrt{x^{2}+1}}$", "$2x$", "$\\sqrt{2x}$", "$\\dfrac{1}{2\\sqrt{x^{2}+1}}$"],
+      correcta: 0, pista: "Derivada de $\\sqrt{u}$ es $\\dfrac{1}{2\\sqrt{u}}$; multiplica por $2x$.",
+      solucion: "$\\dfrac{1}{2\\sqrt{x^2+1}}\\cdot 2x=\\dfrac{x}{\\sqrt{x^2+1}}$. La opción a) olvida multiplicar por la derivada del interior $2x$." },
+    { etiqueta: "Combinada", nivel: 3, criterio: "Identificar la regla principal (§5)",
+      enunciado: "Para derivar $x\\sqrt{x^{2}+1}$, ¿qué regla manda primero?",
+      opciones: ["ninguna, es directa", "la cadena", "el producto (la última operación es multiplicar)", "el cociente"],
+      correcta: 2, pista: "¿Cuál es la última operación al evaluar en un número?",
+      solucion: "La estructura es un producto de $x$ por $\\sqrt{x^2+1}$, así que manda la regla del producto; la raíz interior se deriva con la cadena. La última operación (multiplicar) define la regla principal." },
+    { etiqueta: "Estrategia", nivel: 2, criterio: "Aplicar la estrategia general (§5)",
+      enunciado: "Para decidir qué regla usar, conviene preguntarse:",
+      opciones: ["si hay números", "el grado del polinomio", "cuál es la función más grande", "cuál es la última operación al evaluar"],
+      correcta: 3, pista: "La operación externa define la regla.",
+      solucion: "La última operación que harías al evaluar la función define la regla principal: si es multiplicar, producto; si es dividir, cociente; si es aplicar una función a otra, cadena." },
+    { etiqueta: "Producto", nivel: 2, criterio: "Aplicar el producto (§2)",
+      enunciado: "La derivada de $x\\,e^{x}$ es:",
+      opciones: ["$xe^{x}$", "$e^{x}+xe^{x}=(1+x)e^{x}$", "$1+e^{x}$", "$e^{x}$"],
+      correcta: 1, pista: "Producto: $1\\cdot e^x + x\\cdot e^x$.",
+      solucion: "Con $f=x$ ($f'=1$) y $g=e^x$ ($g'=e^x$): $1\\cdot e^x+x\\cdot e^x=(1+x)e^x$. Un producto necesita ambos términos." },
+    { etiqueta: "Síntesis", nivel: 2, criterio: "Sintetizar la notación de la cadena (§4)",
+      enunciado: "En notación de Leibniz, la regla de la cadena dice:",
+      opciones: ["$\\dfrac{dy}{dx}=\\dfrac{dy}{du}\\cdot\\dfrac{du}{dx}$", "$\\dfrac{dy}{dx}=\\dfrac{du}{dy}\\cdot\\dfrac{dx}{du}$", "$\\dfrac{dy}{dx}=\\dfrac{dy}{du}$", "$\\dfrac{dy}{dx}=\\dfrac{dy}{du}+\\dfrac{du}{dx}$"],
+      correcta: 0, pista: "Las tasas se multiplican, no se suman.",
+      solucion: "$\\dfrac{dy}{dx}=\\dfrac{dy}{du}\\cdot\\dfrac{du}{dx}$: la tasa total es el producto de las tasas de cada eslabón. Los $du$ se 'cancelan' formalmente, ayudando a recordar la regla." }
+  ]
+});
+</script>
 </body>
 </html>

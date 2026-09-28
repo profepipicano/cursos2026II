@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 7 · Derivación implícita y logarítmica — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 7 · Derivación implícita y logarítmica — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 7</h1>
+      <h1>Cálculo · Guía 7</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,390 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Orden superior</a>
+    <a href="#s2">2 · Funciones implícitas</a>
+    <a href="#s3">3 · Derivación implícita</a>
+    <a href="#s4">4 · Derivación logarítmica</a>
+    <a href="#s5">5 · Cuándo usar cada una</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 7 · Derivación implícita y logarítmica</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 7 · Corte II</div>
+  <h2>Derivación implícita y logarítmica</h2>
+  <p>Hasta ahora derivabas funciones de la forma $y=f(x)$, con $y$ despejada. Pero muchas curvas
+     —una circunferencia, una elipse— no se despejan en una sola función. Y algunas expresiones,
+     como $x^{x}$, escapan a todas las reglas anteriores. Esta guía resuelve ambos casos.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 2.5–2.6</span>
+    <span class="chip">Stewart · Cap. 3.5–3.6</span>
+    <span class="chip">Semana 7</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La regla de la cadena de la Guía 6 es la herramienta que hace
+  posible todo lo de hoy: derivar implícitamente es aplicar la cadena tratando $y$ como una función
+  de $x$ escondida. Sin la cadena, nada de esto funcionaría.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Derivadas de orden superior</h3>
+
+  <div class="callout-dark">
+    <h3>Derivar la derivada</h3>
+    <p>La derivada $f'$ es también una función, así que se puede derivar otra vez. El resultado,
+       $f''$, es la <strong>segunda derivada</strong>, y mide cómo cambia la propia tasa de cambio.
+       Se puede seguir: $f'''$, $f^{(4)}$, etcétera.</p>
+    <p>La segunda derivada tiene un significado físico y geométrico importante que usarás en la Guía
+       9: si $f$ es la posición, $f'$ es la velocidad y $f''$ es la aceleración. Y su signo indica
+       la <em>concavidad</em> de la gráfica.</p>
+  </div>
+
+  <div class="def">
+    La <strong>segunda derivada</strong> es la derivada de la derivada:
+    $$f''(x)=\frac{d}{dx}\big[f'(x)\big]$$
+    Notaciones equivalentes: $f''$, $\dfrac{d^{2}y}{dx^{2}}$, $y''$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Derivadas sucesivas de $f(x)=x^{4}-3x^{2}+5x$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Primera derivada</div>
+        $f'(x)=4x^{3}-6x+5$
+      </div>
+      <div class="paso"><div class="paso-t">Segunda derivada</div>
+        $f''(x)=12x^{2}-6$
+      </div>
+      <div class="paso"><div class="paso-t">Tercera y cuarta</div>
+        $f'''(x)=24x$, y $f^{(4)}(x)=24$. La quinta ya es cero: cada derivada baja el grado en uno.
+      </div>
     </div>
   </div>
+
+  <div class="nota">
+    <strong>Un caso cíclico.</strong> Para $f(x)=\sin x$: $f'=\cos x$, $f''=-\sin x$, $f'''=-\cos x$,
+    $f^{(4)}=\sin x$. Las derivadas del seno se repiten cada cuatro pasos, girando entre seno y
+    coseno con signos alternos.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Orden superior</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Cuando $y$ no se puede despejar</h3>
+
+  <div class="callout-dark">
+    <h3>Curvas que no son funciones</h3>
+    <p>La circunferencia $x^{2}+y^{2}=25$ es una curva perfectamente definida, pero <em>no</em> es
+       la gráfica de una función $y=f(x)$: para cada $x$ entre $-5$ y $5$ hay <strong>dos</strong>
+       valores de $y$ (arriba y abajo). No se puede escribir como una sola $y=f(x)$.</p>
+    <p>Y sin embargo, en cada punto la curva tiene una recta tangente bien definida, con su
+       pendiente. ¿Cómo calcularla sin poder despejar $y$? La respuesta es la derivación implícita.</p>
+  </div>
+
+  <div class="def">
+    Una ecuación en $x$ e $y$ que no está resuelta para $y$ define a $y$ <strong>implícitamente</strong>
+    como función (o varias funciones) de $x$. Ejemplos: $x^{2}+y^{2}=25$, $\;x^{2}+xy+y^{2}=7$.
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Derivación implícita</h3>
+
+  <div class="def">
+    <strong>Técnica.</strong> Deriva ambos lados de la ecuación respecto de $x$, recordando que
+    $y$ es una función de $x$ (así que cada vez que derivas $y$ aparece un factor $y'$ por la regla
+    de la cadena). Luego despeja $y'$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · La circunferencia $x^{2}+y^{2}=25$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Derivar término a término</div>
+        $\dfrac{d}{dx}(x^{2})+\dfrac{d}{dx}(y^{2})=\dfrac{d}{dx}(25)$. El término $y^{2}$ se deriva
+        por la cadena: $2y\cdot y'$.<br>
+        $2x+2y\,y'=0$
+      </div>
+      <div class="paso"><div class="paso-t">Despejar $y'$</div>
+        $2y\,y'=-2x\;\Rightarrow\;y'=-\dfrac{x}{y}$
+      </div>
+      <div class="paso"><div class="paso-t">Evaluar en un punto: $(3,4)$</div>
+        $y'=-\dfrac{3}{4}$. La tangente a la circunferencia en $(3,4)$ tiene pendiente $-0{,}75$.
+        Fíjate que la fórmula usa ambas coordenadas del punto, no solo $x$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 La tangente implícita, en imagen</div>
+  <div class="viz" data-viz="implicita">
+    <div class="viz-controls">
+      <label for="im-c">Curva</label>
+      <select id="im-c">
+        <option value="circ">x² + y² = 25</option>
+        <option value="elipse">x²/9 + y²/4 = 1 (elipse)</option>
+        <option value="astro">astroide</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Ninguna de estas curvas es una función $y=f(x)$, pero todas tienen tangente en cada punto. La
+    derivación implícita da la pendiente (recta roja) usando las dos coordenadas del punto verde.
+  </p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Una curva con término mixto: $x^{2}+xy+y^{2}=7$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Derivar, usando el producto en $xy$</div>
+        $2x+\big(1\cdot y+x\cdot y'\big)+2y\,y'=0$. El término $xy$ es un producto, así que su
+        derivada es $y+xy'$.
+      </div>
+      <div class="paso"><div class="paso-t">Agrupar los términos con $y'$</div>
+        $2x+y+(x+2y)\,y'=0\;\Rightarrow\;y'=-\dfrac{2x+y}{x+2y}$
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Derivación implícita</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Derivación logarítmica</h3>
+
+  <div class="callout-dark">
+    <h3>Cuando la variable está en la base y en el exponente</h3>
+    <p>¿Cómo se deriva $x^{x}$? No es una potencia (el exponente no es constante) ni una exponencial
+       (la base no es constante). Ninguna regla anterior aplica directamente.</p>
+    <p>El truco: tomar logaritmo natural en ambos lados <em>antes</em> de derivar. El logaritmo
+       convierte potencias en productos ($\ln a^{b}=b\ln a$), y eso vuelve derivable la expresión.</p>
+  </div>
+
+  <div class="def">
+    <strong>Derivación logarítmica.</strong> Para derivar $y=f(x)$ cuando conviene, se toma
+    $\ln$ en ambos lados, se deriva implícitamente (aparece $\dfrac{y'}{y}$ a la izquierda), y se
+    despeja $y'=y\cdot(\ln y)'$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Derivar $y=x^{x}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Tomar logaritmo</div>
+        $\ln y=\ln(x^{x})=x\ln x$
+      </div>
+      <div class="paso"><div class="paso-t">Derivar ambos lados (implícita a la izquierda, producto a la derecha)</div>
+        $\dfrac{y'}{y}=1\cdot\ln x+x\cdot\dfrac{1}{x}=\ln x+1$
+      </div>
+      <div class="paso"><div class="paso-t">Despejar $y'$</div>
+        $y'=y(\ln x+1)=x^{x}(\ln x+1)$
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>También sirve para productos largos.</strong> Para derivar algo como
+    $y=(x^{2}+1)^{3}(x-1)^{4}$, tomar logaritmo lo convierte en una suma:
+    $\ln y=3\ln(x^{2}+1)+4\ln(x-1)$, mucho más fácil de derivar que el producto directo. Luego
+    $y'=y\left[\dfrac{6x}{x^{2}+1}+\dfrac{4}{x-1}\right]$.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Derivación logarítmica</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Cuándo usar cada técnica</h3>
+  <ul>
+    <li><strong>Derivación implícita</strong>: cuando la relación entre $x$ e $y$ no está despejada,
+        o cuando despejar sería muy engorroso. Curvas como circunferencias, elipses o cualquier
+        ecuación con $x$ e $y$ mezclados.</li>
+    <li><strong>Derivación logarítmica</strong>: cuando la variable aparece en la base <em>y</em> en
+        el exponente ($x^{x}$, $x^{\sin x}$), o cuando hay productos y cocientes de muchos factores
+        que el logaritmo convierte en sumas más manejables.</li>
+    <li>Ambas se apoyan en la <strong>regla de la cadena</strong> de la Guía 6: derivar $y$ (o
+        $\ln y$) respecto de $x$ siempre trae un factor $y'$.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      En modelos de crecimiento con interés compuesto continuo, $A=A_0e^{rt}$, la derivación
+      logarítmica separa la tasa de crecimiento del nivel: $\ln A=\ln A_0+rt$ muestra que la tasa
+      de crecimiento relativa es constante e igual a $r$.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Las curvas de indiferencia y las restricciones presupuestarias suelen darse como ecuaciones
+      implícitas entre dos bienes. La derivación implícita da la <em>tasa marginal de sustitución</em>
+      sin necesidad de despejar una variable en función de la otra.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Las curvas de nivel de una función de pérdida son relaciones implícitas; su gradiente
+      (perpendicular a la tangente implícita) es lo que sigue el descenso de gradiente. La
+      derivación logarítmica aparece al derivar la función de verosimilitud en estadística.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La relación entre voltaje y corriente en componentes no lineales (como un diodo) es implícita.
+      Derivar implícitamente da la <em>resistencia dinámica</em> en el punto de operación, sin tener
+      que despejar la corriente de la ecuación exponencial del diodo.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Orden superior</strong>: $f''$ es la derivada de $f'$; mide el cambio de la tasa de cambio.</li>
+    <li>Posición → velocidad ($f'$) → aceleración ($f''$); el signo de $f''$ da la concavidad.</li>
+    <li><strong>Derivación implícita</strong>: deriva ambos lados tratando $y$ como función de $x$ (factor $y'$), y despeja.</li>
+    <li>Sirve para curvas que no son funciones (circunferencia, elipse); la pendiente usa ambas coordenadas.</li>
+    <li><strong>Derivación logarítmica</strong>: toma $\ln$ antes de derivar cuando la variable está en base y exponente.</li>
+    <li>$(x^{x})'=x^{x}(\ln x+1)$; el logaritmo también convierte productos largos en sumas.</li>
+    <li>Todo se apoya en la <strong>regla de la cadena</strong>.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/3-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-calculo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: "chk1", titulo: "Derivadas de orden superior · 3 preguntas",
+  items: [
+    { etiqueta: "Definición", nivel: 1, criterio: "Entender la segunda derivada (§1)",
+      enunciado: "¿Qué es la segunda derivada $f''$?",
+      opciones: ["la derivada de $f'$", "el cuadrado de $f'$", "la mitad de $f$", "el doble de $f'$"],
+      correcta: 0, pista: "Se deriva la derivada.",
+      solucion: "$f''$ es la derivada de $f'$: se deriva dos veces. Mide cómo cambia la propia tasa de cambio (por ejemplo, la aceleración si $f$ es posición)." },
+    { etiqueta: "Calcular", nivel: 2, criterio: "Calcular derivadas sucesivas (§1)",
+      enunciado: "Para $f(x)=x^{4}-3x^{2}+5x$, la segunda derivada $f''(x)$ es:",
+      opciones: ["$12x^{2}-6x$", "$4x^{3}-6x+5$", "$12x^{2}-6$", "$24x$"],
+      correcta: 2, pista: "Deriva dos veces: primero $4x^3-6x+5$, luego otra vez.",
+      solucion: "$f'=4x^3-6x+5$, y $f''=12x^2-6$. La opción a) es la primera derivada; la c) es la tercera." },
+    { etiqueta: "Cíclico", nivel: 2, criterio: "Derivadas sucesivas del seno (§1)",
+      enunciado: "La segunda derivada de $\\sin x$ es:",
+      opciones: ["$-\\cos x$", "$\\sin x$", "$\\cos x$", "$-\\sin x$"],
+      correcta: 3, pista: "$\\sin x \\to \\cos x \\to ?$",
+      solucion: "$(\\sin x)'=\\cos x$, y $(\\cos x)'=-\\sin x$, así que $f''=-\\sin x$. Las derivadas del seno giran cada cuatro pasos: $\\sin\\to\\cos\\to-\\sin\\to-\\cos\\to\\sin$." }
+  ]
+});
+OVA.quiz({
+  destino: "chk2", titulo: "Derivación implícita · 3 preguntas",
+  items: [
+    { etiqueta: "Por qué", nivel: 2, criterio: "Entender cuándo usarla (§2)",
+      enunciado: "¿Por qué la circunferencia $x^{2}+y^{2}=25$ necesita derivación implícita?",
+      opciones: ["porque no tiene tangentes", "porque no es una función $y=f(x)$ (hay dos $y$ por cada $x$)", "porque no es continua", "porque es muy grande"],
+      correcta: 1, pista: "¿Cuántos valores de $y$ hay para cada $x$?",
+      solucion: "Para cada $x$ entre $-5$ y $5$ hay dos valores de $y$ (arriba y abajo), así que no es una función $y=f(x)$ y no se puede despejar en una sola. Pero sí tiene tangente en cada punto." },
+    { etiqueta: "La técnica", nivel: 3, criterio: "Aplicar derivación implícita (§3)",
+      enunciado: "Al derivar $x^{2}+y^{2}=25$ implícitamente se obtiene:",
+      opciones: ["$2x+2yy'=0$", "$2x=0$", "$x+y=0$", "$2x+2y=0$"],
+      correcta: 0, pista: "El término $y^2$ se deriva por la cadena: aparece un $y'$.",
+      solucion: "Derivando: $2x+2y\\,y'=0$. El factor $y'$ en el segundo término viene de la regla de la cadena, porque $y$ es función de $x$. La opción a) olvida ese $y'$." },
+    { etiqueta: "Evaluar", nivel: 3, criterio: "Hallar la pendiente en un punto (§3)",
+      enunciado: "De $x^{2}+y^{2}=25$ sale $y'=-x/y$. En el punto $(3,4)$, la pendiente vale:",
+      opciones: ["$-4/3$", "$-3$", "$-3/4$", "$3/4$"],
+      correcta: 2, pista: "Sustituye $x=3$, $y=4$.",
+      solucion: "$y'=-x/y=-3/4=-0{,}75$. La fórmula usa ambas coordenadas del punto, no solo $x$. La opción c) invierte la fracción." }
+  ]
+});
+OVA.quiz({
+  destino: "chk3", titulo: "Derivación logarítmica · 3 preguntas",
+  items: [
+    { etiqueta: "Cuándo", nivel: 2, criterio: "Reconocer cuándo usarla (§4)",
+      enunciado: "¿Para qué tipo de función es ideal la derivación logarítmica?",
+      opciones: ["constantes", "rectas", "polinomios", "cuando la variable está en la base y el exponente, como $x^{x}$"],
+      correcta: 3, pista: "¿Qué regla deriva $x^x$?",
+      solucion: "Es ideal cuando la variable aparece en la base y en el exponente ($x^x$, $x^{\\sin x}$): no es potencia ni exponencial. También convierte productos largos en sumas." },
+    { etiqueta: "El primer paso", nivel: 2, criterio: "Aplicar el logaritmo (§4)",
+      enunciado: "Para derivar $y=x^{x}$, el primer paso es tomar $\\ln$, obteniendo:",
+      opciones: ["$\\ln y = x$", "$\\ln y = x\\ln x$", "$\\ln y = x^{x}$", "$\\ln y = \\ln x$"],
+      correcta: 1, pista: "$\\ln(a^b)=b\\ln a$.",
+      solucion: "$\\ln y=\\ln(x^x)=x\\ln x$, usando $\\ln(a^b)=b\\ln a$. Esto convierte la potencia problemática en un producto que sí sabemos derivar." },
+    { etiqueta: "Resultado", nivel: 3, criterio: "Completar la derivación de $x^x$ (§4)",
+      enunciado: "La derivada de $y=x^{x}$ resulta:",
+      opciones: ["$x^{x}(\\ln x + 1)$", "$x^{x}\\ln x$", "$x^{x}$", "$x\\cdot x^{x-1}$"],
+      correcta: 0, pista: "De $\\ln y=x\\ln x$, deriva: $y'/y=\\ln x+1$.",
+      solucion: "Derivando $\\ln y=x\\ln x$: $\\dfrac{y'}{y}=\\ln x+1$, luego $y'=y(\\ln x+1)=x^x(\\ln x+1)$. La opción a) trata mal el exponente como si fuera constante." }
+  ]
+});
+OVA.quiz({
+  destino: "final", titulo: "Práctica final · 8 preguntas",
+  items: [
+    { etiqueta: "Orden superior", nivel: 2, criterio: "Interpretar $f''$ (§1)",
+      enunciado: "Si $f$ es la posición de un objeto, ¿qué representa $f''$?",
+      opciones: ["el tiempo", "la velocidad", "la aceleración", "la distancia"],
+      correcta: 2, pista: "Posición → velocidad → ?",
+      solucion: "$f'$ es la velocidad (tasa de cambio de la posición) y $f''$ es la aceleración (tasa de cambio de la velocidad)." },
+    { etiqueta: "Orden superior", nivel: 2, criterio: "Calcular la tercera derivada (§1)",
+      enunciado: "Para $f(x)=x^{4}-3x^{2}+5x$, la tercera derivada es:",
+      opciones: ["$24$", "$4x^{3}-6x+5$", "$12x^{2}-6$", "$24x$"],
+      correcta: 3, pista: "Deriva tres veces: $\\dots \\to 12x^2-6 \\to ?$",
+      solucion: "$f''=12x^2-6$, luego $f'''=24x$. La opción c) es la cuarta derivada." },
+    { etiqueta: "Implícita", nivel: 2, criterio: "Entender el factor $y'$ (§3)",
+      enunciado: "Al derivar $y^{3}$ respecto de $x$ (con $y$ función de $x$), se obtiene:",
+      opciones: ["$3y^{2}$", "$3y^{2}y'$", "$y'$", "$3y$"],
+      correcta: 1, pista: "Regla de la cadena: deriva la potencia y multiplica por $y'$.",
+      solucion: "Por la cadena: $\\dfrac{d}{dx}(y^3)=3y^2\\cdot y'$. El factor $y'$ aparece porque $y$ depende de $x$. Sin él (opción a) se olvida la cadena." },
+    { etiqueta: "Implícita", nivel: 3, criterio: "Derivar con término mixto (§3)",
+      enunciado: "Al derivar el término $xy$ respecto de $x$ se obtiene:",
+      opciones: ["$y+xy'", "$x'y$", "$1$", "$y'$"],
+      correcta: 0, pista: "Es un producto: regla del producto.",
+      solucion: "$xy$ es un producto: $\\dfrac{d}{dx}(xy)=1\\cdot y+x\\cdot y'=y+xy'$. Combina la regla del producto con el factor $y'$ de la cadena." },
+    { etiqueta: "Implícita", nivel: 3, criterio: "Hallar $y'$ completa (§3)",
+      enunciado: "De $x^{2}+xy+y^{2}=7$, la derivada $y'$ es:",
+      opciones: ["$\\dfrac{2x+y}{x+2y}$", "$-2x-y$", "$-\\dfrac{2x+y}{x+2y}$", "$-\\dfrac{x}{y}$"],
+      correcta: 2, pista: "Deriva todo, agrupa los términos con $y'$ y despeja.",
+      solucion: "Derivando: $2x+y+xy'+2yy'=0$, luego $(x+2y)y'=-(2x+y)$, y $y'=-\\dfrac{2x+y}{x+2y}$. La opción c) olvida el signo negativo." },
+    { etiqueta: "Logarítmica", nivel: 3, criterio: "Log-derivación de un producto (§4)",
+      enunciado: "Para $y=(x^{2}+1)^{3}(x-1)^{4}$, tomar $\\ln$ da:",
+      opciones: ["$\\ln y=12\\ln x$", "$\\ln y=\\ln(x^{2}+1)+\\ln(x-1)$", "$\\ln y=(x^{2}+1)^{3}(x-1)^{4}$", "$\\ln y=3\\ln(x^{2}+1)+4\\ln(x-1)$"],
+      correcta: 3, pista: "$\\ln(ab)=\\ln a+\\ln b$ y $\\ln(a^n)=n\\ln a$.",
+      solucion: "$\\ln y=\\ln[(x^2+1)^3]+\\ln[(x-1)^4]=3\\ln(x^2+1)+4\\ln(x-1)$. El logaritmo convierte el producto de potencias en una suma fácil de derivar." },
+    { etiqueta: "Cuándo", nivel: 1, criterio: "Elegir la técnica (§5)",
+      enunciado: "Para hallar la pendiente de una elipse $\\dfrac{x^2}{9}+\\dfrac{y^2}{4}=1$ conviene:",
+      opciones: ["despejar y derivar normal", "derivación implícita", "derivación logarítmica", "no se puede"],
+      correcta: 1, pista: "¿Se despeja $y$ fácilmente en una sola función?",
+      solucion: "La elipse no es una función $y=f(x)$ (dos $y$ por $x$), así que la derivación implícita da la pendiente sin despejar. Sí tiene tangente en cada punto." },
+    { etiqueta: "Síntesis", nivel: 2, criterio: "Reconocer la base común (§5)",
+      enunciado: "¿Qué regla de la Guía 6 hace posible tanto la derivación implícita como la logarítmica?",
+      opciones: ["la de la cadena", "la del cociente", "la de la suma", "la del producto"],
+      correcta: 0, pista: "Derivar $y$ respecto de $x$ trae un factor $y'$.",
+      solucion: "La regla de la cadena: derivar $y$ (o $\\ln y$) respecto de $x$ siempre produce un factor $y'$, porque $y$ es una función escondida de $x$. Sin la cadena, ninguna de las dos técnicas funcionaría." }
+  ]
+});
+</script>
 </body>
 </html>
