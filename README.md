@@ -47,7 +47,7 @@ ova-dcb/
 │   ├── viz-calculo.js          explorador de funciones · acercamiento al límite · tangente
 │   ├── viz-metodos.js          error de truncamiento de Taylor · bisección iterativa
 │   ├── viz-vectorial.js        productos vectoriales · gradiente · parciales · plano tangente · extremos · integral doble
-│   └── viz-edo.js              campo de direcciones con clic
+│   └── viz-edo.js              campo de direcciones con clic · enfriamiento de Newton · superposición · raíces características
 ├── calculo/     index.html + s01.html … s14.html   (las no escritas son avisos)
 ├── metodos/     index.html + s01.html … s14.html
 ├── vectorial/   index.html + s01.html … s14.html
@@ -76,7 +76,7 @@ window.OVA_PUBLICADAS = {
   calculo:   [1, 2, 3, 4, 6, 7, 8, 9],   ←  añade el número de la semana nueva
   vectorial: [1, 2, 3, 4, 6, 7, 8, 9],
   metodos:   [1, 2, 3, 4, 6, 7, 8, 9],
-  edo:       [1, 2, 3, 4]
+  edo:       [1, 2, 3, 4, 6, 7, 8, 9]
 };
 ```
 
