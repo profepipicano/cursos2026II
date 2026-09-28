@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 7 · Derivada direccional y gradiente — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 7 · Derivada direccional y gradiente — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 7</h1>
+      <h1>Cálculo Vectorial · Guía 7</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,417 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · El gradiente</a>
+    <a href="#s2">2 · Derivada direccional</a>
+    <a href="#s3">3 · Dirección de máximo ascenso</a>
+    <a href="#s4">4 · Plano tangente</a>
+    <a href="#s5">5 · Recta normal</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 7 · Derivada direccional y gradiente</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 7 · Corte II</div>
+  <h2>Derivada direccional y gradiente</h2>
+  <p>Las parciales dan la pendiente en las direcciones $x$ e $y$. Pero, ¿y en cualquier otra
+     dirección? La derivada direccional lo responde, y su herramienta central —el gradiente— resulta
+     ser una de las ideas más potentes del cálculo: un vector que apunta cuesta arriba.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 13.6–13.7</span>
+    <span class="chip">Stewart · Cap. 14.6</span>
+    <span class="chip">Semana 7</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 6, $f_x$ y $f_y$ midieron la pendiente en dos
+  direcciones perpendiculares. Reunir esas dos parciales en un solo vector —el gradiente— desbloquea
+  la pendiente en <em>todas</em> las direcciones, y mucho más.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · El gradiente</h3>
+
+  <div class="def">
+    <strong>Gradiente.</strong> El gradiente de $f(x,y)$ es el vector formado por sus dos parciales:
+    $$\nabla f=\left(\frac{\partial f}{\partial x},\frac{\partial f}{\partial y}\right)=(f_x,\;f_y)$$
+    Se lee «nabla $f$». En cada punto es un vector, así que $\nabla f$ es un <em>campo</em> de
+    vectores sobre el plano.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Gradiente de $f(x,y)=x^{2}+y^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Calcular las parciales</div>
+        $f_x=2x$, $f_y=2y$, así que $\nabla f=(2x,2y)$.
+      </div>
+      <div class="paso"><div class="paso-t">Evaluar en $(1,2)$</div>
+        $\nabla f(1,2)=(2,4)$. En ese punto, el gradiente es el vector $(2,4)$.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Derivada direccional</h3>
+
+  <div class="callout-dark">
+    <h3>Pendiente en cualquier dirección</h3>
+    <p>Las parciales solo miran hacia $x$ o hacia $y$. Pero desde un punto puedes caminar en
+       cualquier dirección $\mathbf{u}$, y la superficie tendrá una pendiente distinta. La
+       <strong>derivada direccional</strong> $D_{\mathbf{u}}f$ mide esa pendiente. Y la calcula el
+       gradiente, con un simple producto punto.</p>
+  </div>
+
+  <div class="def">
+    <strong>Derivada direccional.</strong> En la dirección de un vector <strong>unitario</strong>
+    $\mathbf{u}$,
+    $$D_{\mathbf{u}}f=\nabla f\cdot\mathbf{u}$$
+    Importante: $\mathbf{u}$ debe tener longitud 1. Si te dan un vector cualquiera, primero
+    normalízalo dividiéndolo por su magnitud.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $D_{\mathbf{u}}f$ de $f=x^{2}+y^{2}$ en $(1,2)$, hacia $(3,4)$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Normalizar la dirección</div>
+        $|(3,4)|=\sqrt{9+16}=5$, así que $\mathbf{u}=\left(\tfrac{3}{5},\tfrac{4}{5}\right)$.
+      </div>
+      <div class="paso"><div class="paso-t">Gradiente en el punto</div>
+        $\nabla f(1,2)=(2,4)$ (del Ejemplo 1).
+      </div>
+      <div class="paso"><div class="paso-t">Producto punto</div>
+        $D_{\mathbf{u}}f=(2,4)\cdot\left(\tfrac{3}{5},\tfrac{4}{5}\right)=\tfrac{6}{5}+\tfrac{16}{5}
+        =\tfrac{22}{5}=4{,}4$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.1 El gradiente sobre las curvas de nivel</div>
+  <div class="viz" data-viz="gradiente">
+    <div class="viz-controls">
+      <label for="gr-f">Campo escalar</label>
+      <select id="gr-f">
+        <option value="parab">f = x² + y²</option>
+        <option value="silla">f = x² − y²</option>
+        <option value="onda">f = sen x · cos y</option>
+      </select>
+      <label for="gr-x">Punto x</label>
+      <input id="gr-x" class="gx" type="range" min="-15" max="15" value="8">
+      <label for="gr-y">Punto y</label>
+      <input id="gr-y" class="gy" type="range" min="-15" max="15" value="5">
+      <span class="p-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Las líneas son curvas de nivel (altura constante). El gradiente (flecha) siempre apunta
+    perpendicular a ellas, hacia donde la función crece más rápido.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Gradiente y derivada direccional</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · La dirección de máximo ascenso</h3>
+
+  <div class="callout-dark">
+    <h3>Por qué el gradiente es especial</h3>
+    <p>Como $D_{\mathbf{u}}f=\nabla f\cdot\mathbf{u}=|\nabla f|\cos\theta$, la derivada direccional
+       es máxima cuando $\cos\theta=1$, es decir, cuando caminas <strong>en la misma dirección que
+       el gradiente</strong>. Por eso:</p>
+    <p>El gradiente $\nabla f$ apunta en la dirección de <strong>máximo crecimiento</strong>, y su
+       magnitud $|\nabla f|$ es esa tasa máxima de cambio. En dirección opuesta, $-\nabla f$, la
+       función decrece lo más rápido posible. Y perpendicular al gradiente, la función no cambia:
+       esa es la dirección de las curvas de nivel.</p>
+  </div>
+
+  <div class="def">
+    <strong>Propiedades del gradiente.</strong>
+    <br>• Apunta hacia el <strong>máximo ascenso</strong>. &nbsp; • $|\nabla f|$ es la máxima tasa de cambio.
+    <br>• Es <strong>perpendicular</strong> a las curvas de nivel.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Máxima tasa de cambio de $f=x^{2}+y^{2}$ en $(1,2)$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Magnitud del gradiente</div>
+        $|\nabla f(1,2)|=|(2,4)|=\sqrt{4+16}=\sqrt{20}=2\sqrt{5}\approx4{,}47$.
+      </div>
+      <div class="paso"><div class="paso-t">Interpretar</div>
+        La función crece a razón máxima de $2\sqrt{5}$ por unidad de distancia, y eso ocurre
+        caminando en la dirección de $(2,4)$. En cualquier otra dirección, la pendiente es menor.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Máximo ascenso</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Plano tangente</h3>
+
+  <div class="callout-dark">
+    <h3>La superficie, aplanada localmente</h3>
+    <p>Así como una curva tiene recta tangente, una superficie tiene <strong>plano tangente</strong>:
+       el plano que la roza en un punto sin atravesarla localmente. Sus pendientes en las direcciones
+       $x$ e $y$ son justo las parciales $f_x$ y $f_y$.</p>
+  </div>
+
+  <div class="def">
+    <strong>Plano tangente</strong> a $z=f(x,y)$ en el punto $(a,b)$:
+    $$z=f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)$$
+    Es la mejor aproximación lineal de la superficie cerca del punto.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Plano tangente a $z=x^{2}+y^{2}$ en $(1,1)$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Altura y parciales en el punto</div>
+        $f(1,1)=2$, $f_x=2x\Rightarrow f_x(1,1)=2$, $f_y=2y\Rightarrow f_y(1,1)=2$.
+      </div>
+      <div class="paso"><div class="paso-t">Escribir el plano</div>
+        $z=2+2(x-1)+2(y-1)=2x+2y-2$.
+      </div>
+      <div class="paso"><div class="paso-t">Verificar</div>
+        En $(1,1)$: $z=2+2-2=2$ ✓, coincide con la altura de la superficie.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 El plano tangente, en 3D</div>
+  <div class="viz" data-viz="planotangente">
+    <div class="viz-controls">
+      <label for="pt-f">Superficie</label>
+      <select id="pt-f">
+        <option value="parab">z = x² + y²</option>
+        <option value="domo">z = 4 − x² − y²</option>
+        <option value="ondas">z = 0.6(x² − y²)</option>
+      </select>
+      <label for="pt-x">Punto x</label>
+      <input id="pt-x" class="px" type="range" min="-13" max="13" value="8">
+      <label for="pt-y">Punto y</label>
+      <input id="pt-y" class="py" type="range" min="-13" max="13" value="6">
+      <span class="p-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    El plano dorado roza la superficie en el punto rojo. Muévelo: en un mínimo o máximo el plano
+    queda horizontal; en una ladera, se inclina siguiendo las parciales.
+  </p>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Recta normal</h3>
+
+  <p>Perpendicular al plano tangente está la <strong>recta normal</strong> a la superficie. Su
+     dirección se obtiene de las mismas parciales: para $z=f(x,y)$, el vector normal es
+     $(f_x,\,f_y,\,-1)$.</p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Recta normal a $z=x^{2}+y^{2}$ en $(1,1)$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Vector normal</div>
+        Con $f_x(1,1)=2$ y $f_y(1,1)=2$: la dirección normal es $(2,2,-1)$.
+      </div>
+      <div class="paso"><div class="paso-t">Ecuación paramétrica</div>
+        Partiendo del punto $(1,1,2)$: $\;(x,y,z)=(1,1,2)+t\,(2,2,-1)$.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>El gradiente como normal.</strong> Para una superficie de nivel $F(x,y,z)=0$, el
+    gradiente $\nabla F=(F_x,F_y,F_z)$ es perpendicular a la superficie en cada punto. Es la
+    generalización a tres variables de que $\nabla f$ es perpendicular a las curvas de nivel.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Si una función mide la satisfacción de un cliente según dos atributos de un producto, el
+      gradiente indica en qué dirección mejorar el producto para aumentarla más rápido: la
+      combinación de cambios con mayor impacto por unidad de esfuerzo.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Para una función de costo de dos variables, $-\nabla C$ señala la dirección de reducción de
+      costo más rápida. La derivada direccional cuantifica el ahorro por unidad de ajuste en una
+      combinación concreta de los dos factores.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      El <em>descenso de gradiente</em> —el algoritmo que entrena casi todos los modelos de IA— da
+      pasos en la dirección $-\nabla L$ (máximo descenso de la pérdida). Todo este tema es,
+      literalmente, la teoría detrás de ese algoritmo.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      En un campo de potencial, el campo eléctrico es $\mathbf{E}=-\nabla V$: apunta hacia donde el
+      potencial cae más rápido, perpendicular a las superficies equipotenciales, igual que el
+      gradiente es perpendicular a las curvas de nivel.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Gradiente</strong>: $\nabla f=(f_x,f_y)$, un vector en cada punto.</li>
+    <li><strong>Derivada direccional</strong>: $D_{\mathbf{u}}f=\nabla f\cdot\mathbf{u}$, con $\mathbf{u}$ unitario (¡normaliza primero!).</li>
+    <li>El gradiente apunta al <strong>máximo ascenso</strong>; $|\nabla f|$ es la tasa máxima; $-\nabla f$ es el máximo descenso.</li>
+    <li>$\nabla f$ es <strong>perpendicular</strong> a las curvas de nivel.</li>
+    <li><strong>Plano tangente</strong>: $z=f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)$.</li>
+    <li><strong>Recta normal</strong> a $z=f(x,y)$: dirección $(f_x,f_y,-1)$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-vectorial.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: "chk1", titulo: "Gradiente y derivada direccional · 3 preguntas",
+  items: [
+    {
+      etiqueta: "Gradiente", nivel: 1, criterio: "Definición del gradiente (§1)",
+      enunciado: "El gradiente de $f(x,y)$ es el vector:",
+      opciones: ["$(f_x,f_y)$","$f_x+f_y$","$(f_x,-f_y)$","$f_x\\cdot f_y$"],
+      correcta: 0, pista: "Reúne las dos parciales en un vector.",
+      solucion: "$\\nabla f=(f_x,f_y)$: las dos parciales forman las componentes del vector gradiente, uno en cada punto."
+    },
+    {
+      etiqueta: "Calcular", nivel: 2, criterio: "Gradiente en un punto (§1)",
+      enunciado: "Para $f=x^{2}+y^{2}$, el gradiente $\\nabla f(1,2)$ es:",
+      opciones: ["$(1,2)$","$(2,2)$","$(2,4)$","$(4,2)$"],
+      correcta: 2, pista: "∇f=(2x,2y), sustituye (1,2).",
+      solucion: "$\\nabla f=(2x,2y)$, y en $(1,2)$ da $(2,4)$."
+    },
+    {
+      etiqueta: "Direccional", nivel: 3, criterio: "Calcular la derivada direccional (§2)",
+      enunciado: "La derivada direccional de $f=x^{2}+y^{2}$ en $(1,2)$ hacia $\\mathbf{u}=(3/5,4/5)$ es:",
+      opciones: ["$6$","$2$","$10$","$22/5$"],
+      correcta: 3, pista: "∇f·u = (2,4)·(3/5,4/5).",
+      solucion: "$D_\\mathbf{u}f=\\nabla f\\cdot\\mathbf{u}=(2,4)\\cdot(3/5,4/5)=6/5+16/5=22/5=4{,}4$."
+    }
+  ]
+});
+OVA.quiz({
+  destino: "chk2", titulo: "Máximo ascenso · 3 preguntas",
+  items: [
+    {
+      etiqueta: "Dirección", nivel: 2, criterio: "Dirección de máximo ascenso (§3)",
+      enunciado: "El gradiente $\\nabla f$ apunta en la dirección de:",
+      opciones: ["máximo decrecimiento","máximo crecimiento de f","las curvas de nivel","ningún cambio"],
+      correcta: 1, pista: "Cuesta arriba, lo más empinado.",
+      solucion: "El gradiente apunta en la dirección de máximo crecimiento de $f$. En dirección opuesta, $-\\nabla f$, decrece lo más rápido."
+    },
+    {
+      etiqueta: "Magnitud", nivel: 2, criterio: "Máxima tasa de cambio (§3)",
+      enunciado: "La máxima tasa de cambio de $f$ en un punto es:",
+      opciones: ["$|\\nabla f|$","$f_x+f_y$","$0$","$\\nabla f\\cdot\\nabla f$"],
+      correcta: 0, pista: "Es la longitud del gradiente.",
+      solucion: "La máxima tasa de cambio es $|\\nabla f|$, la magnitud del gradiente, y ocurre justo en la dirección del gradiente."
+    },
+    {
+      etiqueta: "Perpendicular", nivel: 2, criterio: "Gradiente y curvas de nivel (§3)",
+      enunciado: "Respecto de las curvas de nivel de $f$, el gradiente siempre es:",
+      opciones: ["paralelo","tangente","perpendicular","nulo"],
+      correcta: 2, pista: "Cruza las curvas de nivel de frente.",
+      solucion: "El gradiente es perpendicular a las curvas de nivel: sobre una curva de nivel $f$ no cambia, y la dirección de máximo cambio es la que las cruza de frente."
+    }
+  ]
+});
+OVA.quiz({
+  destino: "final", titulo: "Práctica final · 8 preguntas",
+  items: [
+    {
+      etiqueta: "Unitario", nivel: 2, criterio: "Requisito del vector dirección (§2)",
+      enunciado: "Para usar $D_\\mathbf{u}f=\\nabla f\\cdot\\mathbf{u}$, el vector $\\mathbf{u}$ debe ser:",
+      opciones: ["cualquier vector","perpendicular a f","el gradiente","unitario (longitud 1)"],
+      correcta: 3, pista: "Si te dan otro, normalízalo primero.",
+      solucion: "$\\mathbf{u}$ debe ser unitario. Si te dan un vector cualquiera, primero divídelo por su magnitud para normalizarlo."
+    },
+    {
+      etiqueta: "Normalizar", nivel: 2, criterio: "Normalizar un vector (§2)",
+      enunciado: "El vector unitario en la dirección de $(3,4)$ es:",
+      opciones: ["$(3,4)$","$(3/5,4/5)$","$(1,1)$","$(3/7,4/7)$"],
+      correcta: 1, pista: "|(3,4)|=5.",
+      solucion: "$|(3,4)|=\\sqrt{9+16}=5$, así que el unitario es $(3/5,4/5)$."
+    },
+    {
+      etiqueta: "Magnitud", nivel: 3, criterio: "Calcular la máxima tasa (§3)",
+      enunciado: "La máxima tasa de cambio de $f=x^{2}+y^{2}$ en $(1,2)$ es:",
+      opciones: ["$2\\sqrt{5}$","$6$","$20$","$4$"],
+      correcta: 0, pista: "|∇f(1,2)|=|(2,4)|.",
+      solucion: "$|\\nabla f(1,2)|=|(2,4)|=\\sqrt{4+16}=\\sqrt{20}=2\\sqrt5\\approx4{,}47$."
+    },
+    {
+      etiqueta: "Plano", nivel: 2, criterio: "Fórmula del plano tangente (§4)",
+      enunciado: "El plano tangente a $z=f(x,y)$ en $(a,b)$ es $z=f(a,b)+$",
+      opciones: ["$f_x(a)+f_y(b)$","$f_x\\cdot f_y$","$f_x(x-a)+f_y(y-b)$","$f_{xx}(x-a)$"],
+      correcta: 2, pista: "Parciales en el punto por los desplazamientos.",
+      solucion: "$z=f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)$: las parciales en el punto son las pendientes del plano en x e y."
+    },
+    {
+      etiqueta: "Plano", nivel: 3, criterio: "Calcular el plano tangente (§4)",
+      enunciado: "El plano tangente a $z=x^{2}+y^{2}$ en $(1,1)$ es:",
+      opciones: ["$z=x^{2}+y^{2}$","$z=x+y$","$z=2x+2y$","$z=2x+2y-2$"],
+      correcta: 3, pista: "f(1,1)=2, f_x=f_y=2 ahí.",
+      solucion: "$f(1,1)=2$, $f_x(1,1)=f_y(1,1)=2$: $z=2+2(x-1)+2(y-1)=2x+2y-2$."
+    },
+    {
+      etiqueta: "Normal", nivel: 2, criterio: "Vector normal (§5)",
+      enunciado: "La dirección normal a la superficie $z=f(x,y)$ es:",
+      opciones: ["$(f_x,f_y)$","$(f_x,f_y,-1)$","$(1,1,1)$","$(f_x,f_y,0)$"],
+      correcta: 1, pista: "Añade una tercera componente −1.",
+      solucion: "El vector normal a $z=f(x,y)$ es $(f_x,f_y,-1)$. La opción a) es solo el gradiente 2D, tangente al plano xy."
+    },
+    {
+      etiqueta: "Producto", nivel: 3, criterio: "Fórmula del ángulo (§3)",
+      enunciado: "Como $D_\\mathbf{u}f=|\\nabla f|\\cos\\theta$, la derivada direccional es máxima cuando $\\theta=$",
+      opciones: ["$0°$ (misma dirección que ∇f)","$90°$","$180°$","$45°$"],
+      correcta: 0, pista: "cos θ máximo cuando θ=0.",
+      solucion: "$\\cos\\theta$ es máximo (=1) cuando $\\theta=0$, es decir, cuando caminas en la misma dirección que $\\nabla f$. Por eso el gradiente da el máximo ascenso."
+    },
+    {
+      etiqueta: "Nivel", nivel: 2, criterio: "Dirección de no cambio (§3)",
+      enunciado: "¿En qué dirección la función $f$ no cambia (derivada direccional cero)?",
+      opciones: ["la del gradiente","la opuesta al gradiente","la perpendicular al gradiente (curvas de nivel)","ninguna"],
+      correcta: 2, pista: "A lo largo de una curva de nivel la altura es constante.",
+      solucion: "Perpendicular al gradiente, a lo largo de las curvas de nivel, $f$ no cambia: ahí $\\nabla f\\cdot\\mathbf{u}=0$ porque son perpendiculares."
+    }
+  ]
+});
+</script>
 </body>
 </html>

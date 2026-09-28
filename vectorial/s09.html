@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 9 · Integrales iteradas y dobles — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 9 · Integrales iteradas y dobles — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 9</h1>
+      <h1>Cálculo Vectorial · Guía 9</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,371 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · De una a dos variables</a>
+    <a href="#s2">2 · Integrales iteradas</a>
+    <a href="#s3">3 · Regiones generales</a>
+    <a href="#s4">4 · Área</a>
+    <a href="#s5">5 · Volumen</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 9 · Integrales iteradas y dobles</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 9 · Corte II</div>
+  <h2>Integrales iteradas y dobles</h2>
+  <p>La integral de una variable sumaba áreas bajo una curva. La integral doble suma volúmenes bajo
+     una superficie, y se calcula integrando dos veces, una variable a la vez. Esta guía cierra el
+     corte extendiendo la integral al plano.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 14.1–14.2</span>
+    <span class="chip">Stewart · Cap. 15.1–15.2</span>
+    <span class="chip">Semana 9</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La integral $\int_a^b f(x)\,dx$ del cálculo de una variable daba
+  el área bajo una curva. Ahora $\iint_R f(x,y)\,dA$ dará el volumen bajo una superficie sobre una
+  región $R$ del plano. La idea es la misma —sumar infinitas piezas—, pero en una dimensión más.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · De una a dos variables</h3>
+
+  <div class="callout-dark">
+    <h3>Sumar sobre una región</h3>
+    <p>En una variable, se cortaba el intervalo $[a,b]$ en franjas delgadas y se sumaban sus áreas.
+       En dos variables, se corta una <strong>región</strong> $R$ del plano en pedacitos $dA$, se
+       multiplica cada uno por la altura $f(x,y)$ de la superficie encima, y se suman todos: eso es
+       la integral doble $\iint_R f\,dA$.</p>
+    <p>El resultado es el <strong>volumen</strong> del sólido entre la región y la superficie
+       (cuando $f\geq0$). El reto práctico es calcularla: para eso están las integrales iteradas.</p>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Integrales iteradas</h3>
+
+  <div class="def">
+    <strong>Integral iterada.</strong> Una integral doble sobre un rectángulo se calcula integrando
+    una variable a la vez, de adentro hacia afuera:
+    $$\iint_R f\,dA=\int_{a}^{b}\!\!\left(\int_{c}^{d} f(x,y)\,dy\right)dx$$
+    Primero se integra en $y$ (tratando $x$ como constante); el resultado, función de $x$, se integra
+    luego en $x$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $\displaystyle\int_{0}^{1}\!\int_{0}^{2}(x+y)\,dy\,dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Integral interna (en $y$, con $x$ constante)</div>
+        $\displaystyle\int_{0}^{2}(x+y)\,dy=\left[xy+\tfrac{y^{2}}{2}\right]_{0}^{2}=2x+2$.
+      </div>
+      <div class="paso"><div class="paso-t">Integral externa (en $x$)</div>
+        $\displaystyle\int_{0}^{1}(2x+2)\,dx=\left[x^{2}+2x\right]_{0}^{1}=1+2=3$.
+      </div>
     </div>
   </div>
+
+  <div class="callout-dark">
+    <h3>El teorema de Fubini</h3>
+    <p>¿Importa el orden, primero $y$ o primero $x$? Para funciones continuas, <strong>no</strong>:
+       el teorema de Fubini garantiza que ambos órdenes dan el mismo resultado. Puedes elegir el que
+       haga los cálculos más sencillos.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Integrales iteradas</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Regiones más generales</h3>
+
+  <p>Cuando la región no es un rectángulo, los límites de la integral interna dependen de la variable
+     externa. Por ejemplo, si la región va de $y=g_1(x)$ a $y=g_2(x)$ para $x$ entre $a$ y $b$:</p>
+
+  <div class="def">
+    $$\iint_R f\,dA=\int_{a}^{b}\!\!\left(\int_{g_1(x)}^{g_2(x)} f(x,y)\,dy\right)dx$$
+    Los límites internos son funciones de $x$; los externos son constantes. Dibuja la región para
+    leerlos correctamente.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $\displaystyle\int_{0}^{1}\!\int_{0}^{x} xy\,dy\,dx$ (región triangular)</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Integral interna</div>
+        $\displaystyle\int_{0}^{x} xy\,dy=x\left[\tfrac{y^{2}}{2}\right]_{0}^{x}=\tfrac{x^{3}}{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Integral externa</div>
+        $\displaystyle\int_{0}^{1}\tfrac{x^{3}}{2}\,dx=\left[\tfrac{x^{4}}{8}\right]_{0}^{1}
+        =\tfrac{1}{8}$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Área de una región</h3>
+
+  <div class="def">
+    <strong>Área por integral doble.</strong> Integrando la función constante $1$ sobre la región se
+    obtiene su área:
+    $$\text{Área}(R)=\iint_R 1\,dA$$
+    Es el volumen de un sólido de altura 1, que numéricamente coincide con el área de la base.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Área entre $y=x$ y $y=x^{2}$, de 0 a 1</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Plantear los límites</div>
+        Entre $x=0$ y $x=1$, la región va de $y=x^{2}$ (abajo) a $y=x$ (arriba), porque
+        $x\geq x^{2}$ en ese intervalo.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $\displaystyle\int_{0}^{1}\!\int_{x^{2}}^{x}1\,dy\,dx=\int_{0}^{1}(x-x^{2})\,dx
+        =\left[\tfrac{x^{2}}{2}-\tfrac{x^{3}}{3}\right]_{0}^{1}=\tfrac{1}{2}-\tfrac{1}{3}=\tfrac{1}{6}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 La región y las franjas</div>
+  <div class="viz" data-viz="integraldoble">
+    <div class="viz-controls">
+      <label for="id-r">Región</label>
+      <select id="id-r">
+        <option value="triang">entre y = x² y y = x</option>
+        <option value="cuadr">rectángulo [0,1]×[0,1]</option>
+        <option value="bajocurva">bajo y = 1 − x²</option>
+      </select>
+      <label for="id-f">Franjas</label>
+      <input id="id-f" class="franjas" type="range" min="2" max="40" value="10">
+      <span class="franjas-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Cada franja vertical es una integral interna (barrido en $y$); sumar todas las franjas es la
+    integral externa (en $x$). Aumenta las franjas y la suma se acerca al valor exacto.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Regiones y área</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Volumen bajo una superficie</h3>
+
+  <div class="callout-dark">
+    <h3>La aplicación estrella</h3>
+    <p>Cuando $f(x,y)\geq0$, la integral doble $\iint_R f\,dA$ es exactamente el <strong>volumen</strong>
+       del sólido que queda entre la región $R$ (en el plano) y la superficie $z=f(x,y)$ (por
+       encima). Es la generalización directa del «área bajo la curva» a «volumen bajo la superficie».</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Volumen bajo $z=4-x-y$ sobre $[0,1]\times[0,1]$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Integral interna (en $y$)</div>
+        $\displaystyle\int_{0}^{1}(4-x-y)\,dy=\left[4y-xy-\tfrac{y^{2}}{2}\right]_{0}^{1}
+        =4-x-\tfrac{1}{2}=\tfrac{7}{2}-x$.
+      </div>
+      <div class="paso"><div class="paso-t">Integral externa (en $x$)</div>
+        $\displaystyle\int_{0}^{1}\left(\tfrac{7}{2}-x\right)dx=\left[\tfrac{7}{2}x-\tfrac{x^{2}}{2}\right]_{0}^{1}
+        =\tfrac{7}{2}-\tfrac{1}{2}=3$.
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        El volumen del sólido es $3$ unidades cúbicas.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Lo que viene.</strong> En el Corte III extenderás esta idea a coordenadas polares (para
+    regiones circulares), a integrales triples (volúmenes con densidad variable) y a las aplicaciones
+    físicas: masa, centro de masa y momentos. La integral doble es el primer paso de ese camino.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Si una densidad de demanda o de probabilidad depende de dos variables, la integral doble sobre
+      una región da el total acumulado: por ejemplo, la probabilidad de que dos variables caigan en
+      cierto rango conjunto, base del análisis de riesgo con dos factores.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El valor esperado de una función de dos variables aleatorias (como el rendimiento conjunto de
+      dos activos) se calcula con una integral doble de la función por la densidad conjunta. La
+      integral doble es la herramienta para promediar sobre dos fuentes de incertidumbre.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      En procesamiento de imágenes, una imagen es una función $f(x,y)$ de intensidad, y muchas
+      operaciones (brillo total, convoluciones, momentos) son integrales dobles sobre la región de
+      la imagen. La probabilidad conjunta de dos variables continuas también es una integral doble.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El flujo de un campo a través de una superficie plana, la carga total sobre una placa con
+      densidad variable, o la potencia media de una señal en dos dimensiones se calculan con
+      integrales dobles sobre la región correspondiente.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Integral doble</strong> $\iint_R f\,dA$: suma $f(x,y)$ sobre una región del plano.</li>
+    <li><strong>Integral iterada</strong>: se calcula integrando una variable a la vez, de adentro hacia afuera.</li>
+    <li><strong>Fubini</strong>: para funciones continuas, el orden de integración no cambia el resultado.</li>
+    <li><strong>Regiones generales</strong>: los límites internos son funciones de la variable externa; dibuja la región.</li>
+    <li><strong>Área</strong>: $\iint_R 1\,dA$. &nbsp; <strong>Volumen</strong> bajo $z=f(x,y)\geq0$: $\iint_R f\,dA$.</li>
+    <li>Ejemplos: $\int_0^1\!\int_0^2(x+y)\,dy\,dx=3$; área entre $y=x$ y $y=x^2$ es $\tfrac{1}{6}$; volumen bajo $4-x-y$ es $3$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/5-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-vectorial.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: "chk1", titulo: "Integrales iteradas · 3 preguntas",
+  items: [
+    {
+      etiqueta: "Idea", nivel: 1, criterio: "Qué mide la integral doble (§1)",
+      enunciado: "Cuando $f(x,y)\\geq0$, la integral doble $\\iint_R f\\,dA$ representa:",
+      opciones: ["el volumen bajo la superficie","un área","una pendiente","una longitud"],
+      correcta: 0, pista: "Generaliza el \"área bajo la curva\".",
+      solucion: "La integral doble de $f\\geq0$ sobre $R$ es el volumen del sólido entre la región y la superficie $z=f(x,y)$, la versión en 3D del área bajo una curva."
+    },
+    {
+      etiqueta: "Orden", nivel: 2, criterio: "Cómo se calcula (§2)",
+      enunciado: "Una integral iterada se calcula:",
+      opciones: ["sumando las dos variables","derivando primero","integrando una variable a la vez, de adentro hacia afuera","solo en x"],
+      correcta: 2, pista: "Primero la interna, luego la externa.",
+      solucion: "Se integra de adentro hacia afuera: primero la integral interna (una variable, tratando la otra como constante) y luego la externa."
+    },
+    {
+      etiqueta: "Calcular", nivel: 3, criterio: "Evaluar una iterada (§2)",
+      enunciado: "El valor de $\\displaystyle\\int_{0}^{1}\\!\\int_{0}^{2}(x+y)\\,dy\\,dx$ es:",
+      opciones: ["$2$","$6$","$4$","$3$"],
+      correcta: 3, pista: "Interna: ∫₀²(x+y)dy=2x+2.",
+      solucion: "Interna: $\\int_0^2(x+y)dy=2x+2$. Externa: $\\int_0^1(2x+2)dx=1+2=3$."
+    }
+  ]
+});
+OVA.quiz({
+  destino: "chk2", titulo: "Regiones y área · 3 preguntas",
+  items: [
+    {
+      etiqueta: "Fubini", nivel: 2, criterio: "Teorema de Fubini (§2)",
+      enunciado: "El teorema de Fubini garantiza que, para funciones continuas:",
+      opciones: ["la integral es cero","el orden de integración no cambia el resultado","solo sirve un orden","el resultado es negativo"],
+      correcta: 1, pista: "Puedes elegir el orden más cómodo.",
+      solucion: "Fubini dice que, para funciones continuas, integrar primero en $x$ o primero en $y$ da el mismo resultado. Se elige el orden más sencillo."
+    },
+    {
+      etiqueta: "Región", nivel: 3, criterio: "Límites en regiones generales (§3)",
+      enunciado: "En una región general, los límites de la integral INTERNA suelen ser:",
+      opciones: ["funciones de la variable externa","siempre constantes","siempre 0 y 1","iguales a los externos"],
+      correcta: 0, pista: "Dibuja la región: la frontera depende de x.",
+      solucion: "Los límites internos suelen ser funciones de la variable externa (por ejemplo, de $x$), mientras que los externos son constantes. Por eso conviene dibujar la región."
+    },
+    {
+      etiqueta: "Área", nivel: 3, criterio: "Área por integral doble (§4)",
+      enunciado: "El área de la región entre $y=x$ y $y=x^{2}$ (de 0 a 1) es:",
+      opciones: ["$1/2$","$1/3$","$1/6$","$1$"],
+      correcta: 2, pista: "∫₀¹(x-x²)dx.",
+      solucion: "$\\int_0^1\\int_{x^2}^{x}1\\,dy\\,dx=\\int_0^1(x-x^2)dx=\\frac12-\\frac13=\\frac16$."
+    }
+  ]
+});
+OVA.quiz({
+  destino: "final", titulo: "Práctica final · 8 preguntas",
+  items: [
+    {
+      etiqueta: "Concepto", nivel: 1, criterio: "Analogía con una variable (§1)",
+      enunciado: "La integral doble extiende a dos variables la idea de:",
+      opciones: ["la derivada","el límite","la pendiente","el área bajo una curva"],
+      correcta: 3, pista: "De área bajo curva a volumen bajo superficie.",
+      solucion: "La integral doble generaliza el área bajo una curva ($\\int f\\,dx$) al volumen bajo una superficie ($\\iint f\\,dA$)."
+    },
+    {
+      etiqueta: "Área", nivel: 2, criterio: "Función para el área (§4)",
+      enunciado: "El área de una región $R$ se obtiene como $\\iint_R \\square\\;dA$, donde $\\square$ es:",
+      opciones: ["$x$","$1$","$f(x,y)$","$0$"],
+      correcta: 1, pista: "Altura constante 1.",
+      solucion: "$\\text{Área}(R)=\\iint_R 1\\,dA$: integrar la constante 1 da el volumen de un sólido de altura 1, que coincide con el área de la base."
+    },
+    {
+      etiqueta: "Calcular", nivel: 3, criterio: "Integral sobre región triangular (§3)",
+      enunciado: "El valor de $\\displaystyle\\int_{0}^{1}\\!\\int_{0}^{x} xy\\,dy\\,dx$ es:",
+      opciones: ["$1/8$","$1/4$","$1/2$","$1/6$"],
+      correcta: 0, pista: "Interna: ∫₀ˣ xy dy = x³/2.",
+      solucion: "Interna: $\\int_0^x xy\\,dy=x\\cdot\\frac{x^2}{2}=\\frac{x^3}{2}$. Externa: $\\int_0^1\\frac{x^3}{2}dx=\\frac{1}{8}$."
+    },
+    {
+      etiqueta: "Volumen", nivel: 3, criterio: "Volumen bajo un plano (§5)",
+      enunciado: "El volumen bajo $z=4-x-y$ sobre $[0,1]\\times[0,1]$ es:",
+      opciones: ["$2$","$4$","$3$","$7/2$"],
+      correcta: 2, pista: "Interna en y: 7/2 - x.",
+      solucion: "Interna: $\\int_0^1(4-x-y)dy=\\frac72-x$. Externa: $\\int_0^1(\\frac72-x)dx=\\frac72-\\frac12=3$."
+    },
+    {
+      etiqueta: "Fubini", nivel: 2, criterio: "Consecuencia práctica de Fubini (§2)",
+      enunciado: "Para $\\int_0^1\\int_0^2(x+y)\\,dy\\,dx=3$, si invertimos el orden a $dx\\,dy$ el resultado es:",
+      opciones: ["distinto","negativo","cero","$3$ (igual)"],
+      correcta: 3, pista: "Fubini: mismo resultado.",
+      solucion: "Por Fubini, invertir el orden da el mismo valor: $3$. La función es continua, así que el orden no altera el resultado."
+    },
+    {
+      etiqueta: "Interna", nivel: 2, criterio: "Tratar la otra variable (§2)",
+      enunciado: "Al calcular la integral interna en $y$, la variable $x$ se trata como:",
+      opciones: ["cero","constante","otra variable de integración","infinito"],
+      correcta: 1, pista: "Igual que en las parciales.",
+      solucion: "En la integral interna en $y$, se trata $x$ como constante (igual que al calcular una derivada parcial respecto de $y$)."
+    },
+    {
+      etiqueta: "Región", nivel: 2, criterio: "Leer la región (§4)",
+      enunciado: "En $[0,1]$, entre las curvas $y=x$ y $y=x^{2}$, ¿cuál está por encima?",
+      opciones: ["$y=x$","$y=x^{2}$","se cruzan siempre","son iguales"],
+      correcta: 0, pista: "Prueba x=1/2: x=0.5, x²=0.25.",
+      solucion: "En $(0,1)$, $x\\geq x^2$ (por ejemplo, en $x=0{,}5$: $0{,}5>0{,}25$), así que $y=x$ está por encima de $y=x^2$."
+    },
+    {
+      etiqueta: "Aplicación", nivel: 1, criterio: "Lo que viene en Corte III (§5)",
+      enunciado: "La integral doble es el punto de partida para, en el Corte III, calcular:",
+      opciones: ["derivadas parciales","límites","integrales triples y aplicaciones (masa, centro de masa)","gradientes"],
+      correcta: 2, pista: "Una dimensión más: volúmenes con densidad.",
+      solucion: "En el Corte III se extiende a coordenadas polares, integrales triples y aplicaciones físicas como masa y centro de masa. La integral doble es el primer paso."
+    }
+  ]
+});
+</script>
 </body>
 </html>

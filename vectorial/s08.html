@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 8 · Extremos de funciones de varias variables — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 8 · Extremos de funciones de varias variables — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 8</h1>
+      <h1>Cálculo Vectorial · Guía 8</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,430 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Puntos críticos</a>
+    <a href="#s2">2 · Criterio del Hessiano</a>
+    <a href="#s3">3 · El punto de silla</a>
+    <a href="#s4">4 · Optimización aplicada</a>
+    <a href="#s5">5 · Multiplicadores de Lagrange</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 8 · Extremos de funciones de varias variables</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 8 · Corte II</div>
+  <h2>Extremos de funciones de varias variables</h2>
+  <p>Con una variable, un máximo era una cima y un mínimo un valle. Con dos, aparece una figura
+     nueva que no existía: la silla de montar, que sube en una dirección y baja en otra. Esta guía
+     enseña a encontrar y clasificar los extremos de una superficie, y a optimizar con restricciones.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 13.8–13.10</span>
+    <span class="chip">Stewart · Cap. 14.7–14.8</span>
+    <span class="chip">Semana 8</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En Cálculo, los extremos aparecían donde $f'(x)=0$. Aquí la
+  condición es $\nabla f=\mathbf{0}$: <em>ambas</em> parciales deben anularse a la vez. Pero
+  clasificar el punto es más rico, porque hay más formas de curvarse.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Puntos críticos</h3>
+
+  <div class="callout-dark">
+    <h3>Donde el plano tangente es horizontal</h3>
+    <p>En un máximo o un mínimo de una superficie, el plano tangente es horizontal: la superficie no
+       sube ni baja en ninguna dirección instantáneamente. Eso exige que <em>las dos</em> parciales
+       sean cero a la vez.</p>
+  </div>
+
+  <div class="def">
+    <strong>Punto crítico.</strong> Un punto $(a,b)$ es crítico si $\nabla f(a,b)=\mathbf{0}$, es
+    decir, si $f_x(a,b)=0$ <em>y</em> $f_y(a,b)=0$ simultáneamente.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Críticos de $f(x,y)=x^{2}+y^{2}-4x-6y+13$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Igualar las parciales a cero</div>
+        $f_x=2x-4=0\Rightarrow x=2$. &nbsp; $f_y=2y-6=0\Rightarrow y=3$.
+      </div>
+      <div class="paso"><div class="paso-t">Punto crítico</div>
+        Hay un único punto crítico: $(2,3)$. Falta clasificarlo.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Criterio de la segunda derivada (Hessiano)</h3>
+
+  <div class="callout-dark">
+    <h3>Clasificar el punto crítico</h3>
+    <p>Con una variable, el signo de $f''$ decidía entre máximo y mínimo. Con dos, hace falta
+       combinar las tres segundas parciales en un solo número, el <strong>discriminante</strong>
+       $D$, que mide cómo se curva la superficie en todas las direcciones a la vez.</p>
+  </div>
+
+  <div class="def">
+    <strong>Criterio del Hessiano.</strong> En un punto crítico, calcula
+    $$D=f_{xx}\,f_{yy}-(f_{xy})^{2}$$
+    • Si $D\gt0$ y $f_{xx}\gt0$: <strong>mínimo</strong> local.<br>
+    • Si $D\gt0$ y $f_{xx}\lt0$: <strong>máximo</strong> local.<br>
+    • Si $D\lt0$: <strong>punto de silla</strong>.<br>
+    • Si $D=0$: el criterio no decide.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Clasificar el crítico $(2,3)$ del Ejemplo 1</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Segundas parciales</div>
+        $f_{xx}=2$, $f_{yy}=2$, $f_{xy}=0$.
+      </div>
+      <div class="paso"><div class="paso-t">Discriminante</div>
+        $D=(2)(2)-(0)^{2}=4\gt0$, y $f_{xx}=2\gt0$.
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        Es un <strong>mínimo local</strong>. Su valor: $f(2,3)=4+9-8-18+13=0$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.1 Explora los tres casos</div>
+  <div class="viz" data-viz="extremos">
+    <div class="viz-controls">
+      <label for="ex-f">Superficie</label>
+      <select id="ex-f">
+        <option value="minimo">f = x² + y² (mínimo)</option>
+        <option value="maximo">f = 4 − x² − y² (máximo)</option>
+        <option value="silla">f = x² − y² (silla)</option>
+      </select>
+      <label for="ex-g">Girar</label>
+      <input id="ex-g" class="giro" type="range" min="0" max="628" value="90">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Gira cada superficie. El mínimo es un tazón ($D\gt0$, $f_{xx}\gt0$); el máximo, una cúpula
+    ($D\gt0$, $f_{xx}\lt0$); la silla ($D\lt0$) sube en una dirección y baja en la perpendicular.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Críticos y clasificación</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · El punto de silla</h3>
+
+  <div class="callout-dark">
+    <h3>Ni máximo ni mínimo</h3>
+    <p>El caso $D\lt0$ no tiene análogo en una variable. En un <strong>punto de silla</strong> el
+       gradiente es cero —el plano tangente es horizontal— pero no es extremo: en una dirección la
+       superficie sube, y en la perpendicular baja. Como la silla de un caballo, o un paso de
+       montaña entre dos picos.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · $f(x,y)=x^{2}-y^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Punto crítico</div>
+        $f_x=2x=0$, $f_y=-2y=0\Rightarrow(0,0)$.
+      </div>
+      <div class="paso"><div class="paso-t">Discriminante</div>
+        $f_{xx}=2$, $f_{yy}=-2$, $f_{xy}=0$, así que $D=(2)(-2)-0=-4\lt0$.
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        <strong>Punto de silla.</strong> A lo largo del eje $x$, $f=x^{2}$ tiene un mínimo; a lo
+        largo del eje $y$, $f=-y^{2}$ tiene un máximo. Direcciones opuestas: por eso no es extremo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Optimización aplicada</h3>
+
+  <p>El procedimiento para optimizar una función de dos variables sin restricciones repite el patrón
+     de Cálculo, pero con gradiente:</p>
+
+  <div class="def">
+    <strong>Método.</strong>
+    (1) Hallar los puntos críticos resolviendo $f_x=0$ y $f_y=0$.
+    (2) Clasificar cada uno con el discriminante $D$.
+    (3) Evaluar $f$ en los máximos o mínimos para hallar los valores óptimos.
+  </div>
+
+  <div class="nota">
+    <strong>Ejemplo de aplicación.</strong> Una empresa fabrica dos productos en cantidades $x$ e
+    $y$; su ganancia es una función $G(x,y)$. Los niveles de producción que maximizan la ganancia
+    son el punto crítico donde $\nabla G=\mathbf{0}$ y $D\gt0$ con $G_{xx}\lt0$. El mismo criterio de
+    la caja del Corte anterior, ahora con dos variables de decisión.
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Multiplicadores de Lagrange</h3>
+
+  <div class="callout-dark">
+    <h3>Optimizar con una restricción</h3>
+    <p>A menudo el óptimo no es libre: hay una restricción. «Maximiza el área con un perímetro fijo»,
+       «minimiza el costo con una producción dada». El método de <strong>multiplicadores de
+       Lagrange</strong> resuelve exactamente eso: optimizar $f(x,y)$ sujeto a una condición
+       $g(x,y)=c$.</p>
+    <p>La idea geométrica es elegante: en el óptimo restringido, la curva de nivel de $f$ es
+       <em>tangente</em> a la restricción. Y si son tangentes, sus gradientes son paralelos. Esa es
+       toda la condición.</p>
+  </div>
+
+  <div class="def">
+    <strong>Método de Lagrange.</strong> Para optimizar $f(x,y)$ sujeto a $g(x,y)=c$, se resuelve el
+    sistema
+    $$\nabla f=\lambda\,\nabla g,\qquad g(x,y)=c$$
+    El número $\lambda$ es el <em>multiplicador</em>. En la práctica: iguala $f_x=\lambda g_x$,
+    $f_y=\lambda g_y$, y usa la restricción para cerrar el sistema.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Maximizar $f(x,y)=xy$ sujeto a $x+y=10$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Plantear $\nabla f=\lambda\nabla g$</div>
+        Con $g=x+y$: $\nabla f=(y,x)$ y $\nabla g=(1,1)$. El sistema es $y=\lambda$, $x=\lambda$.
+      </div>
+      <div class="paso"><div class="paso-t">Combinar</div>
+        De $y=\lambda$ y $x=\lambda$ sale $x=y$. Con la restricción $x+y=10$: $2x=10\Rightarrow x=5$,
+        $y=5$.
+      </div>
+      <div class="paso"><div class="paso-t">Respuesta</div>
+        El máximo es $f(5,5)=25$. Comprobación: $4\cdot6=24$ y $3\cdot7=21$, ambos menores. Entre
+        todos los pares que suman 10, el producto es máximo cuando son iguales.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>La intuición clave.</strong> Lagrange convierte «optimizar sobre una curva» en «buscar
+    dónde los gradientes se alinean». Es la herramienta estándar en economía (maximizar utilidad con
+    presupuesto fijo) y en ingeniería (minimizar material con resistencia dada).
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Optimización y Lagrange</h3>
+  <div id="chk2"></div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Síntesis</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Maximizar la utilidad $U(x,y)$ de un consumidor sujeto a su restricción presupuestaria
+      $p_1x+p_2y=I$ es el problema de Lagrange por excelencia en microeconomía. La condición
+      $\nabla U=\lambda\nabla g$ da la regla de que las utilidades marginales por peso se igualan.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Minimizar el costo de producir cierto nivel de salida, con dos insumos sujetos a una
+      restricción tecnológica, es optimización con restricción. El multiplicador $\lambda$ tiene una
+      lectura contable: el costo marginal de relajar la restricción una unidad.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Entrenar un modelo es minimizar una función de pérdida de muchas variables: se buscan los
+      puntos donde el gradiente se anula. Los puntos de silla son un fenómeno central en el
+      entrenamiento de redes profundas, donde abundan más que los mínimos.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Diseñar un circuito que maximice el rendimiento con restricciones de potencia o área es
+      optimización con restricciones. Lagrange formaliza el compromiso: dónde el beneficio marginal
+      de mejorar se equilibra con el costo marginal del recurso limitado.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Punto crítico</strong>: donde $\nabla f=\mathbf{0}$, o sea $f_x=0$ y $f_y=0$ a la vez.</li>
+    <li><strong>Criterio del Hessiano</strong>: $D=f_{xx}f_{yy}-(f_{xy})^{2}$.</li>
+    <li>$D\gt0$ con $f_{xx}\gt0$ mínimo; con $f_{xx}\lt0$ máximo; $D\lt0$ silla; $D=0$ no decide.</li>
+    <li><strong>Punto de silla</strong>: gradiente cero pero no es extremo; sube en una dirección, baja en otra.</li>
+    <li><strong>Lagrange</strong>: para optimizar $f$ con $g=c$, resolver $\nabla f=\lambda\nabla g$ junto con la restricción.</li>
+    <li>Geometría de Lagrange: en el óptimo, la curva de nivel de $f$ es tangente a la restricción (gradientes paralelos).</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-vectorial.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: "chk1", titulo: "Críticos y clasificación · 3 preguntas",
+  items: [
+    {
+      etiqueta: "Críticos", nivel: 2, criterio: "Condición de punto crítico (§1)",
+      enunciado: "Un punto $(a,b)$ es crítico de $f(x,y)$ cuando:",
+      opciones: ["$f_x=0$ y $f_y=0$ a la vez","$f_x=0$ o $f_y=0$","$f=0$","$f_{xx}=0$"],
+      correcta: 0, pista: "El gradiente completo debe anularse.",
+      solucion: "Un punto crítico exige $\\nabla f=\\mathbf{0}$, es decir, $f_x=0$ Y $f_y=0$ simultáneamente. Ambas parciales, no solo una."
+    },
+    {
+      etiqueta: "Discriminante", nivel: 2, criterio: "Fórmula del Hessiano (§2)",
+      enunciado: "El discriminante del criterio de la segunda derivada es $D=$",
+      opciones: ["$f_{xx}+f_{yy}$","$f_{xx}\\,f_{yy}$","$f_{xx}\\,f_{yy}-(f_{xy})^{2}$","$f_{xy}^{2}$"],
+      correcta: 2, pista: "Producto de puras menos mixta al cuadrado.",
+      solucion: "$D=f_{xx}f_{yy}-(f_{xy})^2$. Combina las tres segundas parciales para medir la curvatura en todas las direcciones."
+    },
+    {
+      etiqueta: "Clasificar", nivel: 3, criterio: "Interpretar D y f_xx (§2)",
+      enunciado: "Si en un punto crítico $D\\gt0$ y $f_{xx}\\gt0$, el punto es un:",
+      opciones: ["máximo local","no se sabe","punto de silla","mínimo local"],
+      correcta: 3, pista: "D>0 con f_xx>0: tazón hacia arriba.",
+      solucion: "$D>0$ y $f_{xx}>0$ indican un mínimo local (la superficie se abre hacia arriba, como un tazón). Si $f_{xx}<0$ sería máximo."
+    }
+  ]
+});
+OVA.quiz({
+  destino: "chk2", titulo: "Optimización y Lagrange · 3 preguntas",
+  items: [
+    {
+      etiqueta: "Silla", nivel: 2, criterio: "Reconocer el punto de silla (§3)",
+      enunciado: "Si en un punto crítico $D\\lt0$, se trata de un:",
+      opciones: ["mínimo","punto de silla","máximo","punto de inflexión"],
+      correcta: 1, pista: "Sube en una dirección, baja en otra.",
+      solucion: "$D<0$ indica un punto de silla: no es máximo ni mínimo, porque la superficie sube en una dirección y baja en la perpendicular."
+    },
+    {
+      etiqueta: "Lagrange", nivel: 2, criterio: "Condición de Lagrange (§5)",
+      enunciado: "Para optimizar $f$ sujeto a $g=c$, el método de Lagrange resuelve:",
+      opciones: ["$\\nabla f=\\lambda\\nabla g$","$\\nabla f=0$","$f=g$","$\\nabla f\\cdot\\nabla g=0$"],
+      correcta: 0, pista: "Los gradientes deben ser paralelos.",
+      solucion: "Se resuelve $\\nabla f=\\lambda\\nabla g$ junto con la restricción $g=c$: en el óptimo restringido, los gradientes de $f$ y $g$ son paralelos."
+    },
+    {
+      etiqueta: "Lagrange", nivel: 3, criterio: "Resolver un problema de Lagrange (§5)",
+      enunciado: "El máximo de $f=xy$ sujeto a $x+y=10$ se alcanza en:",
+      opciones: ["$(1,9)$","$(2,8)$","$(5,5)$","$(0,10)$"],
+      correcta: 2, pista: "∇f=(y,x)=λ(1,1) → x=y.",
+      solucion: "De $\\nabla f=\\lambda\\nabla g$: $(y,x)=\\lambda(1,1)$ da $x=y$; con $x+y=10$ sale $(5,5)$, producto 25. Es el máximo (4·6=24, 3·7=21 son menores)."
+    }
+  ]
+});
+OVA.quiz({
+  destino: "chk3", titulo: "Síntesis del corte · 3 preguntas",
+  items: [
+    {
+      etiqueta: "Geometría", nivel: 2, criterio: "Intuición de Lagrange (§5)",
+      enunciado: "En el óptimo de Lagrange, la curva de nivel de $f$ y la restricción son:",
+      opciones: ["perpendiculares","iguales","paralelas y separadas","tangentes"],
+      correcta: 3, pista: "Por eso los gradientes se alinean.",
+      solucion: "En el óptimo restringido, la curva de nivel de $f$ es tangente a la restricción; por eso sus gradientes (perpendiculares a cada una) resultan paralelos."
+    },
+    {
+      etiqueta: "D=0", nivel: 2, criterio: "Caso indeterminado (§2)",
+      enunciado: "Si el discriminante da $D=0$, el criterio del Hessiano:",
+      opciones: ["dice que es mínimo","no decide","dice que es silla","dice que es máximo"],
+      correcta: 1, pista: "Es el caso ambiguo.",
+      solucion: "Cuando $D=0$ el criterio no decide: el punto podría ser máximo, mínimo o ninguno, y hay que analizarlo por otros medios."
+    },
+    {
+      etiqueta: "Método", nivel: 2, criterio: "Ordenar la optimización libre (§4)",
+      enunciado: "Para optimizar $f(x,y)$ sin restricciones, el primer paso es:",
+      opciones: ["resolver $f_x=0$ y $f_y=0$","calcular D","aplicar Lagrange","evaluar en el origen"],
+      correcta: 0, pista: "Primero localiza los candidatos.",
+      solucion: "Primero se hallan los puntos críticos resolviendo $f_x=0$ y $f_y=0$; después se clasifican con el discriminante $D$."
+    }
+  ]
+});
+OVA.quiz({
+  destino: "final", titulo: "Práctica final · 8 preguntas",
+  items: [
+    {
+      etiqueta: "Críticos", nivel: 3, criterio: "Hallar críticos (§1)",
+      enunciado: "El punto crítico de $f=x^{2}+y^{2}-4x-6y+13$ es:",
+      opciones: ["$(0,0)$","$(4,6)$","$(2,3)$","$(-2,-3)$"],
+      correcta: 2, pista: "f_x=2x-4=0, f_y=2y-6=0.",
+      solucion: "$f_x=2x-4=0\\Rightarrow x=2$; $f_y=2y-6=0\\Rightarrow y=3$. El crítico es $(2,3)$."
+    },
+    {
+      etiqueta: "Clasificar", nivel: 3, criterio: "Clasificar con D (§2)",
+      enunciado: "Para ese $f$ ($f_{xx}=2$, $f_{yy}=2$, $f_{xy}=0$), el punto $(2,3)$ es:",
+      opciones: ["silla","indeterminado","máximo","mínimo"],
+      correcta: 3, pista: "D=2·2-0=4>0 y f_xx>0.",
+      solucion: "$D=(2)(2)-0=4>0$ y $f_{xx}=2>0$, así que es un mínimo local. Su valor es $f(2,3)=0$."
+    },
+    {
+      etiqueta: "Silla", nivel: 3, criterio: "Identificar silla (§3)",
+      enunciado: "Para $f=x^{2}-y^{2}$ en $(0,0)$: $f_{xx}=2$, $f_{yy}=-2$, $f_{xy}=0$. El punto es:",
+      opciones: ["mínimo","punto de silla","máximo","no crítico"],
+      correcta: 1, pista: "D=(2)(-2)-0.",
+      solucion: "$D=(2)(-2)-0=-4<0$, así que es un punto de silla: sube a lo largo de x ($x^2$) y baja a lo largo de y ($-y^2$)."
+    },
+    {
+      etiqueta: "Concepto", nivel: 1, criterio: "Novedad de dos variables (§3)",
+      enunciado: "¿Qué tipo de punto crítico NO existe en funciones de una sola variable?",
+      opciones: ["el punto de silla","el mínimo","el máximo","ninguno es nuevo"],
+      correcta: 0, pista: "Sube en una dirección y baja en otra.",
+      solucion: "El punto de silla es nuevo: requiere dos direcciones (sube en una, baja en la perpendicular), algo imposible con una sola variable."
+    },
+    {
+      etiqueta: "Lagrange", nivel: 2, criterio: "Cuándo usar Lagrange (§5)",
+      enunciado: "El método de Lagrange sirve para optimizar cuando:",
+      opciones: ["no hay restricciones","la función es lineal","hay una restricción $g=c$","D=0"],
+      correcta: 2, pista: "Optimización sujeta a una condición.",
+      solucion: "Lagrange resuelve la optimización con restricción: maximizar o minimizar $f$ sujeto a una condición $g(x,y)=c$."
+    },
+    {
+      etiqueta: "Lagrange", nivel: 3, criterio: "Producto máximo (§5)",
+      enunciado: "Entre todos los pares $(x,y)$ con $x+y=10$, el producto $xy$ es máximo cuando:",
+      opciones: ["x=1, y=9","x=3, y=7","x=0, y=10","x=y=5"],
+      correcta: 3, pista: "Lagrange da x=y.",
+      solucion: "El máximo es $x=y=5$, con producto 25. Los pares desiguales dan menos: 1·9=9, 3·7=21, 0·10=0."
+    },
+    {
+      etiqueta: "Aplicación", nivel: 2, criterio: "Interpretar el multiplicador (§5)",
+      enunciado: "En Lagrange, el multiplicador $\\lambda$ se interpreta como:",
+      opciones: ["el valor óptimo","la tasa de cambio del óptimo al relajar la restricción","siempre cero","la pendiente de f"],
+      correcta: 1, pista: "Cuánto mejora el óptimo por unidad de restricción.",
+      solucion: "$\\lambda$ mide cuánto cambia el valor óptimo si se relaja la restricción una unidad; en economía es un costo o valor marginal."
+    },
+    {
+      etiqueta: "Método", nivel: 2, criterio: "Segundo paso de la optimización (§4)",
+      enunciado: "Tras hallar un punto crítico de $f(x,y)$, para saber si es máximo o mínimo se usa:",
+      opciones: ["el discriminante D","el gradiente","la restricción","el diferencial"],
+      correcta: 0, pista: "El criterio de la segunda derivada.",
+      solucion: "Se clasifica con el discriminante $D=f_{xx}f_{yy}-(f_{xy})^2$ y el signo de $f_{xx}$, análogo al criterio de la segunda derivada de una variable."
+    }
+  ]
+});
+</script>
 </body>
 </html>
