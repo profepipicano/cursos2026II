@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 8 · EDO de orden superior — Ecuaciones Diferenciales · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 8 · EDO de orden superior — Ecuaciones Diferenciales · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Ecuaciones Diferenciales · Semana 8</h1>
+      <h1>Ecuaciones Diferenciales · Guía 8</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,467 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Subir de orden</a>
+    <a href="#s2">2 · Homogénea vs no homogénea</a>
+    <a href="#s3">3 · Independencia y Wronskiano</a>
+    <a href="#s4">4 · La solución general</a>
+    <a href="#s5">5 · Superposición</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 8 · EDO de orden superior</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 8 · Corte II</div>
+  <h2>EDO de orden superior</h2>
+  <p>Hasta ahora todas las ecuaciones eran de primer orden. Al pasar a segundo orden —con
+     $y''$— aparecen los modelos más ricos de la ingeniería: oscilaciones, resortes, circuitos.
+     Antes de resolverlas, esta guía construye la <strong>teoría</strong> que organiza sus
+     soluciones: cómo se combinan, cuándo son independientes y qué forma tiene la solución general.</p>
+  <div class="chips">
+    <span class="chip">Zill · Cap. 4.1</span>
+    <span class="chip">Semana 8</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> Con primer orden, la solución general tenía una constante
+  arbitraria. Con segundo orden habrá <em>dos</em>, y la novedad es entender cómo se estructuran las
+  soluciones: es un espacio con «dimensión 2». Esta semana es teoría; la próxima, el método de
+  resolución.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Subir de orden</h3>
+
+  <div class="callout-dark">
+    <h3>Por qué el segundo orden es especial</h3>
+    <p>Una EDO lineal de segundo orden tiene la forma
+       $a_2(x)y''+a_1(x)y'+a_0(x)y=g(x)$. Modela cualquier sistema con inercia y restitución: una
+       masa en un resorte, un circuito con inductor y capacitor, una viga que vibra. La segunda
+       derivada representa la aceleración, y por eso aparece la oscilación.</p>
+    <p>Para dominar estas ecuaciones primero hay que entender la <em>estructura</em> de sus
+       soluciones. Ese es el objetivo de hoy.</p>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Homogénea vs no homogénea</h3>
+
+  <div class="def">
+    <strong>Homogénea y no homogénea.</strong> La ecuación $a_2y''+a_1y'+a_0y=g(x)$ es
+    <strong>homogénea</strong> si $g(x)=0$, y <strong>no homogénea</strong> si $g(x)\neq0$. La parte
+    homogénea asociada (poniendo $g=0$) es el punto de partida para resolver cualquiera de las dos.
+  </div>
+
+  <div class="callout-dark">
+    <h3>El principio de superposición (homogénea)</h3>
+    <p>Si $y_1$ y $y_2$ son soluciones de una EDO lineal <strong>homogénea</strong>, entonces
+       cualquier combinación $c_1y_1+c_2y_2$ también lo es. Esto es lo que hace que las soluciones
+       formen un espacio: se pueden sumar y escalar libremente.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Verificar superposición en $y''-5y'+6y=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Dos soluciones</div>
+        $y_1=e^{2x}$: $y_1''-5y_1'+6y_1=4e^{2x}-10e^{2x}+6e^{2x}=0$ ✓. &nbsp;
+        $y_2=e^{3x}$: $9e^{3x}-15e^{3x}+6e^{3x}=0$ ✓.
+      </div>
+      <div class="paso"><div class="paso-t">Su combinación</div>
+        $y=c_1e^{2x}+c_2e^{3x}$ también es solución, para cualquier $c_1,c_2$. Esa es la solución
+        general de la homogénea.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Independencia lineal y Wronskiano</h3>
+
+  <div class="callout-dark">
+    <h3>¿Cuándo dos soluciones bastan?</h3>
+    <p>Para armar la solución general de una EDO de segundo orden necesitas <strong>dos</strong>
+       soluciones que sean <em>linealmente independientes</em>: que una no sea múltiplo de la otra.
+       El <strong>Wronskiano</strong> es el test que lo decide.</p>
+  </div>
+
+  <div class="def">
+    <strong>Wronskiano.</strong> Para dos funciones $y_1,y_2$:
+    $$W(y_1,y_2)=\begin{vmatrix} y_1 & y_2 \\ y_1' & y_2' \end{vmatrix}=y_1y_2'-y_2y_1'$$
+    Si $W\neq0$ (en algún punto del intervalo), las soluciones son <strong>linealmente
+    independientes</strong> y forman un conjunto fundamental.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Wronskiano de $e^{2x}$ y $e^{3x}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Armar el determinante</div>
+        $W=\begin{vmatrix} e^{2x} & e^{3x} \\ 2e^{2x} & 3e^{3x} \end{vmatrix}
+        =e^{2x}(3e^{3x})-e^{3x}(2e^{2x})=3e^{5x}-2e^{5x}=e^{5x}$.
+      </div>
+      <div class="paso"><div class="paso-t">Concluir</div>
+        $W=e^{5x}\neq0$ para todo $x$: las dos soluciones son independientes. Sí forman un conjunto
+        fundamental, y $y=c_1e^{2x}+c_2e^{3x}$ es la solución general.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Superposición e independencia</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · La estructura de la solución general</h3>
+
+  <div class="def">
+    <strong>Solución general (homogénea).</strong> Si $y_1,y_2$ son soluciones independientes de una
+    EDO lineal homogénea de segundo orden, toda solución es
+    $$y=c_1y_1+c_2y_2$$
+    Las dos constantes $c_1,c_2$ se fijan con dos condiciones (por ejemplo, $y(0)$ y $y'(0)$).
+  </div>
+
+  <div class="def">
+    <strong>Solución general (no homogénea).</strong> Para $a_2y''+a_1y'+a_0y=g(x)$, la solución
+    general es
+    $$y=y_c+y_p$$
+    donde $y_c$ (complementaria) es la solución general de la homogénea asociada, e $y_p$
+    (particular) es <em>cualquier</em> solución de la no homogénea completa.
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Superposición en acción</h3>
+
+  <div class="sub-title">5.1 Cómo se combinan y_c y y_p</div>
+  <div class="viz" data-viz="superposicion">
+    <div class="viz-controls">
+      <label for="su-c">Ejemplo</label>
+      <select id="su-c">
+        <option value="decae">y_c decae + y_p constante</option>
+        <option value="osc">y_c oscila + y_p lineal</option>
+        <option value="crece">transitorio + permanente</option>
+      </select>
+      <label for="su-m">Mostrar</label>
+      <select id="su-m" class="mostrar">
+        <option value="todo">Todo</option>
+        <option value="partes">Solo y_c e y_p</option>
+        <option value="suma">Solo la suma</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La solución completa (roja) es la suma de la complementaria (azul, con las constantes) y la
+    particular (dorada). En muchos sistemas físicos, $y_c$ es el transitorio que se desvanece y $y_p$
+    la respuesta permanente.
+  </p>
+
+  <div class="nota">
+    <strong>El plan para la próxima semana.</strong> Ahora que sabes que la solución general de la
+    homogénea es $c_1y_1+c_2y_2$, falta un método para <em>hallar</em> $y_1,y_2$. En la Guía 9
+    verás que, cuando los coeficientes son constantes, basta resolver una ecuación algebraica: la
+    ecuación característica.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Estructura de la solución</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La descomposición $y=y_c+y_p$ separa el comportamiento transitorio (ajuste inicial) del
+      permanente (tendencia de largo plazo). En modelos dinámicos de mercado, distinguir el ajuste
+      del equilibrio de largo plazo es clave para la planeación estratégica.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La linealidad y la superposición permiten analizar por separado el efecto de cada fuente y
+      luego sumarlos. En análisis financiero, el impacto total de varios flujos se descompone en la
+      suma de sus efectos individuales, exactamente el principio de superposición.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La superposición es la base del análisis de sistemas lineales: la respuesta a una suma de
+      entradas es la suma de las respuestas. Es el principio que sustenta el procesamiento de señales
+      y la teoría de control, omnipresentes en ingeniería de sistemas.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Un circuito RLC es una EDO de segundo orden. La complementaria $y_c$ es la respuesta natural
+      (transitorio que decae); la particular $y_p$, la respuesta forzada por la fuente. Separar ambas
+      es el análisis estándar de circuitos.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Homogénea</strong> si $g(x)=0$; <strong>no homogénea</strong> si $g(x)\neq0$.</li>
+    <li><strong>Superposición</strong>: si $y_1,y_2$ resuelven la homogénea, $c_1y_1+c_2y_2$ también.</li>
+    <li><strong>Wronskiano</strong> $W=y_1y_2'-y_2y_1'$: si $W\neq0$, $y_1,y_2$ son independientes.</li>
+    <li><strong>Solución general (homogénea)</strong>: $y=c_1y_1+c_2y_2$ con dos soluciones independientes.</li>
+    <li><strong>Solución general (no homogénea)</strong>: $y=y_c+y_p$ (complementaria + particular).</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-edo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  "destino": "chk1",
+  "titulo": "Superposición e independencia · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Homogénea",
+      "nivel": 1,
+      "criterio": "Definición (§2)",
+      "enunciado": "Una EDO lineal $a_2y''+a_1y'+a_0y=g(x)$ es homogénea cuando:",
+      "opciones": [
+        "$g(x)=0$",
+        "$a_0=0$",
+        "$y=0$",
+        "$a_2=1$"
+      ],
+      "correcta": 0,
+      "pista": "El término independiente se anula.",
+      "solucion": "Es homogénea cuando g(x)=0. Si g(x)≠0 es no homogénea. La homogénea asociada es el punto de partida para resolver ambas."
+    },
+    {
+      "etiqueta": "Superposición",
+      "nivel": 2,
+      "criterio": "Principio de superposición (§2)",
+      "enunciado": "Si $y_1$ y $y_2$ resuelven una EDO lineal homogénea, entonces $c_1y_1+c_2y_2$:",
+      "opciones": [
+        "solo si c1=c2",
+        "solo si son iguales",
+        "también es solución",
+        "nunca es solución"
+      ],
+      "correcta": 2,
+      "pista": "Esa es la propiedad clave de la linealidad.",
+      "solucion": "Por el principio de superposición, cualquier combinación lineal c1·y1+c2·y2 de soluciones de la homogénea también es solución."
+    },
+    {
+      "etiqueta": "Wronskiano",
+      "nivel": 3,
+      "criterio": "Calcular el Wronskiano (§3)",
+      "enunciado": "El Wronskiano de $y_1=e^{2x}$ y $y_2=e^{3x}$ es:",
+      "opciones": [
+        "$0$",
+        "$e^{6x}$",
+        "$e^{x}$",
+        "$e^{5x}$"
+      ],
+      "correcta": 3,
+      "pista": "W = y1·y2 - y2·y1 (derivadas).",
+      "solucion": "W = e^{2x}(3e^{3x}) - e^{3x}(2e^{2x}) = 3e^{5x} - 2e^{5x} = e^{5x}, que no es cero: las soluciones son independientes."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "chk2",
+  "titulo": "Estructura de la solución · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Independencia",
+      "nivel": 2,
+      "criterio": "Interpretar el Wronskiano (§3)",
+      "enunciado": "Si el Wronskiano de dos soluciones es distinto de cero, entonces son:",
+      "opciones": [
+        "ambas cero",
+        "linealmente independientes",
+        "iguales",
+        "linealmente dependientes"
+      ],
+      "correcta": 1,
+      "pista": "W≠0 → conjunto fundamental.",
+      "solucion": "Si W≠0, las soluciones son linealmente independientes y forman un conjunto fundamental: sirven para armar la solución general."
+    },
+    {
+      "etiqueta": "General",
+      "nivel": 2,
+      "criterio": "Solución general homogénea (§4)",
+      "enunciado": "La solución general de una EDO homogénea de 2º orden (con $y_1,y_2$ independientes) es:",
+      "opciones": [
+        "$y=c_1y_1+c_2y_2$",
+        "$y=y_1y_2$",
+        "$y=y_1+y_2$ (sin constantes)",
+        "$y=c_1y_1$"
+      ],
+      "correcta": 0,
+      "pista": "Dos soluciones, dos constantes.",
+      "solucion": "Es y=c1·y1+c2·y2: dos soluciones independientes con dos constantes arbitrarias, que se fijan con dos condiciones."
+    },
+    {
+      "etiqueta": "No homogénea",
+      "nivel": 3,
+      "criterio": "Estructura no homogénea (§4)",
+      "enunciado": "La solución general de una EDO no homogénea se escribe como:",
+      "opciones": [
+        "$y=y_c-y_p$",
+        "$y=y_p$ solamente",
+        "$y=y_c+y_p$",
+        "$y=y_c\\cdot y_p$"
+      ],
+      "correcta": 2,
+      "pista": "Complementaria más particular.",
+      "solucion": "Es y=y_c+y_p: la complementaria y_c (solución general de la homogénea) más una particular y_p de la no homogénea completa."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "final",
+  "titulo": "Práctica final · 8 preguntas",
+  "items": [
+    {
+      "etiqueta": "Orden",
+      "nivel": 1,
+      "criterio": "Qué modela el 2º orden (§1)",
+      "enunciado": "Una EDO lineal de segundo orden modela típicamente sistemas con:",
+      "opciones": [
+        "solo crecimiento",
+        "una sola constante",
+        "ninguna dinámica",
+        "inercia y restitución (oscilaciones)"
+      ],
+      "correcta": 3,
+      "pista": "y'' representa aceleración.",
+      "solucion": "El segundo orden (con y'') modela sistemas con inercia y restitución: masa-resorte, circuitos RLC, vibraciones. Por eso aparecen oscilaciones."
+    },
+    {
+      "etiqueta": "Constantes",
+      "nivel": 2,
+      "criterio": "Número de constantes (§4)",
+      "enunciado": "La solución general de una EDO de segundo orden tiene:",
+      "opciones": [
+        "una constante",
+        "dos constantes arbitrarias",
+        "ninguna constante",
+        "tres constantes"
+      ],
+      "correcta": 1,
+      "pista": "Un orden = una constante.",
+      "solucion": "Tiene dos constantes arbitrarias (c1, c2), una por cada unidad de orden. Se determinan con dos condiciones, como y(0) e y'(0)."
+    },
+    {
+      "etiqueta": "Verificar",
+      "nivel": 3,
+      "criterio": "Comprobar solución (§2)",
+      "enunciado": "¿Es $y=e^{2x}$ solución de $y''-5y'+6y=0$?",
+      "opciones": [
+        "sí: $4e^{2x}-10e^{2x}+6e^{2x}=0$",
+        "no",
+        "solo en x=0",
+        "no se puede verificar"
+      ],
+      "correcta": 0,
+      "pista": "y''=4e^{2x}, y'=2e^{2x}.",
+      "solucion": "y''=4e^{2x}, y'=2e^{2x}; sustituyendo: 4e^{2x}-5(2e^{2x})+6e^{2x}=(4-10+6)e^{2x}=0. Sí es solución."
+    },
+    {
+      "etiqueta": "Wronskiano",
+      "nivel": 2,
+      "criterio": "Fórmula del Wronskiano (§3)",
+      "enunciado": "El Wronskiano de $y_1,y_2$ se define como:",
+      "opciones": [
+        "$y_1y_2$",
+        "$y_1'y_2'$",
+        "$y_1y_2'-y_2y_1'$",
+        "$y_1+y_2$"
+      ],
+      "correcta": 2,
+      "pista": "Es un determinante 2x2.",
+      "solucion": "W = y1·y2' - y2·y1', el determinante de la matriz cuyas filas son (y1,y2) y (y1',y2')."
+    },
+    {
+      "etiqueta": "Dependencia",
+      "nivel": 2,
+      "criterio": "Reconocer dependencia (§3)",
+      "enunciado": "Dos funciones son linealmente dependientes cuando:",
+      "opciones": [
+        "su Wronskiano es distinto de cero",
+        "son ambas exponenciales",
+        "tienen distinto signo",
+        "una es múltiplo constante de la otra"
+      ],
+      "correcta": 3,
+      "pista": "Ej: 2e^x y e^x.",
+      "solucion": "Son dependientes si una es múltiplo constante de la otra (y su Wronskiano se anula). Entonces no sirven para armar la solución general."
+    },
+    {
+      "etiqueta": "Complementaria",
+      "nivel": 2,
+      "criterio": "Qué es y_c (§4)",
+      "enunciado": "En $y=y_c+y_p$, la parte $y_c$ es:",
+      "opciones": [
+        "la derivada de y_p",
+        "la solución general de la homogénea asociada",
+        "una solución particular",
+        "siempre cero"
+      ],
+      "correcta": 1,
+      "pista": "Contiene las constantes arbitrarias.",
+      "solucion": "y_c es la solución general de la homogénea asociada (con las dos constantes); y_p es cualquier solución particular de la completa."
+    },
+    {
+      "etiqueta": "Física",
+      "nivel": 2,
+      "criterio": "Interpretación de y_c e y_p (§5)",
+      "enunciado": "En muchos sistemas físicos, la complementaria $y_c$ representa:",
+      "opciones": [
+        "el transitorio que se desvanece",
+        "la respuesta permanente",
+        "una constante fija",
+        "la entrada del sistema"
+      ],
+      "correcta": 0,
+      "pista": "Suele decaer con el tiempo.",
+      "solucion": "y_c suele ser el transitorio que decae con el tiempo, mientras que y_p es la respuesta permanente (forzada) del sistema."
+    },
+    {
+      "etiqueta": "Superposición",
+      "nivel": 1,
+      "criterio": "Aplicación del principio (§5)",
+      "enunciado": "El principio de superposición es la base de:",
+      "opciones": [
+        "el cálculo de límites",
+        "la regla de la cadena",
+        "el análisis de sistemas lineales",
+        "la derivación implícita"
+      ],
+      "correcta": 2,
+      "pista": "Respuesta a suma de entradas = suma de respuestas.",
+      "solucion": "La superposición sustenta el análisis de sistemas lineales: la respuesta a una suma de entradas es la suma de las respuestas, clave en señales y control."
+    }
+  ]
+});
+</script>
 </body>
 </html>

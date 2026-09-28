@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 6 · Modelos de temperatura y mezclas — Ecuaciones Diferenciales · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 6 · Modelos de temperatura y mezclas — Ecuaciones Diferenciales · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Ecuaciones Diferenciales · Semana 6</h1>
+      <h1>Ecuaciones Diferenciales · Guía 6</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,476 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Del modelo al problema</a>
+    <a href="#s2">2 · Enfriamiento de Newton</a>
+    <a href="#s3">3 · Resolver el problema</a>
+    <a href="#s4">4 · Mezclas en un tanque</a>
+    <a href="#s5">5 · Equilibrio</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 6 · Modelos de temperatura y mezclas</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 6 · Corte II</div>
+  <h2>Modelos de temperatura y mezclas</h2>
+  <p>En el Corte I aprendiste a resolver EDO lineales de primer orden. Ahora las pones a trabajar en
+     dos aplicaciones clásicas de la ingeniería: cómo se enfría un objeto hacia la temperatura de su
+     entorno, y cómo evoluciona la concentración de una sustancia en un tanque con flujo de entrada
+     y salida. Ambas son la misma EDO con distinto disfraz.</p>
+  <div class="chips">
+    <span class="chip">Zill · Cap. 3.1</span>
+    <span class="chip">Semana 6</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> Ya sabes resolver $\dfrac{dy}{dx}+P(x)y=f(x)$ con factor
+  integrante, y modelaste crecimiento y decaimiento exponencial. Esta guía toma esas mismas
+  herramientas y las aplica a dos situaciones físicas concretas. No hay teoría nueva de resolución:
+  el reto es <em>plantear</em> la EDO a partir del enunciado.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Del enunciado al modelo</h3>
+
+  <div class="callout-dark">
+    <h3>Traducir la física a una EDO</h3>
+    <p>Muchos fenómenos comparten una idea: <strong>la tasa de cambio de una cantidad es
+       proporcional a algo</strong>. En el enfriamiento, la rapidez con que cambia la temperatura
+       depende de qué tan lejos está de la temperatura ambiente. En las mezclas, la rapidez con que
+       cambia la cantidad de sal es la diferencia entre lo que entra y lo que sale.</p>
+    <p>El trabajo de esta semana es reconocer ese patrón en un enunciado y escribirlo como una EDO de
+       primer orden. Resolverla ya lo sabes hacer.</p>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Ley de enfriamiento de Newton</h3>
+
+  <div class="def">
+    <strong>Ley de enfriamiento de Newton.</strong> La rapidez con que cambia la temperatura $T$ de
+    un objeto es proporcional a la diferencia entre $T$ y la temperatura del medio $T_m$:
+    $$\frac{dT}{dt}=k\,(T-T_m)$$
+    donde $k$ es una constante (negativa cuando el objeto se enfría). Es una EDO lineal de primer
+    orden, y también separable.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Resolver el modelo general</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Separar variables</div>
+        $\dfrac{dT}{T-T_m}=k\,dt$. Integrando: $\ln|T-T_m|=kt+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Despejar $T$</div>
+        $T-T_m=Ce^{kt}$, es decir $T(t)=T_m+Ce^{kt}$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar $T(0)=T_0$</div>
+        En $t=0$: $T_0=T_m+C$, así que $C=T_0-T_m$. La solución es
+        $$T(t)=T_m+(T_0-T_m)e^{kt}$$
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">2.1 La curva de enfriamiento</div>
+  <div class="viz" data-viz="enfriamiento">
+    <div class="viz-controls">
+      <label for="en-c">Situación</label>
+      <select id="en-c">
+        <option value="pastel">Pastel (300°→ambiente 70°)</option>
+        <option value="cafe">Café (90°→ambiente 20°)</option>
+        <option value="bebida">Bebida fría (5°→ambiente 22°)</option>
+      </select>
+      <label for="en-t">Tiempo</label>
+      <input id="en-t" class="tiempo" type="range" min="0" max="100" value="30">
+      <span class="t-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La temperatura se acerca a la del ambiente ($T_m$, línea azul punteada) pero nunca la cruza:
+    $T_m$ es una asíntota. El punto dorado es el estado inicial; el verde, el dato conocido.
+  </p>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Resolver un problema concreto</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · El pastel que se enfría</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Datos</div>
+        Un pastel sale del horno a $T_0=300°$. La cocina está a $T_m=70°$. A los 3 minutos, el pastel
+        está a $200°$. ¿Cuánto tardará en llegar a $75°$?
+      </div>
+      <div class="paso"><div class="paso-t">Modelo</div>
+        $T(t)=70+(300-70)e^{kt}=70+230\,e^{kt}$.
+      </div>
+      <div class="paso"><div class="paso-t">Hallar $k$ con el dato $T(3)=200$</div>
+        $200=70+230e^{3k}\Rightarrow e^{3k}=\dfrac{130}{230}\Rightarrow
+        k=\dfrac{1}{3}\ln\dfrac{130}{230}\approx-0{,}190$.
+      </div>
+      <div class="paso"><div class="paso-t">Resolver $T(t)=75$</div>
+        $75=70+230e^{kt}\Rightarrow e^{kt}=\dfrac{5}{230}$, de donde
+        $t=\dfrac{1}{k}\ln\dfrac{5}{230}\approx20{,}1$ minutos.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Enfriamiento de Newton</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Problemas de mezclas</h3>
+
+  <div class="callout-dark">
+    <h3>Lo que entra menos lo que sale</h3>
+    <p>Un tanque contiene una solución (por ejemplo, sal disuelta en agua). Entra líquido con cierta
+       concentración y sale líquido mezclado. Si $A(t)$ es la cantidad de sal en el tanque, su tasa
+       de cambio es el balance:</p>
+    <p style="text-align:center">$\dfrac{dA}{dt}=R_{\text{entra}}-R_{\text{sale}}$</p>
+    <p>donde cada tasa es (concentración) × (caudal). La tasa de salida usa la concentración
+       <em>actual</em> del tanque, $A/V$, que es lo que hace interesante el problema.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Tanque con sal</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Datos</div>
+        Un tanque tiene 300 L de agua. Entra salmuera con $1$ kg/L a $6$ L/min, y la mezcla sale
+        también a $6$ L/min (el volumen se mantiene). Inicialmente hay $A(0)=50$ kg de sal.
+      </div>
+      <div class="paso"><div class="paso-t">Plantear la EDO</div>
+        Entra: $(1\text{ kg/L})(6\text{ L/min})=6$ kg/min. Sale: $\left(\dfrac{A}{300}\right)(6)
+        =\dfrac{A}{50}$ kg/min. Entonces $\dfrac{dA}{dt}=6-\dfrac{A}{50}$.
+      </div>
+      <div class="paso"><div class="paso-t">Resolver (lineal)</div>
+        Es lineal: $\dfrac{dA}{dt}+\dfrac{1}{50}A=6$. Con $A(0)=50$, la solución es
+        $A(t)=300-250\,e^{-t/50}$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · El comportamiento a largo plazo</h3>
+
+  <div class="callout-dark">
+    <h3>Hacia el equilibrio</h3>
+    <p>Cuando $t\to\infty$, el término $e^{-t/50}\to0$ y $A(t)\to300$ kg. Esa es la
+       <strong>cantidad de equilibrio</strong>: el punto donde entra y sale sal al mismo ritmo, y la
+       cantidad ya no cambia. Se obtiene rápido haciendo $\dfrac{dA}{dt}=0$: de $6-\dfrac{A}{50}=0$
+       sale $A=300$.</p>
+    <p>Es el mismo fenómeno del enfriamiento: allí $T\to T_m$; aquí $A\to$ valor de equilibrio. Los
+       modelos lineales de primer orden tienden suavemente a un estado estacionario.</p>
+  </div>
+
+  <div class="nota">
+    <strong>Idea unificadora.</strong> Tanto $\dfrac{dT}{dt}=k(T-T_m)$ como
+    $\dfrac{dA}{dt}=6-\dfrac{A}{50}$ tienen la forma $\dfrac{dy}{dt}=a-by$, cuya solución tiende a
+    $y=a/b$. Reconocer esa forma te da el equilibrio sin resolver nada.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Mezclas y equilibrio</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El modelo $\frac{dy}{dt}=a-by$ describe también procesos de adopción y saturación: un mercado
+      que se llena hacia su capacidad, o un inventario que tiende a un nivel de equilibrio entre
+      reposición y demanda. El estado estacionario es la meta de planeación.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La misma EDO modela un fondo con aportes constantes y retiros proporcionales al saldo: tiende a
+      un equilibrio donde aportes y retiros se igualan. Reconocer la cantidad de equilibrio permite
+      proyectar el saldo de largo plazo sin resolver toda la trayectoria.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      El enfriamiento de Newton es el modelo térmico básico de un procesador o un centro de datos: la
+      temperatura tiende a la ambiente según la disipación. Los mismos modelos de mezcla describen
+      buffers y colas donde entran y salen elementos a distintas tasas.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El enfriamiento de Newton y el circuito RC comparten la ecuación: la carga de un capacitor
+      $\frac{dq}{dt}=\frac{V}{R}-\frac{q}{RC}$ tiende a su valor de equilibrio $q=CV$ igual que la
+      temperatura tiende a $T_m$. Mismo modelo, misma curva exponencial hacia una asíntota.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Enfriamiento de Newton</strong>: $\dfrac{dT}{dt}=k(T-T_m)$, solución $T(t)=T_m+(T_0-T_m)e^{kt}$.</li>
+    <li>La temperatura tiende a $T_m$ (asíntota); $k$ se halla con un dato intermedio.</li>
+    <li><strong>Mezclas</strong>: $\dfrac{dA}{dt}=R_{\text{entra}}-R_{\text{sale}}$, con $R_{\text{sale}}=(A/V)\cdot$caudal.</li>
+    <li>Es una EDO lineal de primer orden: se resuelve con factor integrante.</li>
+    <li><strong>Equilibrio</strong>: hacer $\dfrac{dy}{dt}=0$. Para $\dfrac{dy}{dt}=a-by$, el equilibrio es $y=a/b$.</li>
+    <li>Enfriamiento, mezclas y circuito RC son la misma EDO: tienden a un estado estacionario.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-edo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  "destino": "chk1",
+  "titulo": "Enfriamiento de Newton · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Modelo",
+      "nivel": 1,
+      "criterio": "Reconocer la ley de Newton (§2)",
+      "enunciado": "La ley de enfriamiento de Newton se modela con la EDO:",
+      "opciones": [
+        "$\\dfrac{dT}{dt}=k(T-T_m)$",
+        "$\\dfrac{dT}{dt}=kT$",
+        "$\\dfrac{dT}{dt}=k$",
+        "$\\dfrac{dT}{dt}=T_m-T_0$"
+      ],
+      "correcta": 0,
+      "pista": "La tasa depende de la diferencia con el ambiente.",
+      "solucion": "La rapidez de cambio de la temperatura es proporcional a la diferencia entre T y la temperatura del medio: dT/dt = k(T - Tm)."
+    },
+    {
+      "etiqueta": "Solución",
+      "nivel": 2,
+      "criterio": "Forma de la solución (§2)",
+      "enunciado": "La solución de $\\dfrac{dT}{dt}=k(T-T_m)$ con $T(0)=T_0$ es:",
+      "opciones": [
+        "$T=T_m e^{kt}$",
+        "$T=T_0+kt$",
+        "$T=T_m+(T_0-T_m)e^{kt}$",
+        "$T=T_0e^{kt}$"
+      ],
+      "correcta": 2,
+      "pista": "Separa variables: T = Tm + Ce^{kt}, con C=T0-Tm.",
+      "solucion": "Separando variables se llega a T = Tm + Ce^{kt}; con T(0)=T0 resulta C=T0-Tm, así que T(t)=Tm+(T0-Tm)e^{kt}."
+    },
+    {
+      "etiqueta": "Asíntota",
+      "nivel": 2,
+      "criterio": "Comportamiento a largo plazo (§2)",
+      "enunciado": "Cuando pasa mucho tiempo, la temperatura del objeto tiende a:",
+      "opciones": [
+        "infinito",
+        "la temperatura inicial $T_0$",
+        "cero",
+        "la temperatura ambiente $T_m$"
+      ],
+      "correcta": 3,
+      "pista": "e^{kt}→0 cuando k<0.",
+      "solucion": "Como k<0, el término (T0-Tm)e^{kt}→0, así que T→Tm: el objeto tiende a la temperatura del ambiente, que es una asíntota."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "chk2",
+  "titulo": "Mezclas y equilibrio · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Balance",
+      "nivel": 2,
+      "criterio": "Plantear el balance (§4)",
+      "enunciado": "En un problema de mezclas, la EDO para la cantidad $A(t)$ de sal es:",
+      "opciones": [
+        "$\\dfrac{dA}{dt}=A$",
+        "$\\dfrac{dA}{dt}=R_{ent}-R_{sal}$",
+        "$\\dfrac{dA}{dt}=R_{ent}$",
+        "$\\dfrac{dA}{dt}=R_{ent}\\cdot R_{sal}$"
+      ],
+      "correcta": 1,
+      "pista": "Lo que entra menos lo que sale.",
+      "solucion": "La tasa de cambio de la sal es el balance entre la tasa de entrada y la de salida: dA/dt = R_entra - R_sale."
+    },
+    {
+      "etiqueta": "Salida",
+      "nivel": 3,
+      "criterio": "Tasa de salida (§4)",
+      "enunciado": "Si un tanque de 300 L pierde mezcla a 6 L/min, la tasa de salida de sal es:",
+      "opciones": [
+        "$\\dfrac{A}{50}$",
+        "$\\dfrac{A}{300}$",
+        "$300A$",
+        "$6A$"
+      ],
+      "correcta": 0,
+      "pista": "Concentración A/300 por caudal 6.",
+      "solucion": "La tasa de salida es (concentración actual)(caudal) = (A/300)(6) = A/50 kg/min."
+    },
+    {
+      "etiqueta": "Equilibrio",
+      "nivel": 2,
+      "criterio": "Cantidad de equilibrio (§5)",
+      "enunciado": "Para $\\dfrac{dA}{dt}=6-\\dfrac{A}{50}$, la cantidad de equilibrio (donde $A$ ya no cambia) es:",
+      "opciones": [
+        "$0$",
+        "$50$",
+        "$300$",
+        "$6$"
+      ],
+      "correcta": 2,
+      "pista": "Haz dA/dt=0 y despeja A.",
+      "solucion": "En equilibrio dA/dt=0: 6 - A/50 = 0, de donde A = 300 kg. Es el valor al que tiende A a largo plazo."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "final",
+  "titulo": "Práctica final · 8 preguntas",
+  "items": [
+    {
+      "etiqueta": "Concepto",
+      "nivel": 1,
+      "criterio": "Traducir enunciado a EDO (§1)",
+      "enunciado": "Tanto el enfriamiento como las mezclas son, en el fondo, EDO de:",
+      "opciones": [
+        "variables separadas únicamente",
+        "orden cero",
+        "segundo orden",
+        "primer orden lineales"
+      ],
+      "correcta": 3,
+      "pista": "Ya sabías resolverlas del Corte I.",
+      "solucion": "Ambos modelos son EDO lineales de primer orden; el reto es plantearlas, porque resolverlas ya se aprendió antes."
+    },
+    {
+      "etiqueta": "Newton",
+      "nivel": 2,
+      "criterio": "Identificar constantes (§2)",
+      "enunciado": "Un café a 90° en una sala a 20°: en el modelo $T=T_m+(T_0-T_m)e^{kt}$, ¿cuánto vale $T_0-T_m$?",
+      "opciones": [
+        "$110$",
+        "$70$",
+        "$20$",
+        "$90$"
+      ],
+      "correcta": 1,
+      "pista": "90-20.",
+      "solucion": "T0=90 y Tm=20, así que T0-Tm = 90-20 = 70. La solución es T=20+70e^{kt}."
+    },
+    {
+      "etiqueta": "Newton",
+      "nivel": 3,
+      "criterio": "Hallar k con un dato (§3)",
+      "enunciado": "Para $T=70+230e^{kt}$, si $T(3)=200$, entonces $e^{3k}$ vale:",
+      "opciones": [
+        "$130/230$",
+        "$200/230$",
+        "$230/130$",
+        "$70/230$"
+      ],
+      "correcta": 0,
+      "pista": "200=70+230e^{3k}.",
+      "solucion": "De 200=70+230e^{3k} sale 230e^{3k}=130, así que e^{3k}=130/230."
+    },
+    {
+      "etiqueta": "Mezclas",
+      "nivel": 3,
+      "criterio": "Resolver el tanque (§4)",
+      "enunciado": "La solución de $\\dfrac{dA}{dt}=6-\\dfrac{A}{50}$ con $A(0)=50$ es:",
+      "opciones": [
+        "$A=300+250e^{-t/50}$",
+        "$A=6t+50$",
+        "$A=300-250e^{-t/50}$",
+        "$A=50e^{-t/50}$"
+      ],
+      "correcta": 2,
+      "pista": "Lineal; tiende a 300, arranca en 50.",
+      "solucion": "La solución es A(t)=300-250e^{-t/50}: en t=0 da 300-250=50 ✓, y cuando t→∞ tiende a 300 (equilibrio)."
+    },
+    {
+      "etiqueta": "Verificar",
+      "nivel": 2,
+      "criterio": "Comprobar condición inicial (§4)",
+      "enunciado": "En $A(t)=300-250e^{-t/50}$, el valor inicial $A(0)$ es:",
+      "opciones": [
+        "$250$",
+        "$0$",
+        "$300$",
+        "$50$"
+      ],
+      "correcta": 3,
+      "pista": "e^0=1.",
+      "solucion": "A(0)=300-250·e^0=300-250=50 kg, que coincide con la condición inicial dada."
+    },
+    {
+      "etiqueta": "Forma",
+      "nivel": 2,
+      "criterio": "Reconocer la forma unificada (§5)",
+      "enunciado": "Las EDO $\\dfrac{dy}{dt}=a-by$ tienen soluciones que tienden a:",
+      "opciones": [
+        "$0$",
+        "$a/b$",
+        "$a\\cdot b$",
+        "infinito"
+      ],
+      "correcta": 1,
+      "pista": "Haz dy/dt=0.",
+      "solucion": "En equilibrio a-by=0, de donde y=a/b. Toda solución de esa forma tiende suavemente a ese estado estacionario."
+    },
+    {
+      "etiqueta": "Aplicación",
+      "nivel": 1,
+      "criterio": "Conexión con circuito RC (§5)",
+      "enunciado": "El enfriamiento de Newton comparte su ecuación con:",
+      "opciones": [
+        "el circuito RC (carga de capacitor)",
+        "el movimiento de un proyectil",
+        "la ley de Hooke",
+        "ninguna otra"
+      ],
+      "correcta": 0,
+      "pista": "Ambos tienden a un valor de equilibrio exponencialmente.",
+      "solucion": "El circuito RC (carga de un capacitor) tiene la misma forma: tiende a un valor de equilibrio con una curva exponencial, igual que la temperatura tiende a Tm."
+    },
+    {
+      "etiqueta": "Interpretar",
+      "nivel": 2,
+      "criterio": "Signo de k (§2)",
+      "enunciado": "En $T=T_m+(T_0-T_m)e^{kt}$ para un objeto que se enfría, la constante $k$ es:",
+      "opciones": [
+        "igual a Tm",
+        "positiva",
+        "negativa",
+        "cero"
+      ],
+      "correcta": 2,
+      "pista": "Para que e^{kt} decaiga.",
+      "solucion": "k es negativa: así e^{kt} decae y la temperatura se acerca a Tm. Si k fuera positiva, el objeto se alejaría del ambiente."
+    }
+  ]
+});
+</script>
 </body>
 </html>

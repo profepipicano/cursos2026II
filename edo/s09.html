@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 9 · Reducción de orden y coeficientes constantes — Ecuaciones Diferenciales · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 9 · Reducción de orden y coeficientes constantes — Ecuaciones Diferenciales · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Ecuaciones Diferenciales · Semana 9</h1>
+      <h1>Ecuaciones Diferenciales · Guía 9</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,470 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Reducción de orden</a>
+    <a href="#s2">2 · La ecuación característica</a>
+    <a href="#s3">3 · Los tres casos</a>
+    <a href="#s4">4 · Resolver con datos</a>
+    <a href="#s5">5 · Una aplicación</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 9 · Reducción de orden y coeficientes constantes</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 9 · Corte II</div>
+  <h2>Reducción de orden y coeficientes constantes</h2>
+  <p>La Guía 8 estableció que la solución general de una EDO homogénea de segundo orden es
+     $c_1y_1+c_2y_2$. Faltaba el método para <em>hallar</em> esas soluciones. Aquí llega: cuando los
+     coeficientes son constantes, resolver una EDO se reduce a resolver una ecuación algebraica. Con
+     esto se cierra el Corte II.</p>
+  <div class="chips">
+    <span class="chip">Zill · Cap. 4.2–4.3</span>
+    <span class="chip">Semana 9</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> Ya sabes qué forma tiene la solución general y cómo comprobar
+  que dos soluciones son independientes (Wronskiano). Ahora obtendremos las soluciones directamente,
+  y verás por qué la exponencial $e^{mx}$ es la protagonista.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Reducción de orden</h3>
+
+  <div class="callout-dark">
+    <h3>De una solución conocida a la segunda</h3>
+    <p>A veces ya conoces <em>una</em> solución $y_1$ de una EDO de segundo orden y necesitas la
+       segunda, independiente. La <strong>reducción de orden</strong> propone buscar $y_2=u(x)\,y_1$:
+       al sustituir, la ecuación en $u$ pierde un orden y se vuelve resoluble. Es la técnica que
+       justifica las fórmulas de la próxima sección.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Segunda solución de $y''-5y'+6y=0$ conociendo $y_1=e^{2x}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Proponer $y_2=u\,e^{2x}$</div>
+        Se sustituye en la EDO. Tras simplificar, la ecuación para $u$ se reduce de orden y se puede
+        integrar.
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        Se obtiene $y_2=e^{3x}$ (salvo constantes). Coincide con la otra solución esperada: el método
+        recupera la segunda solución independiente a partir de la primera.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · La ecuación característica</h3>
+
+  <div class="callout-dark">
+    <h3>Por qué la exponencial</h3>
+    <p>Para una EDO lineal homogénea con <strong>coeficientes constantes</strong>
+       $ay''+by'+cy=0$, se prueba una solución de la forma $y=e^{mx}$. Como $y'=me^{mx}$ y
+       $y''=m^{2}e^{mx}$, al sustituir sale $e^{mx}(am^{2}+bm+c)=0$. Como $e^{mx}\neq0$, la EDO se
+       cumple exactamente cuando $m$ resuelve una ecuación algebraica.</p>
+  </div>
+
+  <div class="def">
+    <strong>Ecuación característica (o auxiliar).</strong> La EDO $ay''+by'+cy=0$ tiene soluciones
+    $y=e^{mx}$ donde $m$ satisface
+    $$am^{2}+bm+c=0$$
+    Resolver la EDO se reduce a resolver esta cuadrática. Sus raíces determinan la forma de la
+    solución.
+  </div>
+
+  <div class="sub-title">2.1 Las raíces y su solución</div>
+  <div class="viz" data-viz="raices">
+    <div class="viz-controls">
+      <label for="ra-c">Ecuación característica</label>
+      <select id="ra-c">
+        <option value="reales">r² − 5r + 6 = 0 (reales distintas)</option>
+        <option value="doble">r² − 4r + 4 = 0 (raíz doble)</option>
+        <option value="compl">r² + 4 = 0 (imaginarias)</option>
+        <option value="complam">r² + 2r + 5 = 0 (complejas)</option>
+        <option value="negat">r² + 3r + 2 = 0 (reales negativas)</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    El discriminante $\Delta=b^{2}-4ac$ decide el caso: positivo (dos raíces reales), cero (una raíz
+    doble) o negativo (par de raíces complejas). Cada caso da una forma distinta de solución.
+  </p>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Los tres casos</h3>
+
+  <div class="def">
+    <strong>Solución según las raíces de $am^{2}+bm+c=0$:</strong><br>
+    • <strong>Reales distintas</strong> $m_1\neq m_2$: &nbsp; $y=c_1e^{m_1x}+c_2e^{m_2x}$.<br>
+    • <strong>Real doble</strong> $m_1=m_2=m$: &nbsp; $y=(c_1+c_2x)\,e^{mx}$.<br>
+    • <strong>Complejas</strong> $m=\alpha\pm\beta i$: &nbsp; $y=e^{\alpha x}(c_1\cos\beta x+c_2\sin\beta x)$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Un caso de cada tipo</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Reales distintas: $y''-5y'+6y=0$</div>
+        $m^{2}-5m+6=0\Rightarrow m=2,3$. Solución: $y=c_1e^{2x}+c_2e^{3x}$.
+      </div>
+      <div class="paso"><div class="paso-t">Raíz doble: $y''-4y'+4y=0$</div>
+        $m^{2}-4m+4=0\Rightarrow m=2$ (doble). Solución: $y=(c_1+c_2x)e^{2x}$.
+      </div>
+      <div class="paso"><div class="paso-t">Complejas: $y''+4y=0$</div>
+        $m^{2}+4=0\Rightarrow m=\pm2i$, o sea $\alpha=0,\beta=2$. Solución:
+        $y=c_1\cos2x+c_2\sin2x$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Ecuación característica</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Resolver un problema con condiciones iniciales</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · $y''-5y'+6y=0$ con $y(0)=1$, $y'(0)=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Solución general</div>
+        $y=c_1e^{2x}+c_2e^{3x}$, y $y'=2c_1e^{2x}+3c_2e^{3x}$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar las condiciones</div>
+        $y(0)=c_1+c_2=1$ y $y'(0)=2c_1+3c_2=0$. De la segunda, $c_1=-\tfrac{3}{2}c_2$; sustituyendo:
+        $c_2=-2$, $c_1=3$.
+      </div>
+      <div class="paso"><div class="paso-t">Solución particular</div>
+        $y=3e^{2x}-2e^{3x}$. Verificación: $y(0)=3-2=1$ ✓ y $y'(0)=6-6=0$ ✓.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Una aplicación: el resorte</h3>
+
+  <div class="callout-dark">
+    <h3>Movimiento armónico</h3>
+    <p>Una masa $m$ en un resorte con constante $k$ satisface $my''+ky=0$, cuya ecuación
+       característica $mr^{2}+k=0$ tiene raíces imaginarias $r=\pm i\sqrt{k/m}$. La solución
+       $y=c_1\cos\omega t+c_2\sin\omega t$ con $\omega=\sqrt{k/m}$ es una <strong>oscilación</strong>:
+       el caso de raíces complejas describe justamente los sistemas que vibran.</p>
+    <p>Si además hay amortiguamiento, aparece un término $y'$ y las raíces adquieren parte real
+       negativa: la oscilación decae. Los tres casos de raíces corresponden a tres comportamientos
+       físicos: sobreamortiguado, crítico y subamortiguado.</p>
+  </div>
+
+  <div class="nota">
+    <strong>Cierre del Corte II y lo que viene.</strong> Con esto cierras el corte de EDO de primer y
+    segundo orden. En el Corte III abordarás las no homogéneas con coeficientes indeterminados y
+    variación de parámetros, los modelos masa-resorte completos, y la transformada de Laplace, que
+    convierte EDO en ecuaciones algebraicas.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Resolución completa</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Los modelos de segundo orden describen sistemas con inercia y ajuste: fluctuaciones económicas
+      que oscilan hacia un equilibrio. El tipo de raíces (con o sin parte imaginaria) distingue un
+      ajuste suave de uno oscilante, información valiosa para anticipar dinámicas de mercado.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Reducir una EDO a una ecuación algebraica (la característica) es el mismo espíritu de convertir
+      un problema dinámico en uno estático resoluble. El análisis de estabilidad —si las raíces
+      llevan a crecimiento o a decaimiento— es central en modelos financieros dinámicos.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La ubicación de las raíces de la ecuación característica determina la estabilidad de un sistema
+      de control: raíces con parte real negativa significan un sistema que se estabiliza. Es el
+      criterio fundamental del diseño de controladores y del análisis de algoritmos recursivos.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El circuito RLC es el ejemplo canónico: $L q''+R q'+\frac{1}{C}q=0$. El discriminante decide si
+      la respuesta es sobreamortiguada, con amortiguamiento crítico o subamortiguada (oscilante). Los
+      tres casos de raíces son tres comportamientos reales del circuito.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Reducción de orden</strong>: con $y_1$ conocida, buscar $y_2=u\,y_1$ baja el orden y da la segunda solución.</li>
+    <li><strong>Coeficientes constantes</strong>: probar $y=e^{mx}$ lleva a la ecuación característica $am^{2}+bm+c=0$.</li>
+    <li><strong>Reales distintas</strong>: $y=c_1e^{m_1x}+c_2e^{m_2x}$.</li>
+    <li><strong>Raíz doble</strong>: $y=(c_1+c_2x)e^{mx}$.</li>
+    <li><strong>Complejas</strong> $\alpha\pm\beta i$: $y=e^{\alpha x}(c_1\cos\beta x+c_2\sin\beta x)$.</li>
+    <li>El discriminante $\Delta=b^{2}-4ac$ decide el caso; en física, los tres casos son sobre-, crítico y subamortiguado.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-edo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  "destino": "chk1",
+  "titulo": "Ecuación característica · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Idea",
+      "nivel": 2,
+      "criterio": "Por qué la exponencial (§2)",
+      "enunciado": "Para $ay''+by'+cy=0$ con coeficientes constantes, se prueba una solución de la forma:",
+      "opciones": [
+        "$y=e^{mx}$",
+        "$y=x^{m}$",
+        "$y=\\sin mx$",
+        "$y=mx+b$"
+      ],
+      "correcta": 0,
+      "pista": "Su derivada es proporcional a sí misma.",
+      "solucion": "Se prueba y=e^{mx}: como y'=me^{mx} e y''=m²e^{mx}, al sustituir sale e^{mx}(am²+bm+c)=0, reduciendo la EDO a una ecuación algebraica."
+    },
+    {
+      "etiqueta": "Característica",
+      "nivel": 2,
+      "criterio": "Ecuación auxiliar (§2)",
+      "enunciado": "Al sustituir $y=e^{mx}$ en $ay''+by'+cy=0$, se obtiene la ecuación:",
+      "opciones": [
+        "$m^{2}=0$",
+        "$ay+by+c=0$",
+        "$am^{2}+bm+c=0$",
+        "$am+b=0$"
+      ],
+      "correcta": 2,
+      "pista": "Cada derivada baja una potencia de m.",
+      "solucion": "Sale am²+bm+c=0, la ecuación característica (o auxiliar). Resolver la EDO se reduce a resolver esta cuadrática."
+    },
+    {
+      "etiqueta": "Discriminante",
+      "nivel": 2,
+      "criterio": "Qué decide el caso (§3)",
+      "enunciado": "El tipo de solución depende del discriminante $\\Delta=b^{2}-4ac$. Si $\\Delta\\lt0$, las raíces son:",
+      "opciones": [
+        "no existen",
+        "reales distintas",
+        "reales iguales",
+        "complejas"
+      ],
+      "correcta": 3,
+      "pista": "Raíz de un número negativo.",
+      "solucion": "Si Δ<0, las raíces son un par de números complejos conjugados α±βi, y la solución es e^{αx}(c1 cos βx + c2 sen βx)."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "chk2",
+  "titulo": "Resolución completa · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Reales",
+      "nivel": 2,
+      "criterio": "Caso reales distintas (§3)",
+      "enunciado": "Si $m^{2}-5m+6=0$ da $m=2,3$, la solución de la EDO es:",
+      "opciones": [
+        "$y=c_1\\cos 2x+c_2\\sin 3x$",
+        "$y=c_1e^{2x}+c_2e^{3x}$",
+        "$y=c_1e^{2x}$",
+        "$y=(c_1+c_2x)e^{2x}$"
+      ],
+      "correcta": 1,
+      "pista": "Dos raíces reales → dos exponenciales.",
+      "solucion": "Con raíces reales distintas 2 y 3, la solución es y=c1·e^{2x}+c2·e^{3x}."
+    },
+    {
+      "etiqueta": "Doble",
+      "nivel": 3,
+      "criterio": "Caso raíz doble (§3)",
+      "enunciado": "Si $m^{2}-4m+4=0$ da $m=2$ (doble), la solución es:",
+      "opciones": [
+        "$y=(c_1+c_2x)e^{2x}$",
+        "$y=c_1e^{2x}+c_2e^{2x}$",
+        "$y=c_1e^{2x}+c_2e^{-2x}$",
+        "$y=c_1\\cos 2x$"
+      ],
+      "correcta": 0,
+      "pista": "Raíz doble añade un factor x.",
+      "solucion": "Con raíz real doble m=2, la solución es y=(c1+c2·x)e^{2x}: el factor x da la segunda solución independiente."
+    },
+    {
+      "etiqueta": "Complejas",
+      "nivel": 3,
+      "criterio": "Caso complejas (§3)",
+      "enunciado": "Si $m^{2}+4=0$ da $m=\\pm2i$, la solución es:",
+      "opciones": [
+        "$y=(c_1+c_2x)e^{2x}$",
+        "$y=c_1e^{2ix}$",
+        "$y=c_1\\cos 2x+c_2\\sin 2x$",
+        "$y=c_1e^{2x}+c_2e^{-2x}$"
+      ],
+      "correcta": 2,
+      "pista": "α=0, β=2 → senos y cosenos.",
+      "solucion": "Con m=±2i (α=0, β=2), la solución es y=c1·cos2x+c2·sen2x: raíces imaginarias puras dan oscilaciones."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "final",
+  "titulo": "Práctica final · 8 preguntas",
+  "items": [
+    {
+      "etiqueta": "Reducción",
+      "nivel": 2,
+      "criterio": "Idea de reducción de orden (§1)",
+      "enunciado": "La reducción de orden busca la segunda solución en la forma:",
+      "opciones": [
+        "$y_2=y_1+C$",
+        "$y_2=y_1^{2}$",
+        "$y_2=1/y_1$",
+        "$y_2=u(x)\\,y_1$"
+      ],
+      "correcta": 3,
+      "pista": "Multiplica la conocida por una función u(x).",
+      "solucion": "Se propone y2=u(x)·y1: al sustituir, la ecuación en u pierde un orden y se puede integrar para hallar la segunda solución."
+    },
+    {
+      "etiqueta": "Prueba",
+      "nivel": 2,
+      "criterio": "La sustitución exponencial (§2)",
+      "enunciado": "Se prueba $y=e^{mx}$ en EDO de coeficientes constantes porque:",
+      "opciones": [
+        "no tiene derivada",
+        "sus derivadas son proporcionales a ella misma",
+        "siempre vale cero",
+        "es la única función continua"
+      ],
+      "correcta": 1,
+      "pista": "y'=me^{mx}, y''=m²e^{mx}.",
+      "solucion": "Porque las derivadas de e^{mx} son proporcionales a e^{mx}, lo que hace que todos los términos compartan ese factor y quede una ecuación algebraica en m."
+    },
+    {
+      "etiqueta": "Discriminante",
+      "nivel": 2,
+      "criterio": "Caso reales distintas (§3)",
+      "enunciado": "Si $\\Delta=b^{2}-4ac\\gt0$, la ecuación característica tiene:",
+      "opciones": [
+        "dos raíces reales distintas",
+        "una raíz doble",
+        "raíces complejas",
+        "ninguna raíz"
+      ],
+      "correcta": 0,
+      "pista": "Discriminante positivo.",
+      "solucion": "Δ>0 da dos raíces reales distintas, y la solución es y=c1·e^{m1·x}+c2·e^{m2·x}."
+    },
+    {
+      "etiqueta": "Resolver",
+      "nivel": 3,
+      "criterio": "Hallar raíces (§3)",
+      "enunciado": "Las raíces de $m^{2}+3m+2=0$ son:",
+      "opciones": [
+        "$m=-3,2$",
+        "$m=3,-2$",
+        "$m=-1,-2$",
+        "$m=1,2$"
+      ],
+      "correcta": 2,
+      "pista": "Factoriza: (m+1)(m+2).",
+      "solucion": "m²+3m+2=(m+1)(m+2)=0 da m=-1 y m=-2. La solución sería y=c1·e^{-x}+c2·e^{-2x} (decae)."
+    },
+    {
+      "etiqueta": "PVI",
+      "nivel": 3,
+      "criterio": "Aplicar condiciones iniciales (§4)",
+      "enunciado": "Para $y=c_1e^{2x}+c_2e^{3x}$ con $y(0)=1$, $y'(0)=0$, los valores son:",
+      "opciones": [
+        "$c_1=1,\\ c_2=0$",
+        "$c_1=-2,\\ c_2=3$",
+        "$c_1=0,\\ c_2=1$",
+        "$c_1=3,\\ c_2=-2$"
+      ],
+      "correcta": 3,
+      "pista": "c1+c2=1 y 2c1+3c2=0.",
+      "solucion": "De c1+c2=1 y 2c1+3c2=0 sale c2=-2, c1=3. La solución es y=3e^{2x}-2e^{3x}, con y(0)=1 ✓, y'(0)=6-6=0 ✓."
+    },
+    {
+      "etiqueta": "Resorte",
+      "nivel": 2,
+      "criterio": "Aplicación al resorte (§5)",
+      "enunciado": "La EDO $my''+ky=0$ (masa-resorte sin fricción) tiene soluciones que:",
+      "opciones": [
+        "son constantes",
+        "oscilan (senos y cosenos)",
+        "crecen sin límite",
+        "decaen a cero"
+      ],
+      "correcta": 1,
+      "pista": "Raíces imaginarias puras.",
+      "solucion": "mr²+k=0 da raíces imaginarias r=±i√(k/m), así que la solución es una oscilación c1·cos ωt + c2·sen ωt con ω=√(k/m)."
+    },
+    {
+      "etiqueta": "Amortiguamiento",
+      "nivel": 2,
+      "criterio": "Tres comportamientos físicos (§5)",
+      "enunciado": "Los tres casos de raíces (reales distintas, doble, complejas) corresponden en física a:",
+      "opciones": [
+        "sobreamortiguado, crítico y subamortiguado",
+        "lento, medio y rápido",
+        "lineal, cuadrático y cúbico",
+        "no tienen interpretación"
+      ],
+      "correcta": 0,
+      "pista": "Comportamientos de un sistema amortiguado.",
+      "solucion": "Corresponden a los tres regímenes: sobreamortiguado (reales distintas), amortiguamiento crítico (raíz doble) y subamortiguado/oscilante (complejas)."
+    },
+    {
+      "etiqueta": "Cierre",
+      "nivel": 1,
+      "criterio": "Qué viene en el Corte III (§5)",
+      "enunciado": "Tras las EDO de coeficientes constantes, el Corte III introduce:",
+      "opciones": [
+        "límites",
+        "integrales dobles",
+        "coeficientes indeterminados y transformada de Laplace",
+        "derivadas parciales"
+      ],
+      "correcta": 2,
+      "pista": "Métodos para las no homogéneas y Laplace.",
+      "solucion": "El Corte III cubre coeficientes indeterminados, variación de parámetros, modelos masa-resorte y la transformada de Laplace."
+    }
+  ]
+});
+</script>
 </body>
 </html>

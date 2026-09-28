@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 7 · Sustitución y EDO exactas — Ecuaciones Diferenciales · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 7 · Sustitución y EDO exactas — Ecuaciones Diferenciales · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Ecuaciones Diferenciales · Semana 7</h1>
+      <h1>Ecuaciones Diferenciales · Guía 7</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,477 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · La idea de sustituir</a>
+    <a href="#s2">2 · Ecuaciones homogéneas</a>
+    <a href="#s3">3 · Ecuación de Bernoulli</a>
+    <a href="#s4">4 · EDO exactas</a>
+    <a href="#s5">5 · Resolver una exacta</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 7 · Sustitución y EDO exactas</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 7 · Corte II</div>
+  <h2>Sustitución y EDO exactas</h2>
+  <p>No toda EDO de primer orden es separable o lineal. Esta guía añade dos técnicas para ampliar el
+     arsenal: la <strong>sustitución</strong>, que transforma una ecuación difícil en una conocida, y
+     las <strong>ecuaciones exactas</strong>, que se reconocen por una condición y se resuelven casi
+     por inspección.</p>
+  <div class="chips">
+    <span class="chip">Zill · Cap. 2.4–2.5</span>
+    <span class="chip">Semana 7</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> Ya dominas separables y lineales. La estrategia ahora es: cuando
+  una EDO no encaje en esas formas, intenta <em>transformarla</em> en una que sí, mediante un cambio
+  de variable inteligente. Y aprende a detectar cuándo una ecuación ya es la derivada de algo.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · La idea de sustituir</h3>
+
+  <div class="callout-dark">
+    <h3>Cambiar de variable para simplificar</h3>
+    <p>Igual que en integración usabas $u$-sustitución para convertir una integral complicada en una
+       sencilla, en las EDO una sustitución bien elegida transforma una ecuación que no sabes
+       resolver en una separable o lineal. La clave está en reconocer <em>qué</em> sustituir.</p>
+    <p>Veremos dos casos donde la sustitución tiene nombre propio: las ecuaciones homogéneas
+       (sustituir $y=ux$) y la ecuación de Bernoulli (sustituir $u=y^{1-n}$).</p>
+  </div>
+
+  <div class="sub-title">1.1 El campo de direcciones como guía</div>
+  <div class="viz" data-viz="campo">
+    <div class="viz-controls">
+      <label for="ca-e">Ecuación</label>
+      <select id="ca-e">
+        <option value="lin">y' = y</option>
+        <option value="sep">y' = −x/y</option>
+        <option value="log">y' = y(1 − y/3)</option>
+        <option value="osc">y' = cos x − 0.3y</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Cada segmento muestra la pendiente que la EDO asigna en ese punto. Haz clic para trazar la
+    solución que pasa por ahí. Sin resolver nada, el campo ya revela la forma de las soluciones.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Ecuaciones homogéneas</h3>
+
+  <div class="def">
+    <strong>EDO homogénea.</strong> Si una ecuación se puede escribir como
+    $\dfrac{dy}{dx}=F\!\left(\dfrac{y}{x}\right)$ —es decir, el lado derecho solo depende del cociente
+    $y/x$—, la sustitución $y=ux$ (con $u=y/x$) la convierte en <strong>separable</strong>.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $\dfrac{dy}{dx}=\dfrac{x+y}{x}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Ver que es homogénea</div>
+        $\dfrac{x+y}{x}=1+\dfrac{y}{x}$: depende solo de $y/x$. Sustituimos $y=ux$, con
+        $\dfrac{dy}{dx}=u+x\dfrac{du}{dx}$.
+      </div>
+      <div class="paso"><div class="paso-t">Sustituir y simplificar</div>
+        $u+x\dfrac{du}{dx}=1+u\Rightarrow x\dfrac{du}{dx}=1$: ya es separable.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar y volver a $y$</div>
+        $du=\dfrac{dx}{x}\Rightarrow u=\ln|x|+C$. Como $u=y/x$: $y=x(\ln|x|+C)$.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · La ecuación de Bernoulli</h3>
+
+  <div class="def">
+    <strong>Ecuación de Bernoulli.</strong> Tiene la forma
+    $$\frac{dy}{dx}+P(x)\,y=f(x)\,y^{n}$$
+    Si $n\neq0,1$, no es lineal. Pero la sustitución $u=y^{1-n}$ la convierte en una EDO
+    <strong>lineal</strong> en $u$, que ya sabes resolver.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $\dfrac{dy}{dx}+y=xy^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Identificar</div>
+        Es Bernoulli con $n=2$. Sustituimos $u=y^{1-2}=y^{-1}$, de modo que
+        $\dfrac{du}{dx}=-y^{-2}\dfrac{dy}{dx}$.
+      </div>
+      <div class="paso"><div class="paso-t">Transformar</div>
+        Dividiendo la EDO entre $y^{2}$ y sustituyendo se llega a $\dfrac{du}{dx}-u=-x$: lineal en
+        $u$.
+      </div>
+      <div class="paso"><div class="paso-t">Resolver y volver</div>
+        Se resuelve por factor integrante y luego se deshace la sustitución con $y=1/u$. El método
+        reduce Bernoulli a algo conocido.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Sustitución</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Ecuaciones diferenciales exactas</h3>
+
+  <div class="callout-dark">
+    <h3>Cuando la EDO ya es la derivada de algo</h3>
+    <p>Una ecuación escrita como $M(x,y)\,dx+N(x,y)\,dy=0$ es <strong>exacta</strong> si su lado
+       izquierdo es el diferencial total $dF$ de alguna función $F(x,y)$. Si lo es, la solución es
+       simplemente $F(x,y)=C$: no hay que integrar la ecuación, sino reconstruir $F$.</p>
+  </div>
+
+  <div class="def">
+    <strong>Criterio de exactitud.</strong> La ecuación $M\,dx+N\,dy=0$ es exacta si y solo si
+    $$\frac{\partial M}{\partial y}=\frac{\partial N}{\partial x}$$
+    Esta condición (que viene del teorema de Clairaut, $F_{xy}=F_{yx}$) es rápida de comprobar.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · ¿Es exacta $(2x+y)\,dx+(x+2y)\,dy=0$?</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Identificar $M$ y $N$</div>
+        $M=2x+y$, $N=x+2y$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar el criterio</div>
+        $\dfrac{\partial M}{\partial y}=1$ y $\dfrac{\partial N}{\partial x}=1$. Como coinciden, la
+        ecuación <strong>es exacta</strong>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Resolver una ecuación exacta</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Resolver $(2x+y)\,dx+(x+2y)\,dy=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Integrar $M$ respecto de $x$</div>
+        $F=\displaystyle\int(2x+y)\,dx=x^{2}+xy+g(y)$, donde $g(y)$ es una «constante» que puede
+        depender de $y$.
+      </div>
+      <div class="paso"><div class="paso-t">Derivar respecto de $y$ e igualar a $N$</div>
+        $F_y=x+g'(y)$ debe ser igual a $N=x+2y$, así que $g'(y)=2y$, de donde $g(y)=y^{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Escribir la solución</div>
+        $F(x,y)=x^{2}+xy+y^{2}$. La solución implícita es $x^{2}+xy+y^{2}=C$.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Verificación.</strong> Puedes comprobar cualquier solución: si $F=x^{2}+xy+y^{2}$,
+    entonces $F_x=2x+y=M$ y $F_y=x+2y=N$. La conexión con la Guía 6 de Cálculo Vectorial es directa:
+    resolver una exacta es reconstruir una función a partir de sus derivadas parciales.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — EDO exactas</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La idea de sustitución —transformar un problema difícil en uno resuelto— es la esencia de la
+      modelación: reformular una situación compleja en un molde conocido. Reconocer la estructura
+      antes de calcular ahorra trabajo y errores.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Las ecuaciones exactas expresan que una cantidad se conserva (existe una función potencial
+      $F$). En finanzas, muchas condiciones de equilibrio o de no arbitraje tienen esa forma:
+      reconocer que algo es «exacto» revela una cantidad conservada subyacente.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La sustitución de Bernoulli aparece en el modelo logístico, base de curvas de adopción de
+      tecnología y de crecimiento de usuarios. Detectar la forma de una ecuación para aplicar la
+      técnica correcta es análogo a elegir el algoritmo adecuado según la estructura del problema.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El criterio de exactitud $\partial M/\partial y=\partial N/\partial x$ es la condición para que
+      un campo sea conservativo, central en circuitos y campos: garantiza la existencia de un
+      potencial. Es la misma matemática que decide si un campo eléctrico deriva de un potencial.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Homogénea</strong>: si $\dfrac{dy}{dx}=F(y/x)$, sustituir $y=ux$ la vuelve separable.</li>
+    <li><strong>Bernoulli</strong>: $\dfrac{dy}{dx}+P y=f\,y^{n}$; sustituir $u=y^{1-n}$ la vuelve lineal.</li>
+    <li><strong>Exacta</strong>: $M\,dx+N\,dy=0$ es exacta si $\dfrac{\partial M}{\partial y}=\dfrac{\partial N}{\partial x}$.</li>
+    <li>Se resuelve reconstruyendo $F$ con $F_x=M$ y $F_y=N$; la solución es $F(x,y)=C$.</li>
+    <li>Estrategia general: si no es separable ni lineal, intenta reconocer una forma con técnica propia.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Cap. 4</a> · <a href="https://www.geogebra.org/" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-edo.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  "destino": "chk1",
+  "titulo": "Sustitución · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Homogénea",
+      "nivel": 2,
+      "criterio": "Sustitución para homogéneas (§2)",
+      "enunciado": "Para una EDO homogénea $\\dfrac{dy}{dx}=F(y/x)$, la sustitución adecuada es:",
+      "opciones": [
+        "$y=ux$",
+        "$u=y^{2}$",
+        "$u=x+y$",
+        "$y=e^{x}$"
+      ],
+      "correcta": 0,
+      "pista": "Introduce el cociente y/x como nueva variable.",
+      "solucion": "Se sustituye y=ux (con u=y/x), que convierte la EDO homogénea en una separable en u y x."
+    },
+    {
+      "etiqueta": "Reconocer",
+      "nivel": 2,
+      "criterio": "Identificar homogénea (§2)",
+      "enunciado": "¿Por qué $\\dfrac{dy}{dx}=\\dfrac{x+y}{x}$ es homogénea?",
+      "opciones": [
+        "porque es separable de una vez",
+        "porque no tiene x",
+        "porque el lado derecho es $1+y/x$ (depende solo de y/x)",
+        "porque es lineal"
+      ],
+      "correcta": 2,
+      "pista": "Divide entre x el numerador.",
+      "solucion": "(x+y)/x = 1 + y/x, que depende solo del cociente y/x. Esa es la definición de EDO homogénea."
+    },
+    {
+      "etiqueta": "Bernoulli",
+      "nivel": 3,
+      "criterio": "Sustitución de Bernoulli (§3)",
+      "enunciado": "Para la ecuación de Bernoulli $\\dfrac{dy}{dx}+Py=fy^{n}$, la sustitución es:",
+      "opciones": [
+        "$u=y^{n}$",
+        "$y=ux$",
+        "$u=xy$",
+        "$u=y^{1-n}$"
+      ],
+      "correcta": 3,
+      "pista": "Convierte Bernoulli en lineal.",
+      "solucion": "La sustitución u=y^{1-n} transforma la ecuación de Bernoulli en una EDO lineal en u, que ya se sabe resolver."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "chk2",
+  "titulo": "EDO exactas · 3 preguntas",
+  "items": [
+    {
+      "etiqueta": "Criterio",
+      "nivel": 2,
+      "criterio": "Condición de exactitud (§4)",
+      "enunciado": "La ecuación $M\\,dx+N\\,dy=0$ es exacta si y solo si:",
+      "opciones": [
+        "$M+N=0$",
+        "$\\dfrac{\\partial M}{\\partial y}=\\dfrac{\\partial N}{\\partial x}$",
+        "$M=N$",
+        "$\\dfrac{\\partial M}{\\partial x}=\\dfrac{\\partial N}{\\partial y}$"
+      ],
+      "correcta": 1,
+      "pista": "Parciales cruzadas iguales (Clairaut).",
+      "solucion": "Es exacta si ∂M/∂y = ∂N/∂x. Esta condición garantiza que el lado izquierdo es el diferencial de una función F."
+    },
+    {
+      "etiqueta": "Aplicar",
+      "nivel": 3,
+      "criterio": "Verificar exactitud (§4)",
+      "enunciado": "¿Es exacta $(2x+y)\\,dx+(x+2y)\\,dy=0$?",
+      "opciones": [
+        "sí, porque $\\partial M/\\partial y=\\partial N/\\partial x=1$",
+        "no",
+        "solo si y=0",
+        "no se puede saber"
+      ],
+      "correcta": 0,
+      "pista": "Deriva M en y, N en x.",
+      "solucion": "M=2x+y da ∂M/∂y=1; N=x+2y da ∂N/∂x=1. Como coinciden, la ecuación es exacta."
+    },
+    {
+      "etiqueta": "Solución",
+      "nivel": 3,
+      "criterio": "Solución de una exacta (§5)",
+      "enunciado": "La solución de $(2x+y)\\,dx+(x+2y)\\,dy=0$ es:",
+      "opciones": [
+        "$xy=C$",
+        "$2x+2y=C$",
+        "$x^{2}+xy+y^{2}=C$",
+        "$x^{2}+y^{2}=C$"
+      ],
+      "correcta": 2,
+      "pista": "Reconstruye F con F_x=M y F_y=N.",
+      "solucion": "Integrando M en x: F=x²+xy+g(y). Como F_y=x+g'(y)=x+2y, se tiene g'(y)=2y, g=y². Así F=x²+xy+y²=C."
+    }
+  ]
+});
+OVA.quiz({
+  "destino": "final",
+  "titulo": "Práctica final · 8 preguntas",
+  "items": [
+    {
+      "etiqueta": "Estrategia",
+      "nivel": 1,
+      "criterio": "Idea de sustitución (§1)",
+      "enunciado": "La idea general de una sustitución en EDO es:",
+      "opciones": [
+        "eliminar la variable x",
+        "derivar dos veces",
+        "sumar una constante",
+        "transformar la ecuación en una que ya sabemos resolver"
+      ],
+      "correcta": 3,
+      "pista": "Como la u-sustitución en integrales.",
+      "solucion": "Una sustitución transforma una EDO difícil en una separable o lineal ya conocida, igual que la u-sustitución simplifica integrales."
+    },
+    {
+      "etiqueta": "Homogénea",
+      "nivel": 3,
+      "criterio": "Resolver homogénea (§2)",
+      "enunciado": "Tras sustituir $y=ux$ en $\\dfrac{dy}{dx}=1+\\dfrac{y}{x}$, se obtiene:",
+      "opciones": [
+        "$\\dfrac{du}{dx}=0$",
+        "$x\\dfrac{du}{dx}=1$",
+        "$\\dfrac{du}{dx}=u$",
+        "$x\\dfrac{du}{dx}=u$"
+      ],
+      "correcta": 1,
+      "pista": "dy/dx=u+x du/dx; iguala a 1+u.",
+      "solucion": "Con dy/dx=u+x·du/dx e igualando a 1+u: u+x·du/dx=1+u, de donde x·du/dx=1 (ya separable)."
+    },
+    {
+      "etiqueta": "Homogénea",
+      "nivel": 3,
+      "criterio": "Solución final (§2)",
+      "enunciado": "La solución de $\\dfrac{dy}{dx}=\\dfrac{x+y}{x}$ es:",
+      "opciones": [
+        "$y=x(\\ln|x|+C)$",
+        "$y=Cx$",
+        "$y=x^{2}+C$",
+        "$y=e^{x}+C$"
+      ],
+      "correcta": 0,
+      "pista": "u=ln|x|+C, y u=y/x.",
+      "solucion": "De x·du/dx=1 sale u=ln|x|+C; como u=y/x, entonces y=x(ln|x|+C)."
+    },
+    {
+      "etiqueta": "Bernoulli",
+      "nivel": 2,
+      "criterio": "Identificar n (§3)",
+      "enunciado": "En $\\dfrac{dy}{dx}+y=xy^{2}$, el exponente de Bernoulli es $n=$",
+      "opciones": [
+        "$-1$",
+        "$1$",
+        "$2$",
+        "$0$"
+      ],
+      "correcta": 2,
+      "pista": "Mira la potencia de y en el lado derecho.",
+      "solucion": "El término no lineal es xy², así que n=2. La sustitución sería u=y^{1-2}=y^{-1}."
+    },
+    {
+      "etiqueta": "Exacta",
+      "nivel": 2,
+      "criterio": "Qué significa exacta (§4)",
+      "enunciado": "Que una EDO sea exacta significa que su lado izquierdo es:",
+      "opciones": [
+        "siempre cero",
+        "una constante",
+        "lineal",
+        "el diferencial total $dF$ de una función"
+      ],
+      "correcta": 3,
+      "pista": "Existe F con dF = M dx + N dy.",
+      "solucion": "Exacta significa que M dx + N dy es el diferencial total dF de alguna función F(x,y); entonces la solución es F=C."
+    },
+    {
+      "etiqueta": "Exacta",
+      "nivel": 3,
+      "criterio": "Reconstruir F (§5)",
+      "enunciado": "Si $F_x=2x+y$, al integrar respecto de $x$ se obtiene:",
+      "opciones": [
+        "$x^{2}+xy+y^{2}$",
+        "$x^{2}+xy+g(y)$",
+        "$x^{2}+y$",
+        "$2x^{2}+xy$"
+      ],
+      "correcta": 1,
+      "pista": "Integra en x; la constante puede depender de y.",
+      "solucion": "∫(2x+y)dx = x²+xy+g(y), donde g(y) es una función de y (la 'constante' de integración respecto de x)."
+    },
+    {
+      "etiqueta": "Verificar",
+      "nivel": 2,
+      "criterio": "Comprobar la solución (§5)",
+      "enunciado": "Si $F=x^{2}+xy+y^{2}$, entonces $F_y$ es:",
+      "opciones": [
+        "$x+2y$",
+        "$2x+y$",
+        "$2y$",
+        "$x+y$"
+      ],
+      "correcta": 0,
+      "pista": "Deriva F respecto de y.",
+      "solucion": "F_y = ∂/∂y(x²+xy+y²) = x+2y, que coincide con N. Por eso F=x²+xy+y² es la función buscada."
+    },
+    {
+      "etiqueta": "Conexión",
+      "nivel": 1,
+      "criterio": "Relación con parciales (§5)",
+      "enunciado": "Resolver una EDO exacta se parece a:",
+      "opciones": [
+        "derivar dos veces",
+        "factorizar un polinomio",
+        "reconstruir una función a partir de sus derivadas parciales",
+        "calcular un límite"
+      ],
+      "correcta": 2,
+      "pista": "F_x=M y F_y=N.",
+      "solucion": "Es el mismo proceso que reconstruir F a partir de F_x=M y F_y=N, la conexión directa con las derivadas parciales del cálculo vectorial."
+    }
+  ]
+});
+</script>
 </body>
 </html>
