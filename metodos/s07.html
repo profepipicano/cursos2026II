@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 7 · Métodos aproximados para SEL — Métodos Numéricos · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 7 · Métodos iterativos para sistemas lineales — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912a">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Semana 7</h1>
+      <h1>Métodos Numéricos · Guía 7</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,596 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · La idea iterativa</a>
+    <a href="#s2">2 · Jacobi</a>
+    <a href="#s3">3 · Gauss-Seidel</a>
+    <a href="#s4">4 · Convergencia</a>
+    <a href="#s5">5 · Cuándo usarlos</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 7 · Métodos aproximados para SEL</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 7 · Corte II</div>
+  <h2>Métodos iterativos para sistemas lineales</h2>
+  <p>Gauss y LU resuelven un sistema en un número fijo de pasos y dan la respuesta exacta. Los
+     métodos <em>iterativos</em> hacen algo distinto: parten de una suposición y la mejoran una y
+     otra vez, acercándose a la solución. Parece un rodeo, pero para sistemas enormes es la única
+     vía práctica.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 11.2</span>
+    <span class="chip">Burden · Cap. 7.3</span>
+    <span class="chip">Semana 7</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> Las Guías 3 y 4 dieron métodos <em>exactos</em>: Gauss, LU,
+  Cholesky. Terminan en un número conocido de operaciones y, salvo redondeo, dan la solución
+  precisa. Esta semana cambia la filosofía por completo.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · La idea iterativa</h3>
+
+  <div class="callout-dark">
+    <h3>Por qué querríamos un método que solo se «acerca»</h3>
+    <p>Los métodos directos cuestan $O(n^{3})$. Para $n=10^{6}$ —nada raro en simulación física o
+       análisis de redes— eso son $10^{18}$ operaciones: inviable. Además, esas matrices gigantes
+       suelen ser <strong>dispersas</strong> (casi todo ceros), y la eliminación gaussiana los
+       rellena de números, desperdiciando memoria.</p>
+    <p>Los métodos iterativos solo necesitan <em>multiplicar la matriz por un vector</em> en cada
+       paso, lo que respeta los ceros y cuesta poco. Y se detienen cuando la solución es «lo bastante
+       buena», sin pagar por una exactitud que quizás no se necesita.</p>
+  </div>
+
+  <div class="def">
+    <strong>Idea general.</strong> Reescribir $A\mathbf{x}=\mathbf{b}$ en la forma
+    $\mathbf{x}=T\mathbf{x}+\mathbf{c}$, y luego <em>repetir</em>:
+    $$\mathbf{x}^{(k+1)}=T\mathbf{x}^{(k)}+\mathbf{c}$$
+    partiendo de una suposición inicial $\mathbf{x}^{(0)}$ (típicamente el vector cero). Si la
+    sucesión converge, su límite es la solución.
+  </div>
+
+  <p>La forma concreta de despejar da lugar a los dos métodos de esta guía: <strong>Jacobi</strong>
+     y <strong>Gauss-Seidel</strong>. Ambos parten de la misma idea: <em>despejar cada incógnita de
+     su propia ecuación</em>.</p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Método de Jacobi</h3>
+
+  <div class="def">
+    En cada ecuación $i$, se despeja la incógnita $x_i$ (la de la diagonal) en términos de las demás:
+    $$x_i^{(k+1)}=\frac{1}{a_{ii}}\left(b_i-\sum_{j\neq i}a_{ij}\,x_j^{(k)}\right)$$
+    Todas las incógnitas se actualizan usando <strong>únicamente</strong> los valores de la
+    iteración anterior.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Dos pasos de Jacobi</h4>
+    <div class="ejemplo-body">
+      Para el sistema $\;4x+y=9,\quad x+3y=8\;$ (solución exacta $x=\tfrac{19}{11}$, $y=\tfrac{23}{11}$).
+      <div class="paso"><div class="paso-t">Despejar cada incógnita</div>
+        $x=\dfrac{9-y}{4}$ &nbsp;y&nbsp; $y=\dfrac{8-x}{3}$
+      </div>
+      <div class="paso"><div class="paso-t">Partir de $(0,0)$ · iteración 1</div>
+        $x^{(1)}=\dfrac{9-0}{4}=2{,}25$ &nbsp;·&nbsp; $y^{(1)}=\dfrac{8-0}{3}=2{,}667$<br>
+        (ambos usan los valores <em>viejos</em>, que eran cero)
+      </div>
+      <div class="paso"><div class="paso-t">Iteración 2</div>
+        $x^{(2)}=\dfrac{9-2{,}667}{4}=1{,}583$ &nbsp;·&nbsp; $y^{(2)}=\dfrac{8-2{,}25}{3}=1{,}917$
+      </div>
+      <div class="paso"><div class="paso-t">Ya se ve la tendencia</div>
+        Los valores oscilan hacia $(1{,}727;\ 2{,}091)$. Cada iteración acerca la aproximación, sin
+        llegar nunca exactamente — pero tan cerca como se quiera.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Método de Gauss-Seidel</h3>
+
+  <div class="callout-dark">
+    <h3>Una mejora casi gratuita</h3>
+    <p>Jacobi calcula todos los nuevos valores usando los viejos, y solo al final los reemplaza.
+       Pero mira: cuando calculo $x_2^{(k+1)}$, <em>ya conozco</em> $x_1^{(k+1)}$, que acabo de
+       calcular y es mejor que $x_1^{(k)}$. ¿Por qué usar el viejo?</p>
+    <p>Gauss-Seidel usa cada valor nuevo <strong>en cuanto está disponible</strong>, dentro de la
+       misma pasada. Esa única diferencia lo hace converger, típicamente, en la mitad de iteraciones.</p>
+  </div>
+
+  <div class="def">
+    $$x_i^{(k+1)}=\frac{1}{a_{ii}}\left(b_i-\sum_{j\lt i}a_{ij}\,x_j^{(k+1)}-\sum_{j\gt i}a_{ij}\,x_j^{(k)}\right)$$
+    La única diferencia con Jacobi está en el primer sumatorio: usa los valores
+    <strong>ya actualizados</strong> $x_j^{(k+1)}$ para $j\lt i$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · El mismo sistema, con Gauss-Seidel</h4>
+    <div class="ejemplo-body">
+      $4x+y=9,\quad x+3y=8$, partiendo de $(0,0)$.
+      <div class="paso"><div class="paso-t">Iteración 1</div>
+        $x^{(1)}=\dfrac{9-0}{4}=2{,}25$<br>
+        $y^{(1)}=\dfrac{8-2{,}25}{3}=1{,}917$ &nbsp;— ¡usa el $x$ recién calculado, no el cero!
+      </div>
+      <div class="paso"><div class="paso-t">Iteración 2</div>
+        $x^{(2)}=\dfrac{9-1{,}917}{4}=1{,}771$<br>
+        $y^{(2)}=\dfrac{8-1{,}771}{3}=2{,}076$
+      </div>
+      <div class="paso"><div class="paso-t">Compara con Jacobi</div>
+        Tras dos iteraciones, Gauss-Seidel está en $(1{,}771;\ 2{,}076)$, mucho más cerca del
+        exacto $(1{,}727;\ 2{,}091)$ que el $(1{,}583;\ 1{,}917)$ de Jacobi. Misma cuenta,
+        mejor aprovechamiento.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 Explora ambos métodos</div>
+  <div class="viz" data-viz="iterativos">
+    <div class="viz-controls">
+      <label for="it-s">Sistema</label>
+      <select id="it-s">
+        <option value="a">4×4 diagonalmente dominante</option>
+        <option value="b">4x+y=9 ; x+3y=8</option>
+        <option value="c">x+2y=5 ; 3x+y=5 &nbsp;(NO dominante)</option>
+      </select>
+      <label for="it-m">Método</label>
+      <select id="it-m" class="metodo">
+        <option value="jacobi">Jacobi</option>
+        <option value="gs">Gauss-Seidel</option>
+      </select>
+      <label for="it-n">Iteraciones</label>
+      <input id="it-n" class="iter" type="range" min="1" max="30" value="6">
+      <span class="iter-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="tabla" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Resuelve el mismo sistema con los dos métodos y compara la pendiente de la curva de error (en
+    escala logarítmica): la de Gauss-Seidel baja más rápido. Luego elige el sistema «NO dominante»
+    y observa cómo el error <strong>crece</strong> en vez de bajar — el tema de la sección siguiente.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Jacobi y Gauss-Seidel</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Convergencia: cuándo funcionan</h3>
+
+  <div class="callout-dark">
+    <h3>La condición que hay que revisar SIEMPRE</h3>
+    <p>Los métodos iterativos no siempre convergen. Pueden alejarse de la solución indefinidamente,
+       y si no lo compruebas, obtendrás basura sin darte cuenta. Por fortuna hay un criterio simple
+       y suficiente.</p>
+  </div>
+
+  <div class="def">
+    Una matriz es <strong>diagonalmente dominante</strong> si en cada fila el valor absoluto del
+    elemento de la diagonal supera la suma de los demás:
+    $$|a_{ii}|\;\gt\;\sum_{j\neq i}|a_{ij}|\qquad\text{para toda fila }i$$
+    <strong>Teorema.</strong> Si $A$ es diagonalmente dominante, tanto Jacobi como Gauss-Seidel
+    <strong>convergen</strong> desde cualquier punto de partida.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Verificar la dominancia diagonal</h4>
+    <div class="ejemplo-body">
+      Para $A=\begin{pmatrix}10&-1&2&0\\-1&11&-1&3\\2&-1&10&-1\\0&3&-1&8\end{pmatrix}$:
+      <div class="paso"><div class="paso-t">Comparar fila por fila</div>
+        Fila 1: $|10|\gt|-1|+|2|+0=3$ ✓<br>
+        Fila 2: $|11|\gt|-1|+|-1|+|3|=5$ ✓<br>
+        Fila 3: $|10|\gt|2|+|-1|+|-1|=4$ ✓<br>
+        Fila 4: $|8|\gt|3|+|-1|=4$ ✓
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        Todas las filas cumplen la condición, así que la convergencia está garantizada. En el
+        visualizador, este sistema converge a $(1,2,-1,1)$ en pocas iteraciones.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>Cuando falla, y cómo rescatarlo</h3>
+    <p>El sistema $\;x+2y=5,\quad 3x+y=5\;$ <strong>no</strong> es diagonalmente dominante: en la
+       primera fila $|1|\lt|2|$. Si aplicas Jacobi, el error <em>crece</em> en cada paso y la
+       iteración diverge hacia el infinito.</p>
+    <p>Pero fíjate: basta <strong>intercambiar las dos ecuaciones</strong> para obtener
+       $\;3x+y=5,\quad x+2y=5$, donde ahora $|3|\gt|1|$ y $|2|\gt|1|$: diagonalmente dominante. El
+       mismo sistema, reordenado, sí converge.</p>
+    <p>La moraleja: antes de iterar, <strong>reordena las filas</strong> para poner los elementos
+       más grandes en la diagonal. A menudo eso convierte un sistema divergente en uno convergente.</p>
+  </div>
+
+  <div class="sub-title">4.1 Criterio de parada</div>
+  <p>Como la iteración nunca llega <em>exactamente</em> a la solución, hay que decidir cuándo
+     detenerla. El criterio habitual es medir cuánto cambió la solución entre dos pasos:</p>
+  <div class="formula" style="max-width:440px">
+    $$\left\|\mathbf{x}^{(k+1)}-\mathbf{x}^{(k)}\right\|_\infty\;\lt\;\varepsilon$$
+  </div>
+  <p>Cuando la diferencia entre iteraciones consecutivas es menor que una tolerancia $\varepsilon$
+     prefijada, se acepta $\mathbf{x}^{(k+1)}$ como solución. Aquí reaparece la <strong>norma ∞</strong>
+     de la Guía 6: mide el peor componente, garantizando que <em>todas</em> las incógnitas se
+     estabilizaron.</p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Convergencia</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Directos contra iterativos: cuándo usar cada uno</h3>
+
+  <table class="tbl">
+    <tr><th></th><th>Directos (Gauss, LU)</th><th>Iterativos (Jacobi, GS)</th></tr>
+    <tr><td>Resultado</td><td>Exacto (salvo redondeo)</td><td>Aproximado, tan bueno como se quiera</td></tr>
+    <tr><td>Costo</td><td>$O(n^{3})$ fijo</td><td>$O(n^{2})$ por iteración, pocas iteraciones</td></tr>
+    <tr><td>Matrices dispersas</td><td>Se rellenan de números</td><td>Respetan los ceros</td></tr>
+    <tr><td>¿Siempre funcionan?</td><td>Sí (si $\det\neq0$)</td><td>Solo si convergen (dominancia diagonal)</td></tr>
+    <tr><td>Tamaño ideal</td><td>Pequeño y mediano</td><td>Grande y disperso</td></tr>
+  </table>
+
+  <div class="nota">
+    <strong>Regla práctica.</strong> Para sistemas pequeños y densos, usa un método directo: es
+    exacto y no hay que preocuparse por la convergencia. Para sistemas enormes y dispersos —los que
+    aparecen al discretizar ecuaciones en derivadas parciales, en redes o en grafos— usa iterativos:
+    son la única opción viable, siempre que verifiques la dominancia diagonal primero.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Lo que viene después</h3>
+    <p>Jacobi y Gauss-Seidel son los métodos iterativos clásicos, y los mejores para aprender la
+       idea. En la práctica moderna se usan versiones más potentes —SOR, gradiente conjugado,
+       GMRES— pero todas comparten el mismo esqueleto que viste aquí: partir de una suposición,
+       mejorarla repetidamente, y parar cuando sea suficiente.</p>
+    <p>Y la idea trasciende los sistemas lineales. En la Guía 8 verás métodos iterativos para
+       <em>ecuaciones no lineales</em> —bisección, Newton— que también parten de una estimación y la
+       refinan. La iteración es uno de los grandes temas del cálculo numérico.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Comparación</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El algoritmo <em>PageRank</em> de Google, que ordena las páginas web, es en esencia un método
+      iterativo sobre un sistema lineal gigantesco: la matriz de enlaces tiene miles de millones de
+      filas, y solo un método iterativo puede con ella. La misma idea se usa para rankear cualquier
+      red de influencias.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Los modelos de equilibrio con muchos agentes interconectados producen sistemas grandes y
+      dispersos. Resolverlos por iteración, partiendo del estado del periodo anterior como
+      suposición inicial, converge en pocos pasos porque el sistema no cambia mucho de un periodo al
+      siguiente.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Todo simulador físico —fluidos, calor, estructuras— discretiza el espacio en una malla y
+      resuelve un sistema lineal enorme y disperso en cada paso de tiempo. Los métodos iterativos son
+      el estándar, y el cálculo por GPU está diseñado justamente alrededor del producto
+      matriz-vector que define cada iteración.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El análisis de una red eléctrica grande —una red de distribución, un chip con millones de
+      nodos— produce una matriz de conductancias dispersa. Los métodos iterativos la resuelven
+      respetando los ceros, mientras que la eliminación gaussiana los rellenaría y agotaría la
+      memoria.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Los métodos iterativos parten de una suposición y la <strong>mejoran repetidamente</strong>, en vez de resolver de golpe.</li>
+    <li>Convienen para sistemas <strong>grandes y dispersos</strong>, donde los directos son inviables.</li>
+    <li><strong>Jacobi</strong>: cada incógnita se despeja de su ecuación usando solo valores viejos.</li>
+    <li><strong>Gauss-Seidel</strong>: usa los valores ya actualizados en la misma pasada, y converge más rápido.</li>
+    <li>La <strong>dominancia diagonal</strong> ($|a_{ii}|\gt\sum_{j\neq i}|a_{ij}|$) garantiza la convergencia.</li>
+    <li>Si no hay dominancia, la iteración puede <strong>diverger</strong>: reordena filas para lograrla.</li>
+    <li>Criterio de parada: $\|\mathbf{x}^{(k+1)}-\mathbf{x}^{(k)}\|_\infty\lt\varepsilon$, con la norma ∞ de la Guía 6.</li>
+    <li>Directos = exactos y fijos; iterativos = aproximados y baratos por paso.</li>
+    <li>La misma idea de «estimar y refinar» reaparece en la Guía 8 con ecuaciones no lineales.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2</a> · <a href="https://www.geogebra.org/m/YCZa8TAH" target="_blank" rel="noopener">GeoGebra · Matrices</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260912a"></script>
+<script src="../assets/viz-metodos.js?v=20260912a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Jacobi y Gauss-Seidel · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'La diferencia clave', nivel: 2,
+      criterio: 'Distinguir Jacobi de Gauss-Seidel (§3)',
+      enunciado: '¿En qué se diferencian Jacobi y Gauss-Seidel?',
+      opciones: [
+        'Jacobi es exacto y Gauss-Seidel aproximado',
+        'Gauss-Seidel usa los valores ya actualizados en la misma pasada; Jacobi solo los de la iteración anterior',
+        'Jacobi sirve para matrices grandes y Gauss-Seidel para pequeñas',
+        'No hay diferencia real'
+      ],
+      correcta: 1,
+      pista: 'Piensa en qué valor de $x_1$ usa cada método al calcular $x_2$.',
+      solucion: "Gauss-Seidel aprovecha cada valor nuevo en cuanto lo calcula, mientras Jacobi espera a terminar la pasada para reemplazar todo. Esa única diferencia hace que Gauss-Seidel converja, típicamente, en la mitad de iteraciones. Ambos son aproximados e iterativos."
+    },
+    {
+      etiqueta: 'Una iteración', nivel: 3,
+      criterio: 'Ejecutar un paso de Jacobi (§2)',
+      enunciado: "Para $4x+y=9,\\;x+3y=8$, partiendo de $(0,0)$, el primer paso de <strong>Jacobi</strong> da:",
+      opciones: [
+        '$x=2{,}25,\\;y=2{,}667$',
+        '$x=2{,}25,\\;y=1{,}917$',
+        '$x=1{,}727,\\;y=2{,}091$',
+        '$x=0,\\;y=0$'
+      ],
+      correcta: 0,
+      pista: 'Jacobi usa solo valores viejos: ambos parten de cero.',
+      solucion: "$x=\\dfrac{9-0}{4}=2{,}25$ e $y=\\dfrac{8-0}{3}=2{,}667$, ambos usando el cero inicial. La opción b) es el resultado de <em>Gauss-Seidel</em>, que para $y$ ya usaría el $x=2{,}25$ recién calculado. La opción c) es la solución exacta, a la que se llega tras varias iteraciones."
+    },
+    {
+      etiqueta: 'Velocidad', nivel: 2,
+      criterio: 'Comparar la rapidez de convergencia (§3)',
+      enunciado: 'En general, para un sistema que converge, ¿cuál método necesita menos iteraciones?',
+      opciones: [
+        'Jacobi',
+        'Gauss-Seidel',
+        'Siempre igual',
+        'Depende solo del tamaño'
+      ],
+      correcta: 1,
+      pista: '¿Cuál aprovecha información más fresca en cada paso?',
+      solucion: "Gauss-Seidel converge más rápido porque usa información más actualizada dentro de cada pasada. En el visualizador se ve claramente: su curva de error baja con mayor pendiente. No es una regla absoluta, pero sí lo habitual."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Convergencia · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Dominancia diagonal', nivel: 2,
+      criterio: 'Verificar la dominancia diagonal (§4)',
+      enunciado: "¿Cuál de estas matrices es diagonalmente dominante?",
+      opciones: [
+        '$\\begin{pmatrix}5&2\\\\1&4\\end{pmatrix}$',
+        '$\\begin{pmatrix}1&3\\\\2&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}2&5\\\\3&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}$'
+      ],
+      correcta: 0,
+      pista: 'En cada fila, ¿el elemento de la diagonal supera en valor absoluto a los demás?',
+      solucion: "En $\\begin{pmatrix}5&2\\\\1&4\\end{pmatrix}$: fila 1, $|5|\\gt|2|$ ✓; fila 2, $|4|\\gt|1|$ ✓. Las otras fallan: en la a) la fila 1 tiene $|1|\\lt|3|$. Solo la dominante garantiza convergencia de Jacobi y Gauss-Seidel."
+    },
+    {
+      etiqueta: 'Rescate por reordenamiento', nivel: 3,
+      criterio: 'Reordenar filas para lograr dominancia (§4)',
+      enunciado: "El sistema $x+3y=10,\\;4x+y=11$ no es dominante. ¿Qué se puede hacer para que los métodos iterativos converjan?",
+      opciones: [
+        'Nada: es imposible',
+        'Intercambiar las dos ecuaciones',
+        'Multiplicar todo por 2',
+        'Cambiar el vector inicial'
+      ],
+      correcta: 1,
+      pista: '¿Qué pasa si pones la ecuación con el coeficiente grande de $x$ primero?',
+      solucion: "Intercambiando queda $4x+y=11,\\;x+3y=10$, donde $|4|\\gt|1|$ y $|3|\\gt|1|$: ahora es dominante y converge. La opción c) no cambia la dominancia (escalar ambos lados no altera la relación entre coeficientes). El punto de partida (opción d) no afecta <em>si</em> converge, solo cuánto tarda."
+    },
+    {
+      etiqueta: 'Criterio de parada', nivel: 2,
+      criterio: 'Aplicar el criterio de parada (§4.1)',
+      enunciado: '¿Cuándo se detiene la iteración?',
+      opciones: [
+        'Cuando se alcanza la solución exacta',
+        'Siempre tras 10 iteraciones',
+        'Cuando el cambio entre iteraciones consecutivas es menor que una tolerancia',
+        'Cuando el determinante es cero'
+      ],
+      correcta: 2,
+      pista: 'La iteración nunca llega exactamente; hay que decidir cuándo «ya es suficiente».',
+      solucion: "Se para cuando $\\|\\mathbf{x}^{(k+1)}-\\mathbf{x}^{(k)}\\|_\\infty\\lt\\varepsilon$: cuando la solución deja de cambiar apreciablemente. La opción a) es imposible en un número finito de pasos. Aquí reaparece la norma ∞ de la Guía 6, que asegura que todos los componentes se estabilizaron."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Directos vs. iterativos · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Cuándo iterar', nivel: 2,
+      criterio: 'Elegir método según el sistema (§5)',
+      enunciado: '¿Para qué tipo de sistema son más apropiados los métodos iterativos?',
+      opciones: [
+        'Pequeños y densos',
+        'Grandes y dispersos',
+        'Con determinante cero',
+        'Con solución entera'
+      ],
+      correcta: 1,
+      pista: 'Piensa en sistemas de un millón de ecuaciones casi todas llenas de ceros.',
+      solucion: "Los iterativos brillan en sistemas grandes y dispersos: respetan los ceros y solo cuestan $O(n^{2})$ por iteración, mientras que un método directo costaría $O(n^{3})$ y rellenaría la matriz. Para sistemas pequeños y densos conviene un método directo, que es exacto."
+    },
+    {
+      etiqueta: 'Costo', nivel: 2,
+      criterio: 'Comparar el costo (§5)',
+      enunciado: 'Cada iteración de Gauss-Seidel cuesta aproximadamente:',
+      opciones: ['$O(n^{3})$', '$O(n^{2})$', '$O(n)$', '$O(1)$'],
+      correcta: 1,
+      pista: 'Cada iteración es esencialmente un producto matriz-vector.',
+      solucion: "Una iteración recorre toda la matriz una vez, lo que cuesta $O(n^{2})$. Si converge en pocas iteraciones, el costo total queda muy por debajo del $O(n^{3})$ de un método directo. La opción a) es el costo de <em>una</em> eliminación gaussiana completa."
+    },
+    {
+      etiqueta: 'La gran diferencia', nivel: 2,
+      criterio: 'Contrastar exactitud (§5)',
+      enunciado: '¿Cuál es la diferencia esencial entre un método directo y uno iterativo?',
+      opciones: [
+        'El directo da la solución exacta en pasos fijos; el iterativo la aproxima cada vez mejor',
+        'El iterativo es siempre más preciso',
+        'El directo no necesita la matriz',
+        'No pueden resolver el mismo sistema'
+      ],
+      correcta: 0,
+      pista: 'Uno termina; el otro se acerca.',
+      solucion: "Un método directo (Gauss, LU) termina en un número conocido de pasos con la solución exacta salvo redondeo; uno iterativo se acerca indefinidamente y se detiene al alcanzar la precisión deseada. Ambos resuelven el mismo sistema (opción d falsa), y el iterativo no es «siempre más preciso» — de hecho nunca es exacto."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'La idea', nivel: 1,
+      criterio: 'Reconocer la naturaleza de un método iterativo (§1)',
+      enunciado: '¿En qué consiste un método iterativo para resolver $A\\mathbf{x}=\\mathbf{b}$?',
+      opciones: [
+        'Eliminar variables hasta triangular la matriz',
+        'Calcular la matriz inversa',
+        'Partir de una suposición y mejorarla repetidamente',
+        'Factorizar $A$ como producto de dos matrices'
+      ],
+      correcta: 2,
+      pista: 'La palabra clave es «iterar»: repetir.',
+      solucion: "Un método iterativo parte de una estimación inicial (normalmente el vector cero) y la refina paso a paso hasta que sea suficientemente buena. Las otras opciones describen métodos <em>directos</em>: eliminación, inversa, factorización."
+    },
+    {
+      etiqueta: 'Despejar', nivel: 2,
+      criterio: 'Plantear la fórmula de despeje (§2)',
+      enunciado: "En Jacobi, de la ecuación $10x-y+2z=6$ se despeja:",
+      opciones: [
+        '$x=\\dfrac{6+y-2z}{10}$',
+        '$x=6+y-2z$',
+        '$x=\\dfrac{6-y+2z}{10}$',
+        '$x=10(6+y-2z)$'
+      ],
+      correcta: 0,
+      pista: 'Deja $x$ sola: pasa los demás términos al otro lado y divide entre su coeficiente.',
+      solucion: "$10x=6+y-2z$, luego $x=\\dfrac{6+y-2z}{10}$. La opción c) tiene los signos de $y$ y $z$ cambiados. Se despeja siempre la incógnita de la diagonal, y por eso el elemento diagonal no puede ser cero."
+    },
+    {
+      etiqueta: 'Iteración GS', nivel: 3,
+      criterio: 'Ejecutar un paso de Gauss-Seidel (§3)',
+      enunciado: "Para $4x+y=9,\\;x+3y=8$ desde $(0,0)$, el primer paso de <strong>Gauss-Seidel</strong> da:",
+      opciones: [
+        '$x=2{,}25,\\;y=2{,}667$',
+        '$x=2{,}25,\\;y=1{,}917$',
+        '$x=0,\\;y=0$',
+        '$x=1{,}917,\\;y=2{,}25$'
+      ],
+      correcta: 1,
+      pista: 'Al calcular $y$, usa el $x$ que acabas de obtener, no el cero.',
+      solucion: "$x=\\dfrac{9-0}{4}=2{,}25$; luego $y=\\dfrac{8-2{,}25}{3}=1{,}917$, usando ya el $x$ nuevo. La opción a) es Jacobi, que para $y$ usaría el cero inicial. Esa reutilización inmediata es lo que acelera Gauss-Seidel."
+    },
+    {
+      etiqueta: 'Convergencia', nivel: 2,
+      criterio: 'Aplicar el criterio de dominancia (§4)',
+      enunciado: '¿Qué garantiza que Jacobi y Gauss-Seidel converjan?',
+      opciones: [
+        'Que la matriz sea simétrica',
+        'Que el determinante sea positivo',
+        'Que el sistema tenga solución entera',
+        'Que la matriz sea diagonalmente dominante'
+      ],
+      correcta: 3,
+      pista: 'Es una condición sobre los elementos de la diagonal frente al resto de su fila.',
+      solucion: "La dominancia diagonal ($|a_{ii}|\\gt\\sum_{j\\neq i}|a_{ij}|$ en cada fila) es condición <em>suficiente</em> de convergencia. La simetría (opción a) es lo que pedía Cholesky, otra cosa. Siempre conviene verificarla antes de iterar."
+    },
+    {
+      etiqueta: 'Divergencia', nivel: 3,
+      criterio: 'Reconocer y remediar la divergencia (§4)',
+      enunciado: 'Aplicas Jacobi y los valores crecen sin control en cada paso. ¿Qué está pasando?',
+      opciones: [
+        'La matriz no es diagonalmente dominante y la iteración diverge',
+        'El método siempre hace eso al principio',
+        'El sistema no tiene solución',
+        'Falta usar más decimales'
+      ],
+      correcta: 0,
+      pista: 'Sin la condición de la sección 4, la iteración no está garantizada.',
+      solucion: "Si el error crece en vez de reducirse, casi seguro la matriz no es diagonalmente dominante y la iteración diverge. El sistema puede tener solución perfecta (opción c falsa); el problema es el método iterativo sobre esa matriz. Reordenar las filas para lograr dominancia suele rescatarlo."
+    },
+    {
+      etiqueta: 'Parada', nivel: 2,
+      criterio: 'Usar la norma en el criterio de parada (§4.1)',
+      enunciado: "¿Qué mide $\\|\\mathbf{x}^{(k+1)}-\\mathbf{x}^{(k)}\\|_\\infty$ en el criterio de parada?",
+      opciones: [
+        'El error respecto a la solución exacta',
+        'La suma de todos los componentes',
+        'El mayor cambio en cualquier componente entre dos iteraciones',
+        'El determinante de la matriz'
+      ],
+      correcta: 2,
+      pista: 'La norma ∞ es el máximo valor absoluto.',
+      solucion: "La norma ∞ de la diferencia es el mayor cambio en cualquier incógnita de un paso al siguiente. Cuando ese máximo es pequeño, <em>todas</em> las incógnitas se estabilizaron. Ojo: mide el cambio entre iteraciones, no el error real respecto al exacto (que no conocemos)."
+    },
+    {
+      etiqueta: 'Elección', nivel: 2,
+      criterio: 'Decidir entre directo e iterativo (§5)',
+      enunciado: 'Tienes un sistema $5\\times5$ denso, de una sola resolución. ¿Qué conviene?',
+      opciones: [
+        'Un método directo como LU o Gauss',
+        'Un método iterativo, siempre son mejores',
+        'Calcular la inversa a mano',
+        'Ninguno funciona para ese tamaño'
+      ],
+      correcta: 0,
+      pista: 'Pequeño y denso: ¿vale la pena iterar?',
+      solucion: "Para un sistema pequeño y denso, un método directo es exacto y no exige preocuparse por la convergencia: es la elección correcta. Los iterativos ganan en sistemas <em>grandes y dispersos</em>, no en cualquier caso. La opción a) generaliza mal."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Conectar con el resto del curso (§5)',
+      enunciado: '¿Qué idea de esta guía reaparecerá en la Guía 8 con ecuaciones no lineales?',
+      opciones: [
+        'La factorización de matrices',
+        'El cálculo de determinantes',
+        'La dominancia diagonal',
+        'Partir de una estimación y refinarla hasta converger'
+      ],
+      correcta: 3,
+      pista: '¿Qué tienen en común iterar un sistema y buscar una raíz por aproximaciones?',
+      solucion: "El esquema de «estimar y refinar repetidamente» es el corazón de los métodos iterativos, y reaparece en la Guía 8: bisección, Newton y los demás también parten de una estimación de la raíz y la mejoran paso a paso. La iteración es uno de los grandes temas del cálculo numérico."
+    }
+  ]
+});
+</script>
 </body>
 </html>

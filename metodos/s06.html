@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 6 · Normas y condicionamiento — Métodos Numéricos · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 6 · Normas y condicionamiento — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912a">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Semana 6</h1>
+      <h1>Métodos Numéricos · Guía 6</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,559 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Normas vectoriales</a>
+    <a href="#s2">2 · Normas matriciales</a>
+    <a href="#s3">3 · Número de condición</a>
+    <a href="#s4">4 · Un sistema traicionero</a>
+    <a href="#s5">5 · Qué hacer</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 6 · Normas y condicionamiento</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 6 · Corte II</div>
+  <h2>Normas y condicionamiento</h2>
+  <p>En la Guía 3 el pivoteo salvó un sistema de la basura numérica. Esta semana veremos un sistema
+     donde el pivoteo <em>no basta</em>: el problema no está en el método, sino en la matriz misma.
+     Para medir ese problema hace falta primero saber medir el «tamaño» de vectores y matrices.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 9.3</span>
+    <span class="chip">Burden · Cap. 7.1–7.3</span>
+    <span class="chip">Semana 6</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 3 cerró con el pivoteo parcial: intercambiar filas para
+  evitar multiplicadores gigantes. Funcionaba porque el problema era del <em>método</em>. Aquí
+  aparece un problema del <em>problema</em>, que ningún método puede arreglar — solo diagnosticar.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Normas vectoriales</h3>
+
+  <div class="callout-dark">
+    <h3>¿Qué tan grande es un vector?</h3>
+    <p>Para hablar de errores necesitamos medir. El error de una solución aproximada es un
+       <em>vector</em> —la diferencia entre lo calculado y lo exacto—, y para decir si es «grande» o
+       «pequeño» hay que asignarle un número. Ese número es la <strong>norma</strong>.</p>
+    <p>Pero hay más de una forma razonable de medir un vector, y cada una sirve para algo distinto.</p>
+  </div>
+
+  <div class="def">
+    Las tres normas más usadas de un vector $\mathbf{x}=(x_1,\dots,x_n)$:
+    <div class="formulas" style="margin-top:.6rem">
+      <div class="formula"><div class="lbl">Norma 1 (suma)</div>$$\|\mathbf{x}\|_1=\sum_{i}|x_i|$$</div>
+      <div class="formula"><div class="lbl">Norma 2 (euclídea)</div>$$\|\mathbf{x}\|_2=\sqrt{\sum_i x_i^{2}}$$</div>
+      <div class="formula"><div class="lbl">Norma ∞ (máximo)</div>$$\|\mathbf{x}\|_\infty=\max_i|x_i|$$</div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Las tres normas de un mismo vector</h4>
+    <div class="ejemplo-body">
+      Calcula las tres normas de $\mathbf{x}=(3,-4,0,12)$.
+      <div class="paso"><div class="paso-t">Norma 1</div>
+        $|3|+|-4|+|0|+|12|=3+4+0+12=\mathbf{19}$
+      </div>
+      <div class="paso"><div class="paso-t">Norma 2</div>
+        $\sqrt{9+16+0+144}=\sqrt{169}=\mathbf{13}$
+      </div>
+      <div class="paso"><div class="paso-t">Norma ∞</div>
+        el mayor valor absoluto: $\mathbf{12}$
+      </div>
+      <div class="paso"><div class="paso-t">Una relación que siempre se cumple</div>
+        $\|\mathbf{x}\|_\infty \leq \|\mathbf{x}\|_2 \leq \|\mathbf{x}\|_1$, aquí $12\leq13\leq19$.
+        Todas miden lo mismo —cuán lejos está el vector del origen— pero con distinta severidad.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Cuál usar.</strong> La norma ∞ es la más común en análisis de errores porque responde a
+    la pregunta práctica: <em>¿cuál es el peor componente?</em> Si el error en la norma ∞ es pequeño,
+    <strong>todos</strong> los componentes son pequeños. Es la que usaremos como criterio de parada
+    en la Guía 7.
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Normas matriciales</h3>
+
+  <p>Una matriz también necesita una medida de «tamaño», pero con un requisito extra: debe ser
+     <strong>compatible</strong> con la norma vectorial, en el sentido de que
+     $\|A\mathbf{x}\|\leq\|A\|\cdot\|\mathbf{x}\|$. Eso permite acotar cuánto puede agrandar una
+     matriz a un vector.</p>
+
+  <div class="def">
+    Las dos normas matriciales más manejables:
+    <br><br>
+    <strong>Norma 1</strong> = la mayor <em>suma de columna</em> (en valor absoluto):
+    $\;\|A\|_1=\displaystyle\max_j\sum_i|a_{ij}|$.
+    <br><br>
+    <strong>Norma ∞</strong> = la mayor <em>suma de fila</em> (en valor absoluto):
+    $\;\|A\|_\infty=\displaystyle\max_i\sum_j|a_{ij}|$.
+  </div>
+
+  <div class="nota">
+    <strong>Truco para no confundirlas.</strong> El «1» es delgado y vertical, como una
+    <em>columna</em>; el «∞» es ancho y horizontal, como una <em>fila</em>. Norma-1 → columnas,
+    norma-∞ → filas.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Normas de una matriz $3\times3$</h4>
+    <div class="ejemplo-body">
+      Para $A=\begin{pmatrix}3&-1&2\\0&4&-1\\1&2&5\end{pmatrix}$:
+      <div class="paso"><div class="paso-t">Norma ∞ (sumas de fila)</div>
+        Fila 1: $|3|+|-1|+|2|=6$ · Fila 2: $0+4+1=5$ · Fila 3: $1+2+5=8$.<br>
+        El máximo es $\|A\|_\infty=\mathbf{8}$.
+      </div>
+      <div class="paso"><div class="paso-t">Norma 1 (sumas de columna)</div>
+        Columna 1: $3+0+1=4$ · Columna 2: $1+4+2=7$ · Columna 3: $2+1+5=8$.<br>
+        El máximo es $\|A\|_1=\mathbf{8}$.
+      </div>
+      <div class="paso"><div class="paso-t">Nota</div>
+        Que ambas coincidan aquí es casualidad; en general son distintas. Lo importante es el
+        procedimiento: sumar en la dirección correcta y quedarse con el máximo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Normas</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · El número de condición</h3>
+
+  <div class="callout-dark">
+    <h3>La pregunta que importa</h3>
+    <p>Los datos de un sistema real nunca son exactos: vienen de mediciones con error, o se
+       redondean al guardarlos. La pregunta crucial es: <em>si los datos cambian un poquito, ¿cuánto
+       cambia la solución?</em></p>
+    <p>Si un cambio diminuto en $\mathbf{b}$ produce un cambio diminuto en $\mathbf{x}$, el sistema
+       es <strong>bien condicionado</strong> y podemos confiar en la respuesta. Si un cambio diminuto
+       en $\mathbf{b}$ produce un cambio <em>enorme</em> en $\mathbf{x}$, es <strong>mal
+       condicionado</strong> y la respuesta es sospechosa por más exacto que sea el método.</p>
+  </div>
+
+  <div class="def">
+    El <strong>número de condición</strong> de una matriz invertible $A$ es
+    $$\operatorname{cond}(A)=\|A\|\cdot\|A^{-1}\|\;\geq\;1$$
+    <table class="tbl" style="margin-top:.6rem">
+      <tr><th>Si cond(A) es…</th><th>El sistema es…</th></tr>
+      <tr><td>Cercano a 1</td><td>Bien condicionado (ideal)</td></tr>
+      <tr><td>Moderado (decenas, cientos)</td><td>Aceptable</td></tr>
+      <tr><td>Muy grande ($10^3$ o más)</td><td>Mal condicionado: cuidado</td></tr>
+    </table>
+  </div>
+
+  <div class="nota">
+    <strong>Cómo leerlo.</strong> El número de condición es aproximadamente el <em>factor de
+    amplificación</em> del error relativo. Si $\operatorname{cond}(A)=1000$, un error relativo del
+    $0{,}1\,\%$ en los datos puede convertirse en un error del $100\,\%$ en la solución. Como regla
+    práctica, si $\operatorname{cond}(A)\approx10^{k}$, puedes perder hasta $k$ cifras significativas.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Dos extremos</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">El caso perfecto</div>
+        Para $A=2I=\begin{pmatrix}2&0\\0&2\end{pmatrix}$: $\|A\|_1=2$ y $\|A^{-1}\|_1=\tfrac12$,
+        luego $\operatorname{cond}(A)=2\cdot\tfrac12=\mathbf{1}$. Imposible mejorar: escalar no
+        introduce ningún acoplamiento entre las ecuaciones.
+      </div>
+      <div class="paso"><div class="paso-t">La matriz de Hilbert, tristemente célebre</div>
+        La matriz $H_{ij}=\dfrac{1}{i+j-1}$, de aspecto inofensivo, tiene
+        $\operatorname{cond}(H_3)\approx\mathbf{748}$ ya en tamaño $3\times3$, y crece
+        vertiginosamente: la $6\times6$ supera $10^{7}$. Aparece al ajustar polinomios y es el
+        ejemplo estándar de mal condicionamiento.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Un sistema que parece inofensivo y no lo es</h3>
+
+  <div class="callout-dark">
+    <h3>El sistema de Wilson</h3>
+    <p>Considera este sistema, cuyos coeficientes son enteros pequeños y cuya solución exacta es
+       $\mathbf{x}=(1,1,1,1)$:</p>
+    <p>$$\begin{pmatrix}10&7&8&7\\7&5&6&5\\8&6&10&9\\7&5&9&10\end{pmatrix}
+       \begin{pmatrix}x_1\\x_2\\x_3\\x_4\end{pmatrix}=
+       \begin{pmatrix}32\\23\\33\\31\end{pmatrix}$$</p>
+    <p>Nada llama la atención. Pero perturbemos el lado derecho apenas
+       $0{,}1$ en cada componente: $\mathbf{b}=(32{,}1;\ 22{,}9;\ 33{,}1;\ 30{,}9)$.</p>
+    <p>La nueva solución es $\mathbf{x}\approx(9{,}2;\ -12{,}6;\ 4{,}5;\ -1{,}1)$.</p>
+    <p>Un cambio del <strong>0,3 %</strong> en los datos produjo un cambio de más del
+       <strong>1000 %</strong> en la solución. El sistema tiene
+       $\operatorname{cond}(W)\approx4488$, y eso lo explica todo.</p>
+  </div>
+
+  <div class="nota">
+    <strong>Lo que hay que entender.</strong> Este sistema no tiene pivotes pequeños. El pivoteo de
+    la Guía 3 no cambia nada aquí, porque el problema <em>no está en el método</em>. La matriz misma
+    amplifica los errores: sus filas son casi linealmente dependientes, y eso hace que la solución
+    sea hipersensible. Ningún algoritmo puede arreglarlo, solo advertirlo.
+  </div>
+
+  <div class="sub-title">4.1 Explora la amplificación</div>
+  <div class="viz" data-viz="condicion">
+    <div class="viz-controls">
+      <label for="cn-s">Sistema</label>
+      <select id="cn-s">
+        <option value="bien">bien condicionado (cond ≈ 1,5)</option>
+        <option value="medio">moderado (cond ≈ 7)</option>
+        <option value="mal">mal condicionado (cond ≈ 402)</option>
+        <option value="peor">casi singular (cond ≈ 40000)</option>
+      </select>
+      <label for="cn-p">Perturbar b</label>
+      <input id="cn-p" class="pert" type="range" min="0" max="50" value="0">
+      <span class="pert-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Cada ecuación de un sistema $2\times2$ es una recta; la solución es su intersección. Cuando las
+    rectas se cruzan casi perpendiculares, mover una un poco casi no mueve el cruce: buen
+    condicionamiento. Cuando son casi paralelas, un empujón diminuto desplaza el cruce muy lejos.
+    Sube la perturbación en «mal condicionado» y observa la amplificación.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Condicionamiento</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Qué hacer ante un sistema mal condicionado</h3>
+
+  <p>El mal condicionamiento no se «arregla», pero se puede gestionar. Las estrategias, en orden de
+     preferencia:</p>
+  <ol>
+    <li><strong>Reconocerlo.</strong> Calcular o estimar el número de condición <em>antes</em> de
+        confiar en la solución. Muchos desastres numéricos vienen de no haberlo mirado.</li>
+    <li><strong>Usar más precisión.</strong> Si $\operatorname{cond}(A)\approx10^{k}$, trabajar con
+        suficientes cifras para que sobren al menos $k$. En doble precisión hay unas 16 cifras, así
+        que un condicionamiento de $10^{10}$ todavía deja margen.</li>
+    <li><strong>Reformular el problema.</strong> A veces el mal condicionamiento viene de cómo se
+        planteó. Reescalar las variables, cambiar de base o elegir mejores puntos de ajuste puede
+        reducir drásticamente el número de condición.</li>
+    <li><strong>Aceptar la incertidumbre.</strong> Si los datos tienen error y el sistema es mal
+        condicionado, la solución es genuinamente incierta. Lo honesto es reportar esa incertidumbre,
+        no fingir una precisión que no existe.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>La lección de fondo</h3>
+    <p>Hay dos fuentes de error en el cálculo numérico, y esta guía marca la frontera entre ellas.</p>
+    <p>El <strong>error del método</strong> —redondeo, truncamiento, pivotes pequeños— depende del
+       algoritmo y se combate con mejores algoritmos: pivoteo, más cifras, mejores fórmulas.</p>
+    <p>El <strong>mal condicionamiento</strong> es una propiedad del <em>problema</em>. No importa
+       qué algoritmo uses ni con cuánta precisión: si la matriz amplifica errores, la solución será
+       sensible. Distinguir estas dos cosas es lo que separa a quien ejecuta una fórmula de quien
+       entiende lo que está calculando.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Diagnóstico</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Un modelo de optimización con restricciones casi redundantes está mal condicionado: pequeños
+      cambios en los coeficientes de costo dan planes de producción radicalmente distintos. Reconocerlo
+      evita tomar decisiones basadas en una solución que en realidad es ruido.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Al distribuir costos entre departamentos con servicios muy entrelazados, la matriz de reparto
+      puede quedar mal condicionada, y entonces un ajuste menor en un costo directo altera toda la
+      asignación. El número de condición mide esa fragilidad.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      En aprendizaje automático, una matriz de datos mal condicionada hace que el entrenamiento sea
+      inestable: por eso se <em>regulariza</em> (Ridge, por ejemplo), que es literalmente sumar un
+      término que baja el número de condición. La norma de vectores y matrices es también la base de
+      medir errores en cualquier método iterativo.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La matriz de un circuito con componentes de valores muy dispares —megaohmios junto a
+      miliohmios— queda mal condicionada, y el análisis nodal pierde precisión. SPICE escala
+      internamente las ecuaciones precisamente para mejorar el condicionamiento antes de resolver.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>La <strong>norma</strong> asigna un número al «tamaño» de un vector o una matriz, para poder medir errores.</li>
+    <li>Norma 1 = suma de $|\cdot|$; norma 2 = euclídea; norma ∞ = máximo $|\cdot|$.</li>
+    <li>Siempre $\|\mathbf{x}\|_\infty\leq\|\mathbf{x}\|_2\leq\|\mathbf{x}\|_1$.</li>
+    <li>Norma matricial: <strong>1 = máxima suma de columna</strong>, <strong>∞ = máxima suma de fila</strong>.</li>
+    <li>$\operatorname{cond}(A)=\|A\|\cdot\|A^{-1}\|\geq1$ mide cuánto amplifica la matriz los errores relativos.</li>
+    <li>cond $\approx10^{k}$ ⟹ puedes perder hasta $k$ cifras significativas.</li>
+    <li>El sistema de Wilson (cond $\approx4488$) cambia su solución un 1000 % con datos alterados un 0,3 %.</li>
+    <li>El <strong>pivoteo no arregla</strong> el mal condicionamiento: es del problema, no del método.</li>
+    <li>Dos errores distintos: el del <em>método</em> (combatible) y el del <em>problema</em> (solo diagnosticable).</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2</a> · <a href="https://www.geogebra.org/m/YCZa8TAH" target="_blank" rel="noopener">GeoGebra · Matrices</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260912a"></script>
+<script src="../assets/viz-metodos.js?v=20260912a"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Normas · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Normas vectoriales', nivel: 2,
+      criterio: 'Calcular las tres normas de un vector (§1)',
+      enunciado: "Para el vector $\\mathbf{x}=(1,-2,2)$, ¿cuáles son $\\|\\mathbf{x}\\|_1$, $\\|\\mathbf{x}\\|_2$ y $\\|\\mathbf{x}\\|_\\infty$?",
+      opciones: ['$5,\\;3,\\;2$', '$5,\\;9,\\;2$', '$3,\\;3,\\;2$', '$5,\\;3,\\;1$'],
+      correcta: 0,
+      pista: 'Suma de valores absolutos; raíz de la suma de cuadrados; el mayor valor absoluto.',
+      solucion: "$\\|\\mathbf{x}\\|_1=1+2+2=5$; $\\|\\mathbf{x}\\|_2=\\sqrt{1+4+4}=\\sqrt9=3$; $\\|\\mathbf{x}\\|_\\infty=2$. La opción b) olvida la raíz en la norma 2. Se cumple $\\|\\mathbf{x}\\|_\\infty\\leq\\|\\mathbf{x}\\|_2\\leq\\|\\mathbf{x}\\|_1$: $2\\leq3\\leq5$."
+    },
+    {
+      etiqueta: 'Norma matricial', nivel: 3,
+      criterio: 'Calcular la norma ∞ de una matriz (§2)',
+      enunciado: "Para $A=\\begin{pmatrix}2&-3\\\\1&4\\end{pmatrix}$, ¿cuánto vale $\\|A\\|_\\infty$?",
+      opciones: ['$4$', '$5$', '$7$', '$6$'],
+      correcta: 1,
+      pista: 'La norma ∞ es la mayor suma de fila (en valor absoluto). «∞ es ancho como una fila».',
+      solucion: "Suma de la fila 1: $|2|+|-3|=5$; de la fila 2: $|1|+|4|=5$. El máximo es $5$. La opción c) da la norma <em>1</em> (mayor suma de columna: $|2|+|1|=3$, $|-3|+|4|=7$, máximo 7). Recuerda: ∞ = filas, 1 = columnas."
+    },
+    {
+      etiqueta: 'Desigualdad', nivel: 2,
+      criterio: 'Reconocer la relación entre normas (§1)',
+      enunciado: '¿Cuál relación entre normas de un mismo vector se cumple siempre?',
+      opciones: [
+        '$\\|\\mathbf{x}\\|_1\\leq\\|\\mathbf{x}\\|_2\\leq\\|\\mathbf{x}\\|_\\infty$',
+        '$\\|\\mathbf{x}\\|_\\infty\\leq\\|\\mathbf{x}\\|_2\\leq\\|\\mathbf{x}\\|_1$',
+        'Las tres son siempre iguales',
+        'No hay ninguna relación fija'
+      ],
+      correcta: 1,
+      pista: '¿Cuál da el número más pequeño: el máximo, la euclídea o la suma?',
+      solucion: "El máximo componente es siempre el menor de los tres números, y la suma el mayor: $\\|\\mathbf{x}\\|_\\infty\\leq\\|\\mathbf{x}\\|_2\\leq\\|\\mathbf{x}\\|_1$. Se ve en el Ejemplo 1: $12\\leq13\\leq19$. Todas miden la distancia al origen, pero con distinta severidad."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Condicionamiento · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Definición', nivel: 2,
+      criterio: 'Aplicar la definición de número de condición (§3)',
+      enunciado: "Para $A=5I$ (la matriz $\\begin{pmatrix}5&0\\\\0&5\\end{pmatrix}$), el número de condición es:",
+      opciones: ['$25$', '$5$', '$1$', '$0{,}2$'],
+      correcta: 2,
+      pista: '$\\operatorname{cond}(A)=\\|A\\|\\cdot\\|A^{-1}\\|$, y $A^{-1}=\\tfrac15 I$.',
+      solucion: "$\\|A\\|_1=5$ y $\\|A^{-1}\\|_1=\\tfrac15$, luego $\\operatorname{cond}=5\\cdot\\tfrac15=1$. Es el valor ideal: escalar por igual no acopla las ecuaciones. La opción a) multiplica las normas mal; el condicionamiento nunca es menor que 1."
+    },
+    {
+      etiqueta: 'Interpretación', nivel: 3,
+      criterio: 'Interpretar el número de condición como pérdida de cifras (§3)',
+      enunciado: "Si $\\operatorname{cond}(A)\\approx1000$, ¿cuántas cifras significativas puedes perder aproximadamente?",
+      opciones: ['Ninguna', '1 cifra', '3 cifras', '1000 cifras'],
+      correcta: 2,
+      pista: 'Como regla, $\\operatorname{cond}\\approx10^{k}$ implica perder hasta $k$ cifras.',
+      solucion: "$1000=10^{3}$, así que puedes perder hasta 3 cifras significativas. Con datos de 6 cifras, la solución sería fiable solo hasta unas 3. La opción d) confunde el número de condición con el número de cifras: es un factor de amplificación, no un conteo directo."
+    },
+    {
+      etiqueta: 'El límite de fondo', nivel: 3,
+      criterio: 'Entender que el condicionamiento es del problema (§4)',
+      enunciado: 'Un sistema está mal condicionado. Aplicas pivoteo parcial. ¿Qué ocurre?',
+      opciones: [
+        'El pivoteo lo corrige y la solución se vuelve confiable',
+        'El pivoteo no cambia el mal condicionamiento: es una propiedad de la matriz',
+        'El pivoteo empeora el condicionamiento',
+        'El sistema deja de tener solución'
+      ],
+      correcta: 1,
+      pista: '¿El mal condicionamiento es un problema del método o del problema mismo?',
+      solucion: "El pivoteo combate los errores del <em>método</em> (pivotes pequeños), pero el mal condicionamiento es del <em>problema</em>: la matriz amplifica errores por su estructura, no por cómo se resuelve. Ningún algoritmo lo arregla. Distinguir estas dos fuentes de error es la lección central de la guía."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Diagnóstico · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'El caso de Wilson', nivel: 3,
+      criterio: 'Interpretar la sensibilidad de un sistema mal condicionado (§4)',
+      enunciado: 'En el sistema de Wilson, cambiar $\\mathbf{b}$ un $0{,}3\\%$ cambió la solución más del $1000\\%$. ¿Por qué?',
+      opciones: [
+        'Porque se cometió un error de cálculo',
+        'Porque su número de condición es enorme (≈ 4488)',
+        'Porque la matriz no tiene inversa',
+        'Porque faltó aplicar pivoteo'
+      ],
+      correcta: 1,
+      pista: 'El número de condición mide justamente la amplificación del error.',
+      solucion: "Con $\\operatorname{cond}(W)\\approx4488$, un error relativo pequeño se amplifica miles de veces. La matriz sí tiene inversa (la opción c) es falsa), y el pivoteo no ayudaría (opción d): el problema es intrínseco. Las filas casi linealmente dependientes hacen la solución hipersensible."
+    },
+    {
+      etiqueta: 'Amplificación', nivel: 3,
+      criterio: 'Estimar el error amplificado (§3)',
+      enunciado: "Los datos de un sistema tienen un error relativo del $0{,}1\\%$ y $\\operatorname{cond}(A)=500$. El error relativo en la solución puede llegar a:",
+      opciones: ['$0{,}1\\%$', '$5\\%$', '$50\\%$', '$500\\%$'],
+      correcta: 2,
+      pista: 'El error se amplifica hasta por un factor igual al número de condición.',
+      solucion: "$0{,}1\\%\\times500=50\\%$. El número de condición es el factor máximo de amplificación del error relativo. La opción a) ignora la amplificación; la d) multiplica mal. Un error de datos que parecía inofensivo puede volver inútil la solución."
+    },
+    {
+      etiqueta: 'Qué hacer', nivel: 2,
+      criterio: 'Elegir la estrategia ante mal condicionamiento (§5)',
+      enunciado: '¿Cuál NO es una forma razonable de manejar un sistema mal condicionado?',
+      opciones: [
+        'Usar mayor precisión numérica',
+        'Reformular o reescalar el problema',
+        'Aplicar pivoteo parcial para corregirlo',
+        'Reportar honestamente la incertidumbre de la solución'
+      ],
+      correcta: 2,
+      pista: '¿Cuál de estas ataca el problema equivocado?',
+      solucion: "El pivoteo combate errores del método, no el mal condicionamiento, así que no «corrige» nada aquí. Las otras tres sí son estrategias válidas: más precisión da margen, reformular puede bajar el número de condición, y reportar la incertidumbre es lo honesto cuando los datos tienen error."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Norma 1', nivel: 1,
+      criterio: 'Calcular la norma 1 (§1)',
+      enunciado: "$\\|(-3,4,-5)\\|_1$ vale:",
+      opciones: ['$12$', '$5\\sqrt2$', '$5$', '$-4$'],
+      correcta: 0,
+      pista: 'Suma de valores absolutos.',
+      solucion: "$|-3|+|4|+|-5|=3+4+5=12$. La opción c) da la norma ∞ (el mayor: 5). Una norma nunca es negativa, así que la d) queda descartada de entrada."
+    },
+    {
+      etiqueta: 'Norma 2', nivel: 2,
+      criterio: 'Calcular la norma euclídea (§1)',
+      enunciado: "$\\|(6,-8)\\|_2$ vale:",
+      opciones: ['$14$', '$2$', '$10$', '$100$'],
+      correcta: 2,
+      pista: 'Raíz de la suma de cuadrados.',
+      solucion: "$\\sqrt{36+64}=\\sqrt{100}=10$. La opción a) suma los valores absolutos (norma 1); la d) olvida la raíz. Es la distancia euclídea del punto $(6,-8)$ al origen."
+    },
+    {
+      etiqueta: 'Norma matricial', nivel: 3,
+      criterio: 'Calcular la norma 1 de una matriz (§2)',
+      enunciado: "Para $A=\\begin{pmatrix}1&5\\\\-2&3\\end{pmatrix}$, $\\|A\\|_1$ vale:",
+      opciones: ['$6$', '$8$', '$3$', '$5$'],
+      correcta: 1,
+      pista: 'Norma 1 = mayor suma de columna en valor absoluto.',
+      solucion: "Columna 1: $|1|+|-2|=3$; columna 2: $|5|+|3|=8$. El máximo es $8$. La opción a) suma la fila (eso sería para la norma ∞: filas dan 6 y 5, máximo 6). Norma 1 = columnas."
+    },
+    {
+      etiqueta: 'Condición mínima', nivel: 2,
+      criterio: 'Reconocer el valor mínimo del número de condición (§3)',
+      enunciado: '¿Cuál es el menor valor posible del número de condición de una matriz invertible?',
+      opciones: ['$1$', '$0$', '$10$', 'No tiene mínimo'],
+      correcta: 0,
+      pista: '$\\operatorname{cond}(A)=\\|A\\|\\cdot\\|A^{-1}\\|$, y siempre $\\geq1$.',
+      solucion: "El número de condición siempre cumple $\\operatorname{cond}(A)\\geq1$, y vale exactamente 1 para matrices como $cI$ (la identidad escalada). Es el caso perfectamente condicionado. No puede ser 0 ni negativo."
+    },
+    {
+      etiqueta: 'Bien o mal', nivel: 2,
+      criterio: 'Clasificar por condicionamiento (§3)',
+      enunciado: "De estas matrices, ¿cuál está peor condicionada?",
+      opciones: [
+        'Una con cond = 2',
+        'Una con cond = 50',
+        'Una con cond = 10000',
+        'Una con cond = 1'
+      ],
+      correcta: 2,
+      pista: 'Cuanto mayor el número de condición, peor.',
+      solucion: "Cuanto mayor el número de condición, más amplifica los errores: $\\operatorname{cond}=10000$ es la peor con diferencia. La de $\\operatorname{cond}=1$ es la ideal. Un cambio diminuto en los datos de la tercera opción produciría un cambio enorme en su solución."
+    },
+    {
+      etiqueta: 'Fuentes de error', nivel: 3,
+      criterio: 'Distinguir error del método y del problema (§5)',
+      enunciado: '¿Cuál de estos errores NO se puede reducir eligiendo un mejor algoritmo?',
+      opciones: [
+        'El redondeo por pivotes pequeños',
+        'El truncamiento de una serie',
+        'La sensibilidad por mal condicionamiento',
+        'El error de una fórmula inestable'
+      ],
+      correcta: 2,
+      pista: '¿Cuál depende del problema y no del método?',
+      solucion: "El mal condicionamiento es una propiedad del <em>problema</em> (la matriz), así que ningún algoritmo lo reduce. Los otros tres son errores del <em>método</em> y se combaten con mejores técnicas: pivoteo, más términos, fórmulas estables."
+    },
+    {
+      etiqueta: 'Matriz de Hilbert', nivel: 2,
+      criterio: 'Reconocer un ejemplo clásico (§3)',
+      enunciado: '¿Qué caracteriza a la matriz de Hilbert?',
+      opciones: [
+        'Es diagonal',
+        'No tiene inversa',
+        'Está muy mal condicionada pese a su aspecto inofensivo',
+        'Su número de condición es 1'
+      ],
+      correcta: 2,
+      pista: 'Aparece al ajustar polinomios y es el ejemplo estándar de un problema numérico.',
+      solucion: "La Hilbert tiene entradas simples ($1/(i+j-1)$) pero un número de condición que crece vertiginosamente: ya la $3\\times3$ ronda 748. Es el ejemplo clásico de mal condicionamiento «escondido», y aparece al ajustar polinomios por mínimos cuadrados."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 3,
+      criterio: 'Conectar condicionamiento con confiabilidad (§4)',
+      enunciado: 'Resuelves un sistema con un método exacto y sin errores de redondeo, pero tus datos vienen de mediciones. Si el sistema es mal condicionado, tu solución es:',
+      opciones: [
+        'Perfectamente confiable, porque el método es exacto',
+        'Potencialmente muy imprecisa, porque el error de los datos se amplifica',
+        'Siempre incorrecta',
+        'Independiente de la calidad de los datos'
+      ],
+      correcta: 1,
+      pista: 'La exactitud del método no protege contra el error de los datos.',
+      solucion: "Aunque el método sea perfecto, el mal condicionamiento amplifica el error <em>ya presente en los datos</em>. Un método exacto sobre datos inciertos y una matriz mal condicionada da una solución incierta. Por eso hay que mirar el número de condición antes de confiar en el resultado."
+    }
+  ]
+});
+</script>
 </body>
 </html>

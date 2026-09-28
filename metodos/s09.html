@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 9 · Sistemas de ecuaciones no lineales — Métodos Numéricos · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 9 · Sistemas de ecuaciones no lineales — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Semana 9</h1>
+      <h1>Métodos Numéricos · Guía 9</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,569 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · El problema</a>
+    <a href="#s2">2 · El Jacobiano</a>
+    <a href="#s3">3 · Newton para sistemas</a>
+    <a href="#s4">4 · Un ejemplo completo</a>
+    <a href="#s5">5 · Lo que puede salir mal</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 9 · Sistemas de ecuaciones no lineales</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 9 · Corte II</div>
+  <h2>Sistemas de ecuaciones no lineales</h2>
+  <p>Esta guía une los dos hilos del corte. Se resuelve un sistema —como en las Guías 3 y 4— pero
+     las ecuaciones son <em>curvas</em>, no rectas. La herramienta es el Newton de la Guía 8, llevado
+     a varias variables mediante una matriz de derivadas: el Jacobiano.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 6.5</span>
+    <span class="chip">Burden · Cap. 10.2</span>
+    <span class="chip">Semana 9</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>La confluencia del Corte II.</strong> Newton multivariable necesita, en cada paso, resolver
+  un sistema <em>lineal</em> — y para eso usa exactamente la eliminación de las Guías 3 y 4. Es el
+  punto donde todo lo del corte se junta: derivadas parciales, sistemas lineales e iteración.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Cuando las ecuaciones son curvas</h3>
+
+  <div class="callout-dark">
+    <h3>Dos curvas, un cruce</h3>
+    <p>Un sistema lineal $2\times2$ son dos rectas, y resolverlo es hallar su intersección. Un
+       sistema <strong>no lineal</strong> $2\times2$ son dos <em>curvas</em>, y resolverlo es hallar
+       dónde se cruzan.</p>
+    <p>Por ejemplo, la circunferencia $x^{2}+y^{2}=4$ y la parábola $y=x^{2}$ se cortan en dos
+       puntos. Encontrarlos exige resolver ambas ecuaciones a la vez — y ninguna eliminación lineal
+       sirve, porque los términos son cuadráticos.</p>
+  </div>
+
+  <div class="def">
+    Un <strong>sistema no lineal</strong> de dos ecuaciones se escribe
+    $$f_1(x,y)=0,\qquad f_2(x,y)=0$$
+    o de forma compacta $\mathbf{F}(\mathbf{x})=\mathbf{0}$, donde $\mathbf{F}=(f_1,f_2)$ y
+    $\mathbf{x}=(x,y)$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Plantear el sistema de la circunferencia y la parábola</h4>
+    <div class="ejemplo-body">
+      Las curvas $x^{2}+y^{2}=4$ y $y=x^{2}$ se escriben como
+      <div class="paso"><div class="paso-t">Llevar todo a cero</div>
+        $f_1(x,y)=x^{2}+y^{2}-4=0$<br>
+        $f_2(x,y)=y-x^{2}=0$
+      </div>
+      <div class="paso"><div class="paso-t">La solución exacta, para comparar</div>
+        Sustituyendo $y=x^{2}$ en la primera: $x^{2}+x^{4}=4$, o sea $x^{4}+x^{2}-4=0$, de donde
+        $x^{2}=\dfrac{-1+\sqrt{17}}{2}\approx1{,}5616$. Así $x\approx\pm1{,}2496$ e
+        $y\approx1{,}5616$: dos cruces simétricos.
+      </div>
+      <div class="paso"><div class="paso-t">Por qué necesitamos un método</div>
+        Aquí pudimos despejar porque el sistema era sencillo. En general no se puede, y hace falta un
+        método numérico que funcione siempre: Newton para sistemas.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · El Jacobiano: la derivada de un sistema</h3>
+
+  <div class="callout-dark">
+    <h3>¿Cuál es la «derivada» de $\mathbf{F}$?</h3>
+    <p>El Newton de una variable usa $f'(x)$. Para pasar a varias variables necesitamos el análogo:
+       una matriz que reúna todas las derivadas parciales de todas las funciones. Esa matriz es el
+       <strong>Jacobiano</strong>, y aquí reaparecen las derivadas parciales de la Guía 1.</p>
+  </div>
+
+  <div class="def">
+    El <strong>Jacobiano</strong> de $\mathbf{F}=(f_1,f_2)$ es la matriz de todas las parciales:
+    $$J=\begin{pmatrix}\dfrac{\partial f_1}{\partial x}&\dfrac{\partial f_1}{\partial y}\\[8pt]
+       \dfrac{\partial f_2}{\partial x}&\dfrac{\partial f_2}{\partial y}\end{pmatrix}$$
+    Juega el papel de $f'(x)$ en el método de Newton multivariable.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Jacobiano del sistema de la circunferencia y la parábola</h4>
+    <div class="ejemplo-body">
+      Con $f_1=x^{2}+y^{2}-4$ y $f_2=y-x^{2}$:
+      <div class="paso"><div class="paso-t">Calcular las cuatro parciales</div>
+        $\dfrac{\partial f_1}{\partial x}=2x$ · $\dfrac{\partial f_1}{\partial y}=2y$ ·
+        $\dfrac{\partial f_2}{\partial x}=-2x$ · $\dfrac{\partial f_2}{\partial y}=1$
+      </div>
+      <div class="paso"><div class="paso-t">Armar la matriz</div>
+        $$J=\begin{pmatrix}2x&2y\\-2x&1\end{pmatrix}$$
+        Nota que $J$ <strong>depende del punto</strong> $(x,y)$: hay que reevaluarlo en cada
+        iteración, igual que $f'(x_k)$ cambiaba en cada paso de Newton.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — El Jacobiano</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Newton para sistemas</h3>
+
+  <div class="callout-dark">
+    <h3>De dividir a resolver un sistema</h3>
+    <p>El Newton escalar era $x_{k+1}=x_k-\dfrac{f(x_k)}{f'(x_k)}$: restar «$f$ dividido entre la
+       derivada». En varias variables no se puede <em>dividir</em> por una matriz, así que en su
+       lugar se <strong>resuelve un sistema lineal</strong>.</p>
+    <p>Y ese sistema lineal se resuelve con lo que ya sabes: eliminación gaussiana o factorización LU
+       de las Guías 3 y 4. Aquí es donde todo el corte se conecta.</p>
+  </div>
+
+  <div class="def">
+    En cada iteración, dado el punto $\mathbf{x}_k$:
+    <br><br>
+    <strong>1.</strong> Evaluar $\mathbf{F}(\mathbf{x}_k)$ y el Jacobiano $J(\mathbf{x}_k)$.<br>
+    <strong>2.</strong> Resolver el sistema lineal $\;J(\mathbf{x}_k)\,\Delta\mathbf{x}=-\mathbf{F}(\mathbf{x}_k)\;$ para el paso $\Delta\mathbf{x}$.<br>
+    <strong>3.</strong> Actualizar: $\;\mathbf{x}_{k+1}=\mathbf{x}_k+\Delta\mathbf{x}$.
+    <br><br>
+    Se repite hasta que $\|\mathbf{F}(\mathbf{x}_k)\|$ o $\|\Delta\mathbf{x}\|$ sea menor que la
+    tolerancia.
+  </div>
+
+  <div class="nota">
+    <strong>La conexión con todo el corte.</strong> El paso 2 es un sistema lineal
+    $A\mathbf{x}=\mathbf{b}$ con $A=J$ y $\mathbf{b}=-\mathbf{F}$. Si $J$ está mal condicionado
+    (Guía 6), el paso será impreciso. Si el sistema es grande, se usan métodos iterativos (Guía 7).
+    Newton multivariable es el broche que reúne las cinco guías del corte.
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Un ejemplo completo, paso a paso</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Newton sobre circunferencia ∩ parábola, desde $(1,1)$</h4>
+    <div class="ejemplo-body">
+      Sistema: $f_1=x^{2}+y^{2}-4$, $f_2=y-x^{2}$, con $J=\begin{pmatrix}2x&2y\\-2x&1\end{pmatrix}$.
+      <div class="paso"><div class="paso-t">Paso 1 · Evaluar en $(1,1)$</div>
+        $\mathbf{F}(1,1)=(1+1-4,\;1-1)=(-2,\;0)$<br>
+        $J(1,1)=\begin{pmatrix}2&2\\-2&1\end{pmatrix}$, con $\det J=2\cdot1-2\cdot(-2)=6$
+      </div>
+      <div class="paso"><div class="paso-t">Paso 2 · Resolver $J\,\Delta\mathbf{x}=-\mathbf{F}$</div>
+        Es decir $\begin{pmatrix}2&2\\-2&1\end{pmatrix}\Delta\mathbf{x}=\begin{pmatrix}2\\0\end{pmatrix}$.<br>
+        Resolviendo (por Cramer o eliminación): $\Delta x=\dfrac13$, $\Delta y=\dfrac23$.
+      </div>
+      <div class="paso"><div class="paso-t">Paso 3 · Actualizar</div>
+        $\mathbf{x}_1=(1,1)+\left(\tfrac13,\tfrac23\right)=(1{,}333;\;1{,}667)$
+      </div>
+      <div class="paso"><div class="paso-t">Repetir</div>
+        Iterando: $(1{,}253;\,1{,}564)\to(1{,}2496;\,1{,}5616)\to\dots$ Converge a la solución exacta
+        $(1{,}2496;\,1{,}5616)$ en pocos pasos, con la misma convergencia cuadrática de Newton
+        escalar. El error cae como $10^{-1}\to10^{-2}\to10^{-3}\to10^{-9}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 Explora Newton sobre la intersección de dos curvas</div>
+  <div class="viz" data-viz="newton-sistema">
+    <div class="viz-controls">
+      <label for="ns-s">Sistema</label>
+      <select id="ns-s">
+        <option value="circ">x² + y² = 4 ∩ y = x²</option>
+        <option value="hiper">xy = 1 ∩ x² + y² = 4</option>
+        <option value="senos">y = sen x ∩ y = x/2</option>
+      </select>
+      <label for="ns-i">Iteraciones</label>
+      <input id="ns-i" class="iter" type="range" min="0" max="8" value="0">
+      <span class="iter-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="tabla" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Las dos curvas de colores se cruzan en la solución (punto verde). Avanza las iteraciones y observa
+    el camino rojo aproximándose al cruce, con el error desplomándose en la tabla. Cada paso resuelve
+    un sistema lineal $J\,\Delta\mathbf{x}=-\mathbf{F}$ con la eliminación de las Guías 3 y 4.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Newton para sistemas</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Lo que puede salir mal</h3>
+
+  <p>Newton multivariable hereda las virtudes del escalar —rapidez, convergencia cuadrática— y
+     también sus riesgos, ahora con matices propios de varias dimensiones:</p>
+
+  <ul>
+    <li><strong>Jacobiano singular.</strong> Si $\det J=0$ en algún paso, el sistema lineal no tiene
+        solución única y el método se detiene. Es el análogo de la derivada nula en el Newton escalar.</li>
+    <li><strong>Sensibilidad al punto de partida.</strong> Un sistema no lineal puede tener
+        <em>varias</em> soluciones, y Newton converge a la más cercana al arranque. Empezar en
+        $(1,1)$ lleva a un cruce; empezar en $(-1,1)$ lleva al otro. Cada solución tiene su
+        <strong>zona de atracción</strong>.</li>
+    <li><strong>Divergencia.</strong> Con un mal punto de partida, las iteraciones pueden alejarse
+        sin control, igual que en una variable.</li>
+    <li><strong>Jacobiano mal condicionado.</strong> Si $J$ está cerca de ser singular, el paso
+        $\Delta\mathbf{x}$ se calcula con poca precisión (Guía 6), y la convergencia se degrada.</li>
+  </ul>
+
+  <div class="callout-dark">
+    <h3>El panorama del corte, completo</h3>
+    <p>Con esta guía cierras el Corte II, y conviene ver el mapa entero. Empezaste resolviendo
+       sistemas <em>lineales</em> de forma exacta (Guías 3-4), aprendiste a medir cuándo son
+       confiables (Guía 6) y a resolverlos por aproximación cuando son enormes (Guía 7). Luego
+       atacaste ecuaciones <em>no lineales</em> de una variable (Guía 8).</p>
+    <p>Newton para sistemas es la síntesis: resuelve ecuaciones no lineales de varias variables
+       reduciéndolas, en cada paso, a un sistema lineal. Todo el corte converge en este método. Y de
+       fondo late una sola idea, la misma de la Guía 7: <strong>estimar, linealizar, resolver,
+       repetir</strong>.</p>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Diagnóstico</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El equilibrio de un mercado con varios bienes que se influyen mutuamente es un sistema no
+      lineal: cada precio depende de los demás a través de funciones de oferta y demanda no lineales.
+      Newton multivariable halla el punto donde todos los mercados se equilibran a la vez.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Al modelar carteras con varios instrumentos cuyos rendimientos se relacionan de forma no
+      lineal, hallar la combinación óptima lleva a un sistema no lineal. Los mismos solucionadores de
+      Excel que usan Newton para la TIR se generalizan a estos problemas de varias variables.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Entrenar una red neuronal es resolver un sistema no lineal gigante: hallar los pesos donde el
+      gradiente se anula. Los métodos reales son variantes del Newton multivariable que ves aquí, y
+      el Jacobiano (o su pariente, el Hessiano) es la pieza central. La robótica lo usa para
+      cinemática inversa.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Un circuito con varios componentes no lineales —diodos, transistores— produce un sistema de
+      ecuaciones no lineales, una por nodo. SPICE lo resuelve con Newton multivariable, evaluando el
+      Jacobiano del circuito en cada iteración. Es, literalmente, esta guía en acción.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>Un sistema no lineal $2\times2$ es la <strong>intersección de dos curvas</strong>, no de dos rectas.</li>
+    <li>Se escribe $\mathbf{F}(\mathbf{x})=\mathbf{0}$ llevando cada ecuación a cero.</li>
+    <li>El <strong>Jacobiano</strong> $J$ reúne todas las derivadas parciales; es la «derivada» del sistema.</li>
+    <li>$J$ depende del punto: hay que reevaluarlo en cada iteración.</li>
+    <li>Newton multivariable: resolver $J\,\Delta\mathbf{x}=-\mathbf{F}$ y actualizar $\mathbf{x}_{k+1}=\mathbf{x}_k+\Delta\mathbf{x}$.</li>
+    <li>Ese paso es un <strong>sistema lineal</strong>, resuelto con Gauss o LU de las Guías 3-4.</li>
+    <li>Conserva la <strong>convergencia cuadrática</strong> del Newton escalar.</li>
+    <li>Riesgos: Jacobiano singular, divergencia, y sensibilidad al punto de partida (<strong>zonas de atracción</strong>).</li>
+    <li>Es la <strong>síntesis del Corte II</strong>: parciales, sistemas lineales e iteración en un solo método.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3 · Parciales</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-metodos.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'El Jacobiano · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Interpretación', nivel: 2,
+      criterio: 'Interpretar un sistema no lineal geométricamente (§1)',
+      enunciado: 'Un sistema no lineal de dos ecuaciones con dos incógnitas representa:',
+      opciones: [
+        'La intersección de dos rectas',
+        'La intersección de dos curvas',
+        'Una sola curva',
+        'Un plano en el espacio'
+      ],
+      correcta: 1,
+      pista: '¿Qué forma tiene $x^{2}+y^{2}=4$: recta o curva?',
+      solucion: "Cada ecuación no lineal es una curva, y resolver el sistema es hallar dónde se cruzan. Un sistema <em>lineal</em> sería la intersección de dos rectas (opción a). Por ejemplo, $x^{2}+y^{2}=4$ (circunferencia) y $y=x^{2}$ (parábola) se cortan en dos puntos."
+    },
+    {
+      etiqueta: 'Qué es J', nivel: 2,
+      criterio: 'Definir el Jacobiano (§2)',
+      enunciado: 'El Jacobiano de un sistema $\\mathbf{F}=(f_1,f_2)$ es:',
+      opciones: [
+        'La suma de las dos funciones',
+        'La matriz de todas las derivadas parciales de $f_1$ y $f_2$',
+        'El determinante del sistema',
+        'El vector de valores $(f_1,f_2)$'
+      ],
+      correcta: 1,
+      pista: 'Es el análogo multivariable de la derivada $f\'(x)$.',
+      solucion: "El Jacobiano reúne las cuatro parciales $\\partial f_i/\\partial x_j$ en una matriz. Hace el papel de $f'(x)$ en el Newton multivariable. La opción d) es $\\mathbf{F}$ mismo, no su derivada; la c) confunde la matriz con su determinante."
+    },
+    {
+      etiqueta: 'Calcular J', nivel: 3,
+      criterio: 'Calcular un Jacobiano (§2)',
+      enunciado: "Para $f_1=x^{2}+y^{2}-4$ y $f_2=y-x^{2}$, el Jacobiano es:",
+      opciones: [
+        '$\\begin{pmatrix}2x&2y\\\\-2x&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}2x&2y\\\\1&-2x\\end{pmatrix}$',
+        '$\\begin{pmatrix}2x&-2x\\\\2y&1\\end{pmatrix}$',
+        '$\\begin{pmatrix}x^{2}&y^{2}\\\\y&x^{2}\\end{pmatrix}$'
+      ],
+      correcta: 0,
+      pista: 'Fila $i$ = parciales de $f_i$ respecto de $x$ y de $y$.',
+      solucion: "Fila 1: $\\partial f_1/\\partial x=2x$, $\\partial f_1/\\partial y=2y$. Fila 2: $\\partial f_2/\\partial x=-2x$, $\\partial f_2/\\partial y=1$. La opción c) transpone (pone las parciales en columnas); la b) intercambia la fila 2."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Newton para sistemas · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'El paso clave', nivel: 3,
+      criterio: 'Reconocer que cada paso es un sistema lineal (§3)',
+      enunciado: 'En Newton para sistemas, en vez de «dividir entre la derivada» se:',
+      opciones: [
+        'calcula la inversa del Jacobiano siempre',
+        'resuelve el sistema lineal $J\\,\\Delta\\mathbf{x}=-\\mathbf{F}$',
+        'suma las ecuaciones',
+        'ignora el Jacobiano'
+      ],
+      correcta: 1,
+      pista: 'No se puede dividir por una matriz; ¿qué se hace en su lugar?',
+      solucion: "Se resuelve el sistema lineal $J\\,\\Delta\\mathbf{x}=-\\mathbf{F}$ con la eliminación de las Guías 3-4. Calcular la inversa completa (opción a) funciona pero es más caro e impreciso: resolver el sistema es lo estándar. Aquí es donde el corte entero se conecta."
+    },
+    {
+      etiqueta: 'Primera iteración', nivel: 3,
+      criterio: 'Ejecutar un paso de Newton multivariable (§4)',
+      enunciado: "Para el sistema circunferencia-parábola desde $(1,1)$, se tiene $\\mathbf{F}(1,1)=(-2,0)$ y $\\det J=6$. El nuevo punto es:",
+      opciones: [
+        '$(1{,}333;\\,1{,}667)$',
+        '$(1;\\,1)$',
+        '$(2;\\,0)$',
+        '$(1{,}25;\\,1{,}56)$'
+      ],
+      correcta: 0,
+      pista: 'Resuelve $J\\Delta\\mathbf{x}=-\\mathbf{F}$ para obtener $\\Delta\\mathbf{x}=(1/3,2/3)$ y suma.',
+      solucion: "Resolviendo $\\begin{pmatrix}2&2\\\\-2&1\\end{pmatrix}\\Delta\\mathbf{x}=\\begin{pmatrix}2\\\\0\\end{pmatrix}$ sale $\\Delta\\mathbf{x}=(\\tfrac13,\\tfrac23)$, y $(1,1)+(\\tfrac13,\\tfrac23)=(1{,}333;\\,1{,}667)$. La opción d) es la solución <em>final</em>, a la que se llega tras varias iteraciones más."
+    },
+    {
+      etiqueta: 'Convergencia', nivel: 2,
+      criterio: 'Reconocer la convergencia heredada (§4)',
+      enunciado: 'Newton para sistemas hereda del Newton de una variable:',
+      opciones: [
+        'la garantía de convergencia siempre',
+        'la convergencia cuadrática rápida',
+        'la necesidad de un solo punto de partida por incógnita',
+        'la imposibilidad de fallar'
+      ],
+      correcta: 1,
+      pista: '¿Qué hacía tan rápido al Newton escalar?',
+      solucion: "Conserva la convergencia cuadrática: cerca de la solución, el error se desploma ($10^{-1}\\to10^{-2}\\to10^{-4}\\to10^{-9}$). No hereda garantía de convergencia (Newton nunca la tuvo), así que las opciones a) y d) son falsas: también puede fallar."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Diagnóstico · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Jacobiano singular', nivel: 3,
+      criterio: 'Identificar el fallo por Jacobiano singular (§5)',
+      enunciado: 'Si en algún paso $\\det J=0$, ¿qué ocurre?',
+      opciones: [
+        'Newton converge más rápido',
+        'La solución es exacta',
+        'El sistema lineal no tiene solución única y el método se detiene',
+        'No afecta al método'
+      ],
+      correcta: 2,
+      pista: 'Es el análogo de la derivada nula en el Newton de una variable.',
+      solucion: "Con $\\det J=0$ el sistema $J\\,\\Delta\\mathbf{x}=-\\mathbf{F}$ no tiene solución única, así que no se puede calcular el paso y el método falla. Es exactamente el análogo de $f'(x_k)=0$ en una variable: la tangente horizontal que no corta el eje."
+    },
+    {
+      etiqueta: 'Zonas de atracción', nivel: 3,
+      criterio: 'Entender la sensibilidad al punto de partida (§5)',
+      enunciado: 'Un sistema no lineal tiene dos soluciones. ¿A cuál converge Newton?',
+      opciones: [
+        'A la más cercana al punto de partida, según su zona de atracción',
+        'Siempre a la primera',
+        'A ninguna',
+        'A las dos a la vez'
+      ],
+      correcta: 0,
+      pista: 'El punto de partida decide el destino.',
+      solucion: "Newton converge a la solución en cuya <strong>zona de atracción</strong> caiga el punto de partida. Para circunferencia-parábola, empezar en $(1,1)$ lleva a un cruce y empezar en $(-1,1)$ al otro. Por eso el arranque importa tanto en sistemas con varias soluciones."
+    },
+    {
+      etiqueta: 'La síntesis', nivel: 2,
+      criterio: 'Reconocer la conexión con el corte (§5)',
+      enunciado: '¿Por qué se dice que Newton para sistemas es la síntesis del Corte II?',
+      opciones: [
+        'Porque es el método más difícil',
+        'Porque no usa nada de las guías anteriores',
+        'Porque solo sirve para sistemas lineales',
+        'Porque reúne parciales, sistemas lineales e iteración en un solo método'
+      ],
+      correcta: 3,
+      pista: '¿Qué temas del corte aparecen dentro de cada iteración?',
+      solucion: "Cada iteración usa derivadas parciales (el Jacobiano), resuelve un sistema lineal (Guías 3-4-6-7) y refina por iteración (Guía 7). Reúne todo el corte en un método. La opción c) es lo contrario de la verdad: se apoya en todas las guías previas."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'Concepto', nivel: 1,
+      criterio: 'Escribir un sistema en forma F=0 (§1)',
+      enunciado: "El sistema $x^{2}+y^{2}=4$, $y=x^{2}$ se escribe como $\\mathbf{F}=\\mathbf{0}$ con:",
+      opciones: [
+        '$f_1=x^{2}+y^{2}-4$, $f_2=y-x^{2}$',
+        '$f_1=x^{2}+y^{2}$, $f_2=y$',
+        '$f_1=x^{2}+y^{2}+4$, $f_2=y+x^{2}$',
+        '$f_1=4$, $f_2=x^{2}$'
+      ],
+      correcta: 0,
+      pista: 'Lleva todo a un lado para que cada ecuación quede igualada a cero.',
+      solucion: "Se pasa todo a un lado: $x^{2}+y^{2}-4=0$ e $y-x^{2}=0$. La opción c) tiene los signos equivocados; la b) no iguala a cero las constantes. La forma $\\mathbf{F}=\\mathbf{0}$ es la que necesita Newton."
+    },
+    {
+      etiqueta: 'Solución exacta', nivel: 3,
+      criterio: 'Hallar la solución por sustitución (§1)',
+      enunciado: "Para $x^{2}+y^{2}=4$, $y=x^{2}$, sustituyendo se obtiene $x^{4}+x^{2}-4=0$, de donde $x^{2}$ vale:",
+      opciones: [
+        '$2$',
+        '$4$',
+        '$\\dfrac{-1+\\sqrt{17}}{2}\\approx1{,}56$',
+        '$\\sqrt{17}$'
+      ],
+      correcta: 2,
+      pista: 'Es una cuadrática en $x^{2}$: usa la fórmula con $a=1,b=1,c=-4$.',
+      solucion: "Tratando $u=x^{2}$: $u^{2}+u-4=0$, luego $u=\\dfrac{-1+\\sqrt{1+16}}{2}=\\dfrac{-1+\\sqrt{17}}{2}\\approx1{,}56$. Así $y\\approx1{,}56$ y $x\\approx\\pm1{,}25$. Aquí se pudo despejar; en general hace falta Newton."
+    },
+    {
+      etiqueta: 'El Jacobiano', nivel: 2,
+      criterio: 'Reconocer la dependencia del punto (§2)',
+      enunciado: 'El Jacobiano $J$ de un sistema no lineal:',
+      opciones: [
+        'depende del punto $(x,y)$ y se reevalúa en cada iteración',
+        'es constante',
+        'es siempre la identidad',
+        'no se usa en Newton'
+      ],
+      correcta: 0,
+      pista: '¿Las parciales de $x^{2}$ dependen de dónde las evalúes?',
+      solucion: "Como las parciales contienen $x$ e $y$ (por ejemplo $2x$), $J$ cambia con el punto y hay que recalcularlo en cada iteración, igual que $f'(x_k)$ cambiaba en el Newton escalar. Solo sería constante si el sistema fuera lineal."
+    },
+    {
+      etiqueta: 'El algoritmo', nivel: 2,
+      criterio: 'Ordenar los pasos de Newton multivariable (§3)',
+      enunciado: '¿Cuál es el orden correcto de un paso de Newton para sistemas?',
+      opciones: [
+        'Actualizar, luego evaluar $\\mathbf{F}$',
+        'Calcular el determinante y dividir',
+        'Sumar $\\mathbf{F}$ y $J$',
+        'Evaluar $\\mathbf{F}$ y $J$, resolver $J\\Delta\\mathbf{x}=-\\mathbf{F}$, actualizar'
+      ],
+      correcta: 3,
+      pista: 'Primero se necesita saber dónde estás y cómo cambia; luego se da el paso.',
+      solucion: "En cada iteración: (1) evaluar $\\mathbf{F}$ y $J$ en el punto actual, (2) resolver el sistema lineal $J\\,\\Delta\\mathbf{x}=-\\mathbf{F}$, (3) actualizar $\\mathbf{x}_{k+1}=\\mathbf{x}_k+\\Delta\\mathbf{x}$. La opción a) invierte el orden lógico."
+    },
+    {
+      etiqueta: 'La conexión', nivel: 2,
+      criterio: 'Identificar el sistema lineal interno (§3)',
+      enunciado: 'El paso $J\\,\\Delta\\mathbf{x}=-\\mathbf{F}$ se resuelve con:',
+      opciones: [
+        'otro método de Newton',
+        'bisección',
+        'eliminación gaussiana o LU (Guías 3-4)',
+        'integración'
+      ],
+      correcta: 2,
+      pista: 'Es un sistema lineal $A\\mathbf{x}=\\mathbf{b}$ con $A=J$.',
+      solucion: "Es un sistema lineal ordinario, resuelto con la eliminación gaussiana o la factorización LU de las Guías 3-4. Por eso Newton multivariable conecta todo el corte: dentro de cada iteración no lineal vive un problema lineal."
+    },
+    {
+      etiqueta: 'Fallo', nivel: 3,
+      criterio: 'Diagnosticar un fallo (§5)',
+      enunciado: 'Newton para sistemas se detiene porque en un paso el Jacobiano tiene determinante cero. Esto significa que:',
+      opciones: [
+        'la solución ya se alcanzó',
+        'el sistema lineal del paso no tiene solución única',
+        'hay infinitas soluciones al problema',
+        'el método convergió'
+      ],
+      correcta: 1,
+      pista: 'Determinante cero en una matriz significa que no es invertible.',
+      solucion: "Con $\\det J=0$, la matriz no es invertible y $J\\,\\Delta\\mathbf{x}=-\\mathbf{F}$ no tiene solución única: no se puede calcular el paso. Es el análogo multivariable de la derivada nula. Nada que ver con haber convergido (opciones a, d)."
+    },
+    {
+      etiqueta: 'Punto de partida', nivel: 3,
+      criterio: 'Aplicar la idea de zonas de atracción (§5)',
+      enunciado: 'Para hallar <em>ambas</em> soluciones de un sistema no lineal con Newton, hay que:',
+      opciones: [
+        'usar distintos puntos de partida, uno en cada zona de atracción',
+        'ejecutar el método una sola vez',
+        'aumentar el número de iteraciones',
+        'usar bisección'
+      ],
+      correcta: 0,
+      pista: 'Cada corrida converge a una sola solución.',
+      solucion: "Newton converge a una sola solución por corrida, la de la zona de atracción del arranque. Para encontrar las dos, se ejecuta desde puntos distintos —por ejemplo $(1,1)$ y $(-1,1)$—. Más iteraciones (opción c) solo afinan la misma solución."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 2,
+      criterio: 'Reconocer la idea unificadora del corte (§5)',
+      enunciado: '¿Cuál es la idea de fondo común a las Guías 7, 8 y 9?',
+      opciones: [
+        'Calcular determinantes',
+        'Factorizar matrices',
+        'Estimar, linealizar, resolver y repetir',
+        'Evitar las derivadas'
+      ],
+      correcta: 2,
+      pista: '¿Qué hacen en común Gauss-Seidel, Newton y Newton multivariable?',
+      solucion: "Las tres guías comparten el esquema iterativo: partir de una estimación, aproximar el problema por algo más simple (linealizar), resolver, y repetir hasta converger. Es una de las ideas más poderosas del cálculo numérico, y unifica todo el Corte II."
+    }
+  ]
+});
+</script>
 </body>
 </html>

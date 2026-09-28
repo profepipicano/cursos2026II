@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 8 · Ecuaciones no lineales — Métodos Numéricos · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 8 · Ecuaciones no lineales — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912b">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Semana 8</h1>
+      <h1>Métodos Numéricos · Guía 8</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,581 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · El problema</a>
+    <a href="#s2">2 · Bisección</a>
+    <a href="#s3">3 · Falsa posición</a>
+    <a href="#s4">4 · Newton-Raphson</a>
+    <a href="#s5">5 · Secante y punto fijo</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 8 · Ecuaciones no lineales</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 8 · Corte II</div>
+  <h2>Ecuaciones no lineales</h2>
+  <p>Resolver $x^{3}-x-2=0$ no tiene fórmula cómoda como la cuadrática. La estrategia numérica es la
+     misma que en la Guía 7: partir de una estimación y refinarla. Veremos cinco métodos, desde el
+     infalible y lento hasta el veloz que a veces falla.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 5–6</span>
+    <span class="chip">Burden · Cap. 2.1–2.4</span>
+    <span class="chip">Semana 8</span>
+    <span class="chip">3 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 7 introdujo la idea iterativa para sistemas lineales:
+  estimar y mejorar. Aquí la misma filosofía ataca un problema distinto —hallar dónde una función
+  vale cero— y aparece uno de los métodos más famosos del cálculo: Newton-Raphson, que ya viste
+  disfrazado en la recta tangente de Cálculo.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · El problema y cómo empezar</h3>
+
+  <div class="callout-dark">
+    <h3>Ecuaciones que no se despejan</h3>
+    <p>Sabemos resolver $ax^{2}+bx+c=0$ con una fórmula. Pero $x^{3}-x-2=0$, o $\cos x=x$, o
+       $e^{-x}=x$, no tienen fórmula práctica. Y estas ecuaciones aparecen por todas partes: en el
+       punto de operación de un circuito, en el equilibrio de una reacción, en el diseño de una viga.</p>
+    <p>La salida es <strong>numérica</strong>: en vez de despejar, se localiza la raíz y se la
+       aproxima cada vez mejor. Todos los métodos de esta guía hacen eso; se diferencian en cómo.</p>
+  </div>
+
+  <div class="def">
+    <strong>Teorema de Bolzano (localización).</strong> Si $f$ es continua en $[a,b]$ y
+    $f(a)$ y $f(b)$ tienen <strong>signos opuestos</strong>, entonces existe al menos una raíz en
+    $(a,b)$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Localizar la raíz de $x^{3}-x-2$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Evaluar en dos puntos</div>
+        $f(1)=1-1-2=-2\;(\lt0)$ &nbsp;y&nbsp; $f(2)=8-2-2=4\;(\gt0)$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar Bolzano</div>
+        Como cambian de signo y $f$ es continua, hay una raíz en $(1,2)$. De hecho es la única raíz
+        real; las otras dos son complejas.
+      </div>
+      <div class="paso"><div class="paso-t">El plan</div>
+        Ese cambio de signo es el punto de partida de los métodos «cerrados» (bisección, falsa
+        posición), que atrapan la raíz en un intervalo y lo van encogiendo. Es el mismo TVI que
+        viste en la Guía 3 de Cálculo, ahora convertido en algoritmo.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Bisección: lento pero infalible</h3>
+
+  <div class="def">
+    Partiendo de $[a,b]$ con cambio de signo, se calcula el punto medio $c=\dfrac{a+b}{2}$ y se
+    mira en cuál mitad sigue el cambio de signo. Esa mitad reemplaza al intervalo, y se repite.
+    Cada paso reduce el intervalo a la mitad.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Bisección sobre $x^{3}-x-2$ en $[1,2]$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Iteración 1</div>
+        $c=\dfrac{1+2}{2}=1{,}5$, y $f(1{,}5)=-0{,}125\;(\lt0)$. Como $f(1{,}5)$ y $f(2)$ cambian de
+        signo, la raíz está en $[1{,}5;\,2]$.
+      </div>
+      <div class="paso"><div class="paso-t">Iteración 2</div>
+        $c=\dfrac{1{,}5+2}{2}=1{,}75$, y $f(1{,}75)=1{,}609\;(\gt0)$. Ahora la raíz está en
+        $[1{,}5;\,1{,}75]$.
+      </div>
+      <div class="paso"><div class="paso-t">Y así sucesivamente</div>
+        Tras 8 iteraciones se llega a $\approx1{,}5214$, muy cerca de la raíz real
+        $1{,}52138$. Lento, pero seguro.
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>La gran virtud: el error está garantizado.</strong> Como el intervalo se parte por la
+    mitad cada vez, tras $n$ pasos el error es a lo sumo $\dfrac{b-a}{2^{n}}$. Para $[1,2]$ y
+    $n=8$ eso es $\dfrac{1}{256}\approx0{,}0039$. Puedes saber <em>de antemano</em> cuántas
+    iteraciones necesitas para una precisión dada — algo que ningún otro método garantiza.
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Falsa posición: una bisección más lista</h3>
+
+  <div class="callout-dark">
+    <h3>Aprovechar la forma de la función</h3>
+    <p>Bisección ignora por completo <em>cuánto</em> vale la función en cada extremo: solo mira el
+       signo. Pero si $f(a)=-0{,}1$ y $f(b)=5$, la raíz está claramente mucho más cerca de $a$ que
+       de $b$. Partir por la mitad desperdicia esa información.</p>
+    <p>La <strong>falsa posición</strong> (o <em>regula falsi</em>) traza la recta secante entre
+       $(a,f(a))$ y $(b,f(b))$, y toma como aproximación el punto donde esa recta cruza el eje. Como
+       usa la magnitud de $f$, suele acercarse más rápido.</p>
+  </div>
+
+  <div class="def">
+    La aproximación es el corte de la secante con el eje:
+    $$c=b-\frac{f(b)\,(b-a)}{f(b)-f(a)}$$
+    Igual que en bisección, se conserva el subintervalo donde persiste el cambio de signo.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Primera iteración sobre $x^{3}-x-2$ en $[1,2]$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Aplicar la fórmula</div>
+        $c=2-\dfrac{f(2)\,(2-1)}{f(2)-f(1)}=2-\dfrac{4\cdot1}{4-(-2)}=2-\dfrac{4}{6}=1{,}3333$
+      </div>
+      <div class="paso"><div class="paso-t">Comparar con bisección</div>
+        Bisección habría dado $1{,}5$ en el primer paso; falsa posición da $1{,}3333$. Ninguno es
+        aún la raíz $1{,}5214$, pero tras unas pocas iteraciones falsa posición suele afinar más el
+        mismo número de dígitos.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Métodos cerrados</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Newton-Raphson: veloz, con un precio</h3>
+
+  <div class="callout-dark">
+    <h3>La tangente vuelve a escena</h3>
+    <p>En la Guía 4 de Cálculo viste que la recta tangente a $f$ en $x_0$, igualada a cero, da
+       $x=x_0-\dfrac{f(x_0)}{f'(x_0)}$. Dijimos entonces que eso era «un paso de Newton». Aquí está
+       el método completo.</p>
+    <p>La idea: aproximar la curva por su tangente y saltar al punto donde la tangente cruza el eje.
+       Ese punto suele estar mucho más cerca de la raíz. Se repite desde ahí, y la convergencia es
+       vertiginosa.</p>
+  </div>
+
+  <div class="def">
+    $$x_{k+1}=x_k-\frac{f(x_k)}{f'(x_k)}$$
+    Requiere la derivada $f'$ y un punto de partida $x_0$ razonablemente cercano a la raíz.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Newton sobre $x^{3}-x-2$ desde $x_0=1{,}5$</h4>
+    <div class="ejemplo-body">
+      Con $f'(x)=3x^{2}-1$:
+      <div class="paso"><div class="paso-t">Iteración 1</div>
+        $x_1=1{,}5-\dfrac{f(1{,}5)}{f'(1{,}5)}=1{,}5-\dfrac{-0{,}125}{5{,}75}=1{,}52174$
+      </div>
+      <div class="paso"><div class="paso-t">Iteración 2 y 3</div>
+        $x_2=1{,}5213798$ &nbsp;·&nbsp; $x_3=1{,}5213797$. Ya prácticamente exacto.
+      </div>
+      <div class="paso"><div class="paso-t">Convergencia cuadrática</div>
+        Observa los errores: $2\times10^{-2}\to4\times10^{-4}\to1\times10^{-7}\to8\times10^{-15}$.
+        <strong>El número de decimales correctos se duplica en cada paso.</strong> Eso es
+        convergencia cuadrática, y es la razón de que Newton sea tan rápido: donde bisección necesita
+        50 iteraciones, Newton necesita 5.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout-dark">
+    <h3>El precio: puede fallar</h3>
+    <p>Newton no está garantizado. Si la derivada se anula, la tangente es horizontal y no corta el
+       eje: división por cero. Si el punto de partida está lejos, la tangente puede lanzar la
+       aproximación aún más lejos. Y en algunos casos, <strong>cicla para siempre</strong>.</p>
+    <p>Ejemplo concreto: para $f(x)=x^{3}-2x+2$ desde $x_0=0$, Newton salta a $1$, vuelve a $0$,
+       vuelve a $1$… atrapado en un ciclo $0\to1\to0\to1$ sin acercarse nunca a la raíz. Bisección
+       jamás haría eso.</p>
+    <p>La moraleja: Newton es una herramienta de precisión, pero conviene darle un buen punto de
+       partida y vigilar que converja. En la práctica se combina con bisección, que garantiza el
+       arranque.</p>
+  </div>
+
+  <div class="sub-title">4.1 Explora y compara los métodos</div>
+  <div class="viz" data-viz="raices-nolineal">
+    <div class="viz-controls">
+      <label for="rn-f">Ecuación</label>
+      <select id="rn-f">
+        <option value="cubica">x³ − x − 2 = 0</option>
+        <option value="trig">cos x − x = 0</option>
+        <option value="exp">e^{−x} − x = 0</option>
+        <option value="poli">x² − 2 = 0 &nbsp;(raíz = √2)</option>
+      </select>
+      <label for="rn-m">Método</label>
+      <select id="rn-m" class="metodo">
+        <option value="biseccion">Bisección</option>
+        <option value="falsa">Falsa posición</option>
+        <option value="newton">Newton-Raphson</option>
+      </select>
+      <label for="rn-i">Iteraciones</label>
+      <input id="rn-i" class="iter" type="range" min="1" max="10" value="4">
+      <span class="iter-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="tabla" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Resuelve la misma ecuación con los tres métodos al mismo número de iteraciones y compara la
+    columna de error: verás la diferencia entre la convergencia lineal de bisección y la cuadrática
+    de Newton. En Newton, las rectas tenues son las tangentes que llevan de un punto al siguiente.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Newton-Raphson</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Secante y punto fijo</h3>
+
+  <div class="sub-title">5.1 Secante: Newton sin derivada</div>
+  <p>Newton necesita $f'$, que a veces no se conoce o es cara de calcular. El método de la
+     <strong>secante</strong> la reemplaza por una aproximación: en vez de la tangente, usa la recta
+     que pasa por los <em>dos últimos</em> puntos.</p>
+  <div class="def">
+    $$x_{k+1}=x_k-\frac{f(x_k)\,(x_k-x_{k-1})}{f(x_k)-f(x_{k-1})}$$
+    No requiere derivada, solo dos puntos de arranque. Su convergencia es casi tan rápida como la de
+    Newton (orden $\approx1{,}618$, la razón áurea).
+  </div>
+
+  <div class="sub-title">5.2 Punto fijo: reescribir la ecuación</div>
+  <div class="callout-dark">
+    <h3>Convertir $f(x)=0$ en $x=g(x)$</h3>
+    <p>Otra idea: reescribir la ecuación de modo que $x$ aparezca despejado, $x=g(x)$, y luego
+       iterar $x_{k+1}=g(x_k)$. Un <em>punto fijo</em> de $g$ (donde $g(x)=x$) es una raíz de la
+       ecuación original.</p>
+    <p>Para $x^{3}-x-2=0$ se puede escribir $x=\sqrt[3]{x+2}$. Iterando desde $1{,}5$, converge a
+       $1{,}5214$. Pero <strong>la forma importa</strong>: la reescritura $x=x^{3}-2$ diverge, aunque
+       describe la misma ecuación.</p>
+  </div>
+
+  <div class="def">
+    <strong>Criterio de convergencia.</strong> La iteración de punto fijo $x_{k+1}=g(x_k)$ converge
+    cerca de una raíz $r$ si $|g'(r)|\lt1$. Cuanto menor sea $|g'(r)|$, más rápida la convergencia.
+  </div>
+
+  <div class="nota">
+    <strong>Por qué una forma converge y la otra no.</strong> Para $g(x)=\sqrt[3]{x+2}$ se tiene
+    $|g'(r)|\approx0{,}14\lt1$: converge. Para $g(x)=x^{3}-2$ resulta $|g'(r)|\approx6{,}9\gt1$:
+    diverge. La misma ecuación, dos reescrituras, destinos opuestos. Elegir bien la forma de $g$ es
+    el arte del método de punto fijo.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 3 — Secante y punto fijo</h3>
+  <div id="chk3"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La <em>tasa interna de retorno</em> (TIR) de un proyecto es la raíz de una ecuación polinómica
+      que no se despeja: el valor presente neto igualado a cero. Excel la calcula por Newton-Raphson
+      internamente. Entender el método explica por qué a veces la función TIR falla o da resultados
+      múltiples.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Calcular la tasa efectiva de un crédito con cuotas irregulares lleva a una ecuación no lineal
+      en la tasa. No hay fórmula cerrada; se resuelve numéricamente. Bisección da una respuesta
+      garantizada, y Newton la afina en pocos pasos.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Newton-Raphson es el motor de la optimización en aprendizaje automático: minimizar una función
+      de pérdida equivale a hallar dónde su gradiente se anula, y eso es resolver una ecuación no
+      lineal. Los solucionadores modernos son variantes sofisticadas del Newton que ves aquí.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El punto de operación de un circuito con diodos o transistores se halla resolviendo una
+      ecuación no lineal (la ecuación de Shockley del diodo es exponencial). SPICE usa Newton-Raphson
+      en cada punto de análisis, y por eso a veces «no converge»: justo el problema de la sección 4.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Bolzano</strong>: si $f$ es continua y cambia de signo en $[a,b]$, hay una raíz dentro.</li>
+    <li><strong>Bisección</strong>: parte el intervalo por la mitad. Lenta pero infalible; error $\leq(b-a)/2^{n}$.</li>
+    <li><strong>Falsa posición</strong>: usa la secante entre extremos; más rápida, también garantizada.</li>
+    <li><strong>Newton-Raphson</strong>: $x_{k+1}=x_k-\dfrac{f(x_k)}{f'(x_k)}$, la tangente de Cálculo.</li>
+    <li>Newton tiene <strong>convergencia cuadrática</strong>: los decimales correctos se duplican por paso.</li>
+    <li>Pero Newton <strong>puede fallar</strong>: derivada nula, mal arranque, o ciclos.</li>
+    <li><strong>Secante</strong>: como Newton pero sin derivada, usando los dos últimos puntos.</li>
+    <li><strong>Punto fijo</strong>: reescribir $f(x)=0$ como $x=g(x)$; converge si $|g'(r)|\lt1$.</li>
+    <li>Métodos cerrados = seguros y lentos; abiertos = rápidos y arriesgados. A menudo se combinan.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/4-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260912b"></script>
+<script src="../assets/viz-metodos.js?v=20260912b"></script>
+<script>
+OVA.quiz({
+  destino: 'chk1',
+  titulo: 'Métodos cerrados · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Bolzano', nivel: 2,
+      criterio: 'Aplicar el teorema de localización (§1)',
+      enunciado: "¿Cómo se sabe que $f(x)=x^{3}-x-2$ tiene una raíz en $[1,2]$?",
+      opciones: [
+        'Porque $f(1)=-2$ y $f(2)=4$ tienen signos opuestos y $f$ es continua',
+        'Porque $f$ es un polinomio de grado 3',
+        'Porque $f(1{,}5)=0$',
+        'Porque el intervalo tiene longitud 1'
+      ],
+      correcta: 0,
+      pista: 'El teorema de Bolzano habla de cambio de signo.',
+      solucion: "Por Bolzano: $f$ continua y $f(1)=-2\\lt0$, $f(2)=4\\gt0$ garantizan una raíz en el intervalo. Ser polinomio (opción b) no basta por sí solo, y $f(1{,}5)=-0{,}125\\neq0$ (opción c es falsa). El cambio de signo es la clave."
+    },
+    {
+      etiqueta: 'Bisección', nivel: 2,
+      criterio: 'Ejecutar un paso de bisección (§2)',
+      enunciado: "Aplicando bisección a $x^{3}-x-2$ en $[1,2]$, ¿cuál es la primera aproximación y dónde queda la raíz?",
+      opciones: [
+        '$c=1{,}5$; la raíz queda en $[1;\\,1{,}5]$',
+        '$c=1{,}5$; la raíz queda en $[1{,}5;\\,2]$',
+        '$c=1{,}333$; la raíz queda en $[1{,}333;\\,2]$',
+        '$c=1{,}75$; la raíz queda en $[1{,}5;\\,1{,}75]$'
+      ],
+      correcta: 1,
+      pista: 'Punto medio de $[1,2]$, y luego mira dónde cambia el signo con $f(1{,}5)=-0{,}125$.',
+      solucion: "$c=\\dfrac{1+2}{2}=1{,}5$, y $f(1{,}5)=-0{,}125\\lt0$. Como $f(1{,}5)$ y $f(2)$ tienen signos opuestos, la raíz está en $[1{,}5;\\,2]$. La opción c) es falsa posición, no bisección."
+    },
+    {
+      etiqueta: 'Cota de error', nivel: 3,
+      criterio: 'Calcular la cota de error de bisección (§2)',
+      enunciado: "Tras 8 iteraciones de bisección sobre $[1,2]$, el error máximo es:",
+      opciones: ['$\\dfrac{1}{8}$', '$\\dfrac{1}{16}$', '$\\dfrac{1}{256}$', '$0$'],
+      correcta: 2,
+      pista: 'El error tras $n$ pasos es $(b-a)/2^{n}$.',
+      solucion: "$\\dfrac{b-a}{2^{n}}=\\dfrac{1}{2^{8}}=\\dfrac{1}{256}\\approx0{,}0039$. Esta cota <em>garantizada de antemano</em> es la gran virtud de bisección: sabes cuántas iteraciones necesitas para una precisión dada. La opción a) usaría $n$ en vez de $2^{n}$."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk2',
+  titulo: 'Newton-Raphson · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'La fórmula', nivel: 2,
+      criterio: 'Aplicar un paso de Newton (§4)',
+      enunciado: "Para $f(x)=x^{3}-x-2$ con $f'(x)=3x^{2}-1$, partiendo de $x_0=1{,}5$, el valor de $x_1$ es:",
+      opciones: ['$1{,}5$', '$1{,}52174$', '$1{,}333$', '$1{,}75$'],
+      correcta: 1,
+      pista: '$x_1=x_0-\\dfrac{f(x_0)}{f\'(x_0)}$, con $f(1{,}5)=-0{,}125$ y $f\'(1{,}5)=5{,}75$.',
+      solucion: "$x_1=1{,}5-\\dfrac{-0{,}125}{5{,}75}=1{,}5+0{,}0217=1{,}52174$. Ya en un solo paso está casi en la raíz $1{,}52138$. La opción c) es falsa posición; la d) es la segunda iteración de bisección."
+    },
+    {
+      etiqueta: 'Convergencia cuadrática', nivel: 3,
+      criterio: 'Reconocer la convergencia cuadrática (§4)',
+      enunciado: '¿Qué significa que Newton tenga «convergencia cuadrática»?',
+      opciones: [
+        'Que necesita elevar la función al cuadrado',
+        'Que el número de decimales correctos se duplica aproximadamente en cada paso',
+        'Que converge en exactamente dos pasos',
+        'Que solo sirve para funciones cuadráticas'
+      ],
+      correcta: 1,
+      pista: 'Mira la secuencia de errores: $10^{-2}\\to10^{-4}\\to10^{-8}$.',
+      solucion: "El error se eleva aproximadamente al cuadrado en cada iteración, así que los decimales correctos se duplican: $2\\to4\\to8\\to16$. Por eso Newton llega a 15 cifras en 4-5 pasos donde bisección necesitaría 50. No tiene que ver con funciones cuadráticas (opción d)."
+    },
+    {
+      etiqueta: 'Cuándo falla', nivel: 3,
+      criterio: 'Identificar los fallos de Newton (§4)',
+      enunciado: '¿En cuál de estas situaciones Newton-Raphson puede fallar?',
+      opciones: [
+        'Cuando la función es continua',
+        'Cuando hay cambio de signo en el intervalo',
+        'Cuando la derivada se anula o el punto de partida está lejos',
+        'Nunca falla'
+      ],
+      correcta: 2,
+      pista: '¿Qué pasa si $f\'(x_k)=0$ en la fórmula?',
+      solucion: "Si $f'(x_k)=0$, la tangente es horizontal y no corta el eje: división por cero. Y con un mal punto de partida puede diverger o incluso ciclar, como $x^{3}-2x+2$ desde $x_0=0$, que salta $0\\to1\\to0\\to1$ sin fin. A diferencia de bisección, Newton no está garantizado."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'chk3',
+  titulo: 'Secante y punto fijo · 3 preguntas',
+  items: [
+    {
+      etiqueta: 'Secante', nivel: 2,
+      criterio: 'Distinguir secante de Newton (§5.1)',
+      enunciado: '¿Cuál es la ventaja del método de la secante frente a Newton?',
+      opciones: [
+        'Converge más rápido que Newton',
+        'No necesita calcular la derivada',
+        'Siempre converge',
+        'Solo usa un punto de partida'
+      ],
+      correcta: 1,
+      pista: 'La secante reemplaza la tangente por una recta entre dos puntos.',
+      solucion: "La secante aproxima la derivada usando los dos últimos puntos, así que <strong>no requiere $f'$</strong> — útil cuando la derivada es difícil o cara. A cambio necesita dos puntos de arranque (opción d falsa) y converge algo más lento que Newton (orden $\\approx1{,}618$, no más rápido)."
+    },
+    {
+      etiqueta: 'Punto fijo', nivel: 2,
+      criterio: 'Entender la reescritura de punto fijo (§5.2)',
+      enunciado: 'El método de punto fijo resuelve $f(x)=0$ reescribiéndola como:',
+      opciones: [
+        '$x=g(x)$ e iterando $x_{k+1}=g(x_k)$',
+        '$f\'(x)=0$',
+        '$x=f(x)$ siempre',
+        'un sistema de dos ecuaciones'
+      ],
+      correcta: 0,
+      pista: 'Un punto fijo cumple $g(x)=x$.',
+      solucion: "Se despeja $x=g(x)$ y se itera $x_{k+1}=g(x_k)$; el punto fijo de $g$ es la raíz buscada. La forma concreta de $g$ importa: para $x^{3}-x-2=0$, la reescritura $x=\\sqrt[3]{x+2}$ converge pero $x=x^{3}-2$ diverge."
+    },
+    {
+      etiqueta: 'Criterio', nivel: 3,
+      criterio: 'Aplicar el criterio de convergencia de punto fijo (§5.2)',
+      enunciado: "¿Por qué $x=\\sqrt[3]{x+2}$ converge y $x=x^{3}-2$ diverge, siendo la misma ecuación?",
+      opciones: [
+        'Por azar',
+        'Porque en la raíz $|g\'|\\lt1$ para la primera y $|g\'|\\gt1$ para la segunda',
+        'Porque la segunda no es una función',
+        'Porque la primera tiene raíz cúbica'
+      ],
+      correcta: 1,
+      pista: 'El criterio de convergencia mira $|g\'(r)|$.',
+      solucion: "La iteración converge si $|g'(r)|\\lt1$. Para $g=\\sqrt[3]{x+2}$ sale $|g'(r)|\\approx0{,}14\\lt1$; para $g=x^{3}-2$ sale $|g'(r)|\\approx6{,}9\\gt1$. Misma ecuación, distinta $g$, destinos opuestos. Elegir bien $g$ es el arte del método."
+    }
+  ]
+});
+
+OVA.quiz({
+  destino: 'final',
+  titulo: 'Práctica final · 8 preguntas',
+  items: [
+    {
+      etiqueta: 'El problema', nivel: 1,
+      criterio: 'Reconocer cuándo se necesita un método numérico (§1)',
+      enunciado: '¿Por qué se usan métodos numéricos para $x^{3}-x-2=0$?',
+      opciones: [
+        'Porque no hay una fórmula práctica para despejar la raíz',
+        'Porque no tiene solución',
+        'Porque tiene infinitas raíces',
+        'Porque no es continua'
+      ],
+      correcta: 0,
+      pista: 'La cuadrática tiene fórmula; muchas otras ecuaciones no.',
+      solucion: "No existe una fórmula cómoda para las raíces de este cúbico (ni de $\\cos x=x$, etc.), así que se aproximan numéricamente. Sí tiene solución —una raíz real cerca de $1{,}52$— y es continua. La ausencia de fórmula es lo que motiva el enfoque numérico."
+    },
+    {
+      etiqueta: 'Falsa posición', nivel: 3,
+      criterio: 'Ejecutar un paso de falsa posición (§3)',
+      enunciado: "Para $x^{3}-x-2$ en $[1,2]$, la primera aproximación por falsa posición es:",
+      opciones: ['$1{,}5$', '$1{,}75$', '$1{,}3333$', '$1{,}52174$'],
+      correcta: 2,
+      pista: '$c=b-\\dfrac{f(b)(b-a)}{f(b)-f(a)}=2-\\dfrac{4\\cdot1}{4-(-2)}$.',
+      solucion: "$c=2-\\dfrac{4\\cdot1}{4-(-2)}=2-\\dfrac{4}{6}=1{,}3333$. La opción a) es bisección; la d) es Newton. Falsa posición usa la secante entre los extremos, ponderando por el valor de $f$."
+    },
+    {
+      etiqueta: 'Comparar métodos', nivel: 2,
+      criterio: 'Contrastar métodos cerrados y abiertos (§2, §4)',
+      enunciado: '¿Qué método es más lento pero garantiza siempre la convergencia?',
+      opciones: ['Bisección', 'Newton', 'Secante', 'Punto fijo'],
+      correcta: 0,
+      pista: '¿Cuál solo necesita un cambio de signo y no puede fallar?',
+      solucion: "Bisección es lenta (el error solo se divide entre 2 por paso) pero <strong>infalible</strong>: si hay cambio de signo, siempre converge. Los otros tres son más rápidos pero pueden fallar. Por eso a menudo se usa bisección para arrancar y Newton para afinar."
+    },
+    {
+      etiqueta: 'La tangente', nivel: 2,
+      criterio: 'Conectar Newton con la recta tangente (§4)',
+      enunciado: 'Geométricamente, cada paso de Newton salta al punto donde:',
+      opciones: [
+        'la función vale cero',
+        'la función tiene un máximo',
+        'la secante cruza el eje x',
+        'la recta tangente cruza el eje x'
+      ],
+      correcta: 3,
+      pista: 'Es la recta tangente de la Guía 4 de Cálculo, igualada a cero.',
+      solucion: "Newton aproxima la curva por su tangente y salta a donde esa tangente corta el eje. Es exactamente la recta tangente de Cálculo igualada a cero. La opción c) describe la secante, que es otro método (§5.1)."
+    },
+    {
+      etiqueta: 'Ciclos', nivel: 3,
+      criterio: 'Reconocer el fallo por ciclo de Newton (§4)',
+      enunciado: "Para $f(x)=x^{3}-2x+2$ desde $x_0=0$, Newton produce $0\\to1\\to0\\to1\\to\\dots$ Esto es un ejemplo de:",
+      opciones: [
+        'un ciclo del que Newton no escapa',
+        'convergencia rápida',
+        'la raíz exacta',
+        'un error de cálculo'
+      ],
+      correcta: 0,
+      pista: 'Los valores se repiten sin acercarse a la raíz.',
+      solucion: "Newton queda atrapado en un ciclo $0\\to1\\to0\\to1$ y nunca converge: un fallo genuino del método, no un error. Bisección jamás haría esto. Ilustra por qué Newton necesita un buen punto de partida y vigilancia de la convergencia."
+    },
+    {
+      etiqueta: 'Secante', nivel: 2,
+      criterio: 'Caracterizar la secante (§5.1)',
+      enunciado: 'El método de la secante se parece a Newton pero:',
+      opciones: [
+        'necesita tres puntos',
+        'siempre converge',
+        'aproxima la derivada con los dos últimos puntos',
+        'no usa la función $f$'
+      ],
+      correcta: 2,
+      pista: '¿Cómo evita calcular $f\'$?',
+      solucion: "La secante reemplaza la tangente por la recta entre los dos últimos puntos, aproximando así la derivada sin calcularla. Usa dos puntos (no tres), sí evalúa $f$, y no está garantizada. Su orden de convergencia es $\\approx1{,}618$."
+    },
+    {
+      etiqueta: 'Convergencia PF', nivel: 3,
+      criterio: 'Aplicar el criterio de punto fijo (§5.2)',
+      enunciado: "Una iteración de punto fijo $x_{k+1}=g(x_k)$ converge cerca de la raíz $r$ si:",
+      opciones: ['$g(r)=0$', '$g\'(r)=0$ exactamente', '$|g\'(r)|\\lt1$', '$g(r)\\gt1$'],
+      correcta: 2,
+      pista: 'La derivada de $g$ en la raíz controla si la iteración se acerca o se aleja.',
+      solucion: "El criterio es $|g'(r)|\\lt1$: la pendiente de $g$ en la raíz debe ser menor que 1 en magnitud para que las iteraciones se acerquen. Cuanto menor $|g'(r)|$, más rápida la convergencia. Si $|g'(r)|\\gt1$, diverge."
+    },
+    {
+      etiqueta: 'Síntesis', nivel: 2,
+      criterio: 'Elegir estrategia combinada (§4)',
+      enunciado: 'En la práctica, ¿por qué se combinan a menudo bisección y Newton?',
+      opciones: [
+        'Para usar el doble de memoria',
+        'Porque dan raíces distintas',
+        'Bisección garantiza el arranque; Newton afina rápido al final',
+        'Para evitar usar la derivada'
+      ],
+      correcta: 2,
+      pista: 'Cada uno aporta lo que al otro le falta: seguridad y velocidad.',
+      solucion: "Se usa bisección para acercarse con seguridad a la raíz (garantizada), y luego Newton para afinar con convergencia cuadrática. Así se combina la robustez del método cerrado con la velocidad del abierto — lo mejor de ambos mundos."
+    }
+  ]
+});
+</script>
 </body>
 </html>
