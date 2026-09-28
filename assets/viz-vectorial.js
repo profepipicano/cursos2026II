@@ -871,4 +871,175 @@ document.addEventListener('DOMContentLoaded', function () {
     h.addEventListener('change', function () { OVA.viz.redibujar(); });
   });
 });
+
+/* ══════════ S06 · Derivadas parciales: cortes de la superficie ══════════ */
+var PARCIAL = {
+  parab: { f: function (x, y) { return x*x + y*y; },
+           fx: function (x, y) { return 2*x; }, fy: function (x, y) { return 2*y; },
+           n: 'f(x,y) = x² + y²', nfx: 'f_x = 2x', nfy: 'f_y = 2y' },
+  sillabaja: { f: function (x, y) { return x*x - y*y; },
+           fx: function (x, y) { return 2*x; }, fy: function (x, y) { return -2*y; },
+           n: 'f(x,y) = x² − y²', nfx: 'f_x = 2x', nfy: 'f_y = −2y' },
+  prod: { f: function (x, y) { return x*y; },
+           fx: function (x, y) { return y; }, fy: function (x, y) { return x; },
+           n: 'f(x,y) = x·y', nfx: 'f_x = y', nfy: 'f_y = x' }
+};
+
+OVA.viz.registrar('parciales', function (host) {
+  var cfg = PARCIAL[q(host, 'select').value] || PARCIAL.parab;
+  var a = parseFloat(q(host, '.px').value) / 10;
+  var b = parseFloat(q(host, '.py').value) / 10;
+  q(host, '.p-val').textContent = '(' + a.toFixed(1) + ', ' + b.toFixed(1) + ')';
+
+  var E = OVA.esc3d(q(host, 'canvas'), { th: 0.9, ph: 0.45, alto: 340 });
+  E.ajustar(E.puntosSuperficie(cfg.f, -2, 2, -2, 2, 8).concat([[0,0,0],[0,0,4]]));
+  E.ejes(2.2);
+  E.superficie(cfg.f, -2, 2, -2, 2, { n: 14, alfa: 0.5 });
+
+  // traza en y=b (varía x): pendiente = f_x
+  E.curva(function (x) { return [x, b, cfg.f(x, b)]; }, -2, 2, ROJO, 3);
+  // traza en x=a (varía y): pendiente = f_y
+  E.curva(function (y) { return [a, y, cfg.f(a, y)]; }, -2, 2, VERDE, 3);
+  E.punto([a, b, cfg.f(a, b)], ORO, 6);
+
+  var fxv = cfg.fx(a, b), fyv = cfg.fy(a, b);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · las derivadas parciales son las pendientes de los dos ' +
+    'cortes en el punto (' + a.toFixed(1) + ', ' + b.toFixed(1) + ').<br>' +
+    '<span style="color:#b0392c">Corte rojo (y = ' + b.toFixed(1) + ' fijo, varía x):</span> ' +
+    'pendiente <strong>' + cfg.nfx + ' = ' + fxv.toFixed(2) + '</strong>.<br>' +
+    '<span style="color:#1c7a4c">Corte verde (x = ' + a.toFixed(1) + ' fijo, varía y):</span> ' +
+    'pendiente <strong>' + cfg.nfy + ' = ' + fyv.toFixed(2) + '</strong>.<br>' +
+    '<span style="color:#8fb4d9">Cada parcial mide cómo cambia f al mover solo una variable, ' +
+    'dejando la otra congelada. Son las pendientes de esas dos curvas de corte.</span>';
+});
+
+/* ══════════ S07 · Plano tangente a una superficie ══════════ */
+var TANGENTE = {
+  parab: { f: function (x, y) { return x*x + y*y; },
+           fx: function (x, y) { return 2*x; }, fy: function (x, y) { return 2*y; },
+           n: 'z = x² + y²' },
+  domo: { f: function (x, y) { return 4 - x*x - y*y; },
+           fx: function (x, y) { return -2*x; }, fy: function (x, y) { return -2*y; },
+           n: 'z = 4 − x² − y²' },
+  ondas: { f: function (x, y) { return 0.6*(x*x - y*y); },
+           fx: function (x, y) { return 1.2*x; }, fy: function (x, y) { return -1.2*y; },
+           n: 'z = 0.6(x² − y²)' }
+};
+
+OVA.viz.registrar('planotangente', function (host) {
+  var cfg = TANGENTE[q(host, 'select').value] || TANGENTE.parab;
+  var a = parseFloat(q(host, '.px').value) / 10;
+  var b = parseFloat(q(host, '.py').value) / 10;
+  q(host, '.p-val').textContent = '(' + a.toFixed(1) + ', ' + b.toFixed(1) + ')';
+
+  var z0 = cfg.f(a, b), fxv = cfg.fx(a, b), fyv = cfg.fy(a, b);
+  // plano tangente: z = z0 + fx(x-a) + fy(y-b)
+  var plano = function (x, y) { return z0 + fxv*(x - a) + fyv*(y - b); };
+
+  var E = OVA.esc3d(q(host, 'canvas'), { th: 0.85, ph: 0.5, alto: 340 });
+  E.ajustar(E.puntosSuperficie(cfg.f, -2, 2, -2, 2, 8));
+  E.ejes(2.2);
+  E.superficie(cfg.f, -2, 2, -2, 2, { n: 14, alfa: 0.45 });
+  // plano tangente (pequeño, alrededor del punto)
+  E.superficie(plano, a - 1, a + 1, b - 1, b + 1, { n: 6, alfa: 0.4 });
+  E.punto([a, b, z0], ROJO, 6);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · el plano tangente en (' + a.toFixed(1) + ', ' + b.toFixed(1) +
+    ') toca la superficie sin atravesarla localmente.<br>' +
+    'Ecuación: <strong>z = ' + z0.toFixed(2) + ' + (' + fxv.toFixed(2) + ')(x − ' + a.toFixed(1) +
+    ') + (' + fyv.toFixed(2) + ')(y − ' + b.toFixed(1) + ')</strong><br>' +
+    '<span style="color:#8fb4d9">Las pendientes del plano en las direcciones x e y son ' +
+    'exactamente las derivadas parciales f_x = ' + fxv.toFixed(2) + ' y f_y = ' + fyv.toFixed(2) +
+    '. El vector (f_x, f_y, −1) = (' + fxv.toFixed(1) + ', ' + fyv.toFixed(1) + ', −1) es normal ' +
+    'a la superficie ahí.</span>';
+});
+
+/* ══════════ S08 · Extremos: mínimo, máximo o silla ══════════ */
+var EXTREMO = {
+  minimo: { f: function (x, y) { return x*x + y*y; },
+            cx: 0, cy: 0, D: 4, fxx: 2, tipo: 'mínimo',
+            n: 'f = x² + y²', desc: 'D = 4 > 0 y f_xx = 2 > 0' },
+  maximo: { f: function (x, y) { return 4 - x*x - y*y; },
+            cx: 0, cy: 0, D: 4, fxx: -2, tipo: 'máximo',
+            n: 'f = 4 − x² − y²', desc: 'D = 4 > 0 y f_xx = −2 < 0' },
+  silla:  { f: function (x, y) { return x*x - y*y; },
+            cx: 0, cy: 0, D: -4, fxx: 2, tipo: 'punto de silla',
+            n: 'f = x² − y²', desc: 'D = −4 < 0' }
+};
+
+OVA.viz.registrar('extremos', function (host) {
+  var cfg = EXTREMO[q(host, 'select').value] || EXTREMO.minimo;
+  var th = parseFloat(q(host, '.giro').value) / 100;
+  q(host, '.giro-val').textContent = 'θ = ' + th.toFixed(2);
+
+  var E = OVA.esc3d(q(host, 'canvas'), { th: th, ph: 0.5, alto: 340 });
+  E.ajustar(E.puntosSuperficie(cfg.f, -2, 2, -2, 2, 8));
+  E.ejes(2.2);
+  E.superficie(cfg.f, -2, 2, -2, 2, { n: 16, alfa: 0.55 });
+  E.punto([cfg.cx, cfg.cy, cfg.f(cfg.cx, cfg.cy)], MORADO, 7);
+
+  var col = cfg.tipo === 'punto de silla' ? '#7d4f9e' : (cfg.tipo === 'máximo' ? '#b0392c' : '#1c7a4c');
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · punto crítico en (' + cfg.cx + ', ' + cfg.cy +
+    ') donde ∇f = 0.<br>' +
+    'Criterio del Hessiano: D = f_xx·f_yy − (f_xy)². Aquí <strong>' + cfg.desc + '</strong> → ' +
+    '<strong style="color:' + col + '">' + cfg.tipo + '</strong>.<br>' +
+    '<span style="color:#8fb4d9">Si D &gt; 0: es máximo (f_xx &lt; 0) o mínimo (f_xx &gt; 0). ' +
+    'Si D &lt; 0: es un punto de silla, que sube en una dirección y baja en otra —ni máximo ni ' +
+    'mínimo—. Gira la superficie para verlo.</span>';
+});
+
+/* ══════════ S09 · Integral doble: región y volumen ══════════ */
+var REGION = {
+  triang: { n: 'entre y = x² y y = x', ylo: function (x) { return x*x; },
+            yhi: function (x) { return x; }, x0: 0, x1: 1, area: 1/6, narea: '1/6' },
+  cuadr:  { n: 'rectángulo [0,1]×[0,1]', ylo: function (x) { return 0; },
+            yhi: function (x) { return 1; }, x0: 0, x1: 1, area: 1, narea: '1' },
+  bajocurva: { n: 'bajo y = 1 − x²', ylo: function (x) { return 0; },
+            yhi: function (x) { return 1 - x*x; }, x0: 0, x1: 1, area: 2/3, narea: '2/3' }
+};
+
+OVA.viz.registrar('integraldoble', function (host) {
+  var cfg = REGION[q(host, 'select').value] || REGION.triang;
+  var nfranjas = Math.round(parseFloat(q(host, '.franjas').value));
+  q(host, '.franjas-val').textContent = nfranjas + ' franjas';
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 320 });
+  L.ox = 50; L.oy = L.h - 40; L.sx = (L.w - 80) / 1.25; L.sy = (L.h - 70) / 1.25;
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // franjas verticales (suma de Riemann de la integral iterada)
+  var dx = (cfg.x1 - cfg.x0) / nfranjas, i;
+  for (i = 0; i < nfranjas; i++) {
+    var xm = cfg.x0 + (i + 0.5) * dx;
+    var ylo = cfg.ylo(xm), yhi = cfg.yhi(xm);
+    c.fillStyle = 'rgba(58,110,165,.28)';
+    c.strokeStyle = 'rgba(58,110,165,.6)'; c.lineWidth = 1;
+    var px = L.px(cfg.x0 + i * dx), pw = dx * L.sx;
+    c.fillRect(px, L.py(yhi), pw, (yhi - ylo) * L.sy);
+    c.strokeRect(px, L.py(yhi), pw, (yhi - ylo) * L.sy);
+  }
+  // curvas frontera
+  OVA.curva(L, function (x) { return (x >= cfg.x0 && x <= cfg.x1) ? cfg.yhi(x) : NaN; }, ROJO, 2.5);
+  OVA.curva(L, function (x) { return (x >= cfg.x0 && x <= cfg.x1) ? cfg.ylo(x) : NaN; }, VERDE, 2.5);
+
+  // área aproximada
+  var aprox = 0;
+  for (i = 0; i < nfranjas; i++) {
+    var xmi = cfg.x0 + (i + 0.5) * dx;
+    aprox += (cfg.yhi(xmi) - cfg.ylo(xmi)) * dx;
+  }
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Región ' + cfg.n + '</strong> · una integral doble suma f(x,y) sobre toda esta región.<br>' +
+    'El área es ∫∫ 1 dA = <strong>' + cfg.narea + ' ≈ ' + cfg.area.toFixed(4) + '</strong>. Con ' +
+    nfranjas + ' franjas la suma de Riemann da ≈ <strong>' + aprox.toFixed(4) + '</strong>.<br>' +
+    '<span style="color:#8fb4d9">La integral iterada barre primero en y (de la curva ' +
+    '<span style="color:#1c7a4c">verde</span> a la <span style="color:#b0392c">roja</span>, ' +
+    'cada franja) y luego suma todas las franjas en x. Más franjas → mejor aproximación.</span>';
+});
+
 })();
