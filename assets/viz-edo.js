@@ -784,4 +784,136 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+
+/* ══════════ S06 · Ley de enfriamiento de Newton ══════════ */
+var ENFRIA = {
+  pastel: { T0: 300, Tm: 70, t3: 3, T3: 200, tmax: 30,
+            n: 'Pastel enfriándose', u: 'min',
+            txt: 'T₀=300°, ambiente 70°, a los 3 min está a 200°' },
+  bebida: { T0: 5, Tm: 22, t3: 10, T3: 12, tmax: 40,
+            n: 'Bebida calentándose', u: 'min',
+            txt: 'T₀=5°, ambiente 22°, a los 10 min está a 12°' },
+  cafe:   { T0: 90, Tm: 20, t3: 5, T3: 70, tmax: 40,
+            n: 'Café enfriándose', u: 'min',
+            txt: 'T₀=90°, ambiente 20°, a los 5 min está a 70°' }
+};
+
+OVA.viz.registrar('enfriamiento', function (host) {
+  var cfg = ENFRIA[q(host, 'select').value] || ENFRIA.pastel;
+  var frac = parseFloat(q(host, '.tiempo').value) / 100;
+  var tv = frac * cfg.tmax;
+  // k a partir de T(t3)=T3: (T3-Tm)=(T0-Tm)e^{k t3}
+  var k = Math.log((cfg.T3 - cfg.Tm) / (cfg.T0 - cfg.Tm)) / cfg.t3;
+  var Tf = function (t) { return cfg.Tm + (cfg.T0 - cfg.Tm) * Math.exp(k * t); };
+  var Tnow = Tf(tv);
+  q(host, '.t-val').textContent = 't = ' + tv.toFixed(1) + ' ' + cfg.u;
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 300 });
+  var Ttop = Math.max(cfg.T0, cfg.Tm) + 15, Tbot = Math.min(cfg.T0, cfg.Tm) - 15;
+  L.ox = 48; L.oy = L.h - 34;
+  L.sx = (L.w - 70) / cfg.tmax; L.sy = (L.h - 55) / (Ttop - Tbot);
+  var c = L.ctx;
+  // desplazar el origen vertical para el rango real
+  var py = function (T) { return L.oy - (T - Tbot) * L.sy; };
+  var px = function (t) { return L.ox + t * L.sx; };
+
+  // ejes simples
+  c.strokeStyle = '#888'; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(L.ox, py(Tbot)); c.lineTo(L.ox, py(Ttop)); c.stroke();
+  c.beginPath(); c.moveTo(L.ox, py(Tbot)); c.lineTo(px(cfg.tmax), py(Tbot)); c.stroke();
+
+  // asíntota Tm (ambiente)
+  c.strokeStyle = '#3a6ea5'; c.setLineDash([6, 4]); c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(px(0), py(cfg.Tm)); c.lineTo(px(cfg.tmax), py(cfg.Tm)); c.stroke();
+  c.setLineDash([]);
+  c.fillStyle = '#3a6ea5'; c.font = '11px ui-monospace,monospace';
+  c.fillText('Tm = ' + cfg.Tm + '°', px(cfg.tmax) - 62, py(cfg.Tm) - 6);
+
+  // curva T(t)
+  c.strokeStyle = '#b0392c'; c.lineWidth = 2.5; c.beginPath();
+  var i, first = true;
+  for (i = 0; i <= cfg.tmax; i += cfg.tmax / 200) {
+    var Xp = px(i), Yp = py(Tf(i));
+    if (first) { c.moveTo(Xp, Yp); first = false; } else c.lineTo(Xp, Yp);
+  }
+  c.stroke();
+
+  // puntos dato y punto actual
+  function pt(t, T, col) { c.fillStyle = col; c.beginPath(); c.arc(px(t), py(T), 4, 0, 2 * Math.PI); c.fill(); }
+  pt(0, cfg.T0, '#c68f2e');
+  pt(cfg.t3, cfg.T3, '#1c7a4c');
+  pt(tv, Tnow, '#7d4f9e');
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · ' + cfg.txt + '.<br>' +
+    'Modelo: <strong>dT/dt = k(T − Tm)</strong>, solución T(t) = Tm + (T₀ − Tm)e^{kt} con ' +
+    'k = ' + k.toFixed(4) + '.<br>' +
+    'En t = ' + tv.toFixed(1) + ' ' + cfg.u + ': <strong>T = ' + Tnow.toFixed(1) + '°</strong>. ' +
+    '<span style="color:#8fb4d9">La temperatura se acerca a la del ambiente (' + cfg.Tm +
+    '°) de forma exponencial, pero nunca la cruza: Tm es una asíntota horizontal.</span>';
+});
+
+/* ══════════ S08 · Superposición: y = y_c + y_p ══════════ */
+var SUPER = {
+  decae: { yc: function (x) { return 2 * Math.exp(-x); }, yp: function () { return 3; },
+           nyc: 'y_c = 2e^{−x}', nyp: 'y_p = 3', tmax: 4,
+           n: 'Complementaria que decae + particular constante' },
+  osc:   { yc: function (x) { return 1.5 * Math.exp(-0.4 * x) * Math.cos(3 * x); }, yp: function (x) { return 0.5 * x; },
+           nyc: 'y_c = 1.5e^{−0.4x}cos 3x', nyp: 'y_p = 0.5x', tmax: 6,
+           n: 'Complementaria oscilante + particular lineal' },
+  crece: { yc: function (x) { return Math.exp(-1.2 * x); }, yp: function (x) { return 0.5 * x * x; },
+           nyc: 'y_c = e^{−1.2x}', nyp: 'y_p = 0.5x²', tmax: 3,
+           n: 'Transitorio que decae + respuesta permanente' }
+};
+
+OVA.viz.registrar('superposicion', function (host) {
+  var cfg = SUPER[q(host, 'select').value] || SUPER.decae;
+  var mostrar = q(host, '.mostrar') ? q(host, '.mostrar').value : 'todo';
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 300 });
+  var xs = [], i;
+  for (i = 0; i <= cfg.tmax; i += cfg.tmax / 120) xs.push(i);
+  var vals = xs.map(function (x) { return { x: x, yc: cfg.yc(x), yp: cfg.yp(x), y: cfg.yc(x) + cfg.yp(x) }; });
+  var lo = Infinity, hi = -Infinity;
+  vals.forEach(function (v) {
+    [v.yc, v.yp, v.y].forEach(function (w) { if (w < lo) lo = w; if (w > hi) hi = w; });
+  });
+  lo = Math.min(lo, 0) - 0.5; hi = hi + 0.5;
+  L.ox = 46; L.oy = L.h - 30; L.sx = (L.w - 66) / cfg.tmax; L.sy = (L.h - 50) / (hi - lo);
+  var c = L.ctx;
+  var px = function (x) { return L.ox + x * L.sx; };
+  var py = function (y) { return L.oy - (y - lo) * L.sy; };
+
+  // ejes
+  c.strokeStyle = '#888'; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(L.ox, py(hi)); c.lineTo(L.ox, py(lo)); c.stroke();
+  c.beginPath(); c.moveTo(L.ox, py(0)); c.lineTo(px(cfg.tmax), py(0)); c.stroke();
+
+  function traza(key, col, dash, ancho) {
+    c.strokeStyle = col; c.lineWidth = ancho; c.setLineDash(dash);
+    c.beginPath();
+    vals.forEach(function (v, j) {
+      var X = px(v.x), Y = py(v[key]);
+      if (j === 0) c.moveTo(X, Y); else c.lineTo(X, Y);
+    });
+    c.stroke(); c.setLineDash([]);
+  }
+  if (mostrar === 'todo' || mostrar === 'partes') {
+    traza('yc', '#3a6ea5', [6, 4], 2);
+    traza('yp', '#c68f2e', [6, 4], 2);
+  }
+  if (mostrar === 'todo' || mostrar === 'suma') {
+    traza('y', '#b0392c', [], 2.6);
+  }
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong>.<br>' +
+    '<span style="color:#3a6ea5">' + cfg.nyc + '</span> (resuelve la homogénea) &nbsp;+&nbsp; ' +
+    '<span style="color:#c68f2e">' + cfg.nyp + '</span> (una solución particular) &nbsp;=&nbsp; ' +
+    '<span style="color:#b0392c">y = y_c + y_p</span> (solución general).<br>' +
+    '<span style="color:#8fb4d9">Toda solución de una EDO lineal no homogénea es la suma de la ' +
+    'complementaria y_c (con las constantes) más cualquier particular y_p. La y_c suele ser el ' +
+    'transitorio que se desvanece; la y_p, la respuesta permanente.</span>';
+});
+
 })();
