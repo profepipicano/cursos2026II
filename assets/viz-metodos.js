@@ -931,6 +931,441 @@ OVA.viz.registrar('cholesky', function (host) {
     'las dos condiciones.</span>';
 });
 
+/* ══════ S06 · Amplificación del error según el condicionamiento ══════ */
+var COND = {
+  bien:  { n: 'Sistema bien condicionado', A: [[3, 0], [0, 2]], b: [6, 4],
+           cond: 1.5, desc: 'A = diag(3,2): las ecuaciones son casi independientes' },
+  medio: { n: 'Condicionamiento moderado', A: [[4, 3], [3, 4]], b: [7, 7],
+           cond: 7, desc: 'las dos rectas se cruzan en buen ángulo' },
+  mal:   { n: 'Mal condicionado', A: [[1, 1], [1, 1.01]], b: [2, 2.01],
+           cond: 402, desc: 'las dos rectas son casi paralelas' },
+  peor:  { n: 'Casi singular', A: [[1, 1], [1, 1.0001]], b: [2, 2.0001],
+           cond: 40002, desc: 'las rectas son casi la misma: mínimo cambio, enorme efecto' }
+};
+
+function resolver2(A, b) {
+  var det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+  return [(b[0] * A[1][1] - b[1] * A[0][1]) / det,
+          (A[0][0] * b[1] - A[1][0] * b[0]) / det];
+}
+
+OVA.viz.registrar('condicion', function (host) {
+  var cfg = COND[q(host, 'select').value] || COND.bien;
+  var pert = parseFloat(q(host, '.pert').value) / 1000;   // hasta 0.05
+  q(host, '.pert-val').textContent = 'perturbación en b: ' + pert.toFixed(3);
+
+  var x0 = resolver2(cfg.A, cfg.b);
+  var bp = [cfg.b[0] + pert, cfg.b[1] - pert];
+  var x1 = resolver2(cfg.A, bp);
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 300, sx: 40, sy: 40 });
+  // centrar la vista en la solución
+  L.ox = L.w / 2 - x0[0] * L.sx;
+  L.oy = L.h / 2 + x0[1] * L.sy;
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // dibujar las dos rectas del sistema (original y perturbado)
+  var recta = function (fila, rhs, color, ancho, guiones) {
+    c.strokeStyle = color; c.lineWidth = ancho;
+    if (guiones) c.setLineDash(guiones);
+    c.beginPath();
+    var primero = true;
+    for (var px = 0; px <= L.w; px += 3) {
+      var xv = (px - L.ox) / L.sx;
+      var yv = Math.abs(fila[1]) > 1e-12 ? (rhs - fila[0] * xv) / fila[1] : null;
+      if (yv === null) continue;
+      var py = L.py(yv);
+      if (py < -50 || py > L.h + 50) { primero = true; continue; }
+      primero ? (c.moveTo(px, py), primero = false) : c.lineTo(px, py);
+    }
+    c.stroke(); c.setLineDash([]);
+  };
+  recta(cfg.A[0], cfg.b[0], 'rgba(58,110,165,.85)', 2.4);
+  recta(cfg.A[1], cfg.b[1], 'rgba(28,122,76,.85)', 2.4);
+  if (pert > 0) {
+    recta(cfg.A[0], bp[0], 'rgba(58,110,165,.4)', 1.8, [5, 4]);
+    recta(cfg.A[1], bp[1], 'rgba(28,122,76,.4)', 1.8, [5, 4]);
+  }
+
+  OVA.punto(L, x0[0], x0[1], ORO);
+  if (pert > 0) {
+    OVA.punto(L, x1[0], x1[1], ROJO);
+    c.strokeStyle = ROJO; c.lineWidth = 1.4; c.setLineDash([3, 3]);
+    c.beginPath(); c.moveTo(L.px(x0[0]), L.py(x0[1])); c.lineTo(L.px(x1[0]), L.py(x1[1])); c.stroke();
+    c.setLineDash([]);
+  }
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  var dsol = Math.hypot(x1[0] - x0[0], x1[1] - x0[1]);
+  var db = Math.hypot(pert, pert);
+  var amplif = db > 1e-9 ? dsol / db : 0;
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · número de condición ≈ <strong>' + cfg.cond + '</strong><br>' +
+    '<span style="color:#8fb4d9">' + cfg.desc + '</span><br>' +
+    'Solución original <span style="color:#dba949">(' + x0[0].toFixed(3) + ', ' + x0[1].toFixed(3) +
+      ')</span>' +
+    (pert > 0
+      ? ' → perturbada <span style="color:#f0a58a">(' + x1[0].toFixed(3) + ', ' + x1[1].toFixed(3) +
+        ')</span><br>' +
+        'Cambio en b: <strong>' + db.toFixed(4) + '</strong> &nbsp;→&nbsp; cambio en x: <strong>' +
+        dsol.toFixed(4) + '</strong> &nbsp;·&nbsp; amplificación ×<strong style="color:#f0a58a">' +
+        amplif.toFixed(1) + '</strong>'
+      : '<br><span style="color:var(--muted)">Sube la perturbación y observa cuánto se mueve el punto rojo.</span>') +
+    '<br><span style="color:#8fb4d9">Cuanto más paralelas son las rectas, mayor el número de ' +
+    'condición y más se desplaza la solución ante un cambio diminuto en los datos. El pivoteo ' +
+    'no arregla esto: es una propiedad de la matriz, no del método.</span>';
+});
+
+/* ══════ S07 · Jacobi y Gauss-Seidel iterando ══════ */
+var ITER = {
+  a: { n: '10x−y+2z=6 ; −x+11y−z+3w=25 ; 2x−y+10z−w=−11 ; 3y−z+8w=15',
+       A: [[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]],
+       b: [6, 25, -11, 15], v: ['x', 'y', 'z', 'w'], sol: [1, 2, -1, 1], dom: true },
+  b: { n: '4x+y=9 ; x+3y=8', A: [[4, 1], [1, 3]], b: [9, 8],
+       v: ['x', 'y'], sol: [1.857142857, 2.047619048], dom: true },
+  c: { n: 'x+2y=5 ; 3x+y=5  (NO dominante)', A: [[1, 2], [3, 1]], b: [5, 5],
+       v: ['x', 'y'], sol: [1, 2], dom: false }
+};
+
+function iterar(cfg, metodo, n) {
+  var m = cfg.A.length, x = new Array(m).fill(0), hist = [x.slice()];
+  for (var k = 0; k < n; k++) {
+    var xn = metodo === 'jacobi' ? new Array(m).fill(0) : x.slice();
+    for (var i = 0; i < m; i++) {
+      var s = cfg.b[i];
+      for (var j = 0; j < m; j++) {
+        if (j === i) continue;
+        s -= cfg.A[i][j] * (metodo === 'jacobi' ? x[j] : xn[j]);
+      }
+      xn[i] = s / cfg.A[i][i];
+    }
+    x = xn; hist.push(x.slice());
+    if (x.some(function (u) { return !isFinite(u) || Math.abs(u) > 1e6; })) break;
+  }
+  return hist;
+}
+
+OVA.viz.registrar('iterativos', function (host) {
+  var cfg = ITER[q(host, 'select').value] || ITER.a;
+  var metodo = q(host, '.metodo').value;
+  var it = parseInt(q(host, '.iter').value, 10);
+  q(host, '.iter-val').textContent = it + ' iteraciones';
+
+  var hist = iterar(cfg, metodo, Math.max(it, 30));
+  var m = cfg.A.length;
+
+  // tabla de las últimas iteraciones
+  var desde = Math.max(0, it - 6);
+  var t = '<table class="tbl" style="margin:0;font-size:.82rem;text-align:center"><tr>' +
+          '<th style="text-align:center">k</th>' +
+          cfg.v.map(function (v) { return '<th style="text-align:center">' + v + '</th>'; }).join('') +
+          '<th style="text-align:center">‖Δ‖∞</th></tr>';
+  for (var k = desde; k <= Math.min(it, hist.length - 1); k++) {
+    var delta = k > 0 ? Math.max.apply(null, hist[k].map(function (u, i) {
+      return Math.abs(u - hist[k - 1][i]); })) : 0;
+    var conv = k === it;
+    t += '<tr' + (conv ? ' style="background:rgba(28,122,76,.14)"' : '') + '><td>' + k + '</td>' +
+      hist[k].map(function (u) {
+        return '<td>' + (isFinite(u) ? u.toFixed(6) : '∞') + '</td>'; }).join('') +
+      '<td>' + (k > 0 ? delta.toExponential(2) : '—') + '</td></tr>';
+  }
+  q(host, '.tabla').innerHTML = t + '</table>';
+
+  // gráfica de convergencia del error
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 200 });
+  var c = L.ctx, mI = 48, mA = 16, mB = 28, mD = 12;
+  var W = L.w - mI - mD, H = L.h - mA - mB;
+  var errs = hist.map(function (x) {
+    return Math.max.apply(null, x.map(function (u, i) { return Math.abs(u - cfg.sol[i]); }));
+  });
+  var maxIt = Math.min(it, hist.length - 1);
+  var PX = function (k) { return mI + k / Math.max(maxIt, 1) * W; };
+  var lo = -8, hi = Math.max(1, Math.ceil(Math.log10(Math.max(errs[0], 1e-9))));
+  var PY = function (e) {
+    var v = Math.max(Math.min(Math.log10(Math.max(e, 1e-12)), hi), lo);
+    return mA + (hi - v) / (hi - lo) * H;
+  };
+  c.strokeStyle = OVA.color('cv-grid'); c.lineWidth = 1;
+  c.fillStyle = OVA.color('cv-text'); c.font = '9px ui-monospace,monospace';
+  for (var g = hi; g >= lo; g -= 2) {
+    c.beginPath(); c.moveTo(mI, PY(Math.pow(10, g))); c.lineTo(mI + W, PY(Math.pow(10, g))); c.stroke();
+    c.fillText('1e' + g, 4, PY(Math.pow(10, g)) + 3);
+  }
+  c.strokeStyle = OVA.color('cv-axis'); c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(mI, mA); c.lineTo(mI, mA + H); c.lineTo(mI + W, mA + H); c.stroke();
+  var diverge = errs[maxIt] > errs[0] * 2;
+  c.strokeStyle = diverge ? ROJO : VERDE; c.lineWidth = 2.6; c.beginPath();
+  for (var k2 = 0; k2 <= maxIt; k2++) {
+    var pt = [PX(k2), PY(errs[k2])];
+    k2 ? c.lineTo(pt[0], pt[1]) : c.moveTo(pt[0], pt[1]);
+  }
+  c.stroke();
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace';
+  c.fillText('error ‖xₖ − x*‖∞  (escala log)', mI + 8, mA + 12);
+  c.font = '9px ui-monospace,monospace';
+  c.fillText('iteración k', mI + W - 60, L.h - 4);
+
+  var errFin = errs[Math.min(it, hist.length - 1)];
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + (metodo === 'jacobi' ? 'Jacobi' : 'Gauss-Seidel') + '</strong> · ' +
+    (cfg.dom
+      ? '<span style="color:#7fd4a4">matriz diagonalmente dominante ✓</span>'
+      : '<span style="color:#f0a58a">matriz NO dominante ✗</span>') + '<br>' +
+    (diverge
+      ? '<strong style="color:#f0a58a">Diverge:</strong> el error crece sin control. ' +
+        'Sin dominancia diagonal, la iteración no está garantizada.'
+      : 'Error tras ' + it + ' iteraciones: <strong>' + errFin.toExponential(3) + '</strong>') +
+    '<br><span style="color:#8fb4d9">' +
+    (metodo === 'jacobi'
+      ? 'Jacobi usa todos los valores de la iteración anterior. '
+      : 'Gauss-Seidel usa los valores <em>ya actualizados</em> en la misma pasada, y por eso suele ' +
+        'converger en la mitad de iteraciones. ') +
+    'Cambia de método con el mismo sistema y compara la pendiente de la curva de error.</span>';
+});
+
+/* ══════ S08 · Métodos de raíces atacando la misma ecuación ══════ */
+var RAIZ = {
+  cubica: { f: function (x) { return x*x*x - x - 2; }, fp: function (x) { return 3*x*x - 1; },
+            n: 'f(x) = x³ − x − 2', a: 1, b: 2, x0: 1.5, raiz: 1.5213797069,
+            desc: 'una sola raíz real, cerca de 1,52' },
+  trig:   { f: function (x) { return Math.cos(x) - x; }, fp: function (x) { return -Math.sin(x) - 1; },
+            n: 'f(x) = cos x − x', a: 0, b: 1, x0: 0.5, raiz: 0.7390851332,
+            desc: 'el punto fijo del coseno' },
+  exp:    { f: function (x) { return Math.exp(-x) - x; }, fp: function (x) { return -Math.exp(-x) - 1; },
+            n: 'f(x) = e^{−x} − x', a: 0, b: 1, x0: 0.5, raiz: 0.5671432904,
+            desc: 'aparece en física y probabilidad' },
+  poli:   { f: function (x) { return x*x - 2; }, fp: function (x) { return 2*x; },
+            n: 'f(x) = x² − 2', a: 1, b: 2, x0: 1.5, raiz: 1.4142135624,
+            desc: 'la raíz es √2' }
+};
+
+function pasosBiseccion(cfg, n) {
+  var a = cfg.a, b = cfg.b, out = [];
+  for (var i = 0; i < n; i++) {
+    var c = (a + b) / 2, fc = cfg.f(c);
+    out.push(c);
+    if (cfg.f(a) * fc < 0) b = c; else a = c;
+  }
+  return out;
+}
+function pasosFalsa(cfg, n) {
+  var a = cfg.a, b = cfg.b, out = [];
+  for (var i = 0; i < n; i++) {
+    var c = b - cfg.f(b) * (b - a) / (cfg.f(b) - cfg.f(a));
+    out.push(c);
+    if (cfg.f(a) * cfg.f(c) < 0) b = c; else a = c;
+  }
+  return out;
+}
+function pasosNewton(cfg, n) {
+  var x = cfg.x0, out = [x];
+  for (var i = 0; i < n; i++) {
+    var d = cfg.fp(x);
+    if (Math.abs(d) < 1e-12) break;
+    x = x - cfg.f(x) / d; out.push(x);
+    if (!isFinite(x) || Math.abs(x) > 1e6) break;
+  }
+  return out;
+}
+
+OVA.viz.registrar('raices-nolineal', function (host) {
+  var cfg = RAIZ[q(host, 'select').value] || RAIZ.cubica;
+  var metodo = q(host, '.metodo').value;
+  var it = parseInt(q(host, '.iter').value, 10);
+  q(host, '.iter-val').textContent = it + ' iteraciones';
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 300, sx: 90, sy: 34 });
+  // encuadrar en torno a [a,b]
+  var cx = (cfg.a + cfg.b) / 2;
+  L.ox = L.w / 2 - cx * L.sx;
+  OVA.ejes(L);
+  OVA.curva(L, cfg.f, AZUL, 3);
+  var c = L.ctx;
+
+  // línea de la raíz exacta
+  c.strokeStyle = 'rgba(28,122,76,.4)'; c.lineWidth = 1.4; c.setLineDash([4, 4]);
+  c.beginPath(); c.moveTo(L.px(cfg.raiz), 0); c.lineTo(L.px(cfg.raiz), L.h); c.stroke();
+  c.setLineDash([]);
+
+  var pts, col;
+  if (metodo === 'biseccion') { pts = pasosBiseccion(cfg, it); col = ORO; }
+  else if (metodo === 'falsa') { pts = pasosFalsa(cfg, it); col = MORADO; }
+  else { pts = pasosNewton(cfg, it); col = ROJO; }
+
+  // dibujar las aproximaciones
+  if (metodo === 'newton') {
+    // rectas tangentes que llevan de xk a xk+1
+    for (var i = 0; i < pts.length - 1; i++) {
+      var xk = pts[i], fk = cfg.f(xk), m = cfg.fp(xk);
+      c.strokeStyle = 'rgba(176,57,44,.35)'; c.lineWidth = 1.4;
+      c.beginPath();
+      c.moveTo(L.px(xk), L.py(fk));
+      c.lineTo(L.px(pts[i + 1]), L.py(0));
+      c.stroke();
+      OVA.punto(L, xk, fk, col);
+      c.fillStyle = OVA.color('cv-text'); c.font = '10px ui-monospace,monospace';
+      c.fillText('x' + i, L.px(xk) + 4, L.py(fk) - 5);
+    }
+  } else {
+    pts.forEach(function (p, i) {
+      OVA.punto(L, p, 0, col);
+      if (i === pts.length - 1) OVA.punto(L, p, cfg.f(p), col);
+    });
+  }
+  OVA.punto(L, cfg.raiz, 0, VERDE);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  var aprox = pts[pts.length - 1];
+  var err = Math.abs(aprox - cfg.raiz);
+  var nombre = metodo === 'biseccion' ? 'Bisección' : metodo === 'falsa' ? 'Falsa posición' : 'Newton-Raphson';
+
+  // tabla de iteraciones
+  var arr = metodo === 'newton' ? pts.slice(1) : pts;
+  var t = '<table class="tbl" style="margin:0;font-size:.82rem;text-align:center">' +
+          '<tr><th>iter</th><th>aproximación</th><th>error</th></tr>';
+  var desde = Math.max(0, arr.length - 6);
+  for (var k = desde; k < arr.length; k++) {
+    t += '<tr' + (k === arr.length - 1 ? ' style="background:rgba(28,122,76,.14)"' : '') +
+         '><td>' + (k + 1) + '</td><td>' + arr[k].toFixed(8) + '</td><td>' +
+         Math.abs(arr[k] - cfg.raiz).toExponential(2) + '</td></tr>';
+  }
+  q(host, '.tabla').innerHTML = t + '</table>';
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + nombre + '</strong> sobre ' + cfg.n + ' · raíz exacta ≈ ' + cfg.raiz.toFixed(6) + '<br>' +
+    'Tras ' + it + ' iteraciones: <strong style="color:#dba949">' + aprox.toFixed(8) +
+      '</strong> · error <strong>' + err.toExponential(3) + '</strong><br>' +
+    '<span style="color:#8fb4d9">' +
+    (metodo === 'biseccion'
+      ? 'Bisección parte el intervalo por la mitad cada vez. Lenta pero <strong>infalible</strong>: ' +
+        'si hay cambio de signo, converge siempre. El error se divide entre 2 en cada paso.'
+      : metodo === 'falsa'
+      ? 'Falsa posición usa la recta secante entre los extremos en vez del punto medio. Suele ser ' +
+        'más rápida que bisección, y también garantiza convergencia por mantener el cambio de signo.'
+      : 'Newton usa la tangente en cada punto para saltar al siguiente. Muy rápida ' +
+        '(<strong>convergencia cuadrática</strong>: los decimales correctos se duplican), pero ' +
+        'necesita la derivada y puede fallar si la tangente apunta lejos. Compara el error con el ' +
+        'de bisección al mismo número de pasos.') +
+    '</span>';
+});
+
+/* ══════ S09 · Newton para sistemas: intersección de dos curvas ══════ */
+var SISNL = {
+  circ: { n: 'x² + y² = 4  ∩  y = x²',
+          f1: function (x, y) { return x*x + y*y - 4; },
+          f2: function (x, y) { return y - x*x; },
+          J: function (x, y) { return [[2*x, 2*y], [-2*x, 1]]; },
+          c1: 'circunferencia', c2: 'parábola',
+          x0: 1, y0: 1, sol: [1.24962107, 1.56155281],
+          dibujar1: function (t) { return [2*Math.cos(t), 2*Math.sin(t)]; }, t1a: 0, t1b: 6.2832,
+          dibujar2: function (t) { return [t, t*t]; }, t2a: -1.6, t2b: 1.6 },
+  hiper: { n: 'xy = 1  ∩  x² + y² = 4',
+           f1: function (x, y) { return x*y - 1; },
+           f2: function (x, y) { return x*x + y*y - 4; },
+           J: function (x, y) { return [[y, x], [2*x, 2*y]]; },
+           c1: 'hipérbola', c2: 'circunferencia',
+           x0: 1.8, y0: 0.6, sol: [1.9318516, 0.5176381],
+           dibujar1: function (t) { return [t, 1/t]; }, t1a: 0.3, t1b: 3.3,
+           dibujar2: function (t) { return [2*Math.cos(t), 2*Math.sin(t)]; }, t2a: 0, t2b: 6.2832 },
+  senos: { n: 'y = sen x  ∩  y = x/2',
+           f1: function (x, y) { return y - Math.sin(x); },
+           f2: function (x, y) { return y - x/2; },
+           J: function (x, y) { return [[-Math.cos(x), 1], [-0.5, 1]]; },
+           c1: 'seno', c2: 'recta',
+           x0: 2, y0: 1, sol: [1.8954942, 0.9477471],
+           dibujar1: function (t) { return [t, Math.sin(t)]; }, t1a: -0.5, t1b: 3.2,
+           dibujar2: function (t) { return [t, t/2]; }, t2a: -0.5, t2b: 3.2 }
+};
+
+function newtonSistema(cfg, n) {
+  var x = cfg.x0, y = cfg.y0, hist = [[x, y]];
+  for (var i = 0; i < n; i++) {
+    var F = [cfg.f1(x, y), cfg.f2(x, y)];
+    var J = cfg.J(x, y);
+    var det = J[0][0] * J[1][1] - J[0][1] * J[1][0];
+    if (Math.abs(det) < 1e-12) break;
+    // resolver J·d = -F
+    var dx = (-F[0] * J[1][1] + F[1] * J[0][1]) / det;
+    var dy = (-J[0][0] * F[1] + J[1][0] * F[0]) / det;
+    x += dx; y += dy; hist.push([x, y]);
+    if (!isFinite(x) || Math.abs(x) > 1e6) break;
+  }
+  return hist;
+}
+
+OVA.viz.registrar('newton-sistema', function (host) {
+  var cfg = SISNL[q(host, 'select').value] || SISNL.circ;
+  var it = parseInt(q(host, '.iter').value, 10);
+  q(host, '.iter-val').textContent = it + ' iteraciones';
+
+  var L = OVA.lienzo(q(host, 'canvas'), { alto: 340, sx: 48, sy: 48 });
+  OVA.ejes(L);
+  var c = L.ctx;
+
+  // dibujar las dos curvas
+  var trazar = function (fn, ta, tb, color) {
+    c.strokeStyle = color; c.lineWidth = 2.4; c.beginPath();
+    var primero = true;
+    for (var t = ta; t <= tb; t += (tb - ta) / 300) {
+      var p = fn(t);
+      if (!isFinite(p[0]) || !isFinite(p[1])) { primero = true; continue; }
+      var px = L.px(p[0]), py = L.py(p[1]);
+      if (px < -50 || px > L.w + 50 || py < -50 || py > L.h + 50) { primero = true; continue; }
+      primero ? (c.moveTo(px, py), primero = false) : c.lineTo(px, py);
+    }
+    c.stroke();
+  };
+  trazar(cfg.dibujar1, cfg.t1a, cfg.t1b, 'rgba(58,110,165,.85)');
+  trazar(cfg.dibujar2, cfg.t2a, cfg.t2b, 'rgba(198,143,46,.85)');
+
+  var hist = newtonSistema(cfg, Math.max(it, 8));
+  // camino de iteraciones
+  c.strokeStyle = 'rgba(176,57,44,.5)'; c.lineWidth = 1.6; c.setLineDash([4, 3]);
+  c.beginPath();
+  for (var i = 0; i <= Math.min(it, hist.length - 1); i++) {
+    var p = hist[i];
+    i ? c.lineTo(L.px(p[0]), L.py(p[1])) : c.moveTo(L.px(p[0]), L.py(p[1]));
+  }
+  c.stroke(); c.setLineDash([]);
+  for (var k = 0; k <= Math.min(it, hist.length - 1); k++) {
+    OVA.punto(L, hist[k][0], hist[k][1], k === Math.min(it, hist.length - 1) ? ROJO : ORO);
+  }
+  // solución exacta
+  OVA.punto(L, cfg.sol[0], cfg.sol[1], VERDE);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 12px ui-monospace,monospace';
+  c.fillText(cfg.n, 10, 18);
+
+  var idx = Math.min(it, hist.length - 1);
+  var pAprox = hist[idx];
+  var err = Math.hypot(pAprox[0] - cfg.sol[0], pAprox[1] - cfg.sol[1]);
+
+  var t = '<table class="tbl" style="margin:0;font-size:.82rem;text-align:center">' +
+          '<tr><th>iter</th><th>x</th><th>y</th><th>‖error‖</th></tr>';
+  for (var m = 0; m <= idx; m++) {
+    var e = Math.hypot(hist[m][0] - cfg.sol[0], hist[m][1] - cfg.sol[1]);
+    t += '<tr' + (m === idx ? ' style="background:rgba(28,122,76,.14)"' : '') + '><td>' + m +
+         '</td><td>' + hist[m][0].toFixed(6) + '</td><td>' + hist[m][1].toFixed(6) +
+         '</td><td>' + e.toExponential(2) + '</td></tr>';
+  }
+  q(host, '.tabla').innerHTML = t + '</table>';
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Newton para sistemas</strong> · ' + cfg.n + '<br>' +
+    'Intersección de <span style="color:#8fb4d9">' + cfg.c1 + '</span> y ' +
+    '<span style="color:#dba949">' + cfg.c2 + '</span> ≈ (' +
+    cfg.sol[0].toFixed(4) + ', ' + cfg.sol[1].toFixed(4) + ')<br>' +
+    'Iteración ' + idx + ': (' + pAprox[0].toFixed(6) + ', ' + pAprox[1].toFixed(6) +
+    ') · error ' + err.toExponential(3) + '<br>' +
+    '<span style="color:#8fb4d9">En vez de una derivada, Newton usa la matriz <strong>Jacobiana</strong> ' +
+    'de las derivadas parciales, y en cada paso resuelve un sistema lineal $J\\,\\Delta=-F$ ' +
+    '(¡las Guías 3 y 4!). Conserva la convergencia cuadrática: mira cómo el error se desploma. ' +
+    'El punto de partida importa: cada solución tiene su propia zona de atracción.</span>';
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[data-viz]').forEach(function (h) {
     h.addEventListener('input', function () { OVA.viz.redibujar(); });
