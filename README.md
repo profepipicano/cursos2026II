@@ -73,9 +73,9 @@ GitHub te preguntará si quieres reemplazar el archivo existente. Di que sí.
 
 ```js
 window.OVA_PUBLICADAS = {
-  calculo:   [1, 2, 3, 4],     ←  añade el 2
+  calculo:   [1, 2, 3, 4, 6, 7, 8, 9],   ←  añade el número de la semana nueva
   vectorial: [1, 2, 3, 4],
-  metodos:   [1, 2, 3, 4],
+  metodos:   [1, 2, 3, 4, 6, 7, 8, 9],
   edo:       [1, 2, 3, 4]
 };
 ```
