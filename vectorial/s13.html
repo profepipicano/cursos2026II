@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 13 · Aplicaciones de la integral triple — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 13 · Aplicaciones de la integral triple — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912d">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 13</h1>
+      <h1>Cálculo Vectorial · Guía 13</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,331 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Masa y centro de masa</a>
+    <a href="#s2">2 · Momento de inercia</a>
+    <a href="#s3">3 · El jacobiano</a>
+    <a href="#s4">4 · Cambio de variables</a>
+    <a href="#s5">5 · Jacobianos en 3D</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 13 · Aplicaciones de la integral triple</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 13 · Corte III</div>
+  <h2>Aplicaciones de la integral triple</h2>
+  <p>Dos cosas en esta guía. Primero, lo que las integrales múltiples calculan en física e ingeniería:
+     masa, centro de masa y momento de inercia de un cuerpo con densidad variable. Segundo, el
+     fundamento de todo lo que hicimos con polares, cilíndricas y esféricas: el <strong>jacobiano</strong>,
+     el factor que mide cuánto estira o encoge el área (o el volumen) cualquier cambio de variables.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 14.6 y 14.8</span>
+    <span class="chip">Stewart · Cap. 15.6 y 15.9</span>
+    <span class="chip">Semana 13</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En las Guías 11 y 12 aparecieron tres «factores misteriosos»:
+  $r$ en polares y cilíndricas, $\rho^{2}\sin\phi$ en esféricas. Aquí verás que los tres son el mismo
+  objeto —el jacobiano de la transformación— y aprenderás a calcularlo para cualquier cambio de
+  variables. Antes, las aplicaciones físicas de las integrales de la Guía 12.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Masa y centro de masa</h3>
+
+  <div class="callout-dark">
+    <h3>La integral de la densidad es la masa</h3>
+    <p>Si un sólido $E$ tiene densidad $\delta(x,y,z)$ (masa por unidad de volumen), cada pedacito $dV$
+       pesa $\delta\,dV$ y la masa total es $m=\iiint_E\delta\,dV$. El <strong>centro de masa</strong> es el
+       punto de equilibrio: el promedio de las posiciones, ponderado por la masa.</p>
+  </div>
+
+  <div class="def">
+    $$m=\iiint_E\delta\,dV\qquad \bar x=\frac{1}{m}\iiint_E x\,\delta\,dV,\quad \bar y=\frac{1}{m}\iiint_E y\,\delta\,dV,\quad \bar z=\frac{1}{m}\iiint_E z\,\delta\,dV$$
+    Si $\delta$ es constante, el centro de masa es el <strong>centroide</strong> (centro geométrico). Para una lámina plana, lo mismo con integrales dobles.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · El cubo $[0,1]^{3}$ con densidad $\delta=x+y+z$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Masa</div>
+        $m=\displaystyle\iiint(x+y+z)\,dV=\frac12+\frac12+\frac12=\frac32$ (cada variable promedia $\tfrac12$ sobre el cubo).
+      </div>
+      <div class="paso"><div class="paso-t">Primer momento respecto a $x$</div>
+        $\displaystyle\iiint x(x+y+z)\,dV=\iiint x^{2}\,dV+\iiint xy\,dV+\iiint xz\,dV=\frac13+\frac14+\frac14=\frac56$.
+      </div>
+      <div class="paso"><div class="paso-t">Centro de masa</div>
+        $\bar x=\dfrac{5/6}{3/2}=\dfrac59$, y por simetría $\bar y=\bar z=\dfrac59$. Está desplazado desde el centroide $(\tfrac12,\tfrac12,\tfrac12)$ hacia el vértice $(1,1,1)$, donde la densidad es mayor.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">1.1 Una lámina triangular con tres densidades</div>
+  <div class="viz" data-viz="centromasa">
+    <div class="viz-controls">
+      <label for="cm-d">Densidad</label>
+      <select id="cm-d">
+        <option value="uno">δ = 1 (homogénea)</option>
+        <option value="x">δ = x (más densa a la derecha)</option>
+        <option value="y">δ = y (más densa arriba)</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Para la lámina $0\le y\le1-x$, $0\le x\le1$: con $\delta=1$, $m=\tfrac12$ y el centro de masa es el
+    centroide $(\tfrac13,\tfrac13)$. Con $\delta=x$: $m=\iint x\,dA=\tfrac16$, $\bar x=6\iint x^{2}dA=\tfrac12$,
+    $\bar y=6\iint xy\,dA=\tfrac14$. El punto rojo se corre hacia la zona densa.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Momento de inercia</h3>
+
+  <div class="callout-dark">
+    <h3>Cuánto cuesta hacer girar un cuerpo</h3>
+    <p>El momento de inercia respecto a un eje mide la resistencia a girar alrededor de él: cada
+       pedacito contribuye con su masa multiplicada por el <em>cuadrado</em> de su distancia al eje. Masa
+       lejos del eje cuenta mucho más que masa cerca.</p>
+  </div>
+
+  <div class="def">
+    $$I_z=\iiint_E(x^{2}+y^{2})\,\delta\,dV\qquad I_x=\iiint_E(y^{2}+z^{2})\,\delta\,dV\qquad I_y=\iiint_E(x^{2}+z^{2})\,\delta\,dV$$
+    $x^{2}+y^{2}$ es el cuadrado de la distancia al eje $z$: en cilíndricas es simplemente $r^{2}$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Cilindro macizo de radio $a$, altura $h$ y densidad constante $\delta$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">En cilíndricas</div>
+        $I_z=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{a}\!\!\int_{0}^{h}r^{2}\cdot\delta\;r\,dz\,dr\,d\theta=\delta\,h\cdot2\pi\int_{0}^{a}r^{3}\,dr=\delta\,h\cdot2\pi\cdot\frac{a^{4}}{4}=\frac{\pi\delta h a^{4}}{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">En términos de la masa</div>
+        Como $m=\delta\pi a^{2}h$, resulta $I_z=\dfrac12 m a^{2}$: la fórmula clásica del cilindro (o disco) macizo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Masa, centro de masa e inercia</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · El jacobiano: cuánto estira una transformación</h3>
+
+  <div class="callout-dark">
+    <h3>Un factor de escala local</h3>
+    <p>Un cambio de variables $x=x(u,v)$, $y=y(u,v)$ lleva una malla de cuadraditos del plano $uv$ a una
+       malla de «cuadriláteros» curvos del plano $xy$. Cada cuadradito de área $du\,dv$ se convierte en
+       un cuadrilátero de área $|J|\,du\,dv$, donde $J$ es el <strong>jacobiano</strong>: el determinante
+       de las derivadas parciales. Es la versión en dos variables del $dx=g'(u)\,du$ de la sustitución.</p>
+  </div>
+
+  <div class="def">
+    $$J=\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}x_u & x_v\\ y_u & y_v\end{vmatrix}=x_u\,y_v-x_v\,y_u\qquad\qquad dA=|J|\,du\,dv$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Las polares, por fin explicadas</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$x=r\cos\theta$, $y=r\sin\theta$</div>
+        $J=\begin{vmatrix}\cos\theta & -r\sin\theta\\ \sin\theta & r\cos\theta\end{vmatrix}=r\cos^{2}\theta+r\sin^{2}\theta=r$.
+      </div>
+      <div class="paso"><div class="paso-t">Conclusión</div>
+        $dA=r\,dr\,d\theta$: el factor $r$ de la Guía 11 es exactamente el jacobiano de las polares.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Un cambio lineal: $x=u+v$, $y=u-v$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Jacobiano</div>
+        $J=\begin{vmatrix}1 & 1\\ 1 & -1\end{vmatrix}=(1)(-1)-(1)(1)=-2$, luego $|J|=2$: toda figura duplica su área. El signo solo indica que la orientación se invierte.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 La malla deformada y el cociente de áreas</div>
+  <div class="viz" data-viz="jacobiano">
+    <div class="viz-controls">
+      <label for="ja-t">Transformación</label>
+      <select id="ja-t">
+        <option value="polar">polares (r, θ) → (x, y)</option>
+        <option value="lineal">x = u + v, y = u − v</option>
+        <option value="mitad">x = (u+v)/2, y = (u−v)/2</option>
+        <option value="cuad">x = u², y = v</option>
+      </select>
+      <label for="ja-n">Malla</label>
+      <input id="ja-n" class="n" type="range" min="2" max="16" step="1" value="6">
+      <span class="n-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="ja-c">Celda</label>
+      <input id="ja-c" class="celda" type="range" min="0" max="100" step="1" value="70">
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Todas las celdas tienen la misma área en el plano $uv$. En el plano $xy$ el cociente entre el área de
+    la celda roja y la original se acerca a $|J|$ evaluado en su centro; con una transformación lineal el
+    cociente es exactamente $|J|$ en todas las celdas.
+  </p>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Cambio de variables en una integral doble</h3>
+
+  <div class="def">
+    <strong>Fórmula del cambio de variables.</strong> Si $T(u,v)=(x(u,v),y(u,v))$ lleva la región $S$ del plano $uv$ sobre la región $R$ del plano $xy$:
+    $$\iint_R f(x,y)\,dA=\iint_S f\big(x(u,v),y(u,v)\big)\,|J|\,du\,dv$$
+    Se usa para simplificar la <em>región</em> (un paralelogramo se vuelve un rectángulo) o el <em>integrando</em>.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · $\displaystyle\iint_R(x-y)^{2}\,dA$, con $R$ el cuadrado de vértices $(0,0)$, $(1,1)$, $(2,0)$, $(1,-1)$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Elegir las variables nuevas</div>
+        Los lados de $R$ están sobre las rectas $x+y=0$, $x+y=2$, $x-y=0$, $x-y=2$. Con $u=x+y$, $v=x-y$ la región se vuelve el cuadrado $0\le u\le2$, $0\le v\le2$, y el integrando $(x-y)^{2}=v^{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Despejar y calcular el jacobiano</div>
+        $x=\dfrac{u+v}{2}$, $y=\dfrac{u-v}{2}$: $J=\begin{vmatrix}\tfrac12 & \tfrac12\\ \tfrac12 & -\tfrac12\end{vmatrix}=-\tfrac14-\tfrac14=-\tfrac12$, así que $|J|=\tfrac12$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $\displaystyle\iint_R(x-y)^{2}dA=\int_{0}^{2}\!\!\int_{0}^{2}v^{2}\cdot\frac12\,dv\,du=\frac12\cdot2\cdot\frac{8}{3}=\frac{8}{3}$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar con el área</div>
+        Con $f=1$: $\iint_R dA=\tfrac12\cdot4=2$, y en efecto $R$ es un cuadrado de lado $\sqrt2$, área $2$ ✓.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Jacobianos en tres variables</h3>
+
+  <div class="def">
+    Para $x=x(u,v,w)$, $y=y(u,v,w)$, $z=z(u,v,w)$:
+    $$J=\frac{\partial(x,y,z)}{\partial(u,v,w)}=\begin{vmatrix}x_u & x_v & x_w\\ y_u & y_v & y_w\\ z_u & z_v & z_w\end{vmatrix}\qquad dV=|J|\,du\,dv\,dw$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Los factores de la Guía 12</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Cilíndricas</div>
+        $x=r\cos\theta$, $y=r\sin\theta$, $z=z$: la fila de $z$ es $(0,0,1)$ y el determinante se reduce al de las polares: $J=r$.
+      </div>
+      <div class="paso"><div class="paso-t">Esféricas</div>
+        Desarrollando el determinante de $x=\rho\sin\phi\cos\theta$, $y=\rho\sin\phi\sin\theta$, $z=\rho\cos\phi$ se obtiene $J=\rho^{2}\sin\phi$ (positivo porque $0\le\phi\le\pi$). Es el mismo resultado de la «cajita» de lados $d\rho$, $\rho\,d\phi$, $\rho\sin\phi\,d\theta$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · Volumen del elipsoide $\dfrac{x^{2}}{a^{2}}+\dfrac{y^{2}}{b^{2}}+\dfrac{z^{2}}{c^{2}}\le1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Estirar la esfera</div>
+        Con $x=au$, $y=bv$, $z=cw$, el elipsoide es la imagen de la esfera unitaria $u^{2}+v^{2}+w^{2}\le1$.
+      </div>
+      <div class="paso"><div class="paso-t">Jacobiano</div>
+        La matriz es diagonal: $J=abc$.
+      </div>
+      <div class="paso"><div class="paso-t">Volumen</div>
+        $V=\displaystyle\iiint_{\text{esfera}}abc\,du\,dv\,dw=abc\cdot\frac43\pi=\frac43\pi abc$. Con $a=b=c$ recupera la esfera.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 8 · Valor promedio en un sólido</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Definición</div>
+        $\bar f=\dfrac{1}{V(E)}\displaystyle\iiint_E f\,dV$, igual que en una variable.
+      </div>
+      <div class="paso"><div class="paso-t">La temperatura $T=x^{2}+y^{2}+z^{2}$ en la esfera unitaria</div>
+        De la Guía 12, $\iiint T\,dV=\tfrac{4\pi}{5}$ y $V=\tfrac{4\pi}{3}$: $\bar T=\dfrac{4\pi/5}{4\pi/3}=\dfrac35$. Mayor que $\tfrac12$ porque la mayor parte del volumen de una esfera está cerca de su superficie, donde $T$ es grande.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Jacobiano y cambio de variables</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El centro de masa es un promedio ponderado: la misma operación que ubica el «centro de gravedad»
+      de la demanda de una región para decidir dónde instalar un centro de distribución, ponderando cada
+      zona por su volumen de pedidos. Y un cambio de variables es lo que hace un analista al pasar de
+      unidades físicas a unidades monetarias: el jacobiano es el tipo de conversión.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La varianza de una cartera es un momento de inercia: cada activo contribuye con su peso por el
+      cuadrado de su desviación. Y cuando una distribución de probabilidad conjunta se transforma (de
+      precios a rendimientos, por ejemplo), la nueva densidad se obtiene multiplicando por el jacobiano
+      de la transformación.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      El centroide de una región de píxeles es la posición de un objeto en visión por computador; los
+      momentos de segundo orden dan su orientación y elongación. En gráficos, toda textura se mapea con
+      una transformación $(u,v)\to(x,y)$ cuyo jacobiano decide cuánto se estira cada tramo de la imagen.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El momento de inercia del rotor fija la dinámica de un motor y el tiempo de respuesta de un
+      servomecanismo: $I_z=\tfrac12 m a^{2}$ para un rotor cilíndrico. Y el jacobiano aparece al escribir
+      las leyes de Maxwell en cilíndricas o esféricas: el $r$ y el $\rho^{2}\sin\phi$ de los elementos de
+      volumen en la ley de Gauss.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Masa</strong> $m=\iiint\delta\,dV$; <strong>centro de masa</strong> $\bar x=\tfrac1m\iiint x\delta\,dV$ (y análogos). Cubo con $\delta=x+y+z$: $m=\tfrac32$, centro $(\tfrac59,\tfrac59,\tfrac59)$.</li>
+    <li><strong>Momento de inercia</strong> $I_z=\iiint(x^{2}+y^{2})\delta\,dV$; cilindro macizo: $\tfrac12ma^{2}$.</li>
+    <li><strong>Jacobiano</strong> $J=\dfrac{\partial(x,y)}{\partial(u,v)}=x_uy_v-x_vy_u$; $dA=|J|\,du\,dv$. Polares: $J=r$. Lineal $x=u+v$, $y=u-v$: $|J|=2$.</li>
+    <li><strong>Cambio de variables</strong>: $\iint_R f\,dA=\iint_S f(x(u,v),y(u,v))\,|J|\,du\,dv$. Elige $u,v$ para que la región o el integrando se simplifiquen.</li>
+    <li>En 3D: cilíndricas $J=r$, esféricas $J=\rho^{2}\sin\phi$, elipsoide $J=abc$ → $V=\tfrac43\pi abc$.</li>
+    <li><strong>Valor promedio</strong> $\bar f=\tfrac{1}{V}\iiint f\,dV$; promedio de $\rho^{2}$ en la esfera unitaria: $\tfrac35$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/5-7-change-of-variables-in-multiple-integrals" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912d"></script>
+<script src="../assets/viz-vectorial.js?v=20260912d"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Masa, centro de masa e inercia · 3 preguntas", "items": [ { "etiqueta": "Masa", "nivel": 2, "criterio": "Calcular una masa (§1)", "enunciado": "La masa del cubo $[0,1]^{3}$ con densidad $\\delta=2z$ es:", "opciones": [ "$1$", "$2$", "$\\dfrac{1}{2}$", "$\\dfrac{2}{3}$" ], "correcta": 0, "pista": "$\\iiint 2z\\,dV$; en $x$ e $y$ solo aporta el ancho 1.", "solucion": "$m=\\int_{0}^{1}\\int_{0}^{1}\\int_{0}^{1}2z\\,dz\\,dy\\,dx=\\int_{0}^{1}2z\\,dz=1$. La densidad va de $0$ a $2$ y promedia $1$ sobre un volumen $1$. La opción $2$ confunde la masa con la densidad máxima." }, { "etiqueta": "Centro", "nivel": 3, "criterio": "Interpretar el centro de masa (§1)", "enunciado": "Para el cubo $[0,1]^{3}$ con $\\delta=x+y+z$, el centro de masa es $(\\tfrac59,\\tfrac59,\\tfrac59)$. Esto significa que:", "opciones": [ "está fuera del cubo", "la masa total es $\\tfrac59$", "está desplazado desde el centroide $(\\tfrac12,\\tfrac12,\\tfrac12)$ hacia el vértice $(1,1,1)$, donde la densidad es mayor", "coincide con el centroide porque el cubo es simétrico" ], "correcta": 2, "pista": "¿Hacia dónde crece $x+y+z$?", "solucion": "$\\tfrac59\\gt\\tfrac12$ en las tres coordenadas: el centro de masa se corre hacia donde hay más masa, el vértice $(1,1,1)$. El centroide (densidad constante) sería $(\\tfrac12,\\tfrac12,\\tfrac12)$; la masa total es $\\tfrac32$." }, { "etiqueta": "Inercia", "nivel": 2, "criterio": "Plantear un momento de inercia (§2)", "enunciado": "El momento de inercia de un sólido $E$ respecto al eje $z$ es:", "opciones": [ "$\\displaystyle\\iiint_E z^{2}\\,\\delta\\,dV$", "$\\displaystyle\\iiint_E(x+y)\\,\\delta\\,dV$", "$\\displaystyle\\iiint_E\\sqrt{x^{2}+y^{2}}\\,\\delta\\,dV$", "$\\displaystyle\\iiint_E(x^{2}+y^{2})\\,\\delta\\,dV$" ], "correcta": 3, "pista": "Masa por el cuadrado de la distancia al eje.", "solucion": "La distancia al eje $z$ es $\\sqrt{x^{2}+y^{2}}$ y el momento de inercia usa su cuadrado: $I_z=\\iiint(x^{2}+y^{2})\\delta\\,dV$. Con $z^{2}$ se mediría la distancia al plano $xy$, no al eje." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Jacobiano y cambio de variables · 3 preguntas", "items": [ { "etiqueta": "Definición", "nivel": 1, "criterio": "Definir el jacobiano (§3)", "enunciado": "El jacobiano $\\dfrac{\\partial(x,y)}{\\partial(u,v)}$ es:", "opciones": [ "la pendiente de la transformación", "el determinante $x_u\\,y_v-x_v\\,y_u$: el factor local de cambio de área", "la suma $x_u+y_v$", "el producto $x_u\\,y_v$" ], "correcta": 1, "pista": "Es un determinante $2\\times2$.", "solucion": "$J=\\begin{vmatrix}x_u&x_v\\\\y_u&y_v\\end{vmatrix}=x_uy_v-x_vy_u$, y $dA=|J|\\,du\\,dv$: mide cuánto estira o encoge el área cada cuadradito de la malla $uv$ al pasar al plano $xy$." }, { "etiqueta": "Lineal", "nivel": 2, "criterio": "Calcular un jacobiano lineal (§3)", "enunciado": "Para $x=2u$, $y=3v$, el valor de $|J|$ es:", "opciones": [ "$6$", "$5$", "$\\dfrac{1}{6}$", "$1$" ], "correcta": 0, "pista": "Matriz diagonal: producto de las escalas.", "solucion": "$J=\\begin{vmatrix}2&0\\\\0&3\\end{vmatrix}=6$: estirar $2$ en $x$ y $3$ en $y$ multiplica las áreas por $6$. $\\tfrac16$ sería el jacobiano de la transformación inversa." }, { "etiqueta": "Polares", "nivel": 2, "criterio": "Reconocer el jacobiano de las polares (§3)", "enunciado": "El jacobiano de $x=r\\cos\\theta$, $y=r\\sin\\theta$ vale:", "opciones": [ "$r^{2}$", "$\\cos\\theta\\sin\\theta$", "$r$", "$1$" ], "correcta": 2, "pista": "$\\begin{vmatrix}\\cos\\theta&-r\\sin\\theta\\\\\\sin\\theta&r\\cos\\theta\\end{vmatrix}$.", "solucion": "$r\\cos^{2}\\theta+r\\sin^{2}\\theta=r$. Es el factor $r$ de $dA=r\\,dr\\,d\\theta$ de la Guía 11, ahora explicado: las celdas polares crecen con $r$." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Centroide", "nivel": 2, "criterio": "Centro de masa de una lámina (§1)", "enunciado": "La lámina triangular $0\\le y\\le1-x$, $0\\le x\\le1$ con densidad $\\delta=x$ tiene centro de masa:", "opciones": [ "$(\\tfrac13,\\tfrac13)$", "$(\\tfrac14,\\tfrac12)$", "$(\\tfrac12,\\tfrac12)$", "$(\\tfrac12,\\tfrac14)$" ], "correcta": 3, "pista": "La masa se concentra a la derecha; $m=\\tfrac16$.", "solucion": "$m=\\iint x\\,dA=\\tfrac16$; $\\bar x=6\\iint x^{2}dA=6\\cdot\\tfrac1{12}=\\tfrac12$ y $\\bar y=6\\iint xy\\,dA=6\\cdot\\tfrac1{24}=\\tfrac14$. $(\\tfrac13,\\tfrac13)$ es el centroide con densidad constante; $(\\tfrac14,\\tfrac12)$ corresponde a $\\delta=y$." }, { "etiqueta": "Inercia", "nivel": 3, "criterio": "Calcular un momento de inercia (§2)", "enunciado": "El momento de inercia del cubo $[0,1]^{3}$ ($\\delta=1$) respecto al eje $z$ es:", "opciones": [ "$\\dfrac{1}{2}$", "$\\dfrac{2}{3}$", "$\\dfrac{1}{3}$", "$1$" ], "correcta": 1, "pista": "$\\iiint(x^{2}+y^{2})\\,dV=\\iiint x^{2}dV+\\iiint y^{2}dV$.", "solucion": "$\\iiint x^{2}dV=\\int_{0}^{1}x^{2}dx=\\tfrac13$ y lo mismo para $y^{2}$: $I_z=\\tfrac13+\\tfrac13=\\tfrac23$. La opción $\\tfrac13$ olvida uno de los dos sumandos." }, { "etiqueta": "Cilindro", "nivel": 2, "criterio": "Reconocer $I_z=\\tfrac12ma^{2}$ (§2)", "enunciado": "Para un cilindro macizo de masa $m$ y radio $a$, el momento de inercia respecto a su eje es:", "opciones": [ "$\\tfrac12 m a^{2}$", "$m a^{2}$", "$\\tfrac13 m a^{2}$", "$\\tfrac12 m a$" ], "correcta": 0, "pista": "$\\delta h\\,2\\pi\\int_{0}^{a}r^{3}dr$ y $m=\\delta\\pi a^{2}h$.", "solucion": "$I_z=\\delta h\\cdot2\\pi\\cdot\\tfrac{a^{4}}{4}=\\tfrac{\\pi\\delta h a^{4}}{2}=\\tfrac12(\\delta\\pi a^{2}h)a^{2}=\\tfrac12ma^{2}$. $ma^{2}$ sería el de un anillo delgado (toda la masa a distancia $a$); un cilindro macizo tiene masa más cerca del eje." }, { "etiqueta": "Jacobiano", "nivel": 2, "criterio": "Calcular un jacobiano no lineal (§3)", "enunciado": "Para $x=u^{2}$, $y=v$ (con $u\\gt0$), el jacobiano es:", "opciones": [ "$2$", "$2uv$", "$2u$", "$u^{2}$" ], "correcta": 2, "pista": "$x_u=2u$, $x_v=0$, $y_u=0$, $y_v=1$.", "solucion": "$J=\\begin{vmatrix}2u&0\\\\0&1\\end{vmatrix}=2u$. Las celdas se estiran más cuanto mayor es $u$: es la sustitución $x=u^{2}$, $dx=2u\\,du$, con una variable extra que no cambia." }, { "etiqueta": "Mitad", "nivel": 3, "criterio": "Jacobiano de una transformación despejada (§4)", "enunciado": "Si $u=x+y$ y $v=x-y$, entonces $x=\\tfrac{u+v}{2}$, $y=\\tfrac{u-v}{2}$ y $|J|=\\dfrac{\\partial(x,y)}{\\partial(u,v)}$ vale:", "opciones": [ "$2$", "$\\dfrac{1}{4}$", "$1$", "$\\dfrac{1}{2}$" ], "correcta": 3, "pista": "$\\begin{vmatrix}\\tfrac12&\\tfrac12\\\\\\tfrac12&-\\tfrac12\\end{vmatrix}$.", "solucion": "$J=(\\tfrac12)(-\\tfrac12)-(\\tfrac12)(\\tfrac12)=-\\tfrac12$, luego $|J|=\\tfrac12$. Es el inverso del jacobiano de $x=u+v$, $y=u-v$ (que vale $2$): ir y volver deben compensarse." }, { "etiqueta": "Integral", "nivel": 3, "criterio": "Aplicar el cambio de variables (§4)", "enunciado": "Con $u=x+y$, $v=x-y$ ($|J|=\\tfrac12$), la integral $\\displaystyle\\iint_R(x-y)^{2}dA$ sobre $0\\le u\\le2$, $0\\le v\\le2$ vale:", "opciones": [ "$8$", "$\\dfrac{8}{3}$", "$\\dfrac{16}{3}$", "$\\dfrac{4}{3}$" ], "correcta": 1, "pista": "$\\int_{0}^{2}\\int_{0}^{2}v^{2}\\cdot\\tfrac12\\,dv\\,du$.", "solucion": "$(x-y)^{2}=v^{2}$ y $dA=\\tfrac12\\,du\\,dv$: $\\tfrac12\\cdot\\int_{0}^{2}du\\cdot\\int_{0}^{2}v^{2}dv=\\tfrac12\\cdot2\\cdot\\tfrac83=\\tfrac83$. $\\tfrac{16}{3}$ es lo que da olvidar el jacobiano." }, { "etiqueta": "Elipsoide", "nivel": 2, "criterio": "Jacobiano en 3D (§5)", "enunciado": "Con $x=au$, $y=bv$, $z=cw$, el volumen del elipsoide $\\tfrac{x^{2}}{a^{2}}+\\tfrac{y^{2}}{b^{2}}+\\tfrac{z^{2}}{c^{2}}\\le1$ es:", "opciones": [ "$\\tfrac43\\pi abc$", "$\\tfrac43\\pi(a+b+c)$", "$4\\pi abc$", "$\\tfrac43\\pi$" ], "correcta": 0, "pista": "$J=abc$ y el elipsoide es la imagen de la esfera unitaria.", "solucion": "La transformación tiene jacobiano $abc$ (matriz diagonal) y lleva la esfera unitaria, de volumen $\\tfrac43\\pi$, sobre el elipsoide: $V=abc\\cdot\\tfrac43\\pi$. Con $a=b=c=R$ se recupera $\\tfrac43\\pi R^{3}$." }, { "etiqueta": "Promedio", "nivel": 3, "criterio": "Valor promedio en un sólido (§5)", "enunciado": "El valor promedio de $x^{2}+y^{2}+z^{2}$ en la esfera unitaria es:", "opciones": [ "$\\dfrac{1}{2}$", "$1$", "$\\dfrac{3}{5}$", "$\\dfrac{4\\pi}{5}$" ], "correcta": 2, "pista": "$\\iiint\\rho^{2}dV=\\tfrac{4\\pi}{5}$ dividido por $V=\\tfrac{4\\pi}{3}$.", "solucion": "$\\bar f=\\dfrac{4\\pi/5}{4\\pi/3}=\\dfrac35$. Supera a $\\tfrac12$ porque la mayor parte del volumen de una esfera está lejos del centro. $\\tfrac{4\\pi}{5}$ es la integral sin dividir por el volumen." } ] });
+</script>
 </body>
 </html>

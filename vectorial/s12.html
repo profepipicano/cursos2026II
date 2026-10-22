@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 12 · Integrales triples — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 12 · Integrales triples — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912d">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 12</h1>
+      <h1>Cálculo Vectorial · Guía 12</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,332 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · La integral triple</a>
+    <a href="#s2">2 · Volumen y límites</a>
+    <a href="#s3">3 · Cilíndricas</a>
+    <a href="#s4">4 · Esféricas</a>
+    <a href="#s5">5 · Elegir el sistema</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 12 · Integrales triples</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 12 · Corte III</div>
+  <h2>Integrales triples</h2>
+  <p>Un paso más: integrar sobre una región sólida del espacio. La integral triple suma $f(x,y,z)$ sobre
+     cada pedacito de volumen $dV$ y se calcula con tres integrales iteradas. Como en el plano, la clave
+     práctica es elegir las coordenadas que convierten el sólido en una «caja»: cartesianas, cilíndricas
+     o esféricas.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 14.6–14.7</span>
+    <span class="chip">Stewart · Cap. 15.6–15.8</span>
+    <span class="chip">Semana 12</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 9 integró sobre regiones del plano con $dA=dx\,dy$ y la Guía 11
+  sobre regiones circulares con $dA=r\,dr\,d\theta$. Ahora la región es un sólido y el elemento es un
+  volumen $dV$; las coordenadas cilíndricas son las polares con un eje $z$ añadido, y las esféricas usan
+  una distancia y dos ángulos.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · La integral triple</h3>
+
+  <div class="callout-dark">
+    <h3>Sumar sobre un sólido</h3>
+    <p>Se corta el sólido $E$ en cajitas de volumen $dV=dx\,dy\,dz$, se multiplica cada una por el valor
+       de $f$ en ella y se suman todas: $\iiint_E f\,dV$. Si $f=1$, el resultado es el <strong>volumen</strong>
+       de $E$; si $f$ es una densidad, es la <strong>masa</strong>. No hay interpretación de «hipervolumen»
+       que haga falta visualizar: basta pensar en sumar.</p>
+  </div>
+
+  <div class="def">
+    <strong>Integral iterada sobre una caja</strong> $[a,b]\times[c,d]\times[p,q]$:
+    $$\iiint_E f\,dV=\int_{a}^{b}\!\!\int_{c}^{d}\!\!\int_{p}^{q} f(x,y,z)\,dz\,dy\,dx$$
+    Se integra de adentro hacia afuera, una variable a la vez; por Fubini, cualquiera de los seis órdenes da lo mismo.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $\displaystyle\int_{0}^{1}\!\!\int_{0}^{2}\!\!\int_{0}^{3}xyz\,dz\,dy\,dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Interna en $z$</div>
+        $\displaystyle\int_{0}^{3}xyz\,dz=xy\Big[\frac{z^{2}}{2}\Big]_{0}^{3}=\frac{9}{2}xy$.
+      </div>
+      <div class="paso"><div class="paso-t">Media en $y$</div>
+        $\displaystyle\int_{0}^{2}\frac{9}{2}xy\,dy=\frac{9}{2}x\Big[\frac{y^{2}}{2}\Big]_{0}^{2}=9x$.
+      </div>
+      <div class="paso"><div class="paso-t">Externa en $x$</div>
+        $\displaystyle\int_{0}^{1}9x\,dx=\frac{9}{2}$. Como el integrando es un producto $x\cdot y\cdot z$ y los límites son constantes, también se puede calcular como producto de tres integrales: $\tfrac12\cdot2\cdot\tfrac92=\tfrac92$.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Volumen y límites variables</h3>
+
+  <div class="callout-dark">
+    <h3>Describir el sólido de adentro hacia afuera</h3>
+    <p>Para un sólido general se fija el orden (por ejemplo $dz\,dy\,dx$) y se describe así: $z$ va de
+       una superficie inferior a una superior, $z_1(x,y)\le z\le z_2(x,y)$; luego $(x,y)$ recorre la
+       <strong>sombra</strong> $D$ del sólido en el plano $xy$, descrita como en la Guía 9.</p>
+  </div>
+
+  <div class="def">
+    $$\iiint_E f\,dV=\iint_D\left[\int_{z_1(x,y)}^{z_2(x,y)}f(x,y,z)\,dz\right]dA\qquad\qquad V(E)=\iiint_E 1\,dV$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Volumen del tetraedro $x+y+z\le1$ en el primer octante</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Límites en $z$</div>
+        Desde el piso $z=0$ hasta el plano $z=1-x-y$.
+      </div>
+      <div class="paso"><div class="paso-t">La sombra</div>
+        En el plano $xy$ queda el triángulo $0\le y\le1-x$, $0\le x\le1$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $V=\displaystyle\int_{0}^{1}\!\!\int_{0}^{1-x}\!\!\int_{0}^{1-x-y}dz\,dy\,dx=\int_{0}^{1}\!\!\int_{0}^{1-x}(1-x-y)\,dy\,dx=\int_{0}^{1}\frac{(1-x)^{2}}{2}\,dx=\frac{1}{6}$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobación</div>
+        Una pirámide de base triangular (área $\tfrac12$) y altura 1: $\tfrac13\cdot\tfrac12\cdot1=\tfrac16$ ✓.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.1 Sólidos y sus integrales de volumen</div>
+  <div class="viz" data-viz="solido3d">
+    <div class="viz-controls">
+      <label for="s3-f">Sólido</label>
+      <select id="s3-f">
+        <option value="caja">caja [0,1]×[0,2]×[0,3]</option>
+        <option value="tetra">tetraedro x + y + z ≤ 1</option>
+        <option value="parab">entre z = x² + y² y z = 4</option>
+        <option value="esfera">esfera ρ ≤ 1</option>
+        <option value="cono">cono de helado (esfera + cono)</option>
+      </select>
+      <label for="s3-g">Giro</label>
+      <input id="s3-g" class="giro" type="range" min="0" max="628" step="1" value="85">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Cada sólido lleva la integral triple que da su volumen y el sistema de coordenadas en que esa integral
+    es más sencilla. Los tres últimos se calculan en §3 y §4.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Integrales triples en cartesianas</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Coordenadas cilíndricas</h3>
+
+  <div class="callout-dark">
+    <h3>Polares más un eje</h3>
+    <p>Un punto se describe por $(r,\theta,z)$: sus coordenadas polares en el plano $xy$ más su altura.
+       Sirven para sólidos con simetría alrededor del eje $z$: cilindros, conos, paraboloides. El elemento
+       de volumen hereda el factor $r$ de las polares.</p>
+  </div>
+
+  <div class="def">
+    $$x=r\cos\theta,\quad y=r\sin\theta,\quad z=z\qquad\qquad dV=r\,dz\,dr\,d\theta$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Volumen entre el paraboloide $z=x^{2}+y^{2}$ y el plano $z=4$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Describir el sólido</div>
+        $z$ va del paraboloide $z=r^{2}$ al plano $z=4$; se cortan en $r^{2}=4$, así que la sombra es el disco $r\le2$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $V=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{2}\!\!\int_{r^{2}}^{4}r\,dz\,dr\,d\theta=\int_{0}^{2\pi}\!\!\int_{0}^{2}(4-r^{2})\,r\,dr\,d\theta=2\pi\cdot4=8\pi$.
+        Es el mismo cálculo del Ejemplo 4 de la Guía 11: la integral en $z$ reproduce la integral doble de la altura.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Masa del mismo sólido con densidad $\delta=z$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Interna en $z$</div>
+        $\displaystyle\int_{r^{2}}^{4}z\,dz=\Big[\frac{z^{2}}{2}\Big]_{r^{2}}^{4}=\frac{16-r^{4}}{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Las otras dos</div>
+        $m=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{2}\frac{16-r^{4}}{2}\,r\,dr\,d\theta=\pi\int_{0}^{2}(16r-r^{5})\,dr=\pi\Big(32-\frac{64}{6}\Big)=\frac{64\pi}{3}$.
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        La densidad media es $m/V=\tfrac{64\pi/3}{8\pi}=\tfrac83\approx2{,}67$: más cerca de $4$ que de $0$ porque la mayor parte del volumen está arriba, donde $\delta=z$ es grande.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Coordenadas esféricas</h3>
+
+  <div class="callout-dark">
+    <h3>Una distancia y dos ángulos</h3>
+    <p>$\rho$ es la distancia al origen; $\phi$ el ángulo desde el eje $z$ positivo ($0\le\phi\le\pi$);
+       $\theta$ el ángulo polar de siempre en el plano $xy$. Describen esferas, conos con vértice en el
+       origen y sus combinaciones. El elemento de volumen es una «cajita» de lados $d\rho$,
+       $\rho\,d\phi$ y $\rho\sin\phi\,d\theta$.</p>
+  </div>
+
+  <div class="def">
+    $$x=\rho\sin\phi\cos\theta,\quad y=\rho\sin\phi\sin\theta,\quad z=\rho\cos\phi,\quad \rho^{2}=x^{2}+y^{2}+z^{2}$$
+    $$dV=\rho^{2}\sin\phi\;d\rho\,d\phi\,d\theta$$
+    Relación con las cilíndricas: $r=\rho\sin\phi$, $z=\rho\cos\phi$.
+  </div>
+
+  <div class="sub-title">4.1 Un punto en los tres sistemas</div>
+  <div class="viz" data-viz="coordenadas3d">
+    <div class="viz-controls">
+      <label for="c3-r">ρ</label>
+      <input id="c3-r" class="rho" type="range" min="5" max="22" step="1" value="20">
+      <span class="rho-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="c3-p">φ</label>
+      <input id="c3-p" class="phi" type="range" min="0" max="180" step="5" value="60">
+      <span class="phi-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="c3-t">θ</label>
+      <input id="c3-t" class="tht" type="range" min="0" max="360" step="5" value="45">
+      <span class="tht-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Con $\rho=2$, $\phi=60°$, $\theta=45°$: $r=\rho\sin\phi=\sqrt3$, $z=\rho\cos\phi=1$ y
+    $x=y=\sqrt{3}\cos45°=\sqrt6/2\approx1{,}22$. Mueve $\phi$ hasta $90°$ y el punto cae al plano $xy$.
+  </p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Volumen de la esfera de radio $a$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">La esfera es una caja en $(\rho,\phi,\theta)$</div>
+        $0\le\rho\le a$, $0\le\phi\le\pi$, $0\le\theta\le2\pi$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $V=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{\pi}\!\!\int_{0}^{a}\rho^{2}\sin\phi\,d\rho\,d\phi\,d\theta=\frac{a^{3}}{3}\cdot\Big[-\cos\phi\Big]_{0}^{\pi}\cdot2\pi=\frac{a^{3}}{3}\cdot2\cdot2\pi=\frac{4}{3}\pi a^{3}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · $\displaystyle\iiint_E(x^{2}+y^{2}+z^{2})\,dV$ sobre la esfera unitaria</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Convertir</div>
+        $x^{2}+y^{2}+z^{2}=\rho^{2}$, y con el $\rho^{2}\sin\phi$ del $dV$ el integrando queda $\rho^{4}\sin\phi$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{\pi}\!\!\int_{0}^{1}\rho^{4}\sin\phi\,d\rho\,d\phi\,d\theta=\frac{1}{5}\cdot2\cdot2\pi=\frac{4\pi}{5}$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Elegir el sistema de coordenadas</h3>
+
+  <div class="def">
+    <strong>Guía rápida.</strong>
+    <br>• Caras planas, cajas, tetraedros → <strong>cartesianas</strong>, $dV=dz\,dy\,dx$.
+    <br>• Simetría alrededor del eje $z$ (cilindros, conos, paraboloides) o integrando con $x^{2}+y^{2}$ → <strong>cilíndricas</strong>, $dV=r\,dz\,dr\,d\theta$.
+    <br>• Esferas, conos con vértice en el origen, integrando con $x^{2}+y^{2}+z^{2}$ → <strong>esféricas</strong>, $dV=\rho^{2}\sin\phi\,d\rho\,d\phi\,d\theta$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · El «cono de helado»: dentro de la esfera $\rho=1$ y por encima del cono $\phi=\pi/3$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Por qué esféricas</div>
+        La esfera es $\rho\le1$ y el cono es $\phi\le\pi/3$: dos desigualdades en coordenadas distintas, sin acoplarse. Una caja.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $V=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{\pi/3}\!\!\int_{0}^{1}\rho^{2}\sin\phi\,d\rho\,d\phi\,d\theta=\frac13\Big[-\cos\phi\Big]_{0}^{\pi/3}\cdot2\pi=\frac13\cdot\frac12\cdot2\pi=\frac{\pi}{3}$.
+      </div>
+      <div class="paso"><div class="paso-t">Comparar</div>
+        Es la cuarta parte de la esfera ($\tfrac{4\pi}{3}$), porque $1-\cos\tfrac{\pi}{3}=\tfrac12$ es la cuarta parte de $1-\cos\pi=2$. En cilíndricas habría que partir el sólido en dos piezas (cono y casquete).
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Cilíndricas y esféricas</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La capacidad de un silo, un tanque o una bodega con techo curvo es una integral triple de 1; el
+      inventario que contiene, si la densidad del producto varía con la altura (compactación), es la
+      integral de esa densidad. Elegir cilíndricas para un tanque es lo que hace el cálculo viable.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Valorar existencias a granel (minerales, granos, combustibles) exige el volumen real del sólido
+      almacenado, muchas veces un cono o un casquete; la integral triple en cilíndricas o esféricas da
+      la cifra que después se multiplica por el precio unitario.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      En gráficos por computador y simulación física, el volumen y la masa de un modelo 3D se calculan
+      integrando sobre la malla; los motores de física usan integrales triples para la masa y los momentos.
+      Las coordenadas esféricas son además las del mapeo de entornos (<em>skybox</em>) y de la iluminación.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La carga total de una distribución volumétrica es $\iiint\rho_v\,dV$, y el campo de una esfera cargada
+      o de un cable cilíndrico se obtiene con la ley de Gauss en esféricas o cilíndricas: la simetría del
+      problema dicta las coordenadas, exactamente como en esta guía.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Integral triple</strong> $\iiint_E f\,dV$: tres integrales iteradas, de adentro hacia afuera. $f=1$ da el volumen; $f=\delta$ da la masa.</li>
+    <li>Sólido general: $z$ entre dos superficies, $(x,y)$ en la sombra $D$. Tetraedro $x+y+z\le1$: $V=\tfrac16$.</li>
+    <li><strong>Cilíndricas</strong> $(r,\theta,z)$: $dV=r\,dz\,dr\,d\theta$. Entre $z=r^{2}$ y $z=4$: $V=8\pi$; con $\delta=z$, $m=\tfrac{64\pi}{3}$.</li>
+    <li><strong>Esféricas</strong> $(\rho,\phi,\theta)$: $x=\rho\sin\phi\cos\theta$, $y=\rho\sin\phi\sin\theta$, $z=\rho\cos\phi$; $dV=\rho^{2}\sin\phi\,d\rho\,d\phi\,d\theta$. Esfera: $\tfrac43\pi a^{3}$; cono de helado ($\phi\le\pi/3$): $\tfrac{\pi}{3}$.</li>
+    <li>Elegir el sistema por la <strong>simetría</strong> del sólido y la forma del integrando ($x^{2}+y^{2}$ → cilíndricas; $x^{2}+y^{2}+z^{2}$ → esféricas).</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/5-4-triple-integrals" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912d"></script>
+<script src="../assets/viz-vectorial.js?v=20260912d"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Integrales triples en cartesianas · 3 preguntas", "items": [ { "etiqueta": "Significado", "nivel": 1, "criterio": "Interpretar la integral triple (§1)", "enunciado": "La integral triple $\\displaystyle\\iiint_E 1\\,dV$ representa:", "opciones": [ "el volumen del sólido $E$", "el área de la superficie de $E$", "la masa de $E$ con cualquier densidad", "un «hipervolumen» en cuatro dimensiones" ], "correcta": 0, "pista": "Suma todos los pedacitos $dV$ con peso 1.", "solucion": "Sumar $1\\cdot dV$ sobre todo el sólido da su volumen. Con una densidad $\\delta$ en lugar de $1$ se obtiene la masa, y la superficie exige otra fórmula (Guía 11)." }, { "etiqueta": "Caja", "nivel": 2, "criterio": "Evaluar una integral iterada triple (§1)", "enunciado": "$\\displaystyle\\int_{0}^{1}\\!\\!\\int_{0}^{1}\\!\\!\\int_{0}^{1}(x+y)\\,dz\\,dy\\,dx$ es igual a:", "opciones": [ "$2$", "$\\dfrac{3}{2}$", "$1$", "$\\dfrac{1}{2}$" ], "correcta": 2, "pista": "La integral en $z$ no cambia nada (el integrando no depende de $z$).", "solucion": "$\\int_{0}^{1}(x+y)dz=x+y$; luego $\\int_{0}^{1}(x+y)dy=x+\\tfrac12$; y $\\int_{0}^{1}(x+\\tfrac12)dx=\\tfrac12+\\tfrac12=1$. Cada una de $x$ e $y$ promedia $\\tfrac12$ sobre el cubo unitario." }, { "etiqueta": "Tetraedro", "nivel": 3, "criterio": "Plantear límites variables (§2)", "enunciado": "Para el tetraedro $x+y+z\\le1$ del primer octante, en el orden $dz\\,dy\\,dx$ los límites son:", "opciones": [ "$0\\le z\\le1$, $0\\le y\\le1$, $0\\le x\\le1$", "$0\\le z\\le1-x-y$, $0\\le y\\le1$, $0\\le x\\le1$", "$0\\le z\\le1-x$, $0\\le y\\le1-x$, $0\\le x\\le1$", "$0\\le z\\le1-x-y$, $0\\le y\\le1-x$, $0\\le x\\le1$" ], "correcta": 3, "pista": "La sombra en el plano $xy$ es un triángulo, no un cuadrado.", "solucion": "$z$ va del piso al plano $z=1-x-y$; la sombra es el triángulo $0\\le y\\le1-x$, $0\\le x\\le1$. Con límites $0$ y $1$ en $y$ se integraría sobre un cuadrado y $1-x-y$ sería negativo en parte de él. El volumen es $\\tfrac16$." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Cilíndricas y esféricas · 3 preguntas", "items": [ { "etiqueta": "dV", "nivel": 1, "criterio": "Recordar los elementos de volumen (§3–4)", "enunciado": "Los elementos de volumen en cilíndricas y esféricas son, respectivamente:", "opciones": [ "$r\\,dz\\,dr\\,d\\theta$ y $\\rho^{2}\\cos\\phi\\,d\\rho\\,d\\phi\\,d\\theta$", "$r\\,dz\\,dr\\,d\\theta$ y $\\rho^{2}\\sin\\phi\\,d\\rho\\,d\\phi\\,d\\theta$", "$dz\\,dr\\,d\\theta$ y $d\\rho\\,d\\phi\\,d\\theta$", "$r^{2}\\,dz\\,dr\\,d\\theta$ y $\\rho\\sin\\phi\\,d\\rho\\,d\\phi\\,d\\theta$" ], "correcta": 1, "pista": "Cilíndricas = polares + $dz$; esféricas: cajita de lados $d\\rho$, $\\rho\\,d\\phi$, $\\rho\\sin\\phi\\,d\\theta$.", "solucion": "Cilíndricas heredan el $r$ de las polares: $dV=r\\,dz\\,dr\\,d\\theta$. En esféricas la cajita tiene lados $d\\rho$, $\\rho\\,d\\phi$ y $\\rho\\sin\\phi\\,d\\theta$, cuyo producto es $\\rho^{2}\\sin\\phi\\,d\\rho\\,d\\phi\\,d\\theta$. Con $\\cos\\phi$ el elemento sería negativo para $\\phi\\gt\\pi/2$." }, { "etiqueta": "Cilindro", "nivel": 2, "criterio": "Volumen en cilíndricas (§3)", "enunciado": "El volumen del cilindro $x^{2}+y^{2}\\le4$, $0\\le z\\le3$, calculado como $\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{2}\\!\\!\\int_{0}^{3}r\\,dz\\,dr\\,d\\theta$, es:", "opciones": [ "$12\\pi$", "$6\\pi$", "$24\\pi$", "$12$" ], "correcta": 0, "pista": "Base $\\pi\\cdot2^{2}$ por altura $3$.", "solucion": "$\\int_{0}^{3}dz=3$, $\\int_{0}^{2}r\\,dr=2$, $\\int_{0}^{2\\pi}d\\theta=2\\pi$: $3\\cdot2\\cdot2\\pi=12\\pi$, igual que $\\pi r^{2}h=4\\pi\\cdot3$. La opción $12$ olvida que $\\int_{0}^{2\\pi}d\\theta=2\\pi$; $6\\pi$ y $24\\pi$ corresponden a la mitad y al doble de la altura." }, { "etiqueta": "Esfera", "nivel": 3, "criterio": "Integrar en esféricas (§4)", "enunciado": "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{\\pi}\\!\\!\\int_{0}^{2}\\rho^{2}\\sin\\phi\\,d\\rho\\,d\\phi\\,d\\theta$ es igual a:", "opciones": [ "$16\\pi$", "$\\dfrac{16\\pi}{3}$", "$\\dfrac{32\\pi}{3}$ (volumen de la esfera de radio 2)", "$\\dfrac{4\\pi}{3}$" ], "correcta": 2, "pista": "$\\int_{0}^{2}\\rho^{2}d\\rho=\\tfrac83$, $\\int_{0}^{\\pi}\\sin\\phi\\,d\\phi=2$.", "solucion": "$\\tfrac83\\cdot2\\cdot2\\pi=\\tfrac{32\\pi}{3}$, que es $\\tfrac43\\pi\\cdot2^{3}$. $\\tfrac{4\\pi}{3}$ corresponde al radio 1 y $\\tfrac{16\\pi}{3}$ al hemisferio ($\\phi\\le\\pi/2$)." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Producto", "nivel": 2, "criterio": "Evaluar una triple sobre una caja (§1)", "enunciado": "$\\displaystyle\\int_{0}^{1}\\!\\!\\int_{0}^{2}\\!\\!\\int_{0}^{3}xyz\\,dz\\,dy\\,dx$ es igual a:", "opciones": [ "$9$", "$6$", "$\\dfrac{3}{2}$", "$\\dfrac{9}{2}$" ], "correcta": 3, "pista": "Producto de tres integrales: $\\tfrac12\\cdot2\\cdot\\tfrac92$.", "solucion": "Como el integrando es un producto y los límites son constantes, $\\int_{0}^{1}x\\,dx\\cdot\\int_{0}^{2}y\\,dy\\cdot\\int_{0}^{3}z\\,dz=\\tfrac12\\cdot2\\cdot\\tfrac92=\\tfrac92$. La opción $6$ es el volumen de la caja, que sería la integral de $1$." }, { "etiqueta": "Constante", "nivel": 1, "criterio": "Integrar una constante (§1)", "enunciado": "$\\displaystyle\\int_{0}^{2}\\!\\!\\int_{0}^{1}\\!\\!\\int_{0}^{1}6\\,dz\\,dy\\,dx$ es igual a:", "opciones": [ "$24$", "$12$", "$6$", "$2$" ], "correcta": 1, "pista": "Constante por volumen de la caja.", "solucion": "La caja $[0,2]\\times[0,1]\\times[0,1]$ tiene volumen $2$; la integral de la constante $6$ es $6\\cdot2=12$. Si $6$ fuera una densidad, $12$ sería la masa." }, { "etiqueta": "Orden", "nivel": 2, "criterio": "Describir un sólido de adentro hacia afuera (§2)", "enunciado": "En el orden $dz\\,dy\\,dx$, los límites de la integral interna en $z$ para un sólido general son:", "opciones": [ "dos superficies $z_1(x,y)\\le z\\le z_2(x,y)$, y $(x,y)$ recorre la sombra del sólido", "siempre constantes", "funciones solo de $z$", "los mismos que los de $x$" ], "correcta": 0, "pista": "Piso y techo del sólido sobre cada punto de su sombra.", "solucion": "Para cada $(x,y)$ de la sombra $D$, $z$ recorre desde la superficie inferior hasta la superior. Los límites internos dependen de las variables externas; los externos son constantes. Así se planteó el tetraedro." }, { "etiqueta": "Paraboloide", "nivel": 3, "criterio": "Plantear límites en cilíndricas (§3)", "enunciado": "El volumen entre $z=x^{2}+y^{2}$ y $z=4$ se plantea en cilíndricas como:", "opciones": [ "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{2}\\!\\!\\int_{0}^{r^{2}}r\\,dz\\,dr\\,d\\theta$", "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{2}\\!\\!\\int_{r^{2}}^{4}dz\\,dr\\,d\\theta$", "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{2}\\!\\!\\int_{r^{2}}^{4}r\\,dz\\,dr\\,d\\theta=8\\pi$", "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{4}\\!\\!\\int_{r^{2}}^{4}r\\,dz\\,dr\\,d\\theta$" ], "correcta": 2, "pista": "La sombra es el disco donde $r^{2}=4$; $z$ va del paraboloide al plano.", "solucion": "$z$ va de $r^{2}$ a $4$; el paraboloide y el plano se cortan en $r=2$, así que $0\\le r\\le2$; y el $dV$ lleva el factor $r$. Resultado $8\\pi$. Con $r\\le4$ la región sería demasiado grande, y sin el $r$ el elemento de volumen es incorrecto." }, { "etiqueta": "Masa", "nivel": 3, "criterio": "Calcular una masa en cilíndricas (§3)", "enunciado": "La masa del sólido entre $z=x^{2}+y^{2}$ y $z=4$ con densidad $\\delta=z$ es:", "opciones": [ "$8\\pi$", "$32\\pi$", "$\\dfrac{32\\pi}{3}$", "$\\dfrac{64\\pi}{3}$" ], "correcta": 3, "pista": "$\\int_{r^{2}}^{4}z\\,dz=\\tfrac{16-r^{4}}{2}$.", "solucion": "$m=\\int_{0}^{2\\pi}\\int_{0}^{2}\\tfrac{16-r^{4}}{2}\\,r\\,dr\\,d\\theta=\\pi\\int_{0}^{2}(16r-r^{5})dr=\\pi(32-\\tfrac{64}{6})=\\tfrac{64\\pi}{3}$. La densidad media $m/V=\\tfrac83$ está entre $0$ y $4$, como debe. $8\\pi$ es el volumen." }, { "etiqueta": "Conversión", "nivel": 2, "criterio": "Convertir esféricas a cartesianas (§4)", "enunciado": "El punto con coordenadas esféricas $\\rho=2$, $\\phi=\\pi/3$, $\\theta=\\pi/4$ tiene $z$ igual a:", "opciones": [ "$z=2$", "$z=\\rho\\cos\\phi=1$", "$z=\\rho\\sin\\phi=\\sqrt3$", "$z=\\rho\\cos\\theta=\\sqrt2$" ], "correcta": 1, "pista": "$\\phi$ se mide desde el eje $z$.", "solucion": "$z=\\rho\\cos\\phi=2\\cos\\tfrac{\\pi}{3}=1$. $\\rho\\sin\\phi=\\sqrt3$ es $r$, la distancia al eje $z$, no la altura; y $\\theta$ no interviene en $z$. Las otras coordenadas son $x=y=\\sqrt6/2$." }, { "etiqueta": "Esfera", "nivel": 2, "criterio": "Integrar $\\rho^{2}$ en esféricas (§4)", "enunciado": "$\\displaystyle\\iiint_E(x^{2}+y^{2}+z^{2})\\,dV$ sobre la esfera unitaria vale:", "opciones": [ "$\\dfrac{4\\pi}{5}$", "$\\dfrac{4\\pi}{3}$", "$\\dfrac{2\\pi}{5}$", "$4\\pi$" ], "correcta": 0, "pista": "El integrando total es $\\rho^{4}\\sin\\phi$.", "solucion": "$x^{2}+y^{2}+z^{2}=\\rho^{2}$ y $dV=\\rho^{2}\\sin\\phi\\,d\\rho\\,d\\phi\\,d\\theta$: $\\int_{0}^{1}\\rho^{4}d\\rho\\cdot\\int_{0}^{\\pi}\\sin\\phi\\,d\\phi\\cdot2\\pi=\\tfrac15\\cdot2\\cdot2\\pi=\\tfrac{4\\pi}{5}$. $\\tfrac{4\\pi}{3}$ es el volumen (integral de 1)." }, { "etiqueta": "Elegir", "nivel": 3, "criterio": "Elegir el sistema de coordenadas (§5)", "enunciado": "Para el sólido dentro de la esfera $\\rho=1$ y por encima del cono $\\phi=\\pi/3$ conviene usar esféricas porque:", "opciones": [ "en cilíndricas el cono no se puede describir", "el integrando $1$ solo se integra en esféricas", "ambas superficies son «constantes» en esas coordenadas ($\\rho\\le1$, $\\phi\\le\\pi/3$) y el sólido es una caja; $V=\\pi/3$", "el volumen es siempre menor en esféricas" ], "correcta": 2, "pista": "¿En qué sistema los límites son constantes?", "solucion": "Esfera: $\\rho\\le1$; cono: $\\phi\\le\\pi/3$. Con $\\theta$ libre, el sólido es una caja $[0,1]\\times[0,\\pi/3]\\times[0,2\\pi]$ y $V=\\tfrac13(1-\\cos\\tfrac{\\pi}{3})2\\pi=\\tfrac{\\pi}{3}$. En cilíndricas habría que partirlo en cono y casquete." } ] });
+</script>
 </body>
 </html>

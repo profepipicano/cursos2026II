@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 11 · Integrales en polares y área de superficie — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 11 · Integrales en polares y área de superficie — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912d">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 11</h1>
+      <h1>Cálculo Vectorial · Guía 11</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,328 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · El factor r</a>
+    <a href="#s2">2 · Integrar en polares</a>
+    <a href="#s3">3 · Áreas y volúmenes</a>
+    <a href="#s4">4 · Área de una superficie</a>
+    <a href="#s5">5 · El hemisferio</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 11 · Integrales en polares y área de superficie</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 11 · Corte III</div>
+  <h2>Integrales en polares y área de superficie</h2>
+  <p>Muchas regiones del plano son discos, anillos o sectores, y describirlas con $x$ e $y$ llena la
+     integral de raíces cuadradas. En coordenadas polares esas regiones son rectángulos y las integrales
+     se vuelven sencillas, a cambio de un único detalle: el elemento de área es $r\,dr\,d\theta$. Con esa
+     herramienta calcularemos también el área de superficies curvas.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 14.3 y 14.5</span>
+    <span class="chip">Stewart · Cap. 15.3 y 15.5</span>
+    <span class="chip">Semana 11</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 9 definió la integral doble $\iint_R f\,dA$ y la calculó con
+  integrales iteradas en $x$ e $y$. La Guía 2 presentó las coordenadas polares $x=r\cos\theta$,
+  $y=r\sin\theta$. Esta guía junta las dos: integrales dobles en coordenadas polares.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · El factor $r$: de dónde sale $dA=r\,dr\,d\theta$</h3>
+
+  <div class="callout-dark">
+    <h3>Un «rectángulo polar» no es un rectángulo</h3>
+    <p>Si cortamos el plano con circunferencias $r=$ const. y rayos $\theta=$ const., cada celda tiene un
+       lado radial de longitud $\Delta r$ y un lado curvo —un arco— de longitud $r\,\Delta\theta$. Su área
+       es aproximadamente $r\,\Delta r\,\Delta\theta$: las celdas lejanas al origen son más grandes que las
+       cercanas, aunque $\Delta r$ y $\Delta\theta$ sean iguales.</p>
+    <p>Por eso, al sumar sobre una región, no basta con $dr\,d\theta$: hay que multiplicar por $r$.</p>
+  </div>
+
+  <div class="def">
+    <strong>Integral doble en polares.</strong> Si $R$ se describe como $\alpha\le\theta\le\beta$,
+    $g_1(\theta)\le r\le g_2(\theta)$:
+    $$\iint_R f(x,y)\,dA=\int_{\alpha}^{\beta}\!\!\int_{g_1(\theta)}^{g_2(\theta)} f(r\cos\theta,\,r\sin\theta)\;r\,dr\,d\theta$$
+    Tres cambios a la vez: $x=r\cos\theta$, $y=r\sin\theta$ en el integrando; los límites en $r$ y $\theta$; y el factor $r$.
+  </div>
+
+  <div class="sub-title">1.1 Celdas polares: con y sin el factor $r$</div>
+  <div class="viz" data-viz="regionpolar">
+    <div class="viz-controls">
+      <label for="rp-r">Región</label>
+      <select id="rp-r">
+        <option value="disco">disco r ≤ 3/2</option>
+        <option value="anillo">anillo 1 ≤ r ≤ 2</option>
+        <option value="sector">cuarto de disco r ≤ 3/2</option>
+        <option value="cardio">cardioide r ≤ 1 + cos θ</option>
+      </select>
+      <label for="rp-f">Área de cada celda</label>
+      <select id="rp-f" class="factor">
+        <option value="con">r·Δr·Δθ (correcto)</option>
+        <option value="sin">Δr·Δθ (sin el factor r)</option>
+      </select>
+      <label for="rp-n">Celdas</label>
+      <input id="rp-n" class="n" type="range" min="2" max="40" step="1" value="8">
+      <span class="n-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Sube el número de celdas: con el factor $r$ la suma converge al área exacta; sin él converge a otro
+    número. Observa que las celdas exteriores son visiblemente más grandes que las interiores.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Integrar en polares</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $\displaystyle\iint_D\sqrt{x^{2}+y^{2}}\,dA$, con $D$ el disco $x^{2}+y^{2}\le1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Describir la región</div>
+        El disco unitario es $0\le r\le1$, $0\le\theta\le2\pi$: un rectángulo en el plano $r\theta$.
+      </div>
+      <div class="paso"><div class="paso-t">Convertir el integrando</div>
+        $\sqrt{x^{2}+y^{2}}=r$. Con el factor $r$ del $dA$, el integrando queda $r\cdot r=r^{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{1}r^{2}\,dr\,d\theta=\int_{0}^{2\pi}\frac{1}{3}\,d\theta=\frac{2\pi}{3}$.
+        En cartesianas habría exigido integrar $\sqrt{x^{2}+y^{2}}$ entre $\pm\sqrt{1-x^{2}}$: mucho peor.
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $\displaystyle\iint_D e^{-(x^{2}+y^{2})}\,dA$ sobre el mismo disco</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Sin polares es imposible</div>
+        $e^{-x^{2}}$ no tiene antiderivada elemental. Pero $x^{2}+y^{2}=r^{2}$ y el factor $r$ es justo lo
+        que necesita la sustitución $u=r^{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Integral interna</div>
+        $\displaystyle\int_{0}^{1}e^{-r^{2}}\,r\,dr=\Big[-\tfrac{1}{2}e^{-r^{2}}\Big]_{0}^{1}=\frac{1-e^{-1}}{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Integral externa</div>
+        $\displaystyle\int_{0}^{2\pi}\frac{1-e^{-1}}{2}\,d\theta=\pi\,(1-e^{-1})\approx1{,}986$.
+      </div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Cuándo usar polares.</strong> Cuando la región es un disco, un anillo, un sector o está
+    limitada por curvas $r=g(\theta)$; o cuando el integrando contiene $x^{2}+y^{2}$. Señal inequívoca:
+    aparecen $\sqrt{a^{2}-x^{2}}$ en los límites o $x^{2}+y^{2}$ en el integrando.
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Áreas y volúmenes en polares</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Área encerrada por la cardioide $r=1+\cos\theta$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Área = integral de 1</div>
+        $A=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{1+\cos\theta}r\,dr\,d\theta=\int_{0}^{2\pi}\frac{(1+\cos\theta)^{2}}{2}\,d\theta$.
+      </div>
+      <div class="paso"><div class="paso-t">Desarrollar e integrar</div>
+        $(1+\cos\theta)^{2}=1+2\cos\theta+\cos^{2}\theta$. En un periodo, $\int\cos\theta=0$ y $\int\cos^{2}\theta=\pi$:
+        $A=\tfrac{1}{2}(2\pi+0+\pi)=\dfrac{3\pi}{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">La fórmula de la Guía 2 reaparece</div>
+        $A=\tfrac12\int r^{2}\,d\theta$ no es más que la integral interna $\int_0^{g(\theta)}r\,dr=\tfrac12 g(\theta)^{2}$ ya resuelta.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Volumen bajo el paraboloide $z=4-x^{2}-y^{2}$ sobre su base</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">La base</div>
+        El paraboloide corta el plano $z=0$ en $x^{2}+y^{2}=4$: el disco $r\le2$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar en polares</div>
+        $V=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{2}(4-r^{2})\,r\,dr\,d\theta=\int_{0}^{2\pi}\Big[2r^{2}-\frac{r^{4}}{4}\Big]_{0}^{2}d\theta=\int_{0}^{2\pi}4\,d\theta=8\pi$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Integrales en polares</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Área de una superficie</h3>
+
+  <div class="callout-dark">
+    <h3>Un parche inclinado es más grande que su sombra</h3>
+    <p>Sobre cada pedacito $dA$ de la región $R$ hay un pedacito $dS$ de la superficie $z=f(x,y)$. Si la
+       superficie es horizontal, $dS=dA$; si está inclinada, $dS$ es mayor. El factor exacto es
+       $\sqrt{1+f_x^{2}+f_y^{2}}$: la longitud del vector normal $(-f_x,-f_y,1)$ de la Guía 7.</p>
+  </div>
+
+  <div class="def">
+    <strong>Área de la superficie</strong> $z=f(x,y)$ sobre la región $R$:
+    $$S=\iint_R\sqrt{1+f_x(x,y)^{2}+f_y(x,y)^{2}}\;dA$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · El plano $z=2x+2y$ sobre el cuadrado $[0,1]\times[0,1]$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">El factor es constante</div>
+        $f_x=2$, $f_y=2$: $\sqrt{1+4+4}=3$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $S=\displaystyle\iint_R 3\,dA=3\cdot\text{Área}(R)=3$. Un plano inclinado tiene área igual a la de su sombra por un factor fijo.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · El paraboloide $z=x^{2}+y^{2}$ sobre el disco $r\le1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">El factor</div>
+        $f_x=2x$, $f_y=2y$: $\sqrt{1+4x^{2}+4y^{2}}=\sqrt{1+4r^{2}}$. Región circular e integrando con $x^{2}+y^{2}$: polares.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar en polares</div>
+        $S=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{1}\sqrt{1+4r^{2}}\;r\,dr\,d\theta$. Con $u=1+4r^{2}$, $du=8r\,dr$:
+        $\displaystyle\int_{0}^{1}\sqrt{1+4r^{2}}\,r\,dr=\Big[\frac{(1+4r^{2})^{3/2}}{12}\Big]_{0}^{1}=\frac{5\sqrt5-1}{12}$.
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        $S=2\pi\cdot\dfrac{5\sqrt5-1}{12}=\dfrac{\pi}{6}\big(5\sqrt5-1\big)\approx5{,}330$. Más que el área de la base, $\pi\approx3{,}14$, porque la superficie se empina hacia el borde.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 El parche $dA$ y su imagen $dS$</div>
+  <div class="viz" data-viz="areasuperficie">
+    <div class="viz-controls">
+      <label for="as-f">Superficie</label>
+      <select id="as-f">
+        <option value="parab">z = x² + y² (paraboloide)</option>
+        <option value="plano">z = (x + y + 1)/2 (plano)</option>
+        <option value="hemi">z = √(1 − x² − y²) (hemisferio)</option>
+      </select>
+      <label for="as-g">Giro</label>
+      <input id="as-g" class="giro" type="range" min="0" max="628" step="1" value="85">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    El parche rojo está en el plano (la región $R$); el naranja es su imagen sobre la superficie. En el
+    plano la razón entre ambos es constante; en el paraboloide y el hemisferio crece hacia el borde.
+  </p>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Comprobación clásica: el hemisferio</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · Área del hemisferio $z=\sqrt{a^{2}-x^{2}-y^{2}}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Las parciales</div>
+        $f_x=\dfrac{-x}{\sqrt{a^{2}-x^{2}-y^{2}}}$, $f_y=\dfrac{-y}{\sqrt{a^{2}-x^{2}-y^{2}}}$, así que
+        $1+f_x^{2}+f_y^{2}=1+\dfrac{x^{2}+y^{2}}{a^{2}-x^{2}-y^{2}}=\dfrac{a^{2}}{a^{2}-x^{2}-y^{2}}$.
+      </div>
+      <div class="paso"><div class="paso-t">El factor en polares</div>
+        $\sqrt{1+f_x^{2}+f_y^{2}}=\dfrac{a}{\sqrt{a^{2}-r^{2}}}$. Crece sin límite al acercarse al borde $r=a$, donde la superficie es vertical.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $S=\displaystyle\int_{0}^{2\pi}\!\!\int_{0}^{a}\frac{a\,r}{\sqrt{a^{2}-r^{2}}}\,dr\,d\theta=2\pi a\Big[-\sqrt{a^{2}-r^{2}}\Big]_{0}^{a}=2\pi a\cdot a=2\pi a^{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        La mitad de $4\pi a^{2}$, el área de la esfera: la fórmula de la integral reproduce el resultado
+        clásico. (La integral es impropia en $r=a$, pero converge.)
+      </div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Resumen del método.</strong> (1) Calcular $f_x$, $f_y$ y el factor $\sqrt{1+f_x^{2}+f_y^{2}}$.
+    (2) Describir la región $R$ (sombra de la superficie). (3) Si $R$ es circular o el factor contiene
+    $x^{2}+y^{2}$, pasar a polares con $dA=r\,dr\,d\theta$. (4) Integrar.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Área de superficie</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La cobertura de un servicio (una tienda, una antena, un centro de distribución) suele modelarse
+      como un disco o un sector alrededor de un punto. Integrar la densidad de clientes en polares da la
+      demanda total atendida, y el factor $r$ recuerda que un anillo lejano contiene más área —y más
+      clientes— que uno cercano.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La distribución normal bivariada, base de muchos modelos de riesgo conjunto, tiene densidad
+      proporcional a $e^{-(x^{2}+y^{2})/2}$. Que su integral total sea finita y calculable se debe
+      exactamente al Ejemplo 2: en polares, el factor $r$ convierte una integral imposible en una
+      sustitución elemental.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Los filtros y kernels radiales del procesamiento de imágenes ($e^{-r^{2}/2\sigma^{2}}$, por
+      ejemplo) se normalizan integrando en polares. Y el área de una superficie $z=f(x,y)$ es lo que
+      calcula un motor gráfico para repartir texturas o estimar el costo de renderizar un terreno.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El flujo de un campo uniforme a través de una placa inclinada se reduce al factor
+      $\sqrt{1+f_x^{2}+f_y^{2}}$ de la Guía: área real contra área proyectada. Y la potencia radiada por
+      una antena se integra sobre discos y sectores alrededor de ella, siempre con $r\,dr\,d\theta$.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Elemento de área polar</strong>: $dA=r\,dr\,d\theta$. El factor $r$ viene del arco $r\,\Delta\theta$ de cada celda.</li>
+    <li>Para pasar a polares: $x=r\cos\theta$, $y=r\sin\theta$, $x^{2}+y^{2}=r^{2}$, límites en $r$ y $\theta$, y el factor $r$.</li>
+    <li>Úsalas con regiones circulares o integrandos con $x^{2}+y^{2}$: $\iint_D\sqrt{x^{2}+y^{2}}\,dA=\tfrac{2\pi}{3}$; $\iint_D e^{-(x^{2}+y^{2})}dA=\pi(1-e^{-1})$ sobre el disco unitario.</li>
+    <li><strong>Área</strong> $=\iint r\,dr\,d\theta$ (cardioide: $3\pi/2$); <strong>volumen</strong> bajo $z=4-r^{2}$: $8\pi$.</li>
+    <li><strong>Área de superficie</strong>: $S=\iint_R\sqrt{1+f_x^{2}+f_y^{2}}\,dA$. Plano $z=2x+2y$ sobre el cuadrado unitario: $3$; paraboloide sobre $r\le1$: $\tfrac{\pi}{6}(5\sqrt5-1)$; hemisferio: $2\pi a^{2}$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/5-3-double-integrals-in-polar-coordinates" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912d"></script>
+<script src="../assets/viz-vectorial.js?v=20260912d"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Integrales en polares · 3 preguntas", "items": [ { "etiqueta": "El factor r", "nivel": 1, "criterio": "Justificar dA = r dr dθ (§1)", "enunciado": "En coordenadas polares el elemento de área es $dA=r\\,dr\\,d\\theta$ porque:", "opciones": [ "el lado curvo de una celda polar es un arco de longitud $r\\,d\\theta$, que crece con $r$", "$r$ es siempre positivo", "la integral debe dar un número mayor", "$dr$ y $d\\theta$ tienen unidades distintas y hay que compensarlas" ], "correcta": 0, "pista": "Mide los dos lados de una celda polar.", "solucion": "Una celda polar tiene lado radial $dr$ y lado curvo $r\\,d\\theta$ (longitud de arco). Su área es $r\\,dr\\,d\\theta$: las celdas lejanas al origen son más grandes aunque $dr$ y $d\\theta$ sean los mismos." }, { "etiqueta": "Convertir", "nivel": 2, "criterio": "Pasar un integrando a polares (§2)", "enunciado": "$\\displaystyle\\iint_D\\sqrt{x^{2}+y^{2}}\\,dA$ sobre el disco $x^{2}+y^{2}\\le1$ se convierte en:", "opciones": [ "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{1}r^{3}\\,dr\\,d\\theta=\\frac{\\pi}{2}$", "$\\displaystyle\\int_{0}^{1}\\!\\!\\int_{0}^{1}r^{2}\\,dr\\,d\\theta=\\frac{1}{3}$", "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{1}r^{2}\\,dr\\,d\\theta=\\frac{2\\pi}{3}$", "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{1}r\\,dr\\,d\\theta=\\pi$" ], "correcta": 2, "pista": "$\\sqrt{x^{2}+y^{2}}=r$, y el $dA$ aporta otro $r$.", "solucion": "El integrando $\\sqrt{x^{2}+y^{2}}=r$ multiplicado por el factor $r$ de $dA$ da $r^{2}$. Con $0\\le r\\le1$ y $0\\le\\theta\\le2\\pi$: $2\\pi\\cdot\\tfrac13=\\tfrac{2\\pi}{3}$. Olvidar el factor $r$ da $\\pi$, que es el área del disco, no la integral pedida." }, { "etiqueta": "Volumen", "nivel": 3, "criterio": "Calcular un volumen en polares (§3)", "enunciado": "El volumen bajo $z=4-x^{2}-y^{2}$ sobre el disco $r\\le2$ es:", "opciones": [ "$16\\pi$", "$4\\pi$", "$\\dfrac{32\\pi}{3}$", "$8\\pi$" ], "correcta": 3, "pista": "$\\int_{0}^{2\\pi}\\int_{0}^{2}(4-r^{2})\\,r\\,dr\\,d\\theta$.", "solucion": "$\\int_{0}^{2}(4r-r^{3})dr=\\big[2r^{2}-\\tfrac{r^{4}}{4}\\big]_{0}^{2}=8-4=4$, y $\\int_{0}^{2\\pi}4\\,d\\theta=8\\pi$. $16\\pi$ sería el volumen del cilindro de radio 2 y altura 4 que lo envuelve: el paraboloide ocupa exactamente la mitad." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Área de superficie · 3 preguntas", "items": [ { "etiqueta": "Fórmula", "nivel": 1, "criterio": "Enunciar la fórmula del área de superficie (§4)", "enunciado": "El área de la superficie $z=f(x,y)$ sobre la región $R$ es:", "opciones": [ "$\\displaystyle\\iint_R\\sqrt{f_x^{2}+f_y^{2}}\\,dA$", "$\\displaystyle\\iint_R\\sqrt{1+f_x^{2}+f_y^{2}}\\,dA$", "$\\displaystyle\\iint_R f(x,y)\\,dA$", "$\\displaystyle\\iint_R(f_x+f_y)\\,dA$" ], "correcta": 1, "pista": "Cada parche $dS$ es $dA$ multiplicado por un factor $\\ge1$.", "solucion": "$dS=\\sqrt{1+f_x^{2}+f_y^{2}}\\,dA$: el factor es la longitud del vector normal $(-f_x,-f_y,1)$. $\\iint_R f\\,dA$ es el volumen bajo la superficie, no su área; y sin el $1$ dentro de la raíz una superficie horizontal tendría área cero." }, { "etiqueta": "Plano", "nivel": 2, "criterio": "Área de un plano inclinado (§4)", "enunciado": "El área del plano $z=2x+2y$ sobre el cuadrado $[0,1]\\times[0,1]$ es:", "opciones": [ "$3$", "$1$", "$9$", "$\\sqrt{5}$" ], "correcta": 0, "pista": "$\\sqrt{1+2^{2}+2^{2}}$ es constante.", "solucion": "$f_x=2$, $f_y=2$, factor $\\sqrt{1+4+4}=3$. Como es constante, $S=3\\cdot\\text{Área}(R)=3\\cdot1=3$. La opción $9$ olvida la raíz; $1$ es el área de la sombra, no de la superficie." }, { "etiqueta": "Paraboloide", "nivel": 3, "criterio": "Plantear el área en polares (§4)", "enunciado": "Para el área de $z=x^{2}+y^{2}$ sobre el disco $r\\le1$, el integrando en polares (incluido el $dA$) es:", "opciones": [ "$(1+4r^{2})\\,r$", "$\\sqrt{1+2r}\\;r$", "$\\sqrt{1+4r^{2}}\\;r$", "$\\sqrt{1+4r^{2}}$" ], "correcta": 2, "pista": "$f_x=2x$, $f_y=2y$ → $f_x^{2}+f_y^{2}=4r^{2}$; y no olvides el $r$ de $dA$.", "solucion": "$\\sqrt{1+f_x^{2}+f_y^{2}}=\\sqrt{1+4x^{2}+4y^{2}}=\\sqrt{1+4r^{2}}$, y $dA=r\\,dr\\,d\\theta$ aporta el factor $r$. Ese $r$ es además el que permite la sustitución $u=1+4r^{2}$; el resultado es $\\tfrac{\\pi}{6}(5\\sqrt5-1)$." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Región", "nivel": 1, "criterio": "Describir una región en polares (§1)", "enunciado": "El anillo $1\\le x^{2}+y^{2}\\le4$ se describe en polares como:", "opciones": [ "$1\\le r\\le4$, $0\\le\\theta\\le2\\pi$", "$0\\le r\\le2$, $0\\le\\theta\\le\\pi$", "$1\\le r\\le2$, $0\\le\\theta\\le\\pi$", "$1\\le r\\le2$, $0\\le\\theta\\le2\\pi$" ], "correcta": 3, "pista": "$x^{2}+y^{2}=r^{2}$: toma raíces.", "solucion": "$1\\le r^{2}\\le4$ equivale a $1\\le r\\le2$, y el anillo completo recorre $0\\le\\theta\\le2\\pi$. Escribir $r\\le4$ confunde $r$ con $r^{2}$. Su área es $\\int_{0}^{2\\pi}\\int_{1}^{2}r\\,dr\\,d\\theta=3\\pi$." }, { "etiqueta": "Área", "nivel": 2, "criterio": "Área por integral doble en polares (§3)", "enunciado": "$\\displaystyle\\int_{0}^{2\\pi}\\!\\!\\int_{0}^{3}r\\,dr\\,d\\theta$ es igual a:", "opciones": [ "$18\\pi$", "$9\\pi$", "$6\\pi$", "$3\\pi$" ], "correcta": 1, "pista": "Es el área del disco de radio 3.", "solucion": "$\\int_{0}^{3}r\\,dr=\\tfrac92$ y $\\tfrac92\\cdot2\\pi=9\\pi$: el área del disco de radio 3, $\\pi\\cdot3^{2}$. La opción $6\\pi$ sale de olvidar el factor $r$ (da $3\\cdot2\\pi$)." }, { "etiqueta": "Sector", "nivel": 2, "criterio": "Integrar sobre un sector (§2)", "enunciado": "$\\displaystyle\\iint_R(x^{2}+y^{2})\\,dA$ sobre el cuarto de disco $r\\le2$, $0\\le\\theta\\le\\pi/2$ vale:", "opciones": [ "$2\\pi$", "$8\\pi$", "$\\pi$", "$4\\pi$" ], "correcta": 0, "pista": "$x^{2}+y^{2}=r^{2}$; integrando total $r^{3}$.", "solucion": "$\\int_{0}^{\\pi/2}\\int_{0}^{2}r^{2}\\cdot r\\,dr\\,d\\theta=\\tfrac{\\pi}{2}\\cdot\\big[\\tfrac{r^{4}}{4}\\big]_{0}^{2}=\\tfrac{\\pi}{2}\\cdot4=2\\pi$. Sobre el disco completo sería $8\\pi$: el cuarto de disco da la cuarta parte." }, { "etiqueta": "Gaussiana", "nivel": 3, "criterio": "Reconocer por qué polares resuelve $e^{-r^{2}}$ (§2)", "enunciado": "$\\displaystyle\\iint_D e^{-(x^{2}+y^{2})}\\,dA$ sobre el disco unitario vale $\\pi(1-e^{-1})$ porque en polares:", "opciones": [ "$e^{-x^{2}}$ tiene antiderivada elemental", "el disco se convierte en un cuadrado de lado $\\pi$", "el factor $r$ del $dA$ permite la sustitución $u=r^{2}$ en $\\int e^{-r^{2}}r\\,dr$", "$e^{-r^{2}}$ es constante en $\\theta$ y por eso se cancela" ], "correcta": 2, "pista": "¿Qué hace falta para integrar $e^{-r^{2}}$?", "solucion": "$\\int_{0}^{1}e^{-r^{2}}r\\,dr$ se resuelve con $u=r^{2}$ gracias al $r$ que aporta $dA$: da $\\tfrac{1-e^{-1}}{2}$, y la integral en $\\theta$ multiplica por $2\\pi$. En cartesianas, $e^{-x^{2}}$ no tiene antiderivada elemental." }, { "etiqueta": "Cardioide", "nivel": 3, "criterio": "Área con frontera $r=g(\\theta)$ (§3)", "enunciado": "El área encerrada por la cardioide $r=1+\\cos\\theta$ es:", "opciones": [ "$2\\pi$", "$\\pi$", "$3\\pi$", "$\\dfrac{3\\pi}{2}$" ], "correcta": 3, "pista": "$\\tfrac12\\int_{0}^{2\\pi}(1+\\cos\\theta)^{2}d\\theta$, con $\\int\\cos^{2}\\theta\\,d\\theta=\\pi$ en un periodo.", "solucion": "$\\int_{0}^{2\\pi}\\int_{0}^{1+\\cos\\theta}r\\,dr\\,d\\theta=\\tfrac12\\int_{0}^{2\\pi}(1+2\\cos\\theta+\\cos^{2}\\theta)\\,d\\theta=\\tfrac12(2\\pi+0+\\pi)=\\tfrac{3\\pi}{2}$. $2\\pi$ es lo que da olvidar el factor $r$: $\\int(1+\\cos\\theta)d\\theta$." }, { "etiqueta": "Factor", "nivel": 2, "criterio": "Calcular el factor de área (§4)", "enunciado": "Para $z=3x+4y$, el factor $\\sqrt{1+f_x^{2}+f_y^{2}}$ vale:", "opciones": [ "$7$", "$\\sqrt{26}$", "$5$", "$\\sqrt{7}$" ], "correcta": 1, "pista": "$f_x=3$, $f_y=4$.", "solucion": "$\\sqrt{1+9+16}=\\sqrt{26}$. La opción $5=\\sqrt{9+16}$ olvida el $1$; es un error frecuente porque $3$-$4$-$5$ es tentador. Sobre una región de área 2, la superficie tendría área $2\\sqrt{26}$." }, { "etiqueta": "Hemisferio", "nivel": 3, "criterio": "Reproducir el área del hemisferio (§5)", "enunciado": "Para el hemisferio $z=\\sqrt{a^{2}-x^{2}-y^{2}}$, el factor $\\sqrt{1+f_x^{2}+f_y^{2}}$ en polares es:", "opciones": [ "$\\dfrac{a}{\\sqrt{a^{2}-r^{2}}}$", "$\\sqrt{a^{2}-r^{2}}$", "$\\dfrac{r}{\\sqrt{a^{2}-r^{2}}}$", "$1$" ], "correcta": 0, "pista": "$1+\\dfrac{x^{2}+y^{2}}{a^{2}-x^{2}-y^{2}}=\\dfrac{a^{2}}{a^{2}-r^{2}}$.", "solucion": "$f_x^{2}+f_y^{2}=\\dfrac{x^{2}+y^{2}}{a^{2}-x^{2}-y^{2}}$, así que $1+f_x^{2}+f_y^{2}=\\dfrac{a^{2}}{a^{2}-r^{2}}$ y el factor es $\\dfrac{a}{\\sqrt{a^{2}-r^{2}}}$. Integrando $\\dfrac{a\\,r}{\\sqrt{a^{2}-r^{2}}}$ sobre $r\\le a$ y $\\theta$ se obtiene $2\\pi a^{2}$." }, { "etiqueta": "Cono", "nivel": 3, "criterio": "Volumen en polares (§3)", "enunciado": "El volumen del cono sólido bajo $z=1-\\sqrt{x^{2}+y^{2}}$ y sobre el disco $r\\le1$ es:", "opciones": [ "$\\dfrac{2\\pi}{3}$", "$\\dfrac{\\pi}{6}$", "$\\dfrac{\\pi}{3}$", "$\\pi$" ], "correcta": 2, "pista": "$\\int_{0}^{2\\pi}\\int_{0}^{1}(1-r)\\,r\\,dr\\,d\\theta$.", "solucion": "$\\int_{0}^{1}(r-r^{2})dr=\\tfrac12-\\tfrac13=\\tfrac16$ y $2\\pi\\cdot\\tfrac16=\\tfrac{\\pi}{3}$: coincide con la fórmula del cono $\\tfrac13\\pi r^{2}h$ con $r=h=1$. La opción $\\pi$ sale de olvidar el factor $r$ ($\\int_{0}^{1}(1-r)dr=\\tfrac12$)." } ] });
+</script>
 </body>
 </html>

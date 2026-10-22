@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 14 · Campos vectoriales e integral de línea — Cálculo Vectorial · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 14 · Campos vectoriales e integral de línea — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912d">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo Vectorial · Semana 14</h1>
+      <h1>Cálculo Vectorial · Guía 14</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,342 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Campos vectoriales</a>
+    <a href="#s2">2 · Integral de línea</a>
+    <a href="#s3">3 · Trabajo</a>
+    <a href="#s4">4 · Campos conservativos</a>
+    <a href="#s5">5 · Teorema de Green</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 14 · Campos vectoriales e integral de línea</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 14 · Corte III</div>
+  <h2>Campos vectoriales e integral de línea</h2>
+  <p>La última guía del curso cambia el objeto de estudio: en vez de una función que da un número en cada
+     punto, un <strong>campo vectorial</strong> que da una flecha —una fuerza, una velocidad— en cada
+     punto. Integrar un campo a lo largo de una curva mide el trabajo que realiza; y el teorema de Green
+     conecta esa integral sobre una curva cerrada con una integral doble sobre la región que encierra,
+     cerrando el círculo con la Guía 9.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 15.1–15.4</span>
+    <span class="chip">Stewart · Cap. 16.1–16.4</span>
+    <span class="chip">Semana 14</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> El gradiente de la Guía 7, $\nabla f=(f_x,f_y)$, es el primer campo
+  vectorial que conociste; las curvas paramétricas $\mathbf r(t)$ de la Guía 3 son los caminos por los que
+  vamos a integrar; y la integral doble de la Guía 9 reaparece en el teorema de Green.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Campos vectoriales</h3>
+
+  <div class="callout-dark">
+    <h3>Una flecha en cada punto</h3>
+    <p>Un campo vectorial en el plano asigna a cada punto $(x,y)$ un vector $\mathbf F(x,y)=(P(x,y),\,Q(x,y))$.
+       Se dibuja poniendo la flecha en su punto. Ejemplos: el campo de velocidades de un fluido, una
+       fuerza que depende de la posición (gravedad, campo eléctrico) y, muy especialmente, el gradiente
+       de una función escalar.</p>
+  </div>
+
+  <div class="def">
+    <strong>Campo gradiente.</strong> Si $f(x,y)$ es una función escalar, $\nabla f=(f_x,f_y)$ es un campo
+    vectorial. Un campo que es gradiente de alguna $f$ se llama <strong>conservativo</strong>, y $f$ es su
+    <strong>función potencial</strong>.
+    <br>Ejemplos: $\mathbf F=(2xy,\,x^{2})=\nabla(x^{2}y)$; $\mathbf F=(x,y)=\nabla\big(\tfrac12(x^{2}+y^{2})\big)$. El campo
+    de rotación $\mathbf F=(-y,x)$, en cambio, no es gradiente de nada (§4).
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Integral de línea de una función escalar</h3>
+
+  <div class="callout-dark">
+    <h3>Integrar a lo largo de una curva</h3>
+    <p>Si una curva $C$ se recorre con $\mathbf r(t)=(x(t),y(t))$, $a\le t\le b$, un trocito de curva mide
+       $ds=|\mathbf r'(t)|\,dt$ (la rapidez por el tiempo, como en la longitud de arco de la Guía 4). La
+       integral de $f$ sobre $C$ suma $f$ por cada trocito: sirve para la masa de un alambre con densidad
+       $f$, o para el área de una «cortina» de altura $f$ levantada sobre $C$.</p>
+  </div>
+
+  <div class="def">
+    $$\int_C f(x,y)\,ds=\int_{a}^{b} f\big(x(t),y(t)\big)\,\big|\mathbf r'(t)\big|\,dt\qquad\text{y}\qquad \int_C 1\,ds=\text{longitud de }C$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $\displaystyle\int_C(x^{2}+y^{2})\,ds$ sobre la circunferencia de radio 2</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Parametrizar</div>
+        $\mathbf r(t)=(2\cos t,\,2\sin t)$, $0\le t\le2\pi$; $\mathbf r'(t)=(-2\sin t,\,2\cos t)$, $|\mathbf r'|=2$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        Sobre la circunferencia $x^{2}+y^{2}=4$ siempre: $\displaystyle\int_{0}^{2\pi}4\cdot2\,dt=16\pi$. Es $4$ por la longitud $4\pi$.
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Masa de un alambre recto de $(0,0)$ a $(3,4)$ con densidad $\delta=x$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Parametrizar</div>
+        $\mathbf r(t)=(3t,4t)$, $0\le t\le1$; $|\mathbf r'|=\sqrt{9+16}=5$ (la longitud del alambre).
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $m=\displaystyle\int_{0}^{1}3t\cdot5\,dt=15\Big[\frac{t^{2}}{2}\Big]_{0}^{1}=\frac{15}{2}$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Integral de línea de un campo: trabajo</h3>
+
+  <div class="callout-dark">
+    <h3>Solo cuenta la componente a favor del movimiento</h3>
+    <p>El trabajo de una fuerza constante es fuerza por desplazamiento <em>en la dirección del
+       desplazamiento</em>. Para un campo $\mathbf F$ a lo largo de una curva, en cada trocito se toma la
+       componente tangencial $\mathbf F\cdot\mathbf T$ y se multiplica por $ds$. Como $\mathbf T\,ds=\mathbf r'(t)\,dt$,
+       todo se reduce a un producto punto.</p>
+  </div>
+
+  <div class="def">
+    $$W=\int_C\mathbf F\cdot d\mathbf r=\int_C\mathbf F\cdot\mathbf T\,ds=\int_{a}^{b}\mathbf F\big(\mathbf r(t)\big)\cdot\mathbf r'(t)\,dt=\int_C P\,dx+Q\,dy$$
+    El signo importa: recorrer $C$ al revés cambia el signo. $\mathbf F\cdot\mathbf T\gt0$ donde el campo empuja a favor; $\lt0$ donde frena.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · $\mathbf F=(x,y)$ a lo largo de la parábola $\mathbf r(t)=(t,t^{2})$, $0\le t\le1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Evaluar el campo sobre la curva</div>
+        $\mathbf F(\mathbf r(t))=(t,\,t^{2})$ y $\mathbf r'(t)=(1,\,2t)$.
+      </div>
+      <div class="paso"><div class="paso-t">Producto punto e integrar</div>
+        $\mathbf F\cdot\mathbf r'=t+2t^{3}$, así que $W=\displaystyle\int_{0}^{1}(t+2t^{3})\,dt=\frac12+\frac12=1$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · $\mathbf F=(-y,x)$ alrededor de la circunferencia unitaria (antihoraria)</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Parametrizar</div>
+        $\mathbf r(t)=(\cos t,\sin t)$, $\mathbf r'(t)=(-\sin t,\cos t)$, $\mathbf F(\mathbf r(t))=(-\sin t,\cos t)$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $\mathbf F\cdot\mathbf r'=\sin^{2}t+\cos^{2}t=1$: $\oint_C\mathbf F\cdot d\mathbf r=\displaystyle\int_{0}^{2\pi}1\,dt=2\pi$. El campo es tangente a la circunferencia y empuja a favor todo el recorrido.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 El campo, la curva y $\mathbf F\cdot\mathbf T$</div>
+  <div class="viz" data-viz="campovec">
+    <div class="viz-controls">
+      <label for="cv-f">Campo</label>
+      <select id="cv-f" class="campo">
+        <option value="rot">F = (−y, x)</option>
+        <option value="grad">F = (2xy, x²) = ∇(x²y)</option>
+        <option value="rad">F = (x, y)</option>
+        <option value="ciz">F = (y, 0)</option>
+      </select>
+      <label for="cv-c">Curva</label>
+      <select id="cv-c" class="curva">
+        <option value="circ">círculo unitario (cerrada)</option>
+        <option value="parab">parábola de (0,0) a (2,1)</option>
+        <option value="recta">segmento de (0,0) a (2,1)</option>
+        <option value="cuad">cuadrado [0,1]² (cerrada)</option>
+      </select>
+      <label for="cv-t">Posición t</label>
+      <input id="cv-t" class="t" type="range" min="0" max="100" step="1" value="30">
+      <span class="t-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Prueba $\mathbf F=\nabla(x^{2}y)$ con la parábola y con el segmento: la integral vale $4$ en ambos.
+    Luego $\mathbf F=(-y,x)$ con las mismas dos curvas: los valores difieren. Esa es la diferencia entre
+    un campo conservativo y uno que no lo es.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Campos e integrales de línea</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Campos conservativos e independencia de la trayectoria</h3>
+
+  <div class="callout-dark">
+    <h3>El teorema fundamental, versión curvas</h3>
+    <p>Si $\mathbf F=\nabla f$, la integral de línea solo depende de los extremos: es $f$ al final menos
+       $f$ al principio, exactamente como $\int_a^b F'(x)\,dx=F(b)-F(a)$. Consecuencias: la integral no
+       depende del camino, y sobre cualquier curva cerrada vale cero.</p>
+  </div>
+
+  <div class="def">
+    <strong>Teorema fundamental de las integrales de línea.</strong> Si $\mathbf F=\nabla f$ y $C$ va de $A$ a $B$:
+    $$\int_C\nabla f\cdot d\mathbf r=f(B)-f(A)\qquad\qquad \oint_C\nabla f\cdot d\mathbf r=0$$
+    <strong>Criterio.</strong> En una región sin agujeros, $\mathbf F=(P,Q)$ es conservativo si y solo si
+    $\dfrac{\partial P}{\partial y}=\dfrac{\partial Q}{\partial x}$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · $\mathbf F=(2xy,\,x^{2})$ de $(0,0)$ a $(2,1)$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Criterio</div>
+        $P_y=2x$ y $Q_x=2x$: iguales, el campo es conservativo.
+      </div>
+      <div class="paso"><div class="paso-t">Hallar el potencial</div>
+        $f_x=2xy\Rightarrow f=x^{2}y+g(y)$; entonces $f_y=x^{2}+g'(y)=x^{2}\Rightarrow g'=0$. Potencial: $f=x^{2}y$.
+      </div>
+      <div class="paso"><div class="paso-t">Integral por cualquier camino</div>
+        $\displaystyle\int_C\mathbf F\cdot d\mathbf r=f(2,1)-f(0,0)=4-0=4$. Por la recta $(2t,t)$: $\int_0^1(4t^{2}\cdot2+4t^{2})dt=4$ ✓; por la parábola $(2t,t^{2})$ también $4$ ✓.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Por qué $\mathbf F=(-y,x)$ no es conservativo</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Criterio</div>
+        $P_y=-1$ y $Q_x=1$: distintos. No existe potencial.
+      </div>
+      <div class="paso"><div class="paso-t">Lo confirma el Ejemplo 4</div>
+        Sobre la circunferencia cerrada la integral dio $2\pi\neq0$. Un campo conservativo habría dado cero.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · El teorema de Green</h3>
+
+  <div class="callout-dark">
+    <h3>La circulación por el borde es la integral de la rotación en el interior</h3>
+    <p>Para una curva cerrada $C$ recorrida en sentido antihorario que encierra la región $D$, la integral
+       de línea de $\mathbf F=(P,Q)$ sobre $C$ coincide con la integral doble de $Q_x-P_y$ sobre $D$. Esa
+       cantidad mide cuánto «gira» el campo en cada punto; si es cero en todas partes (campo
+       conservativo), la circulación es cero, en acuerdo con §4.</p>
+  </div>
+
+  <div class="def">
+    $$\oint_C P\,dx+Q\,dy=\iint_D\Big(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\Big)dA$$
+    <strong>Área por Green.</strong> Con $P=-y$, $Q=x$ el integrando vale $2$: $\text{Área}(D)=\dfrac12\oint_C x\,dy-y\,dx$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · El Ejemplo 4 con Green</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\mathbf F=(-y,x)$</div>
+        $Q_x-P_y=1-(-1)=2$. Entonces $\oint_C\mathbf F\cdot d\mathbf r=\iint_D2\,dA=2\cdot\pi\cdot1^{2}=2\pi$ ✓, sin parametrizar nada.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 8 · $\oint_C(x^{2}-y)\,dx+xy\,dy$ sobre el borde del cuadrado $[0,1]^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Sin Green: cuatro lados</div>
+        Habría que parametrizar cuatro segmentos y sumar cuatro integrales.
+      </div>
+      <div class="paso"><div class="paso-t">Con Green</div>
+        $P=x^{2}-y$, $Q=xy$: $Q_x-P_y=y-(-1)=y+1$. $\displaystyle\iint_D(y+1)\,dA=\int_{0}^{1}\!\!\int_{0}^{1}(y+1)\,dy\,dx=\frac12+1=\frac32$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 9 · Área de la elipse $\mathbf r(t)=(a\cos t,\,b\sin t)$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Fórmula del área</div>
+        $A=\dfrac12\displaystyle\oint_C x\,dy-y\,dx=\frac12\int_{0}^{2\pi}\big(a\cos t\cdot b\cos t-b\sin t\cdot(-a\sin t)\big)dt=\frac12\int_{0}^{2\pi}ab\,dt=\pi ab$.
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        Una integral sobre el borde mide el área del interior: así funcionan los planímetros y los cálculos de área a partir de coordenadas de vértices (GPS, catastro).
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Conservativos y Green</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Un campo conservativo es un sistema «sin fugas»: el resultado depende solo del punto de partida y
+      de llegada, no de la ruta. Es el modelo de los costos que dependen del estado (inventario inicial y
+      final) frente a los que dependen del camino (una ruta de reparto, donde el orden de las paradas
+      cambia el costo total: integral de línea no conservativa).</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El valor de una cartera es una función potencial: la ganancia entre dos fechas es la diferencia de
+      valor, independiente de los movimientos intermedios. Las comisiones por transacción, en cambio,
+      se acumulan a lo largo del camino —una integral de línea— y no se cancelan en un ciclo que vuelve
+      al punto de partida.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La fórmula del área por Green, $\tfrac12\sum(x_iy_{i+1}-x_{i+1}y_i)$ en su versión discreta, es el
+      algoritmo estándar para el área de un polígono en gráficos, SIG y geometría computacional. Los
+      campos vectoriales son también la base de los sistemas de partículas y de los flujos de datos
+      animados.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El campo electrostático es conservativo: el voltaje es su potencial y $\oint\mathbf E\cdot d\mathbf r=0$
+      es la ley de voltajes de Kirchhoff. El campo magnético alrededor de un conductor no lo es:
+      $\oint\mathbf B\cdot d\mathbf r=\mu_0 I$ (ley de Ampère) es una circulación distinta de cero, el análogo
+      físico del Ejemplo 4 y del teorema de Green.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Campo vectorial</strong> $\mathbf F=(P,Q)$: una flecha en cada punto. El gradiente $\nabla f$ es el ejemplo central; un campo gradiente es <strong>conservativo</strong>.</li>
+    <li><strong>Integral escalar</strong> $\int_C f\,ds=\int_a^b f(\mathbf r(t))\,|\mathbf r'(t)|\,dt$: masa de un alambre, longitud si $f=1$.</li>
+    <li><strong>Trabajo</strong> $\int_C\mathbf F\cdot d\mathbf r=\int_a^b\mathbf F(\mathbf r(t))\cdot\mathbf r'(t)\,dt$. $\mathbf F=(-y,x)$ en la circunferencia unitaria: $2\pi$.</li>
+    <li><strong>Teorema fundamental</strong>: $\int_C\nabla f\cdot d\mathbf r=f(B)-f(A)$; independencia del camino y $\oint=0$. Criterio: $P_y=Q_x$.</li>
+    <li><strong>Green</strong>: $\oint_C P\,dx+Q\,dy=\iint_D(Q_x-P_y)\,dA$ (antihorario). Área $=\tfrac12\oint x\,dy-y\,dx$; elipse: $\pi ab$.</li>
+    <li>Todo el curso en una frase: derivadas e integrales de funciones de varias variables, y los teoremas que las conectan.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/6-1-vector-fields" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912d"></script>
+<script src="../assets/viz-vectorial.js?v=20260912d"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Campos e integrales de línea · 3 preguntas", "items": [ { "etiqueta": "Campo", "nivel": 1, "criterio": "Reconocer un campo gradiente (§1)", "enunciado": "El campo $\\mathbf F=(2xy,\\,x^{2})$ es el gradiente de:", "opciones": [ "$f=x^{2}y$", "$f=xy^{2}$", "$f=x^{2}+y^{2}$", "$f=2xy$" ], "correcta": 0, "pista": "Busca $f$ con $f_x=2xy$ y $f_y=x^{2}$.", "solucion": "$\\nabla(x^{2}y)=(2xy,\\,x^{2})$ ✓. Para $xy^{2}$ el gradiente sería $(y^{2},2xy)$ y para $x^{2}+y^{2}$, $(2x,2y)$." }, { "etiqueta": "ds", "nivel": 2, "criterio": "Calcular una integral escalar de línea (§2)", "enunciado": "$\\displaystyle\\int_C(x^{2}+y^{2})\\,ds$ sobre la circunferencia $x^{2}+y^{2}=4$ vale:", "opciones": [ "$4\\pi$", "$16$", "$16\\pi$", "$8\\pi$" ], "correcta": 2, "pista": "El integrando es constante $=4$ sobre la curva; la longitud es $4\\pi$.", "solucion": "Con $\\mathbf r(t)=(2\\cos t,2\\sin t)$, $|\\mathbf r'|=2$ y $x^{2}+y^{2}=4$: $\\int_{0}^{2\\pi}4\\cdot2\\,dt=16\\pi$. $8\\pi$ sale de olvidar el factor $|\\mathbf r'|=2$." }, { "etiqueta": "Trabajo", "nivel": 3, "criterio": "Calcular el trabajo de un campo (§3)", "enunciado": "El trabajo de $\\mathbf F=(x,y)$ a lo largo de $\\mathbf r(t)=(t,t^{2})$, $0\\le t\\le1$, es:", "opciones": [ "$\\dfrac{1}{2}$", "$2$", "$\\dfrac{3}{2}$", "$1$" ], "correcta": 3, "pista": "$\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)=t+2t^{3}$.", "solucion": "$\\mathbf F(\\mathbf r(t))=(t,t^{2})$, $\\mathbf r'=(1,2t)$, producto $t+2t^{3}$; $\\int_{0}^{1}(t+2t^{3})dt=\\tfrac12+\\tfrac12=1$. Como $\\mathbf F=\\nabla\\tfrac12(x^{2}+y^{2})$, también es $f(1,1)-f(0,0)=1$." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Conservativos y Green · 3 preguntas", "items": [ { "etiqueta": "Criterio", "nivel": 2, "criterio": "Aplicar el criterio $P_y=Q_x$ (§4)", "enunciado": "¿Cuál de estos campos NO es conservativo?", "opciones": [ "$\\mathbf F=(y,\\,x)$", "$\\mathbf F=(-y,\\,x)$, porque $P_y=-1\\neq Q_x=1$", "$\\mathbf F=(2xy,\\,x^{2})$", "$\\mathbf F=(x,\\,y)$" ], "correcta": 1, "pista": "Compara $\\partial P/\\partial y$ con $\\partial Q/\\partial x$ en cada uno.", "solucion": "Para $(-y,x)$: $P_y=-1$ y $Q_x=1$, distintos: no conservativo (su circulación en la circunferencia unitaria es $2\\pi\\neq0$). Los otros tres cumplen $P_y=Q_x$: $(2xy,x^{2})=\\nabla(x^{2}y)$, $(x,y)=\\nabla\\tfrac12(x^{2}+y^{2})$, $(y,x)=\\nabla(xy)$." }, { "etiqueta": "Teorema", "nivel": 3, "criterio": "Usar el teorema fundamental de las integrales de línea (§4)", "enunciado": "$\\displaystyle\\int_C(2xy,\\,x^{2})\\cdot d\\mathbf r$ de $(0,0)$ a $(2,1)$ por cualquier camino vale:", "opciones": [ "$4$", "$2$", "$0$", "depende del camino" ], "correcta": 0, "pista": "$f=x^{2}y$; evalúa $f(2,1)-f(0,0)$.", "solucion": "El campo es conservativo con potencial $f=x^{2}y$, así que la integral es $f(2,1)-f(0,0)=4-0=4$ por la recta, por la parábola o por cualquier otro camino. Solo depende del camino si el campo no es conservativo." }, { "etiqueta": "Green", "nivel": 3, "criterio": "Aplicar el teorema de Green (§5)", "enunciado": "Por el teorema de Green, $\\displaystyle\\oint_C(-y)\\,dx+x\\,dy$ sobre la circunferencia unitaria (antihoraria) vale:", "opciones": [ "$\\pi$", "$\\displaystyle\\iint_D(x-y)\\,dA$", "$\\displaystyle\\iint_D2\\,dA=2\\pi$", "$\\displaystyle\\iint_D0\\,dA=0$" ], "correcta": 2, "pista": "$Q_x-P_y=1-(-1)$.", "solucion": "$P=-y$, $Q=x$: $Q_x-P_y=1-(-1)=2$, y $\\iint_D2\\,dA=2\\cdot\\pi=2\\pi$, el mismo valor que dio la parametrización directa. $\\pi$ sería la mitad: el área sin el factor 2." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Longitud", "nivel": 1, "criterio": "Interpretar $\\int_C 1\\,ds$ (§2)", "enunciado": "$\\displaystyle\\int_C 1\\,ds$ sobre la circunferencia de radio 3 vale:", "opciones": [ "$9\\pi$: el área del disco", "$3$", "$0$", "$6\\pi$: la longitud de la curva" ], "correcta": 3, "pista": "Integrar 1 respecto a la longitud de arco.", "solucion": "$\\int_C ds$ es la longitud de $C$: $2\\pi\\cdot3=6\\pi$. $9\\pi$ sería el área del disco, que es una integral doble, no de línea." }, { "etiqueta": "Alambre", "nivel": 2, "criterio": "Masa de un alambre (§2)", "enunciado": "La masa del alambre recto de $(0,0)$ a $(3,4)$ con densidad $\\delta=x$ es:", "opciones": [ "$5$", "$\\dfrac{15}{2}$", "$\\dfrac{3}{2}$", "$15$" ], "correcta": 1, "pista": "$\\mathbf r(t)=(3t,4t)$, $|\\mathbf r'|=5$.", "solucion": "$m=\\int_{0}^{1}3t\\cdot5\\,dt=15\\cdot\\tfrac12=\\tfrac{15}{2}$. $\\tfrac32$ olvida el factor $|\\mathbf r'|=5$ (la longitud del alambre); $5$ es solo esa longitud." }, { "etiqueta": "Signo", "nivel": 2, "criterio": "Interpretar $\\mathbf F\\cdot\\mathbf T$ (§3)", "enunciado": "Si en todo el recorrido de $C$ se cumple $\\mathbf F\\cdot\\mathbf T\\lt0$, entonces $\\displaystyle\\int_C\\mathbf F\\cdot d\\mathbf r$:", "opciones": [ "es negativa: el campo frena el movimiento a lo largo de $C$", "es cero", "es positiva", "no está definida" ], "correcta": 0, "pista": "La integral suma $\\mathbf F\\cdot\\mathbf T\\,ds$.", "solucion": "$\\int_C\\mathbf F\\cdot d\\mathbf r=\\int_C\\mathbf F\\cdot\\mathbf T\\,ds$; si el integrando es negativo en toda la curva, la integral es negativa: el campo se opone al avance. Recorrer $C$ al revés la haría positiva." }, { "etiqueta": "Circulación", "nivel": 3, "criterio": "Calcular una circulación (§3)", "enunciado": "$\\displaystyle\\oint_C(-y)\\,dx+x\\,dy$ sobre la circunferencia de radio 2 (antihoraria) vale:", "opciones": [ "$2\\pi$", "$0$", "$8\\pi$", "$4\\pi$" ], "correcta": 2, "pista": "Por Green, $2\\times$ área; o $\\int_{0}^{2\\pi}(4\\sin^{2}t+4\\cos^{2}t)dt$.", "solucion": "Con $\\mathbf r=(2\\cos t,2\\sin t)$: $\\mathbf F\\cdot\\mathbf r'=4\\sin^{2}t+4\\cos^{2}t=4$ y $\\int_{0}^{2\\pi}4\\,dt=8\\pi$. Por Green: $2\\cdot\\text{Área}=2\\cdot4\\pi=8\\pi$. $2\\pi$ es el valor para radio 1." }, { "etiqueta": "Potencial", "nivel": 2, "criterio": "Hallar una función potencial (§4)", "enunciado": "Una función potencial de $\\mathbf F=(y,\\,x)$ es:", "opciones": [ "$f=x+y$", "$f=\\tfrac12(x^{2}+y^{2})$", "$f=x^{2}y$", "$f=xy$" ], "correcta": 3, "pista": "$f_x=y$ y $f_y=x$.", "solucion": "$\\nabla(xy)=(y,x)$ ✓; $P_y=1=Q_x$ confirma que es conservativo. $\\nabla(x+y)=(1,1)$ y $\\nabla\\tfrac12(x^{2}+y^{2})=(x,y)$ no coinciden con $\\mathbf F$." }, { "etiqueta": "Cerrada", "nivel": 2, "criterio": "Integral de un gradiente en curva cerrada (§4)", "enunciado": "$\\displaystyle\\oint_C\\nabla f\\cdot d\\mathbf r$ sobre cualquier curva cerrada vale:", "opciones": [ "$f(A)$", "$0$, porque $f(B)-f(A)$ con $B=A$", "el área encerrada", "$2\\pi$" ], "correcta": 1, "pista": "Punto inicial = punto final.", "solucion": "Por el teorema fundamental, $\\int_C\\nabla f\\cdot d\\mathbf r=f(B)-f(A)$, y en una curva cerrada $B=A$: el resultado es $0$. Un valor distinto de cero en una curva cerrada demuestra que el campo no es conservativo." }, { "etiqueta": "Green", "nivel": 3, "criterio": "Calcular con Green (§5)", "enunciado": "$\\displaystyle\\oint_C(x^{2}-y)\\,dx+xy\\,dy$ sobre el borde del cuadrado $[0,1]^{2}$ (antihorario) vale:", "opciones": [ "$\\dfrac{3}{2}$", "$\\dfrac{1}{2}$", "$1$", "$0$" ], "correcta": 0, "pista": "$Q_x-P_y=y+1$.", "solucion": "$P=x^{2}-y$, $Q=xy$: $Q_x-P_y=y-(-1)=y+1$, y $\\int_{0}^{1}\\int_{0}^{1}(y+1)\\,dy\\,dx=\\tfrac12+1=\\tfrac32$. Sin Green habría que sumar las integrales sobre los cuatro lados." }, { "etiqueta": "Área", "nivel": 3, "criterio": "Área por Green (§5)", "enunciado": "Para la elipse $\\mathbf r(t)=(a\\cos t,\\,b\\sin t)$, $\\tfrac12\\displaystyle\\oint_C x\\,dy-y\\,dx$ vale:", "opciones": [ "$\\pi(a+b)$", "$\\pi a^{2}$", "$\\pi ab$", "$2\\pi ab$" ], "correcta": 2, "pista": "$x\\,dy-y\\,dx=ab\\cos^{2}t+ab\\sin^{2}t$.", "solucion": "$x\\,dy-y\\,dx=(a\\cos t)(b\\cos t)\\,dt-(b\\sin t)(-a\\sin t)\\,dt=ab\\,dt$, y $\\tfrac12\\int_{0}^{2\\pi}ab\\,dt=\\pi ab$: el área de la elipse. Con $a=b$ se recupera $\\pi a^{2}$." } ] });
+</script>
 </body>
 </html>
