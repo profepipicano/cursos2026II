@@ -991,4 +991,338 @@ OVA.viz.registrar('elasticidad', function (host) {
     'medio (verde) |E|=1: ahí el ingreso es máximo. Mueve el precio y cruza ese punto.</span>';
 });
 
+/* ══════════════════════════════════════════════════════════
+   CORTE III · S11–S14 · Integración
+   antiderivada (S11) · comprobar (S12) · areabajo · acumulada (S13)
+   entrecurvas · excedente (S14)
+   ══════════════════════════════════════════════════════════ */
+
+/* Lienzo con rango a medida: fija origen y escala para que
+   OVA.curva / OVA.punto funcionen con coordenadas reales.       */
+function marco(cv, alto, xmin, xmax, ymin, ymax) {
+  var L = OVA.lienzo(cv, { alto: alto });
+  var padL = 44, padR = 14, padT = 14, padB = 26;
+  L.sx = (L.w - padL - padR) / (xmax - xmin);
+  L.sy = (L.h - padT - padB) / (ymax - ymin);
+  L.ox = padL - xmin * L.sx;
+  L.oy = padT + ymax * L.sy;
+  L.xmin = xmin; L.xmax = xmax; L.ymin = ymin; L.ymax = ymax;
+  return L;
+}
+
+/* Ejes con paso de rejilla explícito (para rangos no unitarios). */
+function ejesEsc(L, px, py) {
+  var c = L.ctx, grid = OVA.color('cv-grid'), axis = OVA.color('cv-axis'), txt = OVA.color('cv-text');
+  c.strokeStyle = grid; c.lineWidth = 1; c.font = '10px ui-monospace,monospace'; c.fillStyle = txt;
+  var x0 = Math.ceil(L.xmin / px) * px, y0 = Math.ceil(L.ymin / py) * py, v, p;
+  for (v = x0; v <= L.xmax + 1e-9; v += px) {
+    p = L.px(v); c.beginPath(); c.moveTo(p, L.py(L.ymin)); c.lineTo(p, L.py(L.ymax)); c.stroke();
+    if (Math.abs(v) > 1e-9) c.fillText(fmtN(v), p - 6, L.py(L.ymin) + 13);
+  }
+  for (v = y0; v <= L.ymax + 1e-9; v += py) {
+    p = L.py(v); c.beginPath(); c.moveTo(L.px(L.xmin), p); c.lineTo(L.px(L.xmax), p); c.stroke();
+    if (Math.abs(v) > 1e-9) c.fillText(fmtN(v), L.px(L.xmin) - 30, p + 3);
+  }
+  c.strokeStyle = axis; c.lineWidth = 1.6;
+  var yA = Math.min(Math.max(0, L.ymin), L.ymax), xA = Math.min(Math.max(0, L.xmin), L.xmax);
+  c.beginPath(); c.moveTo(L.px(L.xmin), L.py(yA)); c.lineTo(L.px(L.xmax), L.py(yA)); c.stroke();
+  c.beginPath(); c.moveTo(L.px(xA), L.py(L.ymin)); c.lineTo(L.px(xA), L.py(L.ymax)); c.stroke();
+}
+function fmtN(v) { return (Math.round(v * 100) / 100).toString(); }
+function fmt2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+function fmt3(v) { return (Math.round(v * 1000) / 1000).toFixed(3); }
+
+/* Recorta el dibujo al marco para que las curvas no invadan los márgenes. */
+function clipMarco(L, fn) {
+  var c = L.ctx; c.save(); c.beginPath();
+  c.rect(L.px(L.xmin), L.py(L.ymax), L.px(L.xmax) - L.px(L.xmin), L.py(L.ymin) - L.py(L.ymax));
+  c.clip(); fn(); c.restore();
+}
+/* Rellena entre dos funciones en [a,b]. */
+function rellenar(L, a, b, fTop, fBot, color) {
+  var c = L.ctx, n = 160, i, x;
+  c.fillStyle = color; c.beginPath();
+  for (i = 0; i <= n; i++) { x = a + (b - a) * i / n; var y = fTop(x); if (i === 0) c.moveTo(L.px(x), L.py(y)); else c.lineTo(L.px(x), L.py(y)); }
+  for (i = n; i >= 0; i--) { x = a + (b - a) * i / n; c.lineTo(L.px(x), L.py(fBot(x))); }
+  c.closePath(); c.fill();
+}
+function simpson(f, a, b, n) {
+  n = n || 400; var h = (b - a) / n, s = f(a) + f(b), i;
+  for (i = 1; i < n; i++) s += f(a + i * h) * (i % 2 ? 4 : 2);
+  return s * h / 3;
+}
+function tangente(L, x0, y0, m, color) {
+  var c = L.ctx, dx = (L.xmax - L.xmin) * 0.22;
+  c.strokeStyle = color; c.lineWidth = 1.6; c.setLineDash([5, 4]);
+  c.beginPath(); c.moveTo(L.px(x0 - dx), L.py(y0 - m * dx)); c.lineTo(L.px(x0 + dx), L.py(y0 + m * dx)); c.stroke();
+  c.setLineDash([]);
+}
+
+/* ══════════ S11 · Familia de antiderivadas F(x)+C ══════════ */
+var ANTI = {
+  dosx:   { f: function (x) { return 2 * x; },        F: function (x) { return x * x; },
+            nf: 'f(x) = 2x',        nF: 'F(x) = x²',        sF: 'x²' },
+  cubica: { f: function (x) { return 3*x*x - 3; },    F: function (x) { return x*x*x - 3*x; },
+            nf: 'f(x) = 3x² − 3',   nF: 'F(x) = x³ − 3x',   sF: 'x³ − 3x' },
+  cos:    { f: Math.cos,                                F: Math.sin,
+            nf: 'f(x) = cos x',     nF: 'F(x) = sen x',     sF: 'sen x' },
+  exp:    { f: Math.exp,                                F: Math.exp,
+            nf: 'f(x) = eˣ',        nF: 'F(x) = eˣ',        sF: 'eˣ' }
+};
+
+OVA.viz.registrar('antiderivada', function (host) {
+  var cfg = ANTI[q(host, 'select').value] || ANTI.dosx;
+  var C = parseFloat(q(host, '.cte').value);
+  var x0 = parseFloat(q(host, '.punto').value) / 10;
+  q(host, '.cte-val').textContent = 'C = ' + C.toFixed(1);
+  q(host, '.punto-val').textContent = 'x₀ = ' + x0.toFixed(1);
+
+  var L = marco(q(host, 'canvas'), 320, -3, 3, -4, 6);
+  ejesEsc(L, 1, 1);
+  var c = L.ctx;
+  clipMarco(L, function () {
+    [-2, -1, 0, 1, 2].forEach(function (k) {
+      if (k === C) return;
+      OVA.curva(L, function (x) { return cfg.F(x) + k; }, 'rgba(58,110,165,.22)', 1.4);
+    });
+    OVA.curva(L, cfg.f, ORO, 1.8);
+    OVA.curva(L, function (x) { return cfg.F(x) + C; }, AZUL, 3);
+    var y0 = cfg.F(x0) + C, m = cfg.f(x0);
+    tangente(L, x0, y0, m, VERDE);
+    OVA.punto(L, x0, y0, VERDE);
+    OVA.punto(L, x0, m, ORO, true);
+  });
+  c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = AZUL; c.fillText('— ' + cfg.nF + ' + C', L.px(L.xmin) + 6, 24);
+  c.fillStyle = ORO;  c.fillText('— ' + cfg.nf, L.px(L.xmin) + 6, 40);
+
+  var y0 = cfg.F(x0) + C, m = cfg.f(x0);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Familia F(x) + C = ' + cfg.sF + ' + C</strong> · todas tienen la misma derivada ' + cfg.nf + '<br>' +
+    'Curva resaltada: C = ' + C.toFixed(1) + '. En x₀ = ' + x0.toFixed(1) + ': F(x₀)+C = <strong>' + fmt2(y0) +
+    '</strong>, y la pendiente de la tangente (verde) es <strong style="color:#c68f2e">' + fmt2(m) +
+    '</strong> = f(x₀) (el círculo naranja sobre la curva de f).<br>' +
+    '<span style="color:#8fb4d9">Cambiar C desplaza la curva verticalmente sin cambiar su pendiente: ' +
+    'por eso toda antiderivada se escribe F(x) + C. La condición inicial elige una sola curva de la familia.</span>';
+});
+
+/* ══════════ S12 · Comprobar una integral derivando ══════════ */
+var COMPR = {
+  sust1:  { f: function (x) { return x * Math.sqrt(x*x + 4); }, F: function (x) { return Math.pow(x*x + 4, 1.5) / 3; },
+            nf: 'f = x√(x²+4)', nF: 'F = (x²+4)^{3/2}/3', tec: 'sustitución u = x² + 4', r: [-2, 2, -1, 8] },
+  sust2:  { f: function (x) { return 2*x / (x*x + 1); }, F: function (x) { return Math.log(x*x + 1); },
+            nf: 'f = 2x/(x²+1)', nF: 'F = ln(x²+1)', tec: 'sustitución u = x² + 1', r: [-3, 3, -1.5, 3] },
+  sust3:  { f: function (x) { return Math.exp(-2*x); }, F: function (x) { return -Math.exp(-2*x) / 2; },
+            nf: 'f = e^(−2x)', nF: 'F = −e^(−2x)/2', tec: 'sustitución u = −2x', r: [-1, 2, -4, 8] },
+  partes1:{ f: function (x) { return x * Math.exp(x); }, F: function (x) { return (x - 1) * Math.exp(x); },
+            nf: 'f = x·eˣ', nF: 'F = (x−1)eˣ', tec: 'partes: u = x, dv = eˣdx', r: [-2, 2, -3, 8] },
+  partes2:{ f: function (x) { return x > 0 ? x * Math.log(x) : NaN; }, F: function (x) { return x > 0 ? x*x/2*Math.log(x) - x*x/4 : NaN; },
+            nf: 'f = x·ln x', nF: 'F = (x²/2)ln x − x²/4', tec: 'partes: u = ln x, dv = x dx', r: [0, 3, -1, 4] },
+  partes3:{ f: function (x) { return x > 0 ? Math.log(x) : NaN; }, F: function (x) { return x > 0 ? x*Math.log(x) - x : NaN; },
+            nf: 'f = ln x', nF: 'F = x·ln x − x', tec: 'partes: u = ln x, dv = dx', r: [0, 4, -2, 3] }
+};
+
+OVA.viz.registrar('comprobar', function (host) {
+  var cfg = COMPR[q(host, 'select').value] || COMPR.sust1;
+  var r = cfg.r, t = parseFloat(q(host, '.punto').value) / 100;
+  var x0 = r[0] + (r[1] - r[0]) * (0.05 + 0.9 * t);
+  q(host, '.punto-val').textContent = 'x₀ = ' + x0.toFixed(2);
+
+  var L = marco(q(host, 'canvas'), 320, r[0], r[1], r[2], r[3]);
+  ejesEsc(L, 1, 1);
+  var c = L.ctx;
+  var y0 = cfg.F(x0), m = cfg.f(x0), h = 1e-4;
+  var mNum = (cfg.F(x0 + h) - cfg.F(x0 - h)) / (2 * h);
+  clipMarco(L, function () {
+    OVA.curva(L, cfg.f, ORO, 1.8);
+    OVA.curva(L, cfg.F, AZUL, 3);
+    tangente(L, x0, y0, m, VERDE);
+    OVA.punto(L, x0, y0, VERDE);
+    OVA.punto(L, x0, m, ORO, true);
+  });
+  c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = AZUL; c.fillText('— ' + cfg.nF, L.px(L.xmin) + 6, 24);
+  c.fillStyle = ORO;  c.fillText('— ' + cfg.nf, L.px(L.xmin) + 6, 40);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.nF + '</strong> obtenida por ' + cfg.tec + '.<br>' +
+    'En x₀ = ' + x0.toFixed(2) + ': pendiente de F (tangente verde) = <strong>' + fmt3(mNum) +
+    '</strong> &nbsp;·&nbsp; f(x₀) = <strong style="color:#c68f2e">' + fmt3(m) + '</strong>' +
+    (Math.abs(mNum - m) < 1e-3 * Math.max(1, Math.abs(m)) ? ' &nbsp;✓ coinciden' : '') + '<br>' +
+    '<span style="color:#8fb4d9">Toda integral se comprueba derivando: si F′(x) = f(x) en todo punto, la ' +
+    'técnica se aplicó bien. Mueve x₀ y verifica que la pendiente de F siempre es la altura de f.</span>';
+});
+
+/* ══════════ S13 · Área bajo la curva: sumas de Riemann ══════════ */
+var RIEM = {
+  cuad:  { f: function (x) { return x*x; },     a: 0, b: 2, ex: 8/3,          n: 'f(x) = x² en [0, 2]',    sEx: '8/3 ≈ 2.6667',  ymax: 4.4 },
+  lineal:{ f: function (x) { return x; },       a: 0, b: 1, ex: 0.5,          n: 'f(x) = x en [0, 1]',     sEx: '1/2',           ymax: 1.3 },
+  parab: { f: function (x) { return 4 - x*x; }, a: 0, b: 2, ex: 16/3,         n: 'f(x) = 4 − x² en [0, 2]', sEx: '16/3 ≈ 5.3333', ymax: 4.6 },
+  exp:   { f: Math.exp,                          a: 0, b: 1, ex: Math.E - 1,   n: 'f(x) = eˣ en [0, 1]',    sEx: 'e − 1 ≈ 1.7183', ymax: 3 }
+};
+
+OVA.viz.registrar('areabajo', function (host) {
+  var cfg = RIEM[q(host, 'select').value] || RIEM.cuad;
+  var n = parseInt(q(host, '.n').value, 10);
+  var modo = q(host, '.modo').value;
+  q(host, '.n-val').textContent = 'n = ' + n;
+
+  var L = marco(q(host, 'canvas'), 320, cfg.a - 0.15 * (cfg.b - cfg.a), cfg.b + 0.15 * (cfg.b - cfg.a), -0.12 * cfg.ymax, cfg.ymax);
+  ejesEsc(L, (cfg.b - cfg.a) / 4, cfg.ymax > 3 ? 1 : 0.5);
+  var c = L.ctx, dx = (cfg.b - cfg.a) / n, suma = 0, i;
+  for (i = 0; i < n; i++) {
+    var xi = cfg.a + i * dx;
+    var xe = modo === 'izq' ? xi : modo === 'der' ? xi + dx : xi + dx / 2;
+    var alt = cfg.f(xe); suma += alt * dx;
+    c.fillStyle = 'rgba(198,143,46,.38)'; c.strokeStyle = ORO; c.lineWidth = 1;
+    c.fillRect(L.px(xi), L.py(alt), L.px(xi + dx) - L.px(xi), L.py(0) - L.py(alt));
+    c.strokeRect(L.px(xi), L.py(alt), L.px(xi + dx) - L.px(xi), L.py(0) - L.py(alt));
+  }
+  clipMarco(L, function () { OVA.curva(L, cfg.f, AZUL, 3); });
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace';
+  c.fillText(cfg.n, L.px(L.xmin) + 6, 24);
+
+  var err = suma - cfg.ex, nomb = modo === 'izq' ? 'izquierdos' : modo === 'der' ? 'derechos' : 'punto medio';
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · ' + n + ' rectángulos (' + nomb + '), Δx = ' + fmt3(dx) + '<br>' +
+    'Suma de Riemann: <strong style="color:#c68f2e">' + fmt3(suma) + '</strong> &nbsp;·&nbsp; ' +
+    'valor exacto ∫ = <strong>' + cfg.sEx + '</strong> &nbsp;·&nbsp; error = ' + (err >= 0 ? '+' : '') + fmt3(err) + '<br>' +
+    '<span style="color:#8fb4d9">Al aumentar n el error se encoge: la integral definida es el límite de estas sumas ' +
+    'cuando n → ∞. Con extremos derechos la suma sobreestima cuando f crece; con izquierdos, subestima.</span>';
+});
+
+/* ══════════ S13 · Función acumulada A(x) = ∫ₐˣ f(t) dt (TFC) ══════════ */
+var ACUM = {
+  dos:  { f: function (t) { return 2*t; },        A: function (x) { return x*x; },
+          nf: 'f(t) = 2t',       nA: 'A(x) = x²',          xmax: 3, ymin: -1, ymax: 9 },
+  cuad: { f: function (t) { return t*t; },        A: function (x) { return x*x*x/3; },
+          nf: 'f(t) = t²',       nA: 'A(x) = x³/3',        xmax: 3, ymin: -1, ymax: 9 },
+  mix:  { f: function (t) { return t*t - 2*t; },  A: function (x) { return x*x*x/3 - x*x; },
+          nf: 'f(t) = t² − 2t',  nA: 'A(x) = x³/3 − x²',   xmax: 3, ymin: -1.6, ymax: 3.2 },
+  cos:  { f: Math.cos,                             A: Math.sin,
+          nf: 'f(t) = cos t',    nA: 'A(x) = sen x',       xmax: 6.5, ymin: -1.5, ymax: 1.5 }
+};
+
+OVA.viz.registrar('acumulada', function (host) {
+  var cfg = ACUM[q(host, 'select').value] || ACUM.dos;
+  var x = cfg.xmax * parseFloat(q(host, '.xa').value) / 100;
+  q(host, '.xa-val').textContent = 'x = ' + x.toFixed(2);
+
+  var L = marco(q(host, 'canvas'), 320, -0.3, cfg.xmax, cfg.ymin, cfg.ymax);
+  ejesEsc(L, cfg.xmax > 4 ? 1 : 0.5, cfg.ymax > 4 ? 2 : 1);
+  var c = L.ctx;
+  clipMarco(L, function () {
+    // región con signo entre 0 y x
+    rellenar(L, 0, x, function (t) { return Math.max(cfg.f(t), 0); }, function () { return 0; }, 'rgba(28,122,76,.35)');
+    rellenar(L, 0, x, function () { return 0; }, function (t) { return Math.min(cfg.f(t), 0); }, 'rgba(176,57,44,.35)');
+    OVA.curva(L, cfg.f, ORO, 1.8);
+    OVA.curva(L, function (u) { return u >= 0 ? cfg.A(u) : NaN; }, AZUL, 3);
+    c.strokeStyle = 'rgba(58,110,165,.5)'; c.setLineDash([4, 4]); c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(L.px(x), L.py(0)); c.lineTo(L.px(x), L.py(cfg.A(x))); c.stroke(); c.setLineDash([]);
+    OVA.punto(L, x, cfg.A(x), AZUL);
+  });
+  c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = ORO;  c.fillText('— ' + cfg.nf, L.px(L.xmin) + 6, 24);
+  c.fillStyle = AZUL; c.fillText('— ' + cfg.nA + ' = ∫₀ˣ f', L.px(L.xmin) + 6, 40);
+
+  var A = cfg.A(x), fx = cfg.f(x), num = simpson(cfg.f, 0, x, 200);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.nA + '</strong> acumula el área con signo bajo ' + cfg.nf + ' desde 0 hasta x.<br>' +
+    'En x = ' + x.toFixed(2) + ': A(x) = <strong>' + fmt3(A) + '</strong> (área verde − área roja = ' + fmt3(num) + ')' +
+    ' &nbsp;·&nbsp; A′(x) = f(x) = <strong style="color:#c68f2e">' + fmt3(fx) + '</strong><br>' +
+    '<span style="color:#8fb4d9">Teorema fundamental: la rapidez con que crece el área acumulada es la altura de f. ' +
+    'Donde f &gt; 0 (verde) A sube; donde f &lt; 0 (rojo) A baja; donde f = 0, A tiene un máximo o mínimo.</span>';
+});
+
+/* ══════════ S14 · Área entre dos curvas ══════════ */
+var ENTRE = {
+  recta: { f: function (x) { return x + 2; }, g: function (x) { return x*x; }, a: -1, b: 2,
+           nf: 'y = x + 2', ng: 'y = x²', ex: 4.5, sEx: '9/2', r: [-2, 3, -1, 6], cortes: [-1, 2],
+           txt: 'La recta va arriba en todo [−1, 2]: área = ∫₋₁²(x + 2 − x²)dx = 9/2.' },
+  cubica:{ f: function (x) { return x; }, g: function (x) { return x*x*x; }, a: -1, b: 1,
+           nf: 'y = x', ng: 'y = x³', ex: 0.5, sEx: '1/2', r: [-1.5, 1.5, -1.5, 1.5], cortes: [-1, 0, 1],
+           txt: 'Las curvas se cruzan en 0: en [0,1] va arriba y = x, en [−1,0] va arriba y = x³. Se parte en dos integrales de 1/4 cada una.' },
+  dos:   { f: function (x) { return 2*x; }, g: function (x) { return x*x; }, a: 0, b: 2,
+           nf: 'y = 2x', ng: 'y = x²', ex: 4/3, sEx: '4/3', r: [-0.5, 3, -1, 5], cortes: [0, 2],
+           txt: 'Cortes en x = 0 y x = 2; la recta va arriba: área = ∫₀²(2x − x²)dx = 4/3.' },
+  lorenz:{ f: function (x) { return x; }, g: function (x) { return x*x; }, a: 0, b: 1,
+           nf: 'y = x (igualdad perfecta)', ng: 'L(x) = x² (curva de Lorenz)', ex: 1/6, sEx: '1/6', r: [-0.1, 1.1, -0.1, 1.1], cortes: [0, 1],
+           txt: 'Área entre la diagonal y la curva de Lorenz = 1/6; el índice de Gini es el doble: G = 1/3.' }
+};
+
+OVA.viz.registrar('entrecurvas', function (host) {
+  var cfg = ENTRE[q(host, 'select').value] || ENTRE.recta;
+  var r = cfg.r, t = parseFloat(q(host, '.franja').value) / 100;
+  var xs = cfg.a + (cfg.b - cfg.a) * t;
+  q(host, '.franja-val').textContent = 'x = ' + xs.toFixed(2);
+
+  var L = marco(q(host, 'canvas'), 320, r[0], r[1], r[2], r[3]);
+  ejesEsc(L, (r[1] - r[0]) > 3 ? 1 : 0.5, (r[3] - r[2]) > 3 ? 1 : 0.5);
+  var c = L.ctx;
+  var top = function (x) { return Math.max(cfg.f(x), cfg.g(x)); }, bot = function (x) { return Math.min(cfg.f(x), cfg.g(x)); };
+  clipMarco(L, function () {
+    rellenar(L, cfg.a, cfg.b, top, bot, 'rgba(28,122,76,.33)');
+    OVA.curva(L, cfg.f, AZUL, 2.6);
+    OVA.curva(L, cfg.g, ORO, 2.6);
+    cfg.cortes.forEach(function (xc) { OVA.punto(L, xc, cfg.f(xc), ROJO); });
+    // franja vertical en xs
+    c.strokeStyle = MORADO; c.lineWidth = 3;
+    c.beginPath(); c.moveTo(L.px(xs), L.py(top(xs))); c.lineTo(L.px(xs), L.py(bot(xs))); c.stroke();
+  });
+  c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = AZUL; c.fillText('— ' + cfg.nf, L.px(L.xmin) + 6, 24);
+  c.fillStyle = ORO;  c.fillText('— ' + cfg.ng, L.px(L.xmin) + 6, 40);
+
+  var area = simpson(function (x) { return top(x) - bot(x); }, cfg.a, cfg.b, 400);
+  var arriba = cfg.f(xs) >= cfg.g(xs) ? cfg.nf : cfg.ng;
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Área entre ' + cfg.nf + ' y ' + cfg.ng + ' en [' + cfg.a + ', ' + cfg.b + ']</strong> = ' +
+    '∫(arriba − abajo)dx = <strong style="color:#1c7a4c">' + cfg.sEx + ' ≈ ' + fmt3(cfg.ex) + '</strong> (numérico: ' + fmt3(area) + ')<br>' +
+    'Franja morada en x = ' + xs.toFixed(2) + ': altura = arriba − abajo = <strong>' + fmt3(top(xs) - bot(xs)) +
+    '</strong> (arriba va <em>' + arriba + '</em>).<br>' +
+    '<span style="color:#8fb4d9">' + cfg.txt + ' Los puntos rojos son los cortes, que dan los límites de integración.</span>';
+});
+
+/* ══════════ S14 · Excedente del consumidor y del productor ══════════ */
+var EXCED = {
+  base:  { D: function (q) { return 100 - 2*q; }, S: function (q) { return 20 + 2*q; }, qe: 20, pe: 60,
+           nD: 'D: p = 100 − 2q', nS: 'S: p = 20 + 2q', EC: 400, EP: 400, sEC: '400', sEP: '400' },
+  inel:  { D: function (q) { return 100 - q; },   S: function (q) { return 20 + 2*q; }, qe: 80/3, pe: 220/3,
+           nD: 'D: p = 100 − q',  nS: 'S: p = 20 + 2q', EC: 3200/9, EP: 6400/9, sEC: '3200/9 ≈ 355,6', sEP: '6400/9 ≈ 711,1' },
+  oferta:{ D: function (q) { return 100 - 2*q; }, S: function (q) { return 40 + q; },   qe: 20, pe: 60,
+           nD: 'D: p = 100 − 2q', nS: 'S: p = 40 + q',  EC: 400, EP: 200, sEC: '400', sEP: '200' }
+};
+
+OVA.viz.registrar('excedente', function (host) {
+  var cfg = EXCED[q(host, 'select').value] || EXCED.base;
+  var ver = q(host, '.capa').value;   // ambos | ec | ep
+
+  var L = marco(q(host, 'canvas'), 320, 0, 55, 0, 110);
+  ejesEsc(L, 10, 20);
+  var c = L.ctx;
+  clipMarco(L, function () {
+    if (ver !== 'ep') rellenar(L, 0, cfg.qe, cfg.D, function () { return cfg.pe; }, 'rgba(28,122,76,.35)');
+    if (ver !== 'ec') rellenar(L, 0, cfg.qe, function () { return cfg.pe; }, cfg.S, 'rgba(125,79,158,.35)');
+    OVA.curva(L, cfg.D, AZUL, 2.6);
+    OVA.curva(L, cfg.S, ORO, 2.6);
+    c.strokeStyle = 'rgba(176,57,44,.5)'; c.setLineDash([4, 4]); c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(L.px(0), L.py(cfg.pe)); c.lineTo(L.px(cfg.qe), L.py(cfg.pe)); c.lineTo(L.px(cfg.qe), L.py(0)); c.stroke();
+    c.setLineDash([]);
+    OVA.punto(L, cfg.qe, cfg.pe, ROJO);
+  });
+  c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = AZUL;   c.fillText('— ' + cfg.nD, L.px(28), 24);
+  c.fillStyle = ORO;    c.fillText('— ' + cfg.nS, L.px(28), 40);
+  c.fillStyle = VERDE;  c.fillText('EC', L.px(3), L.py((cfg.D(0) + cfg.pe) / 2) + 4);
+  c.fillStyle = MORADO; c.fillText('EP', L.px(3), L.py((cfg.S(0) + cfg.pe) / 2) + 4);
+
+  var ECn = simpson(cfg.D, 0, cfg.qe, 200) - cfg.pe * cfg.qe, EPn = cfg.pe * cfg.qe - simpson(cfg.S, 0, cfg.qe, 200);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Equilibrio</strong> (punto rojo): D = S en q* = ' + fmt2(cfg.qe) + ', p* = ' + fmt2(cfg.pe) + '.<br>' +
+    'Excedente del consumidor (verde) = ∫₀^{q*} D(q)dq − p*q* = <strong style="color:#1c7a4c">' + cfg.sEC + '</strong> (numérico ' + fmt2(ECn) + ') ' +
+    '&nbsp;·&nbsp; Excedente del productor (morado) = p*q* − ∫₀^{q*} S(q)dq = <strong style="color:#b08ad0">' + cfg.sEP + '</strong> (numérico ' + fmt2(EPn) + ')<br>' +
+    '<span style="color:#8fb4d9">EC: lo que los compradores estaban dispuestos a pagar por encima del precio real. ' +
+    'EP: lo que los vendedores reciben por encima del mínimo que aceptarían. Ambos son áreas entre curvas.</span>';
+});
+
 })();
