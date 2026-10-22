@@ -44,7 +44,7 @@ ova-dcb/
 │   ├── ova.css                 estilos comunes
 │   ├── ova.js                  MOTOR: quiz, validador, canvas, modo oscuro
 │   ├── estado.js               QUÉ GUÍAS ESTÁN PUBLICADAS (edítalo al publicar)
-│   ├── viz-calculo.js          explorador de funciones · acercamiento al límite · tangente
+│   ├── viz-calculo.js          explorador · límite · tangente · derivadas · antiderivada · sustitución/partes · Riemann · acumulada · áreas entre curvas · excedentes
 │   ├── viz-metodos.js          error de truncamiento de Taylor · bisección iterativa
 │   ├── viz-vectorial.js        productos vectoriales · gradiente · parciales · plano tangente · extremos · integral doble
 │   └── viz-edo.js              campo de direcciones con clic · enfriamiento de Newton · superposición · raíces características
@@ -54,8 +54,9 @@ ova-dcb/
 └── edo/         index.html + s01.html … s14.html
 ```
 
-Cada curso tiene su índice con las 5 sesiones del Corte I: la sesión 1 activa y
-las demás marcadas como pendientes.
+Cada índice lista las 16 semanas del curso. Estado actual (ver `assets/estado.js`): Cálculo tiene
+publicados los tres cortes (semanas 1–4, 6–9 y 11–14); Vectorial, Métodos y EDO tienen Corte I y II
+(semanas 1–4 y 6–9). Las demás fichas aparecen como «Próximamente».
 
 ---
 
@@ -73,7 +74,7 @@ GitHub te preguntará si quieres reemplazar el archivo existente. Di que sí.
 
 ```js
 window.OVA_PUBLICADAS = {
-  calculo:   [1, 2, 3, 4, 6, 7, 8, 9],   ←  añade el número de la semana nueva
+  calculo:   [1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14],   ←  añade el número de la semana nueva
   vectorial: [1, 2, 3, 4, 6, 7, 8, 9],
   metodos:   [1, 2, 3, 4, 6, 7, 8, 9],
   edo:       [1, 2, 3, 4, 6, 7, 8, 9]
@@ -190,13 +191,13 @@ sigue estos pasos en orden:
 Todas las páginas enlazan los archivos con un sufijo de versión:
 
 ```html
-<link rel="stylesheet" href="../assets/ova.css?v=20260911a">
-<script src="../assets/viz-vectorial.js?v=20260911a"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912c">
+<script src="../assets/viz-vectorial.js?v=20260912c"></script>
 ```
 
 Ese `?v=` obliga al navegador a descargar el archivo de nuevo en lugar de usar el que tiene
 guardado. **Cada vez que modifiques algo dentro de `assets/`, cambia ese número en todas las
-páginas** (por ejemplo a `20260901a`). Si no lo haces, tus estudiantes podrían seguir viendo la
+páginas** (la versión actual es `20260912c`; la siguiente sería `20260912d`). Si no lo haces, tus estudiantes podrían seguir viendo la
 versión vieja durante horas.
 
 ---
