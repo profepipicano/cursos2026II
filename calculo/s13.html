@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 13 · Integral definida y teorema fundamental — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 13 · Integral definida y teorema fundamental — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912c">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 13</h1>
+      <h1>Cálculo · Guía 13</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,331 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Área con rectángulos</a>
+    <a href="#s2">2 · La integral definida</a>
+    <a href="#s3">3 · Teorema fundamental</a>
+    <a href="#s4">4 · Área con signo</a>
+    <a href="#s5">5 · Acumulación y cambio total</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 13 · Integral definida y teorema fundamental</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 13 · Corte III</div>
+  <h2>Integral definida y teorema fundamental</h2>
+  <p>Hasta ahora la integral era una familia de funciones. Esta guía le da un número: el área bajo una
+     curva entre dos valores de $x$. Y el resultado más importante del curso —el teorema fundamental del
+     cálculo— dice que ese número se obtiene con una antiderivada: $F(b)-F(a)$. Derivar e integrar son
+     operaciones inversas, y el área lo demuestra.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 4.2–4.4</span>
+    <span class="chip">Stewart · Cap. 5.1–5.3</span>
+    <span class="chip">Semana 13</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> Las Guías 11 y 12 enseñaron a hallar antiderivadas $F(x)+C$. Aquí
+  esas antiderivadas cobran sentido geométrico: la diferencia $F(b)-F(a)$ es exactamente el área bajo
+  $f$ entre $a$ y $b$. La constante $C$ desaparece al restar, así que por fin no hará falta escribirla.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Aproximar el área con rectángulos</h3>
+
+  <div class="callout-dark">
+    <h3>Sumas de Riemann</h3>
+    <p>Para medir el área bajo una curva $y=f(x)$ entre $x=a$ y $x=b$ la cortamos en $n$ franjas de ancho
+       $\Delta x=\dfrac{b-a}{n}$ y aproximamos cada franja con un rectángulo cuya altura es el valor de $f$
+       en un punto de la franja (extremo izquierdo, derecho o punto medio). La suma de las áreas de los
+       rectángulos es una <strong>suma de Riemann</strong>.</p>
+    <p>Con pocos rectángulos la aproximación es burda; al aumentar $n$ el error se encoge. El área exacta es
+       el <strong>límite</strong> de la suma cuando $n\to\infty$.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Área bajo $f(x)=x^{2}$ en $[0,2]$ con $n=4$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Ancho de cada franja</div>
+        $\Delta x=\dfrac{2-0}{4}=0{,}5$. Las franjas van de 0 a 0,5; 0,5 a 1; 1 a 1,5; 1,5 a 2.
+      </div>
+      <div class="paso"><div class="paso-t">Extremos derechos</div>
+        Alturas $f(0{,}5)=0{,}25$, $f(1)=1$, $f(1{,}5)=2{,}25$, $f(2)=4$. Suma $=0{,}5\,(0{,}25+1+2{,}25+4)=3{,}75$. Como $f$ crece, sobreestima.
+      </div>
+      <div class="paso"><div class="paso-t">Extremos izquierdos</div>
+        Alturas $f(0)=0$, $f(0{,}5)=0{,}25$, $f(1)=1$, $f(1{,}5)=2{,}25$. Suma $=0{,}5\,(0+0{,}25+1+2{,}25)=1{,}75$. Subestima.
+      </div>
+      <div class="paso"><div class="paso-t">Más rectángulos</div>
+        Con $n=8$: derechos $3{,}1875$, izquierdos $2{,}1875$. Con $n=100$, derechos $\approx2{,}7068$. Las sumas se
+        acercan a $\dfrac{8}{3}\approx2{,}6667$, el valor exacto que calcularemos en §3.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">1.1 Explora las sumas de Riemann</div>
+  <div class="viz" data-viz="areabajo">
+    <div class="viz-controls">
+      <label for="ab-f">Función e intervalo</label>
+      <select id="ab-f">
+        <option value="cuad">f(x) = x² en [0, 2]</option>
+        <option value="lineal">f(x) = x en [0, 1]</option>
+        <option value="parab">f(x) = 4 − x² en [0, 2]</option>
+        <option value="exp">f(x) = eˣ en [0, 1]</option>
+      </select>
+      <label for="ab-m">Altura en</label>
+      <select id="ab-m" class="modo">
+        <option value="der">extremo derecho</option>
+        <option value="izq">extremo izquierdo</option>
+        <option value="med">punto medio</option>
+      </select>
+      <label for="ab-n">Rectángulos n</label>
+      <input id="ab-n" class="n" type="range" min="1" max="60" step="1" value="4">
+      <span class="n-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Sube $n$ y mira cómo el error cae hacia cero: la suma de Riemann converge al valor exacto sin importar
+    si usas extremos izquierdos, derechos o puntos medios.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · La integral definida y sus propiedades</h3>
+
+  <div class="def">
+    <strong>Definición.</strong> La <strong>integral definida</strong> de $f$ en $[a,b]$ es el límite de las sumas de Riemann:
+    $$\int_{a}^{b} f(x)\,dx=\lim_{n\to\infty}\sum_{i=1}^{n} f(x_i)\,\Delta x .$$
+    $a$ y $b$ son los <strong>límites de integración</strong>. El resultado es un <em>número</em>, no una familia de
+    funciones. Si $f\ge0$ en $[a,b]$, ese número es el área bajo la curva.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Propiedades que ahorran trabajo</h3>
+    <p>Salen directamente de pensar en áreas:</p>
+    <p>• $\displaystyle\int_{a}^{a}f(x)\,dx=0$ (una franja de ancho cero). &nbsp;
+       • $\displaystyle\int_{b}^{a}f(x)\,dx=-\int_{a}^{b}f(x)\,dx$ (invertir los límites cambia el signo). &nbsp;
+       • $\displaystyle\int_{a}^{b}f=\int_{a}^{c}f+\int_{c}^{b}f$ (aditividad: partir el intervalo). &nbsp;
+       • Linealidad: $\displaystyle\int_{a}^{b}[k f\pm g]=k\int_{a}^{b}f\pm\int_{a}^{b}g$.</p>
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · El teorema fundamental del cálculo</h3>
+
+  <div class="callout-dark">
+    <h3>No hace falta el límite: basta una antiderivada</h3>
+    <p>Calcular el límite de sumas de Riemann a mano es impracticable. El teorema fundamental lo evita:
+       si $F$ es cualquier antiderivada de $f$, el área es simplemente $F(b)-F(a)$. Las dos mitades del
+       cálculo —derivada e integral— quedan unidas.</p>
+  </div>
+
+  <div class="def">
+    <strong>Teorema fundamental del cálculo.</strong> Si $f$ es continua en $[a,b]$ y $F'=f$, entonces
+    $$\int_{a}^{b} f(x)\,dx=F(b)-F(a)\;=\;\Big[F(x)\Big]_{a}^{b}.$$
+    La constante $C$ se cancela en la resta: puede omitirse.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · El área exacta de $x^{2}$ en $[0,2]$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Antiderivada</div>
+        $F(x)=\dfrac{x^{3}}{3}$.
+      </div>
+      <div class="paso"><div class="paso-t">Evaluar y restar</div>
+        $\displaystyle\int_{0}^{2}x^{2}dx=\Big[\frac{x^{3}}{3}\Big]_{0}^{2}=\frac{8}{3}-0=\frac{8}{3}\approx2{,}6667$. Justo el valor al que convergían las sumas de Riemann.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Tres integrales definidas</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\displaystyle\int_{1}^{4}(2x+1)\,dx$</div>
+        $\big[x^{2}+x\big]_{1}^{4}=(16+4)-(1+1)=20-2=18$.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int_{1}^{e}\frac{1}{x}\,dx$</div>
+        $\big[\ln x\big]_{1}^{e}=\ln e-\ln1=1-0=1$.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int_{0}^{1}e^{x}\,dx$</div>
+        $\big[e^{x}\big]_{0}^{1}=e-1\approx1{,}718$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Sustitución en una integral definida: $\displaystyle\int_{0}^{2}2x(x^{2}+1)^{3}dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Cambiar también los límites</div>
+        $u=x^{2}+1$, $du=2x\,dx$. Cuando $x=0$, $u=1$; cuando $x=2$, $u=5$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar en $u$ con los nuevos límites</div>
+        $\displaystyle\int_{1}^{5}u^{3}du=\Big[\frac{u^{4}}{4}\Big]_{1}^{5}=\frac{625-1}{4}=156$. No hace falta volver a $x$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Sumas de Riemann y teorema fundamental</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Área con signo y área real</h3>
+
+  <div class="callout-dark">
+    <h3>La integral cuenta lo de abajo del eje como negativo</h3>
+    <p>Si $f$ es negativa en parte del intervalo, los rectángulos tienen «altura negativa» y la integral
+       resta esa región. Por eso $\displaystyle\int_{a}^{b}f\,dx$ es el <strong>área con signo</strong>: puede
+       ser cero aunque haya región encerrada. Para el <strong>área real</strong> hay que partir el intervalo
+       donde $f$ cambia de signo y sumar valores absolutos.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · $f(x)=x^{2}-2x$ en $[0,3]$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Integral directa</div>
+        $\displaystyle\int_{0}^{3}(x^{2}-2x)\,dx=\Big[\frac{x^{3}}{3}-x^{2}\Big]_{0}^{3}=(9-9)-0=0$. ¡Cero! Pero sí hay región.
+      </div>
+      <div class="paso"><div class="paso-t">Dónde cambia de signo</div>
+        $x^{2}-2x=x(x-2)=0$ en $x=0$ y $x=2$. En $(0,2)$ la función es negativa; en $(2,3)$, positiva.
+      </div>
+      <div class="paso"><div class="paso-t">Partir y sumar en valor absoluto</div>
+        $\displaystyle\int_{0}^{2}(x^{2}-2x)\,dx=\Big(\frac{8}{3}-4\Big)-0=-\frac{4}{3}$ y
+        $\displaystyle\int_{2}^{3}(x^{2}-2x)\,dx=(9-9)-\Big(\frac{8}{3}-4\Big)=\frac{4}{3}$.
+        Área real $=\Big|-\dfrac{4}{3}\Big|+\dfrac{4}{3}=\dfrac{8}{3}$. Las dos partes se cancelaban en la integral.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Acumulación y cambio total</h3>
+
+  <div class="callout-dark">
+    <h3>La otra cara del teorema: la integral como función</h3>
+    <p>Si dejamos libre el límite superior, $A(x)=\displaystyle\int_{a}^{x}f(t)\,dt$ es la
+       <strong>función de acumulación</strong>: el área acumulada desde $a$ hasta $x$. El teorema
+       fundamental (segunda parte) dice que $A'(x)=f(x)$: la rapidez con que crece el área acumulada es la
+       altura de la curva.</p>
+    <p>Leído al revés, es el resultado más útil para las aplicaciones: integrar una <em>tasa</em> entre
+       $a$ y $b$ da el <strong>cambio total</strong> de la cantidad: $\displaystyle\int_{a}^{b}F'(x)\,dx=F(b)-F(a)$.</p>
+  </div>
+
+  <div class="sub-title">5.1 La función de acumulación $A(x)=\displaystyle\int_{0}^{x}f(t)\,dt$</div>
+  <div class="viz" data-viz="acumulada">
+    <div class="viz-controls">
+      <label for="ac-f">Integrando</label>
+      <select id="ac-f">
+        <option value="dos">f(t) = 2t → A(x) = x²</option>
+        <option value="cuad">f(t) = t² → A(x) = x³/3</option>
+        <option value="mix">f(t) = t² − 2t → A(x) = x³/3 − x²</option>
+        <option value="cos">f(t) = cos t → A(x) = sen x</option>
+      </select>
+      <label for="ac-x">Límite superior x</label>
+      <input id="ac-x" class="xa" type="range" min="0" max="100" step="1" value="70">
+      <span class="xa-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Arrastra $x$: el área sombreada (verde positiva, roja negativa) es el valor de $A(x)$, el punto azul.
+    En el preset $t^{2}-2t$ observa que $A$ baja mientras $f\lt0$ y toca su mínimo justo donde $f=0$.
+  </p>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Del costo marginal al costo de un lote</h4>
+    <div class="ejemplo-body">
+      Con el costo marginal $C'(q)=2q+10$ de la Guía 11:
+      <div class="paso"><div class="paso-t">Costo de producir las primeras 10 unidades</div>
+        $\displaystyle\int_{0}^{10}(2q+10)\,dq=\big[q^{2}+10q\big]_{0}^{10}=100+100=200$. Es $C(10)-C(0)$: el costo fijo no interviene.
+      </div>
+      <div class="paso"><div class="paso-t">Costo de pasar de 10 a 20 unidades</div>
+        $\displaystyle\int_{10}^{20}(2q+10)\,dq=(400+200)-(100+100)=400$. El segundo lote cuesta el doble: el costo marginal crece.
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        La integral del marginal entre dos niveles de producción es el costo variable de ese tramo, sin
+        necesidad de conocer la función de costo total.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Área con signo y cambio total</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Si las ventas mensuales siguen una tasa $v(t)$, las ventas acumuladas de un trimestre son
+      $\int_{0}^{3}v(t)\,dt$: el área bajo la curva de ventas. Comparar esa área entre dos campañas es
+      comparar sus resultados totales, no solo sus picos.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El costo variable de un lote de producción es la integral del costo marginal entre los dos niveles
+      de producción, $\int_{q_1}^{q_2}C'(q)\,dq=C(q_2)-C(q_1)$. No hace falta conocer el costo fijo: se
+      cancela en la resta, igual que la constante $C$.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Un monitor registra la tasa de peticiones por segundo; el total de peticiones atendidas en una
+      ventana de tiempo es la integral de esa curva, y en la práctica se calcula como suma de Riemann con
+      las muestras del monitor (ancho $\Delta t$ = intervalo de muestreo).</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La carga que atraviesa un conductor entre $t_1$ y $t_2$ es $\int_{t_1}^{t_2}i(t)\,dt$; la energía
+      entregada es $\int p(t)\,dt$. Una corriente alterna tiene integral cero sobre un periodo —área con
+      signo— aunque la energía disipada, que integra $i^{2}R\ge0$, no sea cero.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Suma de Riemann</strong>: $\sum f(x_i)\,\Delta x$ con $\Delta x=\frac{b-a}{n}$; aproxima el área y converge cuando $n\to\infty$.</li>
+    <li><strong>Integral definida</strong> $\displaystyle\int_{a}^{b}f(x)\,dx$: un número, el área con signo bajo $f$ entre $a$ y $b$.</li>
+    <li>Propiedades: $\int_{a}^{a}=0$; invertir límites cambia el signo; aditividad en $c$; linealidad.</li>
+    <li><strong>Teorema fundamental</strong>: $\displaystyle\int_{a}^{b}f(x)\,dx=F(b)-F(a)$ con $F'=f$. La $C$ se cancela.</li>
+    <li>Con sustitución en una definida, <strong>cambia también los límites</strong> a valores de $u$.</li>
+    <li><strong>Área real</strong>: parte el intervalo donde $f$ cambia de signo y suma valores absolutos.</li>
+    <li><strong>Cambio total</strong>: $\displaystyle\int_{a}^{b}F'(x)\,dx=F(b)-F(a)$; la función de acumulación cumple $A'(x)=f(x)$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/5-3-the-fundamental-theorem-of-calculus" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912c"></script>
+<script src="../assets/viz-calculo.js?v=20260912c"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Sumas de Riemann y teorema fundamental · 3 preguntas", "items": [ { "etiqueta": "Riemann", "nivel": 2, "criterio": "Calcular una suma de Riemann (§1)", "enunciado": "Para $f(x)=x$ en $[0,1]$ con $n=4$ rectángulos y extremos derechos, la suma de Riemann es:", "opciones": [ "$0{,}625$", "$0{,}5$", "$0{,}375$", "$1$" ], "correcta": 0, "pista": "$\\Delta x=0{,}25$; alturas $0{,}25$, $0{,}5$, $0{,}75$, $1$.", "solucion": "$\\Delta x=\\tfrac14$ y la suma es $\\tfrac14(0{,}25+0{,}5+0{,}75+1)=\\tfrac14\\cdot2{,}5=0{,}625$. Sobreestima el área exacta $\\tfrac12$ porque $f$ es creciente; con extremos izquierdos daría $0{,}375$." }, { "etiqueta": "TFC", "nivel": 2, "criterio": "Aplicar el teorema fundamental (§3)", "enunciado": "$\\displaystyle\\int_{0}^{3}x^{2}\\,dx$ es igual a:", "opciones": [ "$6$", "$3$", "$9$", "$27$" ], "correcta": 2, "pista": "$F(x)=x^{3}/3$; calcula $F(3)-F(0)$.", "solucion": "$\\Big[\\dfrac{x^{3}}{3}\\Big]_{0}^{3}=\\dfrac{27}{3}-0=9$. La opción 27 olvida dividir por 3; la opción 6 es $f'(3)$, una derivada, no una integral." }, { "etiqueta": "Concepto", "nivel": 1, "criterio": "Distinguir definida e indefinida (§2)", "enunciado": "A diferencia de la integral indefinida, la integral definida $\\displaystyle\\int_{a}^{b}f(x)\\,dx$ es:", "opciones": [ "una familia de funciones $F(x)+C$", "la derivada de $f$", "siempre positiva", "un número: el área con signo bajo $f$ entre $a$ y $b$" ], "correcta": 3, "pista": "Tiene límites de integración.", "solucion": "La integral definida es un número, el límite de las sumas de Riemann: el área con signo entre $a$ y $b$. Puede ser negativa si $f\\lt0$. La indefinida, en cambio, es la familia $F(x)+C$." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Área con signo y cambio total · 3 preguntas", "items": [ { "etiqueta": "Signo", "nivel": 2, "criterio": "Interpretar una integral negativa (§4)", "enunciado": "$\\displaystyle\\int_{0}^{1}(x^{2}-1)\\,dx$ es igual a:", "opciones": [ "$-\\dfrac{1}{3}$", "$-\\dfrac{2}{3}$: la región está bajo el eje", "$\\dfrac{2}{3}$", "$0$" ], "correcta": 1, "pista": "En $[0,1]$, $x^{2}-1\\le0$.", "solucion": "$\\Big[\\dfrac{x^{3}}{3}-x\\Big]_{0}^{1}=\\dfrac13-1=-\\dfrac23$. Es negativa porque la gráfica va por debajo del eje en todo el intervalo: la integral es área con signo. El área real sería $\\tfrac23$." }, { "etiqueta": "Área real", "nivel": 3, "criterio": "Calcular área real partiendo el intervalo (§4)", "enunciado": "Para $f(x)=x^{2}-2x$ en $[0,3]$, la integral vale $0$ pero el área real es:", "opciones": [ "$\\dfrac{8}{3}$", "$0$", "$\\dfrac{4}{3}$", "$9$" ], "correcta": 0, "pista": "Parte en $x=2$: $-\\tfrac43$ y $+\\tfrac43$.", "solucion": "$f$ cambia de signo en $x=2$. $\\int_{0}^{2}f=-\\tfrac43$ y $\\int_{2}^{3}f=\\tfrac43$; el área real suma los valores absolutos: $\\tfrac43+\\tfrac43=\\tfrac83$. La integral directa da $0$ porque las dos partes se cancelan." }, { "etiqueta": "Cambio total", "nivel": 3, "criterio": "Integrar una tasa (§5)", "enunciado": "Con costo marginal $C'(q)=2q+10$, el costo de producir las primeras 10 unidades es:", "opciones": [ "$10\\cdot C'(10)=300$", "$\\displaystyle\\int_{0}^{10}(2q+10)\\,dq=500$", "$\\displaystyle\\int_{0}^{10}(2q+10)\\,dq=200$", "$C'(10)=30$" ], "correcta": 2, "pista": "Integrar el marginal entre 0 y 10 da $C(10)-C(0)$.", "solucion": "$\\int_{0}^{10}(2q+10)dq=\\big[q^{2}+10q\\big]_{0}^{10}=100+100=200$. Es el cambio total del costo, $C(10)-C(0)$, y no depende del costo fijo. $C'(10)=30$ es solo el costo de la unidad número 11." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Δx", "nivel": 1, "criterio": "Calcular el ancho de las franjas (§1)", "enunciado": "Al dividir $[0,2]$ en $n=8$ franjas iguales, el ancho de cada una es:", "opciones": [ "$\\Delta x=0{,}5$", "$\\Delta x=4$", "$\\Delta x=8$", "$\\Delta x=0{,}25$" ], "correcta": 3, "pista": "$\\Delta x=(b-a)/n$.", "solucion": "$\\Delta x=\\dfrac{2-0}{8}=0{,}25$. Con $n=4$ sería $0{,}5$. El ancho se reduce al aumentar $n$, y con él el error de la suma de Riemann." }, { "etiqueta": "Convergencia", "nivel": 2, "criterio": "Entender el límite de las sumas (§1–2)", "enunciado": "Para $f(x)=x^{2}$ en $[0,2]$ las sumas con extremos derechos dan $3{,}75$ ($n=4$), $3{,}1875$ ($n=8$) y $\\approx2{,}7068$ ($n=100$). Esto ilustra que:", "opciones": [ "la integral no existe", "las sumas convergen al valor exacto $8/3$ cuando $n\\to\\infty$", "la suma de Riemann siempre sobreestima, sin importar $n$", "el área exacta es $3{,}75$" ], "correcta": 1, "pista": "¿Hacia qué número se acercan?", "solucion": "Las sumas bajan hacia $\\int_{0}^{2}x^{2}dx=\\tfrac83\\approx2{,}6667$. Con extremos derechos sobreestiman porque $f$ crece, pero el error tiende a cero: la integral definida es ese límite." }, { "etiqueta": "Lineal", "nivel": 2, "criterio": "Evaluar con el teorema fundamental (§3)", "enunciado": "$\\displaystyle\\int_{1}^{2}3x^{2}\\,dx$ es igual a:", "opciones": [ "$7$", "$8$", "$9$", "$1$" ], "correcta": 0, "pista": "$\\big[x^{3}\\big]_{1}^{2}$.", "solucion": "$\\big[x^{3}\\big]_{1}^{2}=8-1=7$. Olvidar restar $F(1)$ daría $8$; el resultado es una diferencia, $F(b)-F(a)$." }, { "etiqueta": "Logaritmo", "nivel": 2, "criterio": "Integrar $1/x$ en un intervalo (§3)", "enunciado": "$\\displaystyle\\int_{1}^{e}\\frac{1}{x}\\,dx$ es igual a:", "opciones": [ "$0$", "$e-1$", "$1$", "$e$" ], "correcta": 2, "pista": "$\\big[\\ln x\\big]_{1}^{e}$.", "solucion": "$\\ln e-\\ln1=1-0=1$. Recuerda $\\ln1=0$ y $\\ln e=1$; el resultado es un número, no $e$." }, { "etiqueta": "Propiedad", "nivel": 1, "criterio": "Usar las propiedades de la integral (§2)", "enunciado": "Si $\\displaystyle\\int_{0}^{2}f(x)\\,dx=5$, entonces $\\displaystyle\\int_{2}^{0}f(x)\\,dx$ es:", "opciones": [ "$5$", "$0$", "$\\dfrac{1}{5}$", "$-5$" ], "correcta": 3, "pista": "Invertir los límites cambia el signo.", "solucion": "$\\int_{b}^{a}f=-\\int_{a}^{b}f$, así que vale $-5$. Recorrer el intervalo al revés equivale a franjas de ancho negativo." }, { "etiqueta": "Sustitución", "nivel": 3, "criterio": "Cambiar límites en una definida (§3)", "enunciado": "En $\\displaystyle\\int_{0}^{2}2x(x^{2}+1)^{3}dx$ con $u=x^{2}+1$, los nuevos límites y el valor son:", "opciones": [ "$u$ de $0$ a $4$; valor $64$", "$u$ de $1$ a $5$; valor $156$", "$u$ de $0$ a $2$; valor $156$", "$u$ de $1$ a $5$; valor $625$" ], "correcta": 1, "pista": "$u(0)=1$, $u(2)=5$; $\\big[u^{4}/4\\big]_{1}^{5}$.", "solucion": "Con $u=x^{2}+1$: $x=0\\Rightarrow u=1$ y $x=2\\Rightarrow u=5$. Entonces $\\int_{1}^{5}u^{3}du=\\dfrac{625-1}{4}=156$. Mantener los límites $0$ y $2$ en la variable $u$ es el error más común." }, { "etiqueta": "Acumulación", "nivel": 2, "criterio": "Derivar la función de acumulación (§5)", "enunciado": "Si $A(x)=\\displaystyle\\int_{0}^{x}t^{2}\\,dt$, entonces $A'(x)$ es:", "opciones": [ "$x^{2}$", "$\\dfrac{x^{3}}{3}$", "$2x$", "$0$" ], "correcta": 0, "pista": "Segunda parte del teorema fundamental: $A'=f$.", "solucion": "La derivada de la función de acumulación es el integrando evaluado en el límite superior: $A'(x)=x^{2}$. Como $A(x)=x^{3}/3$, también se ve derivando directamente. La opción $x^{3}/3$ es $A$, no $A'$." }, { "etiqueta": "Lote", "nivel": 3, "criterio": "Interpretar la integral del marginal (§5)", "enunciado": "Con $C'(q)=2q+10$, el costo de pasar de 10 a 20 unidades es:", "opciones": [ "$C'(20)-C'(10)=20$", "$600$", "$\\displaystyle\\int_{10}^{20}(2q+10)\\,dq=400$", "$200$, igual que las primeras 10" ], "correcta": 2, "pista": "$\\big[q^{2}+10q\\big]_{10}^{20}$.", "solucion": "$(400+200)-(100+100)=400$. El segundo lote cuesta el doble que el primero ($200$) porque el costo marginal crece. $C'(20)-C'(10)=20$ es la diferencia de marginales, no un costo." } ] });
+</script>
 </body>
 </html>

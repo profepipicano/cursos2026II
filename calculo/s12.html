@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 12 · Técnicas de integración — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 12 · Técnicas de integración — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912c">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 12</h1>
+      <h1>Cálculo · Guía 12</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,323 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · La cadena al revés</a>
+    <a href="#s2">2 · Sustitución paso a paso</a>
+    <a href="#s3">3 · Integración por partes</a>
+    <a href="#s4">4 · Elegir la técnica</a>
+    <a href="#s5">5 · Aplicación</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 12 · Técnicas de integración</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 12 · Corte III</div>
+  <h2>Técnicas de integración</h2>
+  <p>Las reglas básicas integran potencias sueltas, pero la mayoría de las funciones útiles vienen
+     «compuestas» o «multiplicadas»: $2x(x^{2}+1)^{3}$, $e^{3x}$, $x\,e^{x}$, $\ln x$. Dos técnicas
+     resuelven casi todas: la <strong>sustitución</strong>, que es la regla de la cadena al revés, y la
+     <strong>integración por partes</strong>, que es la regla del producto al revés.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 4.5 y 8.2</span>
+    <span class="chip">Stewart · Cap. 5.5 y 7.1</span>
+    <span class="chip">Semana 12</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 11 dejó claro que no hay regla del producto ni de la
+  composición para integrar. Pero sí las hay para derivar (Guía 6: cadena y producto). Esta guía las
+  lee al revés: cada regla de derivación, invertida, es una técnica de integración.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · La regla de la cadena al revés</h3>
+
+  <div class="callout-dark">
+    <h3>Reconocer una derivada «de adentro»</h3>
+    <p>Por la regla de la cadena, $\dfrac{d}{dx}F(g(x))=F'(g(x))\,g'(x)$. Si en un integrando vemos una
+       función de «algo» multiplicada por la derivada de ese «algo», la integral es inmediata:
+       $$\int F'(g(x))\,g'(x)\,dx=F(g(x))+C.$$</p>
+    <p>La clave es detectar la pareja: la <em>función interior</em> $g(x)$ y su derivada $g'(x)$
+       acompañándola como factor.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $\displaystyle\int 2x\,(x^{2}+1)^{3}\,dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Detectar la función interior</div>
+        Interior: $g(x)=x^{2}+1$. Su derivada, $g'(x)=2x$, está justo como factor. ¡Pareja completa!
+      </div>
+      <div class="paso"><div class="paso-t">Integrar la parte exterior</div>
+        Lo exterior es «elevar al cubo», y $\displaystyle\int u^{3}du=\frac{u^{4}}{4}$. Entonces
+        $\displaystyle\int 2x(x^{2}+1)^{3}dx=\frac{(x^{2}+1)^{4}}{4}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar derivando (cadena)</div>
+        $\dfrac{d}{dx}\dfrac{(x^{2}+1)^{4}}{4}=\dfrac{4(x^{2}+1)^{3}\cdot 2x}{4}=2x(x^{2}+1)^{3}$ ✓.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Sustitución paso a paso</h3>
+
+  <div class="callout-dark">
+    <h3>Cambiar de variable para simplificar</h3>
+    <p>Cuando la pareja no está a la vista, la escribimos nosotros. Llamamos $u$ a la función interior
+       y calculamos $du=g'(x)\,dx$. Si el integrando no trae exactamente $g'(x)$ sino un múltiplo
+       constante, <strong>ajustamos la constante</strong>: sacamos o metemos el número que falte.
+       Lo que nunca se puede ajustar es una $x$ que sobre: en ese caso la sustitución no sirve.</p>
+  </div>
+
+  <div class="def">
+    <strong>Método de sustitución.</strong>
+    (1) Elegir $u=g(x)$ (lo de adentro: base de la potencia, exponente, radicando, denominador).
+    (2) Calcular $du=g'(x)\,dx$.
+    (3) Reescribir toda la integral en $u$, ajustando constantes.
+    (4) Integrar en $u$ y (5) volver a $x$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $\displaystyle\int x\sqrt{x^{2}+4}\,dx$ (ajustar la constante)</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Elegir $u$</div>
+        $u=x^{2}+4$, $du=2x\,dx$. El integrando trae $x\,dx$, no $2x\,dx$: entonces $x\,dx=\tfrac{1}{2}du$.
+      </div>
+      <div class="paso"><div class="paso-t">Reescribir e integrar</div>
+        $\displaystyle\int\sqrt{u}\cdot\tfrac{1}{2}du=\tfrac{1}{2}\cdot\frac{u^{3/2}}{3/2}+C=\frac{1}{3}u^{3/2}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Volver a $x$</div>
+        $\dfrac{1}{3}(x^{2}+4)^{3/2}+C$. Comprobación: su derivada es $\tfrac{1}{3}\cdot\tfrac{3}{2}(x^{2}+4)^{1/2}\cdot2x=x\sqrt{x^{2}+4}$ ✓.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Tres sustituciones frecuentes</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Exponencial: $\displaystyle\int e^{3x}dx$</div>
+        $u=3x$, $du=3\,dx$, $dx=\tfrac{1}{3}du$: $\displaystyle\tfrac{1}{3}\int e^{u}du=\frac{e^{3x}}{3}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Logaritmo: $\displaystyle\int\frac{2x}{x^{2}+1}dx$</div>
+        $u=x^{2}+1$, $du=2x\,dx$: $\displaystyle\int\frac{du}{u}=\ln|u|+C=\ln(x^{2}+1)+C$ (sin valor absoluto porque $x^{2}+1\gt0$).
+      </div>
+      <div class="paso"><div class="paso-t">Potencia de un lineal: $\displaystyle\int(2x+1)^{5}dx$</div>
+        $u=2x+1$, $du=2\,dx$: $\displaystyle\tfrac{1}{2}\int u^{5}du=\frac{u^{6}}{12}+C=\frac{(2x+1)^{6}}{12}+C$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Sustitución</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Integración por partes</h3>
+
+  <div class="callout-dark">
+    <h3>La regla del producto al revés</h3>
+    <p>De $(uv)'=u'v+uv'$ se obtiene, integrando, $uv=\displaystyle\int v\,du+\int u\,dv$. Despejando:
+       $$\int u\,dv=uv-\int v\,du.$$
+       Sirve para productos donde la sustitución falla, como $x\,e^{x}$ o $x\ln x$: cambiamos la integral
+       original por otra, $\displaystyle\int v\,du$, que debe ser <em>más fácil</em>.</p>
+    <p>La elección de $u$ decide todo. Regla práctica: $u$ es lo que se <strong>simplifica al derivar</strong>
+       (un polinomio, un logaritmo) y $dv$ lo que se <strong>integra con facilidad</strong> ($e^{x}$, potencias).</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · $\displaystyle\int x\,e^{x}dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Elegir</div>
+        $u=x$ (al derivar se vuelve $1$), $dv=e^{x}dx$. Entonces $du=dx$ y $v=e^{x}$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la fórmula</div>
+        $\displaystyle\int x e^{x}dx=x e^{x}-\int e^{x}dx=x e^{x}-e^{x}+C=(x-1)e^{x}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar (producto)</div>
+        $\dfrac{d}{dx}\big[(x-1)e^{x}\big]=1\cdot e^{x}+(x-1)e^{x}=x e^{x}$ ✓.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Cuando aparece $\ln x$: $\displaystyle\int x\ln x\,dx$ y $\displaystyle\int\ln x\,dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\ln x$ siempre es $u$</div>
+        No sabemos integrar $\ln x$ directamente, pero sí derivarlo: $u=\ln x$, $du=\dfrac{dx}{x}$. Con $dv=x\,dx$, $v=\dfrac{x^{2}}{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int x\ln x\,dx$</div>
+        $=\dfrac{x^{2}}{2}\ln x-\displaystyle\int\frac{x^{2}}{2}\cdot\frac{dx}{x}=\frac{x^{2}}{2}\ln x-\int\frac{x}{2}dx=\frac{x^{2}}{2}\ln x-\frac{x^{2}}{4}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int\ln x\,dx$ (el truco $dv=dx$)</div>
+        $u=\ln x$, $dv=dx$, $v=x$: $\displaystyle\int\ln x\,dx=x\ln x-\int x\cdot\frac{dx}{x}=x\ln x-x+C$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 Comprueba cada técnica derivando</div>
+  <div class="viz" data-viz="comprobar">
+    <div class="viz-controls">
+      <label for="co-f">Integral resuelta</label>
+      <select id="co-f">
+        <option value="sust1">∫x√(x²+4)dx = (x²+4)^(3/2)/3 — sustitución</option>
+        <option value="sust2">∫2x/(x²+1)dx = ln(x²+1) — sustitución</option>
+        <option value="sust3">∫e^(−2x)dx = −e^(−2x)/2 — sustitución</option>
+        <option value="partes1">∫x·eˣdx = (x−1)eˣ — partes</option>
+        <option value="partes2">∫x·ln x dx = (x²/2)ln x − x²/4 — partes</option>
+        <option value="partes3">∫ln x dx = x·ln x − x — partes</option>
+      </select>
+      <label for="co-x">Punto x₀</label>
+      <input id="co-x" class="punto" type="range" min="0" max="100" step="1" value="60">
+      <span class="punto-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La curva azul es la antiderivada $F$ obtenida con la técnica; la naranja es el integrando $f$. En
+    cada $x_0$ la pendiente de la tangente verde a $F$ coincide con la altura de $f$ (círculo naranja):
+    esa es la comprobación de que la técnica se aplicó bien.
+  </p>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Elegir la técnica</h3>
+
+  <div class="callout-dark">
+    <h3>Mira la estructura del integrando</h3>
+    <p>Primero intenta lo más simple y avanza solo si falla: ¿es una suma de potencias? Reglas básicas.
+       ¿Hay una función «de adentro» acompañada de su derivada (o de un múltiplo constante)? Sustitución.
+       ¿Es un producto de dos tipos distintos —polinomio por exponencial, polinomio por logaritmo— sin
+       esa pareja? Partes.</p>
+  </div>
+
+  <div class="def">
+    <strong>Guía rápida.</strong>
+    <br>• $\displaystyle\int 3x^{2}(x^{3}+5)^{4}dx$ → interior $x^{3}+5$ con derivada $3x^{2}$ presente: <strong>sustitución</strong>.
+    <br>• $\displaystyle\int x\,e^{x^{2}}dx$ → interior $x^{2}$, derivada $2x$ a un factor de distancia: <strong>sustitución</strong> ajustando $\tfrac12$.
+    <br>• $\displaystyle\int x\,e^{2x}dx$ → el exponente es $2x$, su derivada es $2$, no $x$: la $x$ sobra. <strong>Partes</strong> con $u=x$.
+    <br>• $\displaystyle\int\frac{x}{x^{2}+3}dx$ → derivada del denominador salvo constante: <strong>sustitución</strong>, da $\tfrac12\ln(x^{2}+3)+C$.
+    <br>• $\displaystyle\int\ln x\,dx$, $\displaystyle\int x\ln x\,dx$ → aparece $\ln x$ sin su derivada $1/x$: <strong>partes</strong> con $u=\ln x$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Dos integrales parecidas, dos técnicas</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\displaystyle\int x\,e^{x^{2}}dx$ — sustitución</div>
+        $u=x^{2}$, $du=2x\,dx$, $x\,dx=\tfrac12du$: $\tfrac12\displaystyle\int e^{u}du=\frac{e^{x^{2}}}{2}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int x\,e^{2x}dx$ — partes</div>
+        $u=x$, $dv=e^{2x}dx$, $du=dx$, $v=\dfrac{e^{2x}}{2}$:
+        $\dfrac{x e^{2x}}{2}-\displaystyle\int\frac{e^{2x}}{2}dx=\frac{x e^{2x}}{2}-\frac{e^{2x}}{4}+C=\Big(\frac{x}{2}-\frac{1}{4}\Big)e^{2x}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">La diferencia</div>
+        En la primera, la $x$ de afuera es (salvo constante) la derivada del exponente $x^{2}$. En la
+        segunda el exponente es $2x$ y la $x$ sobra: hay que ir por partes.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Aplicación: ingreso con sustitución</h3>
+
+  <div class="callout-dark">
+    <h3>El marginal no siempre es un polinomio</h3>
+    <p>Un modelo de ingreso marginal con rendimientos decrecientes puede tener raíces o exponenciales. Las
+       técnicas de esta guía permiten integrarlo igual que en la Guía 11: integral más condición inicial
+       $R(0)=0$.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · $R'(q)=\dfrac{20q}{\sqrt{q^{2}+9}}$ (miles de pesos por unidad)</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Sustituir</div>
+        $u=q^{2}+9$, $du=2q\,dq$, $q\,dq=\tfrac12du$: $R(q)=\displaystyle\int 20\,u^{-1/2}\cdot\tfrac12du=10\int u^{-1/2}du=10\cdot\frac{u^{1/2}}{1/2}+K=20\sqrt{q^{2}+9}+K$.
+      </div>
+      <div class="paso"><div class="paso-t">Condición inicial</div>
+        $R(0)=20\sqrt{9}+K=60+K=0\ \Rightarrow\ K=-60$. Así $R(q)=20\sqrt{q^{2}+9}-60$.
+      </div>
+      <div class="paso"><div class="paso-t">Usar el modelo</div>
+        Vender 4 unidades ingresa $R(4)=20\sqrt{25}-60=100-60=40$ (miles de pesos). Comprobación: $R'(q)=20\cdot\dfrac{2q}{2\sqrt{q^{2}+9}}=\dfrac{20q}{\sqrt{q^{2}+9}}$ ✓.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Partes y elección de técnica</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Las tasas de adopción de un producto o de crecimiento de ventas se modelan con exponenciales
+      ($e^{-kt}$) y raíces, no con polinomios. Integrarlas para proyectar el acumulado exige sustitución;
+      un modelo del tipo $t\,e^{-kt}$ (crecimiento con saturación) exige partes.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El valor presente de un flujo continuo de ingresos $f(t)$ a tasa $r$ es $\int f(t)e^{-rt}dt$. Con
+      un flujo constante basta la sustitución $u=-rt$; con un flujo que crece linealmente, $f(t)=a+bt$,
+      aparece $t\,e^{-rt}$ y hace falta integrar por partes.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Las distribuciones de probabilidad que modelan tiempos de respuesta y fallos (exponencial, Weibull)
+      tienen densidades como $\lambda e^{-\lambda t}$: calcular probabilidades y tiempos medios
+      ($\int t\,\lambda e^{-\lambda t}dt$) es sustitución y partes, respectivamente.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La carga y descarga de un condensador siguen $e^{-t/RC}$; la energía disipada en una resistencia
+      integra $i(t)^{2}R$ con $i$ exponencial. Son sustituciones con $u=-t/RC$ y, cuando la señal es una
+      rampa por exponencial, integración por partes.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Sustitución</strong> = cadena al revés: $u=$ lo de adentro, $du=g'(x)\,dx$, ajusta constantes (nunca una $x$ sobrante), integra y vuelve a $x$.</li>
+    <li>Patrones: $\displaystyle\int e^{kx}dx=\frac{e^{kx}}{k}+C$; $\displaystyle\int\frac{g'(x)}{g(x)}dx=\ln|g(x)|+C$; $\displaystyle\int g'(x)\,g(x)^{n}dx=\frac{g(x)^{n+1}}{n+1}+C$.</li>
+    <li><strong>Partes</strong> = producto al revés: $\displaystyle\int u\,dv=uv-\int v\,du$. $u$ se simplifica al derivar (polinomio, $\ln x$); $dv$ se integra fácil ($e^{x}$, potencias).</li>
+    <li>$\displaystyle\int\ln x\,dx=x\ln x-x+C$ sale por partes con $dv=dx$.</li>
+    <li>Elegir: ¿suma de potencias? básicas. ¿Interior con su derivada? sustitución. ¿Producto de tipos distintos sin esa pareja? partes.</li>
+    <li>Siempre <strong>comprueba derivando</strong>: $F'(x)$ debe devolver el integrando.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/5-5-substitution" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://openstax.org/books/calculus-volume-2/pages/3-1-integration-by-parts" target="_blank" rel="noopener">OpenStax Vol. 2 · Partes</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912c"></script>
+<script src="../assets/viz-calculo.js?v=20260912c"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Sustitución · 3 preguntas", "items": [ { "etiqueta": "Pareja", "nivel": 2, "criterio": "Reconocer la cadena al revés (§1)", "enunciado": "$\\displaystyle\\int 3x^{2}(x^{3}+5)^{4}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{(x^{3}+5)^{5}}{5}+C$", "$\\dfrac{x^{3}(x^{3}+5)^{5}}{5}+C$", "$12x^{2}(x^{3}+5)^{3}+C$", "$(x^{3}+5)^{5}+C$" ], "correcta": 0, "pista": "Interior $x^{3}+5$; su derivada $3x^{2}$ ya está como factor.", "solucion": "Con $u=x^{3}+5$, $du=3x^{2}dx$, la integral es $\\int u^{4}du=\\dfrac{u^{5}}{5}+C=\\dfrac{(x^{3}+5)^{5}}{5}+C$. El factor $3x^{2}$ se «consume» en $du$: no debe sobrevivir en la respuesta." }, { "etiqueta": "Exponencial", "nivel": 2, "criterio": "Integrar $e^{kx}$ (§2)", "enunciado": "$\\displaystyle\\int e^{-2x}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{e^{-2x}}{2}+C$", "$e^{-2x}+C$", "$-\\dfrac{e^{-2x}}{2}+C$", "$-2e^{-2x}+C$" ], "correcta": 2, "pista": "$u=-2x$, $du=-2\\,dx$: hay que dividir por $-2$.", "solucion": "Con $u=-2x$, $dx=-\\tfrac12du$: $-\\tfrac12\\int e^{u}du=-\\dfrac{e^{-2x}}{2}+C$. Comprobación: $\\dfrac{d}{dx}\\Big(-\\dfrac{e^{-2x}}{2}\\Big)=-\\dfrac{-2e^{-2x}}{2}=e^{-2x}$ ✓. La opción $-2e^{-2x}$ multiplica en vez de dividir." }, { "etiqueta": "Logaritmo", "nivel": 3, "criterio": "Reconocer $g'/g$ (§2, §4)", "enunciado": "$\\displaystyle\\int\\frac{x}{x^{2}+3}\\,dx$ es igual a:", "opciones": [ "$\\ln(x^{2}+3)+C$", "$\\dfrac{x^{2}/2}{x^{3}/3+3x}+C$", "$2\\ln(x^{2}+3)+C$", "$\\tfrac12\\ln(x^{2}+3)+C$" ], "correcta": 3, "pista": "La derivada del denominador es $2x$; arriba solo hay $x$.", "solucion": "$u=x^{2}+3$, $du=2x\\,dx$, así que $x\\,dx=\\tfrac12du$ y la integral es $\\tfrac12\\int\\dfrac{du}{u}=\\tfrac12\\ln(x^{2}+3)+C$. Integrar numerador y denominador por separado no es válido." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Partes y elección de técnica · 3 preguntas", "items": [ { "etiqueta": "Fórmula", "nivel": 1, "criterio": "Enunciar la integración por partes (§3)", "enunciado": "La fórmula de integración por partes es:", "opciones": [ "$\\displaystyle\\int u\\,dv=u'v-uv'$", "$\\displaystyle\\int u\\,dv=uv-\\int v\\,du$", "$\\displaystyle\\int u\\,dv=uv+\\int v\\,du$", "$\\displaystyle\\int u\\,dv=\\int u\\,dx\\cdot\\int dv$" ], "correcta": 1, "pista": "Sale de integrar la regla del producto $(uv)'=u'v+uv'$.", "solucion": "De $(uv)'=u'v+uv'$ se integra y despeja: $\\int u\\,dv=uv-\\int v\\,du$. El signo menos es esencial; el producto de integrales no es una regla válida." }, { "etiqueta": "x·eˣ", "nivel": 3, "criterio": "Aplicar partes (§3)", "enunciado": "$\\displaystyle\\int x\\,e^{x}\\,dx$ es igual a:", "opciones": [ "$(x-1)e^{x}+C$", "$\\dfrac{x^{2}}{2}e^{x}+C$", "$(x+1)e^{x}+C$", "$x\\,e^{x}+C$" ], "correcta": 0, "pista": "$u=x$, $dv=e^{x}dx$.", "solucion": "$u=x$, $du=dx$, $v=e^{x}$: $x e^{x}-\\int e^{x}dx=x e^{x}-e^{x}+C=(x-1)e^{x}+C$. Comprobación con la regla del producto: $e^{x}+(x-1)e^{x}=x e^{x}$ ✓. La opción $\\tfrac{x^{2}}{2}e^{x}$ integra los factores por separado, lo cual no es válido." }, { "etiqueta": "Elegir", "nivel": 3, "criterio": "Decidir la técnica (§4)", "enunciado": "Para $\\displaystyle\\int x\\,e^{2x}\\,dx$ la técnica adecuada es:", "opciones": [ "sustitución $u=x$", "las reglas básicas directamente", "partes, con $u=x$ y $dv=e^{2x}dx$, porque la $x$ no es la derivada de $2x$", "sustitución $u=2x$, porque $x$ es la derivada del exponente" ], "correcta": 2, "pista": "¿La $x$ de afuera es la derivada del exponente?", "solucion": "El exponente es $2x$ y su derivada es $2$, no $x$: la $x$ sobra y la sustitución falla. Es un producto polinomio por exponencial: partes con $u=x$, que da $\\big(\\tfrac{x}{2}-\\tfrac14\\big)e^{2x}+C$. Compárala con $\\int x e^{x^{2}}dx$, donde sí es sustitución." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Cadena", "nivel": 2, "criterio": "Integrar una derivada de composición (§1)", "enunciado": "$\\displaystyle\\int 2x\\,(x^{2}+1)^{3}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{(x^{2}+1)^{4}}{8}+C$", "$x^{2}\\dfrac{(x^{2}+1)^{4}}{4}+C$", "$6x(x^{2}+1)^{2}+C$", "$\\dfrac{(x^{2}+1)^{4}}{4}+C$" ], "correcta": 3, "pista": "$u=x^{2}+1$, $du=2x\\,dx$: la pareja está completa.", "solucion": "$\\int u^{3}du=\\dfrac{u^{4}}{4}+C=\\dfrac{(x^{2}+1)^{4}}{4}+C$. No hay que dividir por 2 porque el $2x$ ya está en el integrando; dividir daría $\\tfrac18$, que es un error típico." }, { "etiqueta": "Ajustar", "nivel": 3, "criterio": "Ajustar la constante en una sustitución (§2)", "enunciado": "$\\displaystyle\\int x\\,e^{x^{2}}\\,dx$ es igual a:", "opciones": [ "$2e^{x^{2}}+C$", "$\\dfrac{e^{x^{2}}}{2}+C$", "$e^{x^{2}}+C$", "$\\dfrac{x^{2}}{2}e^{x^{2}}+C$" ], "correcta": 1, "pista": "$u=x^{2}$, $du=2x\\,dx$: falta un 2.", "solucion": "$x\\,dx=\\tfrac12du$, luego $\\tfrac12\\int e^{u}du=\\dfrac{e^{x^{2}}}{2}+C$. Comprobación: $\\dfrac{d}{dx}\\dfrac{e^{x^{2}}}{2}=\\dfrac{2x e^{x^{2}}}{2}=x e^{x^{2}}$ ✓." }, { "etiqueta": "Lineal", "nivel": 2, "criterio": "Potencia de una expresión lineal (§2)", "enunciado": "$\\displaystyle\\int(x+1)^{7}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{(x+1)^{8}}{8}+C$", "$7(x+1)^{6}+C$", "$\\dfrac{x^{8}}{8}+x+C$", "$(x+1)^{8}+C$" ], "correcta": 0, "pista": "$u=x+1$, $du=dx$.", "solucion": "Con $u=x+1$ y $du=dx$: $\\int u^{7}du=\\dfrac{u^{8}}{8}+C=\\dfrac{(x+1)^{8}}{8}+C$. No es válido integrar «$x$» y «$1$» por separado dentro de la potencia." }, { "etiqueta": "e^{3x}", "nivel": 2, "criterio": "Integrar $e^{kx}$ (§2)", "enunciado": "$\\displaystyle\\int e^{3x}\\,dx$ es igual a:", "opciones": [ "$e^{3x}+C$", "$\\dfrac{e^{3x+1}}{3x+1}+C$", "$\\dfrac{e^{3x}}{3}+C$", "$3e^{3x}+C$" ], "correcta": 2, "pista": "La derivada de $e^{3x}$ es $3e^{3x}$: hay que compensar el 3.", "solucion": "$u=3x$, $dx=\\tfrac13du$: $\\tfrac13\\int e^{u}du=\\dfrac{e^{3x}}{3}+C$. La regla de la potencia no aplica a exponenciales: la opción con $3x+1$ en el exponente es ese error." }, { "etiqueta": "ln x", "nivel": 3, "criterio": "Integrar $\\ln x$ por partes (§3)", "enunciado": "$\\displaystyle\\int\\ln x\\,dx$ es igual a:", "opciones": [ "$\\dfrac{1}{x}+C$", "$\\dfrac{(\\ln x)^{2}}{2}+C$", "$x\\ln x+C$", "$x\\ln x-x+C$" ], "correcta": 3, "pista": "$u=\\ln x$, $dv=dx$.", "solucion": "$u=\\ln x$, $du=dx/x$, $v=x$: $x\\ln x-\\int x\\cdot\\dfrac{dx}{x}=x\\ln x-x+C$. Comprobación: $\\ln x+x\\cdot\\tfrac1x-1=\\ln x$ ✓. La opción $1/x$ es la derivada." }, { "etiqueta": "x ln x", "nivel": 3, "criterio": "Aplicar partes con logaritmo (§3)", "enunciado": "$\\displaystyle\\int x\\ln x\\,dx$ es igual a:", "opciones": [ "$\\dfrac{x^{2}}{2}\\ln x-\\dfrac{x^{2}}{2}+C$", "$\\dfrac{x^{2}}{2}\\ln x-\\dfrac{x^{2}}{4}+C$", "$\\dfrac{x^{2}}{2}\\ln x+C$", "$\\dfrac{x^{2}}{2}(x\\ln x-x)+C$" ], "correcta": 1, "pista": "$u=\\ln x$, $dv=x\\,dx$, $v=x^{2}/2$.", "solucion": "$\\dfrac{x^{2}}{2}\\ln x-\\int\\dfrac{x^{2}}{2}\\cdot\\dfrac{dx}{x}=\\dfrac{x^{2}}{2}\\ln x-\\int\\dfrac{x}{2}dx=\\dfrac{x^{2}}{2}\\ln x-\\dfrac{x^{2}}{4}+C$. El término restado sale de integrar $x/2$, que da $x^{2}/4$, no $x^{2}/2$." }, { "etiqueta": "Decidir", "nivel": 2, "criterio": "Reconocer cuándo usar sustitución (§4)", "enunciado": "La sustitución funciona cuando en el integrando aparece:", "opciones": [ "una función interior $g(x)$ acompañada de su derivada $g'(x)$, salvo una constante", "cualquier producto de dos funciones", "un logaritmo", "una suma de potencias de $x$" ], "correcta": 0, "pista": "Es la regla de la cadena al revés.", "solucion": "La sustitución invierte la regla de la cadena: necesita la pareja $g(x)$ y $g'(x)$ (una constante se ajusta, una $x$ sobrante no). Un producto sin esa pareja, o un $\\ln x$ sin su $1/x$, va por partes." }, { "etiqueta": "Aplicación", "nivel": 3, "criterio": "Integrar un marginal con sustitución (§5)", "enunciado": "Si $R'(q)=\\dfrac{20q}{\\sqrt{q^{2}+9}}$ y $R(0)=0$, el ingreso por vender 4 unidades es:", "opciones": [ "$R(4)=20$", "$R(4)=16$", "$R(4)=40$", "$R(4)=100$" ], "correcta": 2, "pista": "$R(q)=20\\sqrt{q^{2}+9}+K$ con $R(0)=0$.", "solucion": "La sustitución $u=q^{2}+9$ da $R(q)=20\\sqrt{q^{2}+9}+K$; $R(0)=60+K=0$ fija $K=-60$. Entonces $R(4)=20\\cdot5-60=40$. La opción 100 olvida la constante $K=-60$." } ] });
+</script>
 </body>
 </html>

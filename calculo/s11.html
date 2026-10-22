@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 11 · La antiderivada — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 11 · La antiderivada — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912c">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 11</h1>
+      <h1>Cálculo · Guía 11</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,323 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Deshacer la derivada</a>
+    <a href="#s2">2 · Integral indefinida</a>
+    <a href="#s3">3 · Reescribir primero</a>
+    <a href="#s4">4 · Condición inicial</a>
+    <a href="#s5">5 · Del marginal al total</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 11 · La antiderivada</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 11 · Corte III</div>
+  <h2>La antiderivada</h2>
+  <p>Dos cortes derivando; ahora el camino de vuelta. Si conocemos la rapidez con que cambia algo
+     —un costo marginal, una velocidad, una tasa de ventas— ¿podemos recuperar la cantidad total?
+     Esa pregunta inversa es la antiderivada, y abre la segunda mitad del cálculo: la integral.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 4.1</span>
+    <span class="chip">Stewart · Cap. 4.9</span>
+    <span class="chip">Semana 11</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 9 derivamos el costo $C(q)=q^{2}+10q+300$ y obtuvimos
+  el costo marginal $C'(q)=2q+10$. En esta guía hacemos exactamente lo contrario: partimos de
+  $C'(q)=2q+10$ y reconstruimos $C(q)$. Para lograrlo solo necesitas las reglas de derivación que ya
+  dominas, leídas al revés.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Deshacer la derivada</h3>
+
+  <div class="callout-dark">
+    <h3>La pregunta inversa</h3>
+    <p>Derivar responde «¿cuál es la tasa de cambio de $F$?». Antiderivar responde «¿qué función $F$
+       tiene esta tasa de cambio $f$?». Si $F'(x)=f(x)$, decimos que $F$ es una
+       <strong>antiderivada</strong> de $f$.</p>
+    <p>La respuesta nunca es única: como la derivada de una constante es cero, $x^{2}$, $x^{2}+3$ y
+       $x^{2}-7$ tienen todas derivada $2x$. Toda la familia $x^{2}+C$ está formada por antiderivadas
+       de $2x$, y son <em>todas</em> las que existen.</p>
+  </div>
+
+  <div class="def">
+    <strong>Definición.</strong> $F$ es una antiderivada de $f$ en un intervalo si $F'(x)=f(x)$ para
+    todo $x$ del intervalo. Si $F$ es una antiderivada, la <strong>antiderivada general</strong> es
+    $$F(x)+C,\qquad C\ \text{constante arbitraria}.$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Antiderivadas de $f(x)=2x$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Buscar una función cuya derivada sea $2x$</div>
+        Sabemos que $\dfrac{d}{dx}\,x^{2}=2x$. Así que $F(x)=x^{2}$ es una antiderivada.
+      </div>
+      <div class="paso"><div class="paso-t">No es la única</div>
+        $\dfrac{d}{dx}(x^{2}+3)=2x$ y $\dfrac{d}{dx}(x^{2}-7)=2x$ también. Las constantes desaparecen al derivar.
+      </div>
+      <div class="paso"><div class="paso-t">La antiderivada general</div>
+        $F(x)=x^{2}+C$. Cada valor de $C$ da una curva distinta, todas con la misma pendiente en cada $x$.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">1.1 Explora la familia $F(x)+C$</div>
+  <div class="viz" data-viz="antiderivada">
+    <div class="viz-controls">
+      <label for="an-f">Derivada dada</label>
+      <select id="an-f">
+        <option value="dosx">f(x) = 2x → F = x²</option>
+        <option value="cubica">f(x) = 3x² − 3 → F = x³ − 3x</option>
+        <option value="cos">f(x) = cos x → F = sen x</option>
+        <option value="exp">f(x) = eˣ → F = eˣ</option>
+      </select>
+      <label for="an-c">Constante C</label>
+      <input id="an-c" class="cte" type="range" min="-3" max="3" step="0.5" value="1">
+      <span class="cte-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="an-x">Punto x₀</label>
+      <input id="an-x" class="punto" type="range" min="-25" max="25" step="1" value="12">
+      <span class="punto-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Las curvas azules tenues son otros miembros de la familia. Mueve $C$: la curva sube o baja, pero
+    la tangente verde en $x_0$ conserva la pendiente, que siempre es la altura de
+    <span style="color:#c68f2e">f (naranja)</span>. Cambiar $C$ no cambia la derivada.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · La integral indefinida y sus reglas</h3>
+
+  <div class="callout-dark">
+    <h3>Una notación para la antiderivada general</h3>
+    <p>La operación «hallar todas las antiderivadas de $f$» se escribe con el signo integral:
+       $\displaystyle\int f(x)\,dx=F(x)+C$. El $dx$ indica cuál es la variable; $f(x)$ se llama
+       <strong>integrando</strong>, y $C$ es la <strong>constante de integración</strong>.</p>
+    <p>Las reglas salen de leer al revés las reglas de derivación. La más usada es la de la potencia:
+       para derivar $x^{n}$ bajamos el exponente y restamos 1; para integrar hacemos lo contrario,
+       <em>sumamos 1 al exponente y dividimos por el nuevo exponente</em>.</p>
+  </div>
+
+  <div class="def">
+    <strong>Reglas básicas.</strong> ($k$, $C$ constantes; $n\neq-1$)
+    $$\int k\,dx=kx+C\qquad \int x^{n}\,dx=\frac{x^{n+1}}{n+1}+C\qquad \int \frac{1}{x}\,dx=\ln|x|+C\qquad \int e^{x}\,dx=e^{x}+C$$
+    <br><strong>Linealidad.</strong> $\displaystyle\int\big[k\,f(x)\pm g(x)\big]dx=k\int f(x)\,dx\pm\int g(x)\,dx$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $\displaystyle\int(3x^{2}-4x+5)\,dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Separar por linealidad</div>
+        $3\displaystyle\int x^{2}dx-4\int x\,dx+\int 5\,dx$.
+      </div>
+      <div class="paso"><div class="paso-t">Regla de la potencia en cada término</div>
+        $3\cdot\dfrac{x^{3}}{3}-4\cdot\dfrac{x^{2}}{2}+5x+C=x^{3}-2x^{2}+5x+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar derivando</div>
+        $\dfrac{d}{dx}\big(x^{3}-2x^{2}+5x+C\big)=3x^{2}-4x+5$ ✓. Toda integral se verifica así.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Raíces y potencias negativas: $\displaystyle\int\Big(\sqrt{x}+\frac{1}{x^{2}}\Big)dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Escribir todo como potencias</div>
+        $\sqrt{x}=x^{1/2}$ y $\dfrac{1}{x^{2}}=x^{-2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Aplicar la regla de la potencia</div>
+        $\dfrac{x^{3/2}}{3/2}+\dfrac{x^{-1}}{-1}+C=\dfrac{2}{3}x^{3/2}-\dfrac{1}{x}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Ojo con el caso $n=-1$</div>
+        La regla de la potencia falla para $x^{-1}$ (dividiríamos por cero). Por eso $\displaystyle\int\frac{1}{x}dx=\ln|x|+C$ es una regla aparte.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Reescribir antes de integrar</h3>
+
+  <div class="callout-dark">
+    <h3>No hay regla del producto ni del cociente para integrar</h3>
+    <p>Al derivar teníamos una regla para cada operación. Al integrar, no: $\displaystyle\int f\cdot g\,dx$
+       <strong>no</strong> es $\displaystyle\int f\,dx\cdot\int g\,dx$. Lo que sí podemos hacer es usar
+       álgebra para convertir productos y cocientes en sumas de potencias, y entonces integrar término
+       a término.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Un producto y un cociente</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\displaystyle\int x(x+3)\,dx$ — distribuir</div>
+        $x(x+3)=x^{2}+3x$, así que $\displaystyle\int(x^{2}+3x)\,dx=\frac{x^{3}}{3}+\frac{3x^{2}}{2}+C$.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int\frac{x^{3}+2x}{x}\,dx$ — dividir término a término</div>
+        $\dfrac{x^{3}+2x}{x}=x^{2}+2$, así que $\displaystyle\int(x^{2}+2)\,dx=\frac{x^{3}}{3}+2x+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobar</div>
+        $\dfrac{d}{dx}\Big(\dfrac{x^{3}}{3}+2x\Big)=x^{2}+2=\dfrac{x^{3}+2x}{x}$ ✓.
+      </div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Estrategia.</strong> Antes de integrar: distribuye productos, divide cocientes término a
+    término, convierte raíces y fracciones en potencias $x^{n}$. Integra cada término con la regla de la
+    potencia y <em>deriva el resultado</em> para comprobar.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Antiderivadas y reglas básicas</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · La condición inicial elige una curva</h3>
+
+  <div class="callout-dark">
+    <h3>De la familia a una sola función</h3>
+    <p>La integral indefinida da infinitas curvas, una por cada $C$. Si además conocemos el valor de la
+       función en un punto —una <strong>condición inicial</strong>, como $F(1)=4$ o «el costo fijo es
+       300»— podemos despejar $C$ y quedarnos con una sola curva: la que pasa por ese punto.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · $f'(x)=3x^{2}-2$ con $f(1)=4$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Antiderivada general</div>
+        $f(x)=\displaystyle\int(3x^{2}-2)\,dx=x^{3}-2x+C$.
+      </div>
+      <div class="paso"><div class="paso-t">Imponer la condición</div>
+        $f(1)=1-2+C=4\ \Rightarrow\ C=5$.
+      </div>
+      <div class="paso"><div class="paso-t">Respuesta</div>
+        $f(x)=x^{3}-2x+5$. Comprobación: $f'(x)=3x^{2}-2$ ✓ y $f(1)=1-2+5=4$ ✓.
+      </div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Problema de valor inicial.</strong> Dada $F'(x)=f(x)$ y $F(x_0)=y_0$: (1) integra para obtener
+    $F(x)+C$; (2) sustituye $x_0$ y despeja $C$; (3) escribe la función particular. En economía, la
+    condición inicial suele ser el <em>costo fijo</em> $C(0)$ o el hecho de que con cero ventas el ingreso
+    es cero, $R(0)=0$.
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Del marginal al total</h3>
+
+  <div class="callout-dark">
+    <h3>Integrar el marginal recupera la función total</h3>
+    <p>En la Guía 9, «marginal» significaba derivada: $C'(q)$ es el costo marginal. Ahora podemos
+       recorrer el camino inverso: si una empresa conoce su costo marginal y su costo fijo, la integral
+       reconstruye la función de costo total. Lo mismo para el ingreso y la utilidad.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Reconstruir costo, ingreso y utilidad</h4>
+    <div class="ejemplo-body">
+      Una empresa tiene costo marginal $C'(q)=2q+10$, costo fijo $300$, e ingreso marginal $R'(q)=100-2q$.
+      <div class="paso"><div class="paso-t">Costo total</div>
+        $C(q)=\displaystyle\int(2q+10)\,dq=q^{2}+10q+K$. Con $C(0)=300$: $K=300$, así que $C(q)=q^{2}+10q+300$
+        —la misma función de la Guía 9.
+      </div>
+      <div class="paso"><div class="paso-t">Ingreso total</div>
+        $R(q)=\displaystyle\int(100-2q)\,dq=100q-q^{2}+K$. Sin ventas no hay ingreso, $R(0)=0$, luego $K=0$ y $R(q)=100q-q^{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Utilidad</div>
+        $P(q)=R(q)-C(q)=-2q^{2}+90q-300$. Su máximo está donde $P'(q)=-4q+90=0$, es decir $q=22{,}5$,
+        y vale $P(22{,}5)=712{,}5$. El valor de $C$ sí importa: el costo fijo $300$ baja toda la utilidad.
+      </div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Resumen económico.</strong> $C(q)=\displaystyle\int C'(q)\,dq$ con $C(0)=$ costo fijo;
+    $R(q)=\displaystyle\int R'(q)\,dq$ con $R(0)=0$; $P=R-C$.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Condición inicial y aplicaciones</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Los estudios de mercado suelen estimar la <em>tasa</em> a la que crecen las ventas o la demanda,
+      no el total. Integrar esa tasa, con la condición inicial del nivel actual de ventas, proyecta el
+      volumen acumulado: es la base de los pronósticos de ingresos.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      La función de costo total se reconstruye integrando el costo marginal e imponiendo el costo fijo
+      como condición inicial: $C(q)=\int C'(q)\,dq$ con $C(0)=$ costos fijos. Es el puente entre el
+      análisis marginal y los estados de costos que elaboras.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Un sensor o un contador de red suele entregar una tasa (peticiones por segundo, bytes por segundo).
+      Acumular esa tasa en el tiempo —integrarla— da el total procesado o transferido; la condición
+      inicial es el valor del contador cuando empezó la medición.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La corriente es la tasa de cambio de la carga, $i(t)=q'(t)$. Integrar la corriente recupera la
+      carga acumulada en un condensador, y la condición inicial es la carga que tenía en $t=0$. La misma
+      lógica une velocidad y posición en un sistema de control.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Antiderivada</strong>: $F$ es antiderivada de $f$ si $F'=f$. La general es $F(x)+C$.</li>
+    <li><strong>Integral indefinida</strong>: $\displaystyle\int f(x)\,dx=F(x)+C$; nunca olvides la $C$.</li>
+    <li><strong>Regla de la potencia</strong>: $\displaystyle\int x^{n}dx=\frac{x^{n+1}}{n+1}+C$ ($n\neq-1$); $\displaystyle\int\frac{dx}{x}=\ln|x|+C$; $\displaystyle\int e^{x}dx=e^{x}+C$.</li>
+    <li>No hay regla del producto ni del cociente: <strong>reescribe</strong> como suma de potencias e integra término a término.</li>
+    <li>Siempre <strong>comprueba derivando</strong> el resultado.</li>
+    <li>La <strong>condición inicial</strong> fija $C$ y elige una sola curva de la familia.</li>
+    <li><strong>Del marginal al total</strong>: $C(q)=\int C'(q)\,dq$ con $C(0)=$ costo fijo; $R(0)=0$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/4-10-antiderivatives" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912c"></script>
+<script src="../assets/viz-calculo.js?v=20260912c"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Antiderivadas y reglas básicas · 3 preguntas", "items": [ { "etiqueta": "Definición", "nivel": 1, "criterio": "Reconocer una antiderivada (§1)", "enunciado": "$F$ es una antiderivada de $f$ cuando:", "opciones": [ "$F'(x)=f(x)$", "$f'(x)=F(x)$", "$F(x)=f(x)+C$", "$F(x)\\cdot f(x)=1$" ], "correcta": 0, "pista": "Antiderivar deshace la derivada.", "solucion": "Por definición, $F$ es antiderivada de $f$ si al derivar $F$ se obtiene $f$: $F'(x)=f(x)$. La opción $f'=F$ invierte los papeles." }, { "etiqueta": "Potencia", "nivel": 2, "criterio": "Aplicar la regla de la potencia (§2)", "enunciado": "$\\displaystyle\\int x^{4}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{x^{4}}{4}+C$", "$x^{5}+C$", "$\\dfrac{x^{5}}{5}+C$", "$4x^{3}+C$" ], "correcta": 2, "pista": "Sube el exponente en 1 y divide por el nuevo exponente.", "solucion": "$\\int x^{4}dx=\\dfrac{x^{5}}{5}+C$. Comprobación: $\\dfrac{d}{dx}\\dfrac{x^{5}}{5}=x^{4}$. La opción $4x^{3}$ es la derivada, no la antiderivada." }, { "etiqueta": "Constante", "nivel": 2, "criterio": "Explicar la constante de integración (§1)", "enunciado": "¿Por qué toda integral indefinida lleva «$+C$»?", "opciones": [ "Porque la integral siempre vale cero en $x=0$", "Porque $C$ es el valor de la función en $x=1$", "Por convención, pero no cambia nada", "Porque la derivada de una constante es cero: infinitas funciones comparten la misma derivada" ], "correcta": 3, "pista": "¿Qué le pasa a una constante al derivar?", "solucion": "Como $\\dfrac{d}{dx}C=0$, las funciones $F(x)+C$ tienen todas la misma derivada $f(x)$. La antiderivada general debe incluirlas a todas; $C$ se fija solo con una condición inicial." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Condición inicial y aplicaciones · 3 preguntas", "items": [ { "etiqueta": "Valor inicial", "nivel": 3, "criterio": "Resolver un problema de valor inicial (§4)", "enunciado": "Si $f'(x)=2x+1$ y $f(0)=3$, entonces $f(x)$ es:", "opciones": [ "$x^{2}+3$", "$x^{2}+x+3$", "$x^{2}+x$", "$2x^{2}+x+3$" ], "correcta": 1, "pista": "Integra y luego usa $f(0)=3$ para hallar $C$.", "solucion": "$f(x)=\\int(2x+1)dx=x^{2}+x+C$. Con $f(0)=0+0+C=3$ resulta $C=3$: $f(x)=x^{2}+x+3$. Comprobación: $f'=2x+1$ ✓." }, { "etiqueta": "Costo total", "nivel": 3, "criterio": "Reconstruir el costo desde el marginal (§5)", "enunciado": "El costo marginal es $C'(q)=6q+4$ y el costo fijo es $200$. El costo total es:", "opciones": [ "$C(q)=3q^{2}+4q+200$", "$C(q)=6q^{2}+4q+200$", "$C(q)=3q^{2}+4q$", "$C(q)=6+200q$" ], "correcta": 0, "pista": "Integra $6q+4$ y usa $C(0)=200$.", "solucion": "$C(q)=\\int(6q+4)dq=3q^{2}+4q+K$. El costo fijo es $C(0)=K=200$, así que $C(q)=3q^{2}+4q+200$. Olvidar el costo fijo daría $3q^{2}+4q$, que es otra curva de la familia." }, { "etiqueta": "Ingreso", "nivel": 2, "criterio": "Elegir la condición inicial del ingreso (§5)", "enunciado": "Al integrar el ingreso marginal $R'(q)$, la constante se determina con:", "opciones": [ "$R(1)=1$", "$R'(0)=0$", "$R(0)=0$: sin ventas no hay ingreso", "$R(0)=$ costo fijo" ], "correcta": 2, "pista": "¿Cuánto se ingresa si no se vende nada?", "solucion": "El ingreso de vender cero unidades es cero, $R(0)=0$. Esa condición inicial fija la constante. El costo fijo es la condición inicial del costo, no del ingreso." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Familia", "nivel": 1, "criterio": "Identificar la antiderivada general (§1)", "enunciado": "La antiderivada general de $f(x)=2x$ es:", "opciones": [ "$x^{2}$", "$2$", "$2x^{2}+C$", "$x^{2}+C$" ], "correcta": 3, "pista": "¿Qué funciones tienen derivada $2x$?", "solucion": "$\\dfrac{d}{dx}(x^{2}+C)=2x$ para cualquier $C$, así que la antiderivada general es $x^{2}+C$. Solo $x^{2}$ es una de ellas, no todas." }, { "etiqueta": "Polinomio", "nivel": 2, "criterio": "Integrar término a término (§2)", "enunciado": "$\\displaystyle\\int(4x^{3}-2x)\\,dx$ es igual a:", "opciones": [ "$4x^{4}-x^{2}+C$", "$x^{4}-x^{2}+C$", "$12x^{2}-2+C$", "$x^{4}-2x^{2}+C$" ], "correcta": 1, "pista": "Regla de la potencia en cada término.", "solucion": "$4\\cdot\\dfrac{x^{4}}{4}-2\\cdot\\dfrac{x^{2}}{2}=x^{4}-x^{2}$, más $C$. Comprobación: $\\dfrac{d}{dx}(x^{4}-x^{2})=4x^{3}-2x$ ✓." }, { "etiqueta": "Potencia negativa", "nivel": 2, "criterio": "Integrar potencias negativas (§2)", "enunciado": "$\\displaystyle\\int\\frac{1}{x^{3}}\\,dx$ es igual a:", "opciones": [ "$-\\dfrac{1}{2x^{2}}+C$", "$\\dfrac{1}{2x^{2}}+C$", "$-\\dfrac{3}{x^{4}}+C$", "$\\ln|x^{3}|+C$" ], "correcta": 0, "pista": "$x^{-3}$: sube el exponente a $-2$ y divide por $-2$.", "solucion": "$\\int x^{-3}dx=\\dfrac{x^{-2}}{-2}+C=-\\dfrac{1}{2x^{2}}+C$. El logaritmo solo aparece con $x^{-1}$, y $-3/x^{4}$ es la derivada." }, { "etiqueta": "Raíz", "nivel": 2, "criterio": "Convertir raíces en potencias (§2)", "enunciado": "$\\displaystyle\\int\\sqrt{x}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{3}{2}x^{3/2}+C$", "$x^{3/2}+C$", "$\\dfrac{2}{3}x^{3/2}+C$", "$\\dfrac{1}{2\\sqrt{x}}+C$" ], "correcta": 2, "pista": "$\\sqrt{x}=x^{1/2}$; el nuevo exponente es $3/2$.", "solucion": "$\\int x^{1/2}dx=\\dfrac{x^{3/2}}{3/2}+C=\\dfrac{2}{3}x^{3/2}+C$. Dividir por $3/2$ es multiplicar por $2/3$." }, { "etiqueta": "Reescribir", "nivel": 3, "criterio": "Reescribir antes de integrar (§3)", "enunciado": "$\\displaystyle\\int\\frac{x^{3}+2x}{x}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{x^{4}/4+x^{2}}{x^{2}/2}+C$", "$x^{2}+2+C$", "$\\dfrac{x^{3}}{3}+x^{2}+C$", "$\\dfrac{x^{3}}{3}+2x+C$" ], "correcta": 3, "pista": "Divide primero: $\\dfrac{x^{3}+2x}{x}=x^{2}+2$.", "solucion": "No existe regla del cociente para integrar. Dividiendo, el integrando es $x^{2}+2$ y su integral es $\\dfrac{x^{3}}{3}+2x+C$. Integrar numerador y denominador por separado es un error." }, { "etiqueta": "Comprobar", "nivel": 2, "criterio": "Verificar derivando (§2)", "enunciado": "Para comprobar que $\\dfrac{x^{3}}{3}+5$ es antiderivada de $x^{2}$ se debe:", "opciones": [ "comprobar que valen lo mismo en $x=1$", "derivar $\\dfrac{x^{3}}{3}+5$ y ver que da $x^{2}$", "integrar $x^{2}$ otra vez", "evaluar ambas en $x=0$" ], "correcta": 1, "pista": "Antiderivada significa «su derivada es…».", "solucion": "$\\dfrac{d}{dx}\\Big(\\dfrac{x^{3}}{3}+5\\Big)=x^{2}$ ✓. La comprobación de toda integral es derivar el resultado; evaluar en un punto no prueba nada." }, { "etiqueta": "Valor inicial", "nivel": 3, "criterio": "Resolver un problema de valor inicial (§4)", "enunciado": "Si $f'(x)=3x^{2}-2$ y $f(1)=4$, el valor de la constante $C$ es:", "opciones": [ "$C=5$", "$C=4$", "$C=3$", "$C=-1$" ], "correcta": 0, "pista": "$f(x)=x^{3}-2x+C$; sustituye $x=1$.", "solucion": "$f(1)=1-2+C=4$ da $C=5$, así que $f(x)=x^{3}-2x+5$. Tomar $C=4$ es olvidar evaluar $x^{3}-2x$ en $x=1$." }, { "etiqueta": "Utilidad", "nivel": 3, "criterio": "Integrar el marginal y aplicar (§5)", "enunciado": "Con $C(q)=q^{2}+10q+300$ y $R(q)=100q-q^{2}$, la utilidad $P=R-C$ es:", "opciones": [ "$90q-300$", "$2q^{2}+90q-300$", "$-2q^{2}+90q-300$", "$-2q^{2}+110q+300$" ], "correcta": 2, "pista": "Resta término a término y cuida los signos.", "solucion": "$P=(100q-q^{2})-(q^{2}+10q+300)=-2q^{2}+90q-300$. Su máximo está en $P'=-4q+90=0$, $q=22{,}5$, con $P=712{,}5$: el costo fijo $300$ reduce la utilidad pero no cambia la cantidad óptima." } ] });
+</script>
 </body>
 </html>

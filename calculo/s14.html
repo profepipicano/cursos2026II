@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 14 · Áreas entre curvas y modelos de aplicación — Cálculo · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 14 · Áreas entre curvas y modelos de aplicación — Cálculo · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912c">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Cálculo · Semana 14</h1>
+      <h1>Cálculo · Guía 14</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,338 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Área entre curvas</a>
+    <a href="#s2">2 · Cuando se cruzan</a>
+    <a href="#s3">3 · Excedentes</a>
+    <a href="#s4">4 · Valor promedio</a>
+    <a href="#s5">5 · Curva de Lorenz y Gini</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 14 · Áreas entre curvas y modelos de aplicación</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 14 · Corte III</div>
+  <h2>Áreas entre curvas y modelos de aplicación</h2>
+  <p>La última guía del curso lleva la integral definida a problemas con dos curvas: el área encerrada
+     entre ellas. Esa idea, tan geométrica, resulta ser el lenguaje de varios modelos económicos —el
+     excedente del consumidor y del productor, el valor promedio de una función, la desigualdad medida
+     con la curva de Lorenz— que cierran el recorrido del cálculo en contextos empresariales.</p>
+  <div class="chips">
+    <span class="chip">Larson · Cap. 7.1</span>
+    <span class="chip">Stewart · Cap. 6.1 y 6.5</span>
+    <span class="chip">Semana 14</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 13 midió el área entre una curva y el eje $x$ con
+  $\int_{a}^{b}f(x)\,dx$. Si en vez del eje (que es la recta $y=0$) ponemos otra curva $g$, el área entre
+  ambas es la misma idea: integrar la <em>altura</em> de cada franja, que ahora es $f(x)-g(x)$.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Área entre dos curvas</h3>
+
+  <div class="callout-dark">
+    <h3>Integrar «arriba menos abajo»</h3>
+    <p>Si en $[a,b]$ la curva $f$ va por encima de $g$, cada franja vertical tiene altura $f(x)-g(x)$ y
+       ancho $dx$. Sumar todas las franjas es integrar:
+       $$A=\int_{a}^{b}\big[f(x)-g(x)\big]\,dx .$$
+       Siempre se resta la de abajo a la de arriba; así el integrando es positivo y el resultado es
+       un área, sin preocuparse de si las curvas están sobre o bajo el eje $x$.</p>
+    <p>Los límites $a$ y $b$ suelen ser los <strong>puntos de corte</strong>: se hallan resolviendo $f(x)=g(x)$.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Área entre $y=x+2$ y $y=x^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Puntos de corte</div>
+        $x+2=x^{2}\Rightarrow x^{2}-x-2=0\Rightarrow(x-2)(x+1)=0$: $x=-1$ y $x=2$.
+      </div>
+      <div class="paso"><div class="paso-t">¿Cuál va arriba?</div>
+        En $x=0$: la recta da $2$ y la parábola $0$. La recta va arriba en todo $[-1,2]$.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar la altura</div>
+        $A=\displaystyle\int_{-1}^{2}\big[(x+2)-x^{2}\big]dx=\Big[\frac{x^{2}}{2}+2x-\frac{x^{3}}{3}\Big]_{-1}^{2}
+        =\Big(2+4-\frac{8}{3}\Big)-\Big(\frac{1}{2}-2+\frac{1}{3}\Big)=\frac{10}{3}+\frac{7}{6}=\frac{9}{2}$.
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Área entre $y=2x$ y $y=x^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Cortes y posición</div>
+        $2x=x^{2}\Rightarrow x(x-2)=0$: $x=0$ y $x=2$. En $x=1$: $2\gt1$, la recta va arriba.
+      </div>
+      <div class="paso"><div class="paso-t">Integrar</div>
+        $A=\displaystyle\int_{0}^{2}(2x-x^{2})\,dx=\Big[x^{2}-\frac{x^{3}}{3}\Big]_{0}^{2}=4-\frac{8}{3}=\frac{4}{3}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">1.1 Explora el área entre curvas</div>
+  <div class="viz" data-viz="entrecurvas">
+    <div class="viz-controls">
+      <label for="ec-f">Par de curvas</label>
+      <select id="ec-f">
+        <option value="recta">y = x + 2 y y = x²</option>
+        <option value="dos">y = 2x y y = x²</option>
+        <option value="cubica">y = x y y = x³ (se cruzan)</option>
+        <option value="lorenz">y = x y L(x) = x² (Lorenz)</option>
+      </select>
+      <label for="ec-x">Franja en x</label>
+      <input id="ec-x" class="franja" type="range" min="0" max="100" step="1" value="45">
+      <span class="franja-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    La franja morada es el integrando: su altura es «arriba menos abajo» en ese $x$. Desplázala y
+    observa cómo cambia; el área verde es la suma de todas las franjas entre los cortes (puntos rojos).
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Cuando las curvas se cruzan</h3>
+
+  <div class="callout-dark">
+    <h3>Partir en los cruces</h3>
+    <p>Si dentro del intervalo las curvas intercambian posición, «arriba menos abajo» cambia de signo y
+       una sola integral cancelaría partes del área (igual que en la Guía 13 con el eje). La solución es
+       la misma: hallar <strong>todos</strong> los cortes, partir el intervalo en ellos y, en cada tramo,
+       restar la curva que realmente va abajo.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Área entre $y=x$ y $y=x^{3}$ en $[-1,1]$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Cortes</div>
+        $x=x^{3}\Rightarrow x(x^{2}-1)=0$: $x=-1$, $0$, $1$. Hay un cruce intermedio en $x=0$.
+      </div>
+      <div class="paso"><div class="paso-t">Quién va arriba en cada tramo</div>
+        En $[0,1]$ (prueba $x=0{,}5$: $0{,}5\gt0{,}125$) va arriba $y=x$. En $[-1,0]$ (prueba $x=-0{,}5$: $-0{,}125\gt-0{,}5$) va arriba $y=x^{3}$.
+      </div>
+      <div class="paso"><div class="paso-t">Dos integrales</div>
+        $\displaystyle\int_{0}^{1}(x-x^{3})\,dx=\Big[\frac{x^{2}}{2}-\frac{x^{4}}{4}\Big]_{0}^{1}=\frac{1}{4}$, y por simetría
+        $\displaystyle\int_{-1}^{0}(x^{3}-x)\,dx=\frac{1}{4}$. Área total $=\dfrac{1}{2}$.
+      </div>
+      <div class="paso"><div class="paso-t">Lo que saldría mal</div>
+        $\displaystyle\int_{-1}^{1}(x-x^{3})\,dx=0$: la integral única cancela las dos mitades. Por eso hay que partir.
+      </div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Procedimiento.</strong> (1) Resolver $f(x)=g(x)$ para hallar todos los cortes. (2) En cada
+    tramo, probar un punto para saber cuál curva va arriba. (3) Integrar «arriba − abajo» en cada tramo
+    y sumar. Equivale a $\displaystyle\int_{a}^{b}|f(x)-g(x)|\,dx$.
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Área entre curvas</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Excedente del consumidor y del productor</h3>
+
+  <div class="callout-dark">
+    <h3>Dos áreas entre curvas que miden bienestar</h3>
+    <p>La curva de demanda $p=D(q)$ dice cuánto están dispuestos a pagar los compradores por la unidad
+       $q$; la de oferta $p=S(q)$, cuánto exigen los vendedores. En el <strong>equilibrio</strong> $(q^*,p^*)$
+       ambas coinciden y todos pagan el mismo precio $p^*$.</p>
+    <p>Los compradores que habrían pagado más que $p^*$ se ahorran la diferencia: sumada sobre todas las
+       unidades es el <strong>excedente del consumidor</strong>, el área entre la demanda y la recta
+       $p=p^*$. Los vendedores que habrían aceptado menos ganan la diferencia: el <strong>excedente del
+       productor</strong>, área entre $p=p^*$ y la oferta.</p>
+  </div>
+
+  <div class="def">
+    $$EC=\int_{0}^{q^*}D(q)\,dq-p^*q^*\qquad\qquad EP=p^*q^*-\int_{0}^{q^*}S(q)\,dq$$
+    donde $p^*q^*$ es el gasto total (el rectángulo bajo el precio de equilibrio).
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · $D(q)=100-2q$ (la demanda de la Guía 9) y $S(q)=20+2q$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Equilibrio</div>
+        $100-2q=20+2q\Rightarrow4q=80\Rightarrow q^*=20$, $p^*=100-40=60$. Gasto total $p^*q^*=1200$.
+      </div>
+      <div class="paso"><div class="paso-t">Excedente del consumidor</div>
+        $EC=\displaystyle\int_{0}^{20}(100-2q)\,dq-1200=\big[100q-q^{2}\big]_{0}^{20}-1200=1600-1200=400$.
+      </div>
+      <div class="paso"><div class="paso-t">Excedente del productor</div>
+        $EP=1200-\displaystyle\int_{0}^{20}(20+2q)\,dq=1200-\big[20q+q^{2}\big]_{0}^{20}=1200-800=400$.
+      </div>
+      <div class="paso"><div class="paso-t">Comprobación geométrica</div>
+        Con rectas, el $EC$ es un triángulo de base $20$ y altura $100-60=40$: $\tfrac12\cdot40\cdot20=400$ ✓. La integral da lo mismo, pero sirve también cuando la demanda es curva.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">3.1 Explora los excedentes</div>
+  <div class="viz" data-viz="excedente">
+    <div class="viz-controls">
+      <label for="ex-f">Mercado</label>
+      <select id="ex-f">
+        <option value="base">D: p = 100 − 2q · S: p = 20 + 2q</option>
+        <option value="inel">D: p = 100 − q · S: p = 20 + 2q</option>
+        <option value="oferta">D: p = 100 − 2q · S: p = 40 + q</option>
+      </select>
+      <label for="ex-c">Mostrar</label>
+      <select id="ex-c" class="capa">
+        <option value="ambos">ambos excedentes</option>
+        <option value="ec">solo el del consumidor</option>
+        <option value="ep">solo el del productor</option>
+      </select>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Una demanda menos sensible al precio ($p=100-q$) desplaza el equilibrio y cambia el reparto de los
+    excedentes; una oferta más plana ($p=40+q$) reduce el del productor. Ambos son áreas entre curvas.
+  </p>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Valor promedio de una función</h3>
+
+  <div class="callout-dark">
+    <h3>El promedio de infinitos valores</h3>
+    <p>Para promediar una lista de números se suman y se divide por cuántos son. Para una función que
+       cambia continuamente —un precio a lo largo del día, un costo que depende del nivel de
+       producción— «sumar» es integrar y «cuántos son» es la longitud del intervalo.</p>
+  </div>
+
+  <div class="def">
+    <strong>Valor promedio</strong> de $f$ en $[a,b]$: $\displaystyle \bar f=\frac{1}{b-a}\int_{a}^{b}f(x)\,dx$.
+    Geométricamente, es la altura del rectángulo de base $b-a$ que tiene la misma área que la región bajo $f$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Dos promedios</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Promedio de $f(x)=x^{2}$ en $[0,3]$</div>
+        $\bar f=\dfrac{1}{3}\displaystyle\int_{0}^{3}x^{2}dx=\frac{1}{3}\cdot9=3$. El rectángulo de altura 3 y base 3 tiene área 9, igual que la región bajo la parábola.
+      </div>
+      <div class="paso"><div class="paso-t">Precio promedio de la demanda $p=100-2q$ para $q\in[0,20]$</div>
+        $\bar p=\dfrac{1}{20}\displaystyle\int_{0}^{20}(100-2q)\,dq=\frac{1600}{20}=80$. Es el precio medio que los compradores estaban dispuestos a pagar por las 20 unidades; supera en $20$ al precio de equilibrio, y $20\cdot20=400$ es justamente el excedente del consumidor.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Curva de Lorenz e índice de Gini</h3>
+
+  <div class="callout-dark">
+    <h3>Medir la desigualdad con un área</h3>
+    <p>La <strong>curva de Lorenz</strong> $L(x)$ indica qué fracción del ingreso total recibe la fracción
+       $x$ más pobre de la población. Si todos ganaran lo mismo, $L(x)=x$ (la diagonal). Cuanto más se
+       hunde la curva por debajo de la diagonal, más concentrado está el ingreso.</p>
+    <p>El <strong>índice de Gini</strong> mide ese hundimiento: es el área entre la diagonal y la curva,
+       normalizada para que valga entre 0 (igualdad perfecta) y 1 (una sola persona lo recibe todo). Como
+       el área bajo la diagonal es $\tfrac12$, se multiplica por 2.</p>
+  </div>
+
+  <div class="def">
+    $$G=2\int_{0}^{1}\big[x-L(x)\big]\,dx$$
+    $L$ es creciente, $L(0)=0$, $L(1)=1$ y $L(x)\le x$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Gini de $L(x)=x^{2}$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Área entre la diagonal y la curva</div>
+        $\displaystyle\int_{0}^{1}(x-x^{2})\,dx=\Big[\frac{x^{2}}{2}-\frac{x^{3}}{3}\Big]_{0}^{1}=\frac{1}{2}-\frac{1}{3}=\frac{1}{6}$.
+      </div>
+      <div class="paso"><div class="paso-t">Índice</div>
+        $G=2\cdot\dfrac{1}{6}=\dfrac{1}{3}\approx0{,}33$. Lectura: el 50 % más pobre recibe $L(0{,}5)=0{,}25$, un cuarto del ingreso.
+      </div>
+      <div class="paso"><div class="paso-t">Comparar</div>
+        Con $L(x)=x^{3}$, $G=2\big(\tfrac12-\tfrac14\big)=\tfrac12$: más desigual. Con $L(x)=0{,}3x+0{,}7x^{2}$, $G=2\cdot0{,}7\big(\tfrac12-\tfrac13\big)=\tfrac{7}{30}\approx0{,}23$: más igualitario.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Modelos de aplicación</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      El excedente del consumidor cuantifica el valor que un mercado entrega a los clientes por encima
+      de lo que pagan; una estrategia de precios diferenciados intenta capturar parte de esa área. El
+      índice de Gini se usa igual para medir la concentración de ventas entre clientes o productos
+      (análisis ABC/Pareto).</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El valor promedio de una función es la forma continua del promedio ponderado: el costo unitario
+      medio de un tramo de producción es $\frac{1}{q_2-q_1}\int_{q_1}^{q_2}C'(q)\,dq$. Y el área entre la
+      curva de ingresos y la de costos, entre dos niveles de actividad, es la utilidad acumulada en ese
+      tramo.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      El área entre la curva de capacidad de un servidor y la curva de demanda de peticiones mide la
+      capacidad ociosa (o el déficit, donde se cruzan). El Gini se aplica a la distribución de carga
+      entre nodos: $G=0$ es balanceo perfecto.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      El valor promedio de una señal en un periodo es $\frac{1}{T}\int_{0}^{T}v(t)\,dt$ —su componente
+      DC— y el valor eficaz (RMS) es la raíz del promedio de $v^{2}$. El área entre dos curvas de
+      corriente mide la carga neta intercambiada entre dos ramas.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Área entre curvas</strong>: $A=\displaystyle\int_{a}^{b}[\text{arriba}-\text{abajo}]\,dx$; los límites son los cortes, de $f(x)=g(x)$.</li>
+    <li>Si las curvas se <strong>cruzan</strong>, parte el intervalo en cada corte y en cada tramo resta la que va abajo.</li>
+    <li><strong>Excedentes</strong>: $EC=\displaystyle\int_{0}^{q^*}D(q)\,dq-p^*q^*$, $\;EP=p^*q^*-\displaystyle\int_{0}^{q^*}S(q)\,dq$; con $D=100-2q$, $S=20+2q$: ambos valen 400.</li>
+    <li><strong>Valor promedio</strong>: $\bar f=\dfrac{1}{b-a}\displaystyle\int_{a}^{b}f(x)\,dx$.</li>
+    <li><strong>Gini</strong>: $G=2\displaystyle\int_{0}^{1}[x-L(x)]\,dx$; para $L=x^{2}$, $G=\tfrac13$.</li>
+    <li>Todo el Corte III es una sola idea: <strong>sumar franjas infinitamente finas</strong>, y el teorema fundamental la convierte en $F(b)-F(a)$.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-1/pages/6-1-areas-between-curves" target="_blank" rel="noopener">OpenStax Calculus Vol. 1</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912c"></script>
+<script src="../assets/viz-calculo.js?v=20260912c"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Área entre curvas · 3 preguntas", "items": [ { "etiqueta": "Integrando", "nivel": 1, "criterio": "Plantear el área entre curvas (§1)", "enunciado": "Si $f$ va por encima de $g$ en $[a,b]$, el área entre ambas es:", "opciones": [ "$\\displaystyle\\int_{a}^{b}[f(x)-g(x)]\\,dx$", "$\\displaystyle\\int_{a}^{b}f(x)\\,dx\\cdot\\int_{a}^{b}g(x)\\,dx$", "$\\displaystyle\\int_{a}^{b}[f(x)+g(x)]\\,dx$", "$\\displaystyle\\int_{a}^{b}[g(x)-f(x)]\\,dx$" ], "correcta": 0, "pista": "Cada franja tiene altura «arriba menos abajo».", "solucion": "La altura de cada franja es $f(x)-g(x)$ (arriba menos abajo), así que $A=\\int_{a}^{b}[f-g]\\,dx$. Restar al revés daría el área con signo negativo." }, { "etiqueta": "Cortes", "nivel": 2, "criterio": "Hallar los límites de integración (§1)", "enunciado": "Los puntos de corte de $y=x+2$ y $y=x^{2}$ son:", "opciones": [ "$x=0$ y $x=2$", "$x=-1$ y $x=1$", "$x=-1$ y $x=2$", "$x=1$ y $x=-2$" ], "correcta": 2, "pista": "Resuelve $x^{2}-x-2=0$.", "solucion": "$x+2=x^{2}\\Rightarrow x^{2}-x-2=(x-2)(x+1)=0$, luego $x=-1$ y $x=2$. Comprueba: en $x=2$ ambas valen 4; en $x=-1$ ambas valen 1." }, { "etiqueta": "Cálculo", "nivel": 3, "criterio": "Calcular un área entre curvas (§1)", "enunciado": "El área entre $y=x$ y $y=x^{2}$ en $[0,1]$ es:", "opciones": [ "$\\dfrac{1}{2}$", "$\\dfrac{1}{3}$", "$\\dfrac{5}{6}$", "$\\dfrac{1}{6}$" ], "correcta": 3, "pista": "En $[0,1]$ la recta va arriba: $\\int_{0}^{1}(x-x^{2})dx$.", "solucion": "$\\int_{0}^{1}(x-x^{2})dx=\\Big[\\dfrac{x^{2}}{2}-\\dfrac{x^{3}}{3}\\Big]_{0}^{1}=\\dfrac12-\\dfrac13=\\dfrac16$. Las opciones $\\tfrac12$ y $\\tfrac13$ son las áreas bajo cada curva por separado; el área entre ellas es su diferencia." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Modelos de aplicación · 3 preguntas", "items": [ { "etiqueta": "Excedente", "nivel": 3, "criterio": "Calcular el excedente del consumidor (§3)", "enunciado": "Con demanda $D(q)=100-2q$ y equilibrio $q^*=20$, $p^*=60$, el excedente del consumidor es:", "opciones": [ "$800$", "$400$", "$1600$", "$1200$" ], "correcta": 1, "pista": "$EC=\\int_{0}^{20}D(q)\\,dq-p^*q^*$.", "solucion": "$\\int_{0}^{20}(100-2q)dq=1600$ y $p^*q^*=1200$, así que $EC=400$. Como la demanda es una recta, coincide con el triángulo $\\tfrac12\\cdot40\\cdot20$. $1600$ es el valor total que los compradores estaban dispuestos a pagar, no el excedente." }, { "etiqueta": "Promedio", "nivel": 2, "criterio": "Calcular el valor promedio (§4)", "enunciado": "El valor promedio de $f(x)=2x$ en $[0,4]$ es:", "opciones": [ "$4$", "$16$", "$8$", "$2$" ], "correcta": 0, "pista": "$\\dfrac{1}{4}\\int_{0}^{4}2x\\,dx$.", "solucion": "$\\int_{0}^{4}2x\\,dx=\\big[x^{2}\\big]_{0}^{4}=16$, y dividiendo por la longitud $4$: $\\bar f=4$. Es la altura del rectángulo de base 4 con área 16. La opción 16 olvida dividir." }, { "etiqueta": "Gini", "nivel": 3, "criterio": "Calcular el índice de Gini (§5)", "enunciado": "Para la curva de Lorenz $L(x)=x^{2}$, el índice de Gini es:", "opciones": [ "$\\dfrac{2}{3}$", "$1$", "$\\dfrac{1}{3}$", "$\\dfrac{1}{6}$" ], "correcta": 2, "pista": "$G=2\\int_{0}^{1}(x-x^{2})dx$.", "solucion": "$\\int_{0}^{1}(x-x^{2})dx=\\tfrac12-\\tfrac13=\\tfrac16$, y $G=2\\cdot\\tfrac16=\\tfrac13$. El factor 2 normaliza el área bajo la diagonal ($\\tfrac12$) a 1; $\\tfrac16$ es el área sin normalizar." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Arriba", "nivel": 1, "criterio": "Determinar qué curva va arriba (§1)", "enunciado": "Entre $y=2x$ y $y=x^{2}$ en $[0,2]$, ¿cuál va arriba y cuánto vale el área?", "opciones": [ "$y=x^{2}$ arriba; área $\\dfrac{4}{3}$", "$y=2x$ arriba; área $4$", "$y=2x$ arriba; área $\\dfrac{8}{3}$", "$y=2x$ arriba; área $\\dfrac{4}{3}$" ], "correcta": 3, "pista": "Prueba $x=1$: $2\\gt1$. Luego $\\int_{0}^{2}(2x-x^{2})dx$.", "solucion": "En $x=1$ la recta vale 2 y la parábola 1: la recta va arriba. $\\int_{0}^{2}(2x-x^{2})dx=\\big[x^{2}-\\tfrac{x^{3}}{3}\\big]_{0}^{2}=4-\\tfrac83=\\tfrac43$. Las opciones $4$ y $\\tfrac83$ son las áreas bajo cada curva." }, { "etiqueta": "Área", "nivel": 3, "criterio": "Calcular área con cortes en ±2 (§1)", "enunciado": "El área encerrada entre $y=4$ y $y=x^{2}$ es:", "opciones": [ "$8$", "$\\dfrac{32}{3}$", "$\\dfrac{16}{3}$", "$16$" ], "correcta": 1, "pista": "Cortes en $x=\\pm2$; integra $4-x^{2}$.", "solucion": "$x^{2}=4$ da $x=\\pm2$ y la recta va arriba. $\\int_{-2}^{2}(4-x^{2})dx=\\big[4x-\\tfrac{x^{3}}{3}\\big]_{-2}^{2}=\\big(8-\\tfrac83\\big)-\\big(-8+\\tfrac83\\big)=\\tfrac{32}{3}$. $\\tfrac{16}{3}$ es solo la mitad derecha." }, { "etiqueta": "Cruce", "nivel": 2, "criterio": "Reconocer cuándo partir el intervalo (§2)", "enunciado": "Si dos curvas se cruzan dentro del intervalo, para hallar el área encerrada se debe:", "opciones": [ "partir el intervalo en los cortes y en cada tramo restar la curva que va abajo", "integrar $f-g$ en todo el intervalo de una sola vez", "integrar solo donde $f\\gt g$", "tomar el valor absoluto del resultado de una sola integral" ], "correcta": 0, "pista": "Recuerda $\\int_{-1}^{1}(x-x^{3})dx=0$.", "solucion": "Una sola integral cancela las partes donde el orden se invierte: para $y=x$ y $y=x^{3}$ en $[-1,1]$ da $0$ aunque el área es $\\tfrac12$. Hay que partir en $x=0$ y restar en cada tramo la curva inferior. El valor absoluto del total no corrige la cancelación interna." }, { "etiqueta": "Cúbica", "nivel": 3, "criterio": "Calcular área con cruce (§2)", "enunciado": "El área entre $y=x$ y $y=x^{3}$ en $[-1,1]$ es:", "opciones": [ "$\\dfrac{1}{4}$", "$1$", "$\\dfrac{1}{2}$", "$0$" ], "correcta": 2, "pista": "Dos tramos de $\\tfrac14$ cada uno.", "solucion": "$\\int_{0}^{1}(x-x^{3})dx=\\tfrac12-\\tfrac14=\\tfrac14$ y, por simetría, $\\int_{-1}^{0}(x^{3}-x)dx=\\tfrac14$. Total $\\tfrac12$. La integral única da $0$ (cancelación); $\\tfrac14$ es solo un tramo." }, { "etiqueta": "Equilibrio", "nivel": 2, "criterio": "Hallar el equilibrio de mercado (§3)", "enunciado": "Con $D(q)=100-2q$ y $S(q)=20+2q$, el equilibrio es:", "opciones": [ "$q^*=40$, $p^*=20$", "$q^*=25$, $p^*=50$", "$q^*=20$, $p^*=100$", "$q^*=20$, $p^*=60$" ], "correcta": 3, "pista": "Iguala $D=S$.", "solucion": "$100-2q=20+2q\\Rightarrow 4q=80\\Rightarrow q^*=20$, y $p^*=100-2\\cdot20=60$ (o $20+2\\cdot20=60$). El gasto total es $p^*q^*=1200$." }, { "etiqueta": "Productor", "nivel": 3, "criterio": "Calcular el excedente del productor (§3)", "enunciado": "Con $S(q)=20+2q$, $q^*=20$ y $p^*=60$, el excedente del productor es:", "opciones": [ "$200$", "$400$", "$800$", "$1200$" ], "correcta": 1, "pista": "$EP=p^*q^*-\\int_{0}^{20}S(q)\\,dq$.", "solucion": "$\\int_{0}^{20}(20+2q)dq=\\big[20q+q^{2}\\big]_{0}^{20}=800$ y $EP=1200-800=400$. Geométricamente, el triángulo $\\tfrac12\\cdot(60-20)\\cdot20=400$. $800$ es el mínimo total que los vendedores aceptarían, no el excedente." }, { "etiqueta": "Promedio", "nivel": 2, "criterio": "Interpretar el valor promedio (§4)", "enunciado": "El valor promedio de $f(x)=x^{2}$ en $[0,3]$ es:", "opciones": [ "$3$", "$9$", "$4{,}5$", "$1$" ], "correcta": 0, "pista": "$\\dfrac{1}{3}\\int_{0}^{3}x^{2}dx$.", "solucion": "$\\int_{0}^{3}x^{2}dx=9$ y $\\bar f=\\dfrac{9}{3}=3$: el rectángulo de base 3 y altura 3 tiene la misma área que la región bajo la parábola. $9$ es la integral, no el promedio." }, { "etiqueta": "Lorenz", "nivel": 2, "criterio": "Interpretar la curva de Lorenz (§5)", "enunciado": "Si la curva de Lorenz de un país fuera $L(x)=x$, su índice de Gini sería:", "opciones": [ "$\\dfrac{1}{2}$", "$\\dfrac{1}{3}$", "$0$: igualdad perfecta, todos reciben la misma fracción", "$1$: máxima desigualdad" ], "correcta": 2, "pista": "No hay área entre la diagonal y la curva.", "solucion": "$G=2\\int_{0}^{1}(x-x)dx=0$. Cuando $L$ coincide con la diagonal, cada fracción de la población recibe la misma fracción del ingreso. Cuanto más se hunde $L$ bajo la diagonal, mayor es $G$; para $L=x^{2}$ vale $\\tfrac13$." } ] });
+</script>
 </body>
 </html>
