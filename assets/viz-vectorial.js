@@ -1042,4 +1042,390 @@ OVA.viz.registrar('integraldoble', function (host) {
     'cada franja) y luego suma todas las franjas en x. Más franjas → mejor aproximación.</span>';
 });
 
+/* ══════════════════════════════════════════════════════════
+   CORTE III · S11–S14
+   regionpolar · areasuperficie (S11) · solido3d · coordenadas3d (S12)
+   jacobiano · centromasa (S13) · campovec (S14)
+   ══════════════════════════════════════════════════════════ */
+
+/* Lienzo 2D con rango a medida (misma idea que en viz-calculo). */
+function marco2(cv, alto, xmin, xmax, ymin, ymax) {
+  var L = OVA.lienzo(cv, { alto: alto });
+  var padL = 40, padR = 14, padT = 14, padB = 24;
+  var sx = (L.w - padL - padR) / (xmax - xmin), sy = (L.h - padT - padB) / (ymax - ymin);
+  var s = Math.min(sx, sy);                      // misma escala en x e y (ángulos fieles)
+  L.sx = s; L.sy = s;
+  L.ox = padL + ((L.w - padL - padR) - s * (xmax - xmin)) / 2 - xmin * s;
+  L.oy = padT + ((L.h - padT - padB) - s * (ymax - ymin)) / 2 + ymax * s;
+  L.xmin = xmin; L.xmax = xmax; L.ymin = ymin; L.ymax = ymax;
+  return L;
+}
+function ejes2(L, paso) {
+  var c = L.ctx, grid = OVA.color('cv-grid'), axis = OVA.color('cv-axis'), txt = OVA.color('cv-text'), v, p;
+  c.strokeStyle = grid; c.lineWidth = 1; c.fillStyle = txt; c.font = '10px ui-monospace,monospace';
+  for (v = Math.ceil(L.xmin / paso) * paso; v <= L.xmax + 1e-9; v += paso) {
+    p = L.px(v); c.beginPath(); c.moveTo(p, L.py(L.ymin)); c.lineTo(p, L.py(L.ymax)); c.stroke();
+    if (Math.abs(v) > 1e-9) c.fillText(String(Math.round(v * 100) / 100), p - 6, L.py(L.ymin) + 13);
+  }
+  for (v = Math.ceil(L.ymin / paso) * paso; v <= L.ymax + 1e-9; v += paso) {
+    p = L.py(v); c.beginPath(); c.moveTo(L.px(L.xmin), p); c.lineTo(L.px(L.xmax), p); c.stroke();
+    if (Math.abs(v) > 1e-9) c.fillText(String(Math.round(v * 100) / 100), L.px(L.xmin) - 26, p + 3);
+  }
+  c.strokeStyle = axis; c.lineWidth = 1.6;
+  var yA = Math.min(Math.max(0, L.ymin), L.ymax), xA = Math.min(Math.max(0, L.xmin), L.xmax);
+  c.beginPath(); c.moveTo(L.px(L.xmin), L.py(yA)); c.lineTo(L.px(L.xmax), L.py(yA)); c.stroke();
+  c.beginPath(); c.moveTo(L.px(xA), L.py(L.ymin)); c.lineTo(L.px(xA), L.py(L.ymax)); c.stroke();
+}
+function f3(v) { return (Math.round(v * 1000) / 1000).toFixed(3); }
+function f2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+
+/* Superficie paramétrica r(u,v) por el algoritmo del pintor (la del motor
+   solo acepta z = f(x,y)). rgb = [R,G,B] base; sombreado por altura.  */
+function supParam(E, fn, u0, u1, v0, v1, n, rgb, alfa) {
+  var c = E.ctx, quads = [], i, j;
+  for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+    var a = u0 + (u1 - u0) * i / n, b = u0 + (u1 - u0) * (i + 1) / n;
+    var p = v0 + (v1 - v0) * j / n, q2 = v0 + (v1 - v0) * (j + 1) / n;
+    var e = [fn(a, p), fn(b, p), fn(b, q2), fn(a, q2)], zc = 0, cen = [0, 0, 0], k;
+    for (k = 0; k < 4; k++) { cen[0] += e[k][0] / 4; cen[1] += e[k][1] / 4; cen[2] += e[k][2] / 4; }
+    quads.push({ d: E.prof(cen), e: e, z: cen[2] });
+  }
+  quads.sort(function (p, q) { return p.d - q.d; });
+  var zs = quads.map(function (q) { return q.z; }), zmin = Math.min.apply(null, zs), zmax = Math.max.apply(null, zs);
+  var oscuro = document.body.classList.contains('dark');
+  quads.forEach(function (q) {
+    var t = 0.55 + 0.45 * (q.z - zmin) / Math.max(zmax - zmin, 1e-9);
+    c.fillStyle = 'rgba(' + (rgb[0] * t | 0) + ',' + (rgb[1] * t | 0) + ',' + (rgb[2] * t | 0) + ',' + alfa + ')';
+    c.strokeStyle = oscuro ? 'rgba(20,40,60,.4)' : 'rgba(255,255,255,.4)'; c.lineWidth = 0.6;
+    c.beginPath();
+    for (var k = 0; k < 4; k++) { var pp = E.p(q.e[k]); k ? c.lineTo(pp[0], pp[1]) : c.moveTo(pp[0], pp[1]); }
+    c.closePath(); c.fill(); c.stroke();
+  });
+}
+function puntosParam(fn, u0, u1, v0, v1, n) {
+  var pts = [], i, j;
+  for (i = 0; i <= n; i++) for (j = 0; j <= n; j++) pts.push(fn(u0 + (u1 - u0) * i / n, v0 + (v1 - v0) * j / n));
+  return pts;
+}
+/* Simpson 2D en coordenadas (u,v) rectangulares */
+function simpson2(f, u0, u1, v0, v1, n) {
+  n = n || 60; var hu = (u1 - u0) / n, hv = (v1 - v0) / n, s = 0, i, j;
+  for (i = 0; i <= n; i++) for (j = 0; j <= n; j++) {
+    var wi = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2), wj = (j === 0 || j === n) ? 1 : (j % 2 ? 4 : 2);
+    s += wi * wj * f(u0 + i * hu, v0 + j * hv);
+  }
+  return s * hu * hv / 9;
+}
+function simpson1(f, a, b, n) {
+  n = n || 400; var h = (b - a) / n, s = f(a) + f(b), i;
+  for (i = 1; i < n; i++) s += f(a + i * h) * (i % 2 ? 4 : 2);
+  return s * h / 3;
+}
+
+/* ══════════ S11 · Región polar: celdas r·Δr·Δθ ══════════ */
+var RPOL = {
+  disco:  { n: 'disco r ≤ 3/2', rmax: function (t) { return 1.5; }, rmin: function (t) { return 0; }, t0: 0, t1: 2 * Math.PI, ex: 2.25 * Math.PI, sEx: '9π/4', int: '∫₀^{2π}∫₀^{3/2} r dr dθ' },
+  anillo: { n: 'anillo 1 ≤ r ≤ 2', rmax: function (t) { return 2; }, rmin: function (t) { return 1; }, t0: 0, t1: 2 * Math.PI, ex: 3 * Math.PI, sEx: '3π', int: '∫₀^{2π}∫₁² r dr dθ' },
+  sector: { n: 'sector r ≤ 3/2, 0 ≤ θ ≤ π/2', rmax: function (t) { return 1.5; }, rmin: function (t) { return 0; }, t0: 0, t1: Math.PI / 2, ex: 9 * Math.PI / 16, sEx: '9π/16', int: '∫₀^{π/2}∫₀^{3/2} r dr dθ' },
+  cardio: { n: 'cardioide r ≤ 1 + cos θ', rmax: function (t) { return 1 + Math.cos(t); }, rmin: function (t) { return 0; }, t0: 0, t1: 2 * Math.PI, ex: 1.5 * Math.PI, sEx: '3π/2', int: '∫₀^{2π}∫₀^{1+cosθ} r dr dθ' }
+};
+
+OVA.viz.registrar('regionpolar', function (host) {
+  var cfg = RPOL[q(host, 'select').value] || RPOL.disco;
+  var n = parseInt(q(host, '.n').value, 10);
+  var sinR = q(host, '.factor').value === 'sin';
+  q(host, '.n-val').textContent = n + ' × ' + n + ' celdas';
+
+  var L = marco2(q(host, 'canvas'), 330, -2.3, 2.3, -2.3, 2.3);
+  ejes2(L, 1);
+  var c = L.ctx, dt = (cfg.t0 === 0 && cfg.t1 > 6) ? 2 * Math.PI / n : (cfg.t1 - cfg.t0) / n;
+  var Rm = 2, dr = Rm / n, suma = 0, i, j;
+  for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+    var r0 = i * dr, r1 = r0 + dr, a0 = cfg.t0 + j * dt, a1 = a0 + dt;
+    var rm = (r0 + r1) / 2, am = (a0 + a1) / 2;
+    if (rm < cfg.rmin(am) || rm > cfg.rmax(am)) continue;
+    suma += (sinR ? 1 : rm) * dr * dt;
+    c.fillStyle = 'rgba(198,143,46,.35)'; c.strokeStyle = 'rgba(198,143,46,.8)'; c.lineWidth = 0.7;
+    c.beginPath();
+    c.arc(L.ox, L.oy, r1 * L.sx, -a1, -a0);
+    c.arc(L.ox, L.oy, r0 * L.sx, -a0, -a1, true);
+    c.closePath(); c.fill(); c.stroke();
+  }
+  // frontera
+  c.strokeStyle = AZUL; c.lineWidth = 2.6; c.beginPath();
+  for (i = 0; i <= 300; i++) { var t = cfg.t0 + (cfg.t1 - cfg.t0) * i / 300, rr = cfg.rmax(t); i ? c.lineTo(L.px(rr * Math.cos(t)), L.py(rr * Math.sin(t))) : c.moveTo(L.px(rr * Math.cos(t)), L.py(rr * Math.sin(t))); }
+  c.stroke();
+  if (cfg.rmin(0) > 0) { c.beginPath(); c.arc(L.ox, L.oy, cfg.rmin(0) * L.sx, 0, 2 * Math.PI); c.stroke(); }
+  if (cfg.t1 - cfg.t0 < 6) { var rb = cfg.rmax(cfg.t0); c.beginPath(); c.moveTo(L.ox, L.oy); c.lineTo(L.px(rb * Math.cos(cfg.t0)), L.py(rb * Math.sin(cfg.t0))); c.moveTo(L.ox, L.oy); c.lineTo(L.px(rb * Math.cos(cfg.t1)), L.py(rb * Math.sin(cfg.t1))); c.stroke(); }
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Región: ' + cfg.n + '</strong> · área exacta = ' + cfg.int + ' = <strong>' + cfg.sEx + ' ≈ ' + f3(cfg.ex) + '</strong><br>' +
+    'Suma de ' + n + '×' + n + ' celdas polares con ' + (sinR ? '<strong style="color:#b0392c">Δr·Δθ (sin el factor r)</strong>' : '<strong style="color:#c68f2e">r·Δr·Δθ</strong>') +
+    ': <strong>' + f3(suma) + '</strong>' + (sinR ? ' — no converge al área: una celda lejos del origen es más ancha que una cercana.' : ' — converge al área exacta al aumentar n.') + '<br>' +
+    '<span style="color:#8fb4d9">Una celda polar es casi un rectángulo de lados Δr y r·Δθ (el arco). Por eso dA = r dr dθ: el factor r mide cuánto se estira el arco al alejarse del origen.</span>';
+});
+
+/* ══════════ S11 · Área de una superficie z = f(x,y) ══════════ */
+var ASUP = {
+  plano: { f: function (x, y) { return 0.5 * x + 0.5 * y + 0.5; }, fx: function () { return 0.5; }, fy: function () { return 0.5; },
+           n: 'z = (x + y + 1)/2 sobre el disco r ≤ 1', S: Math.sqrt(1.5) * Math.PI, sS: '√(3/2)·π ≈ 3.848', fac: '√(1 + ¼ + ¼) = √(3/2) constante: S = √(3/2)·π' },
+  parab: { f: function (x, y) { return x * x + y * y; }, fx: function (x) { return 2 * x; }, fy: function (x, y) { return 2 * y; },
+           n: 'z = x² + y² sobre el disco r ≤ 1', S: Math.PI / 6 * (5 * Math.sqrt(5) - 1), sS: '(π/6)(5√5 − 1) ≈ 5.330', fac: '√(1 + 4x² + 4y²) = √(1 + 4r²): en polares, 2π∫₀¹ √(1+4r²) r dr' },
+  hemi:  { f: function (x, y) { var s = 1 - x * x - y * y; return s > 0 ? Math.sqrt(s) : 0; }, fx: function (x, y) { var s = 1 - x * x - y * y; return s > 1e-6 ? -x / Math.sqrt(s) : NaN; }, fy: function (x, y) { var s = 1 - x * x - y * y; return s > 1e-6 ? -y / Math.sqrt(s) : NaN; },
+           n: 'z = √(1 − x² − y²) (hemisferio) sobre r ≤ 1', S: 2 * Math.PI, sS: '2π ≈ 6.283', fac: '√(1 + fx² + fy²) = 1/√(1 − r²): crece hacia el borde, donde la superficie es vertical; con r = sen u la integral 2π∫₀¹ r/√(1−r²) dr se vuelve 2π∫₀^{π/2} sen u du = 2π',
+           num: function () { return 2 * Math.PI * simpson1(Math.sin, 0, Math.PI / 2, 200); } }
+};
+
+OVA.viz.registrar('areasuperficie', function (host) {
+  var cfg = ASUP[q(host, 'select').value] || ASUP.parab;
+  var th = parseFloat(q(host, '.giro').value) / 100;
+  var rr = 0.6, aa = 0.8;   // punto de muestra
+  q(host, '.giro-val').textContent = 'θ = ' + th.toFixed(2);
+
+  var E = OVA.esc3d(q(host, 'canvas'), { th: th, ph: 0.5, alto: 340 });
+  var sup = function (r, t) { var x = r * Math.cos(t), y = r * Math.sin(t); return [x, y, cfg.f(x, y)]; };
+  E.ajustar(puntosParam(sup, 0, 1, 0, 2 * Math.PI, 8).concat([[0, 0, 0], [1.3, 0, 0], [0, 1.3, 0], [0, 0, 1.3]]));
+  E.ejes(1.3);
+  // disco base (región R) en el plano z=0
+  E.ctx.setLineDash([3, 4]); E.curva(function (t) { return [Math.cos(t), Math.sin(t), 0]; }, 0, 2 * Math.PI, 'rgba(150,167,181,.9)', 1.3); E.ctx.setLineDash([]);
+  supParam(E, sup, 0, 1, 0, 2 * Math.PI, 18, [78, 122, 184], 0.55);
+  // parche dA y su imagen dS
+  var x0 = rr * Math.cos(aa), y0 = rr * Math.sin(aa), d = 0.12;
+  var esq = [[x0 - d, y0 - d], [x0 + d, y0 - d], [x0 + d, y0 + d], [x0 - d, y0 + d]], k, p;
+  E.ctx.fillStyle = 'rgba(176,57,44,.55)'; E.ctx.beginPath();
+  for (k = 0; k < 4; k++) { p = E.p([esq[k][0], esq[k][1], 0]); k ? E.ctx.lineTo(p[0], p[1]) : E.ctx.moveTo(p[0], p[1]); }
+  E.ctx.closePath(); E.ctx.fill();
+  E.ctx.fillStyle = 'rgba(198,143,46,.85)'; E.ctx.beginPath();
+  for (k = 0; k < 4; k++) { p = E.p([esq[k][0], esq[k][1], cfg.f(esq[k][0], esq[k][1])]); k ? E.ctx.lineTo(p[0], p[1]) : E.ctx.moveTo(p[0], p[1]); }
+  E.ctx.closePath(); E.ctx.fill();
+  for (k = 0; k < 4; k++) E.segmento([esq[k][0], esq[k][1], 0], [esq[k][0], esq[k][1], cfg.f(esq[k][0], esq[k][1])], 'rgba(150,167,181,.6)', [2, 3]);
+
+  var fxv = cfg.fx(x0, y0), fyv = cfg.fy(x0, y0), fac = Math.sqrt(1 + fxv * fxv + fyv * fyv);
+  var Snum = cfg.num ? cfg.num() : simpson2(function (r, t) { var x = r * Math.cos(t), y = r * Math.sin(t); var a = cfg.fx(x, y), b = cfg.fy(x, y); return Math.sqrt(1 + a * a + b * b) * r; }, 0, 1, 0, 2 * Math.PI, 120);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · S = ∬_R √(1 + f_x² + f_y²) dA = <strong>' + cfg.sS + '</strong>' +
+    ' (numérico ' + f3(Snum) + ')<br>' +
+    'En el punto rojo (r = ' + rr + '): f_x = ' + f2(fxv) + ', f_y = ' + f2(fyv) + ' → el parche <span style="color:#e08b7e">dA</span> del plano se convierte en un parche ' +
+    '<span style="color:#c68f2e">dS</span> de la superficie <strong>' + f3(fac) + '</strong> veces más grande.<br>' +
+    '<span style="color:#8fb4d9">' + cfg.fac + '. Cuanto más inclinada está la superficie, mayor es el factor.</span>';
+});
+
+/* ══════════ S12 · Sólidos de integrales triples ══════════ */
+var SOL3 = {
+  caja:  { n: 'caja [0,1]×[0,2]×[0,3]', V: 6, sV: '6', int: '∫₀¹∫₀²∫₀³ dz dy dx', sis: 'cartesianas',
+           dib: function (E) { caja(E, 0, 1, 0, 2, 0, 3); }, pts: [[0, 0, 0], [1, 2, 3]] },
+  tetra: { n: 'tetraedro x + y + z ≤ 1 (primer octante)', V: 1 / 6, sV: '1/6', int: '∫₀¹∫₀^{1−x}∫₀^{1−x−y} dz dy dx', sis: 'cartesianas',
+           dib: function (E) { supParam(E, function (u, v) { return [u, v * (1 - u), (1 - u) * (1 - v)]; }, 0, 1, 0, 1, 10, [78, 122, 184], 0.6); cara(E, [[0, 0, 0], [1, 0, 0], [0, 1, 0]], 'rgba(198,143,46,.35)'); }, pts: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]] },
+  parab: { n: 'entre z = x² + y² y z = 4', V: 8 * Math.PI, sV: '8π', int: '∫₀^{2π}∫₀²∫_{r²}^{4} r dz dr dθ', sis: 'cilíndricas',
+           dib: function (E) { supParam(E, function (r, t) { return [r * Math.cos(t), r * Math.sin(t), r * r]; }, 0, 2, 0, 2 * Math.PI, 18, [78, 122, 184], 0.6); supParam(E, function (r, t) { return [r * Math.cos(t), r * Math.sin(t), 4]; }, 0, 2, 0, 2 * Math.PI, 10, [198, 143, 46], 0.35); }, pts: [[-2, -2, 0], [2, 2, 4]] },
+  esfera:{ n: 'esfera ρ ≤ 1', V: 4 * Math.PI / 3, sV: '4π/3', int: '∫₀^{2π}∫₀^{π}∫₀¹ ρ² sen φ dρ dφ dθ', sis: 'esféricas',
+           dib: function (E) { supParam(E, function (p, t) { return [Math.sin(p) * Math.cos(t), Math.sin(p) * Math.sin(t), Math.cos(p)]; }, 0, Math.PI, 0, 2 * Math.PI, 18, [78, 122, 184], 0.6); }, pts: [[-1, -1, -1], [1, 1, 1]] },
+  cono:  { n: 'cono de helado: ρ ≤ 1, 0 ≤ φ ≤ π/3', V: Math.PI / 3, sV: 'π/3', int: '∫₀^{2π}∫₀^{π/3}∫₀¹ ρ² sen φ dρ dφ dθ', sis: 'esféricas',
+           dib: function (E) { supParam(E, function (r, t) { return [r * Math.sin(Math.PI / 3) * Math.cos(t), r * Math.sin(Math.PI / 3) * Math.sin(t), r * Math.cos(Math.PI / 3)]; }, 0, 1, 0, 2 * Math.PI, 14, [198, 143, 46], 0.55); supParam(E, function (p, t) { return [Math.sin(p) * Math.cos(t), Math.sin(p) * Math.sin(t), Math.cos(p)]; }, 0, Math.PI / 3, 0, 2 * Math.PI, 14, [78, 122, 184], 0.6); }, pts: [[-1, -1, 0], [1, 1, 1]] }
+};
+function cara(E, pts, color) {
+  var c = E.ctx; c.fillStyle = color; c.beginPath();
+  pts.forEach(function (P, i) { var p = E.p(P); i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); });
+  c.closePath(); c.fill();
+}
+function caja(E, x0, x1, y0, y1, z0, z1) {
+  var V = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]];
+  var caras = [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [2, 3, 7, 6], [1, 2, 6, 5], [0, 3, 7, 4]];
+  caras.map(function (f) { var cen = [0, 0, 0]; f.forEach(function (i) { cen[0] += V[i][0] / 4; cen[1] += V[i][1] / 4; cen[2] += V[i][2] / 4; }); return { d: E.prof(cen), f: f }; })
+       .sort(function (a, b) { return a.d - b.d; })
+       .forEach(function (o) { cara(E, o.f.map(function (i) { return V[i]; }), 'rgba(78,122,184,.45)'); var c = E.ctx; c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 0.8; c.stroke(); });
+}
+
+OVA.viz.registrar('solido3d', function (host) {
+  var cfg = SOL3[q(host, 'select').value] || SOL3.caja;
+  var th = parseFloat(q(host, '.giro').value) / 100;
+  q(host, '.giro-val').textContent = 'θ = ' + th.toFixed(2);
+  var E = OVA.esc3d(q(host, 'canvas'), { th: th, ph: 0.45, alto: 340 });
+  var lo = cfg.pts[0], hi = cfg.pts[cfg.pts.length - 1];
+  E.ajustar(cfg.pts.concat([[0, 0, 0], [hi[0] * 1.2, 0, 0], [0, hi[1] * 1.2, 0], [0, 0, hi[2] * 1.2]]));
+  E.ejes(Math.max(hi[0], hi[1], hi[2]) * 1.15, 0.6);
+  cfg.dib(E);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · sistema natural: <strong>' + cfg.sis + '</strong><br>' +
+    'V = ∭_E dV = ' + cfg.int + ' = <strong style="color:#c68f2e">' + cfg.sV + ' ≈ ' + f3(cfg.V) + '</strong><br>' +
+    '<span style="color:#8fb4d9">La integral triple de 1 es el volumen; si se integra una densidad δ(x,y,z) en vez de 1, el resultado es la masa. Gira el sólido para ver las superficies que lo limitan.</span>';
+});
+
+/* ══════════ S12 · Coordenadas cilíndricas y esféricas de un punto ══════════ */
+OVA.viz.registrar('coordenadas3d', function (host) {
+  var rho = parseFloat(q(host, '.rho').value) / 10;
+  var phi = parseFloat(q(host, '.phi').value) * Math.PI / 180;
+  var tht = parseFloat(q(host, '.tht').value) * Math.PI / 180;
+  q(host, '.rho-val').textContent = 'ρ = ' + rho.toFixed(1);
+  q(host, '.phi-val').textContent = 'φ = ' + Math.round(phi * 180 / Math.PI) + '°';
+  q(host, '.tht-val').textContent = 'θ = ' + Math.round(tht * 180 / Math.PI) + '°';
+  var r = rho * Math.sin(phi), x = r * Math.cos(tht), y = r * Math.sin(tht), z = rho * Math.cos(phi);
+
+  var E = OVA.esc3d(q(host, 'canvas'), { th: 0.8, ph: 0.45, alto: 340 });
+  E.ajustar([[0, 0, 0], [2.3, 0, 0], [0, 2.3, 0], [0, 0, 2.3], [-0.5, -0.5, -0.3], [x, y, z]]);
+  E.ejes(2.3, 0.5);
+  // arco θ en el plano xy y arco φ desde el eje z
+  E.curva(function (t) { return [0.6 * Math.cos(t), 0.6 * Math.sin(t), 0]; }, 0, tht, VERDE, 2);
+  E.curva(function (p) { return [0.7 * Math.sin(p) * Math.cos(tht), 0.7 * Math.sin(p) * Math.sin(tht), 0.7 * Math.cos(p)]; }, 0, phi, MORADO, 2);
+  E.segmento([0, 0, 0], [x, y, 0], VERDE, [4, 3]);          // r (proyección)
+  E.segmento([x, y, 0], [x, y, z], AZUL, [4, 3]);           // z
+  E.segmento([0, 0, 0], [x, y, z], ROJO);                   // ρ
+  E.ctx.lineWidth = 2.4; E.ctx.strokeStyle = ROJO; var o = E.p([0, 0, 0]), pp = E.p([x, y, z]);
+  E.ctx.beginPath(); E.ctx.moveTo(o[0], o[1]); E.ctx.lineTo(pp[0], pp[1]); E.ctx.stroke();
+  E.punto([x, y, z], ORO, 6); E.punto([x, y, 0], VERDE, 4);
+  var c = E.ctx; c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = ROJO; c.fillText('ρ', (o[0] + pp[0]) / 2 + 6, (o[1] + pp[1]) / 2);
+  var pr = E.p([x / 2, y / 2, 0]); c.fillStyle = VERDE; c.fillText('r', pr[0] + 4, pr[1] + 12);
+  var pa = E.p([0.75 * Math.cos(tht / 2), 0.75 * Math.sin(tht / 2), 0]); c.fillText('θ', pa[0], pa[1] + 4);
+  var pf = E.p([0.85 * Math.sin(phi / 2) * Math.cos(tht), 0.85 * Math.sin(phi / 2) * Math.sin(tht), 0.85 * Math.cos(phi / 2)]); c.fillStyle = MORADO; c.fillText('φ', pf[0] + 4, pf[1]);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>Esféricas</strong> (ρ, φ, θ) = (' + rho.toFixed(1) + ', ' + Math.round(phi * 180 / Math.PI) + '°, ' + Math.round(tht * 180 / Math.PI) + '°) &nbsp;→&nbsp; ' +
+    '<strong>cilíndricas</strong> (r, θ, z) = (' + f3(r) + ', ' + Math.round(tht * 180 / Math.PI) + '°, ' + f3(z) + ') &nbsp;→&nbsp; ' +
+    '<strong>cartesianas</strong> (x, y, z) = (' + f3(x) + ', ' + f3(y) + ', ' + f3(z) + ')<br>' +
+    'r = ρ sen φ = ' + f3(r) + ' · z = ρ cos φ = ' + f3(z) + ' · x = r cos θ · y = r sen θ · comprobación: √(x²+y²+z²) = ' + f3(Math.sqrt(x * x + y * y + z * z)) + ' = ρ<br>' +
+    '<span style="color:#8fb4d9"><span style="color:#e08b7e">ρ</span> es la distancia al origen; <span style="color:#b08ad0">φ</span> se mide desde el eje z positivo (0 a π); <span style="color:#7fd4a4">θ</span> es el mismo ángulo de las polares, en el plano xy. Los elementos de volumen: dV = r dz dr dθ (cilíndricas) y dV = ρ² sen φ dρ dφ dθ (esféricas).</span>';
+});
+
+/* ══════════ S13 · Jacobiano: cómo una transformación deforma la malla ══════════ */
+var JACO = {
+  polar: { n: '(r, θ) → (x, y) = (r cos θ, r sen θ)', T: function (u, v) { return [u * Math.cos(v), u * Math.sin(v)]; }, J: function (u, v) { return u; }, sJ: '|J| = r',
+           u0: 0.4, u1: 2, v0: 0, v1: Math.PI / 2, r: [-0.3, 2.3, -0.3, 2.3], lu: 'r', lv: 'θ' },
+  lineal:{ n: '(u, v) → (x, y) = (u + v, u − v)', T: function (u, v) { return [u + v, u - v]; }, J: function () { return 2; }, sJ: '|J| = |(1)(−1) − (1)(1)| = 2',
+           u0: 0, u1: 1, v0: 0, v1: 1, r: [-0.3, 2.3, -1.3, 1.3], lu: 'u', lv: 'v' },
+  mitad: { n: '(u, v) → (x, y) = ((u+v)/2, (u−v)/2)', T: function (u, v) { return [(u + v) / 2, (u - v) / 2]; }, J: function () { return 0.5; }, sJ: '|J| = |(½)(−½) − (½)(½)| = ½',
+           u0: 0, u1: 2, v0: 0, v1: 2, r: [-0.3, 2.3, -1.3, 1.3], lu: 'u', lv: 'v' },
+  cuad:  { n: '(u, v) → (x, y) = (u², v)', T: function (u, v) { return [u * u, v]; }, J: function (u) { return 2 * u; }, sJ: '|J| = 2u',
+           u0: 0.2, u1: 1.4, v0: 0, v1: 1, r: [-0.3, 2.3, -0.3, 1.3], lu: 'u', lv: 'v' }
+};
+
+OVA.viz.registrar('jacobiano', function (host) {
+  var cfg = JACO[q(host, 'select').value] || JACO.polar;
+  var n = parseInt(q(host, '.n').value, 10), t = parseFloat(q(host, '.celda').value) / 100;
+  q(host, '.n-val').textContent = n + ' × ' + n;
+  var i, j, L = marco2(q(host, 'canvas'), 330, cfg.r[0], cfg.r[1], cfg.r[2], cfg.r[3]);
+  ejes2(L, 0.5);
+  var c = L.ctx, du = (cfg.u1 - cfg.u0) / n, dv = (cfg.v1 - cfg.v0) / n;
+  // celda resaltada
+  var iu = Math.min(n - 1, Math.floor(t * n)), iv = Math.min(n - 1, Math.floor((1 - t) * n * 0.999));
+  for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+    var u = cfg.u0 + i * du, v = cfg.v0 + j * dv, k, P;
+    var esq = [[u, v], [u + du, v], [u + du, v + dv], [u, v + dv]];
+    var sel = (i === iu && j === iv);
+    c.fillStyle = sel ? 'rgba(176,57,44,.6)' : 'rgba(58,110,165,.18)'; c.strokeStyle = sel ? ROJO : 'rgba(58,110,165,.7)'; c.lineWidth = sel ? 2 : 0.8;
+    c.beginPath();
+    for (k = 0; k < 4; k++) { P = cfg.T(esq[k][0], esq[k][1]); k ? c.lineTo(L.px(P[0]), L.py(P[1])) : c.moveTo(L.px(P[0]), L.py(P[1])); }
+    c.closePath(); c.fill(); c.stroke();
+  }
+  // área de la celda imagen (fórmula del polígono, con lados curvos muestreados)
+  var u = cfg.u0 + iu * du, v = cfg.v0 + iv * dv, poly = [], m = 12, s;
+  for (s = 0; s < m; s++) poly.push(cfg.T(u + du * s / m, v));
+  for (s = 0; s < m; s++) poly.push(cfg.T(u + du, v + dv * s / m));
+  for (s = 0; s < m; s++) poly.push(cfg.T(u + du - du * s / m, v + dv));
+  for (s = 0; s < m; s++) poly.push(cfg.T(u, v + dv - dv * s / m));
+  var A = 0; for (s = 0; s < poly.length; s++) { var p1 = poly[s], p2 = poly[(s + 1) % poly.length]; A += p1[0] * p2[1] - p2[0] * p1[1]; }
+  A = Math.abs(A) / 2;
+  var Jm = cfg.J(u + du / 2, v + dv / 2);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace'; c.fillText(cfg.n, L.px(L.xmin) + 6, 22);
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · ' + cfg.sJ + '<br>' +
+    'Celda roja: ' + cfg.lu + ' ∈ [' + f2(u) + ', ' + f2(u + du) + '], ' + cfg.lv + ' ∈ [' + f2(v) + ', ' + f2(v + dv) + '] → área en el plano ' + cfg.lu + cfg.lv + ' = Δ' + cfg.lu + '·Δ' + cfg.lv + ' = ' + f3(du * dv) +
+    '; área de su imagen en xy = <strong>' + f3(A) + '</strong>; cociente = <strong style="color:#c68f2e">' + f3(A / (du * dv)) + '</strong> ≈ |J| en el centro = ' + f3(Jm) + '<br>' +
+    '<span style="color:#8fb4d9">El jacobiano es el factor local de cambio de área: dA = |J| du dv. Donde |J| es grande la malla se estira; donde es pequeño, se comprime. Mueve la celda y compara.</span>';
+});
+
+/* ══════════ S13 · Centro de masa de una lámina triangular ══════════ */
+var LAMINA = {
+  uno: { n: 'δ = 1 (homogénea)', d: function (x, y) { return 1; }, m: 0.5, cm: [1 / 3, 1 / 3], sm: '1/2', scm: '(1/3, 1/3)' },
+  x:   { n: 'δ = x (más densa a la derecha)', d: function (x, y) { return x; }, m: 1 / 6, cm: [0.5, 0.25], sm: '1/6', scm: '(1/2, 1/4)' },
+  y:   { n: 'δ = y (más densa arriba)', d: function (x, y) { return y; }, m: 1 / 6, cm: [0.25, 0.5], sm: '1/6', scm: '(1/4, 1/2)' }
+};
+
+OVA.viz.registrar('centromasa', function (host) {
+  var cfg = LAMINA[q(host, 'select').value] || LAMINA.uno;
+  var L = marco2(q(host, 'canvas'), 320, -0.15, 1.15, -0.15, 1.15);
+  ejes2(L, 0.25);
+  var c = L.ctx, n = 40, i, j, dmax = 1;
+  for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+    var x = (i + 0.5) / n, y = (j + 0.5) / n; if (x + y > 1) continue;
+    var t = cfg.d(x, y) / dmax;
+    c.fillStyle = 'rgba(198,143,46,' + (0.15 + 0.75 * t) + ')';
+    c.fillRect(L.px(i / n), L.py((j + 1) / n), L.sx / n + 0.5, L.sy / n + 0.5);
+  }
+  c.strokeStyle = AZUL; c.lineWidth = 2.4; c.beginPath(); c.moveTo(L.px(0), L.py(0)); c.lineTo(L.px(1), L.py(0)); c.lineTo(L.px(0), L.py(1)); c.closePath(); c.stroke();
+  // centro de masa numérico
+  var m = 0, mx = 0, my = 0, N = 200;
+  for (i = 0; i < N; i++) for (j = 0; j < N; j++) { var xx = (i + 0.5) / N, yy = (j + 0.5) / N; if (xx + yy > 1) continue; var w = cfg.d(xx, yy) / (N * N); m += w; mx += xx * w; my += yy * w; }
+  OVA.punto(L, mx / m, my / m, ROJO);
+  OVA.punto(L, 1 / 3, 1 / 3, VERDE, true);
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace'; c.fillText('lámina 0 ≤ x, 0 ≤ y, x + y ≤ 1', L.px(0.35), L.py(0.9));
+
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · masa m = ∬ δ dA = <strong>' + cfg.sm + '</strong> · centro de masa (x̄, ȳ) = (∬xδ dA / m, ∬yδ dA / m) = <strong style="color:#e08b7e">' + cfg.scm + '</strong> (numérico: ' + f3(mx / m) + ', ' + f3(my / m) + ')<br>' +
+    '<span style="color:#8fb4d9">El círculo verde es el centroide geométrico (1/3, 1/3). Cuando la densidad crece hacia un lado, el centro de masa (rojo) se desplaza hacia la zona más densa. En 3D la idea es idéntica con integrales triples.</span>';
+});
+
+/* ══════════ S14 · Campo vectorial, integral de línea y Green ══════════ */
+var CAMPOV = {
+  rot:  { n: 'F = (−y, x)', P: function (x, y) { return -y; }, Q: function (x, y) { return x; }, Py: -1, Qx: 1, cons: false, f: null, sf: '' },
+  grad: { n: 'F = (2xy, x²) = ∇(x²y)', P: function (x, y) { return 2 * x * y; }, Q: function (x, y) { return x * x; }, Py: '2x', Qx: '2x', cons: true, f: function (x, y) { return x * x * y; }, sf: 'f = x²y' },
+  rad:  { n: 'F = (x, y) = ∇(½(x² + y²))', P: function (x, y) { return x; }, Q: function (x, y) { return y; }, Py: 0, Qx: 0, cons: true, f: function (x, y) { return (x * x + y * y) / 2; }, sf: 'f = ½(x² + y²)' },
+  ciz:  { n: 'F = (y, 0) (cizalla)', P: function (x, y) { return y; }, Q: function (x, y) { return 0; }, Py: 1, Qx: 0, cons: false, f: null, sf: '' }
+};
+var CURVA = {
+  circ: { n: 'círculo unitario (cerrada, antihoraria)', r: function (t) { return [Math.cos(t), Math.sin(t)]; }, dr: function (t) { return [-Math.sin(t), Math.cos(t)]; }, t0: 0, t1: 2 * Math.PI, cerrada: true, area: Math.PI, ini: '(1, 0)', fin: '(1, 0)',
+          dentro: function (x, y) { return x * x + y * y <= 1; } },
+  parab:{ n: 'parábola y = x²/4 de (0,0) a (2,1)', r: function (t) { return [2 * t, t * t]; }, dr: function (t) { return [2, 2 * t]; }, t0: 0, t1: 1, cerrada: false, ini: '(0, 0)', fin: '(2, 1)' },
+  recta:{ n: 'segmento recto de (0,0) a (2,1)', r: function (t) { return [2 * t, t]; }, dr: function (t) { return [2, 1]; }, t0: 0, t1: 1, cerrada: false, ini: '(0, 0)', fin: '(2, 1)' },
+  cuad: { n: 'cuadrado [0,1]² (cerrada, antihoraria)', r: function (t) { var s = t * 4, k = Math.floor(Math.min(s, 3.999)), u = s - k; return [[u, 0], [1, u], [1 - u, 1], [0, 1 - u]][k]; },
+          dr: function (t) { var k = Math.floor(Math.min(t * 4, 3.999)); return [[4, 0], [0, 4], [-4, 0], [0, -4]][k]; }, t0: 0, t1: 1, cerrada: true, area: 1, ini: '(0, 0)', fin: '(0, 0)',
+          dentro: function (x, y) { return x >= 0 && x <= 1 && y >= 0 && y <= 1; } }
+};
+
+OVA.viz.registrar('campovec', function (host) {
+  var F = CAMPOV[q(host, '.campo').value] || CAMPOV.rot;
+  var C = CURVA[q(host, '.curva').value] || CURVA.circ;
+  var tt = C.t0 + (C.t1 - C.t0) * parseFloat(q(host, '.t').value) / 100;
+  q(host, '.t-val').textContent = 't = ' + f2(tt);
+
+  var L = marco2(q(host, 'canvas'), 340, -1.6, 2.4, -1.6, 1.6);
+  ejes2(L, 0.5);
+  var c = L.ctx, i, j;
+  // campo
+  for (i = -3; i <= 4; i++) for (j = -3; j <= 3; j++) {
+    var x = i * 0.5, y = j * 0.5, vx = F.P(x, y), vy = F.Q(x, y), nm = Math.hypot(vx, vy);
+    if (nm < 1e-9) continue;
+    var sc = 0.22 * Math.min(1, nm / 1.5) / nm;
+    flecha(L, x, y, x + vx * sc, y + vy * sc, 'rgba(150,167,181,.75)', 1.2);
+  }
+  // curva
+  c.strokeStyle = AZUL; c.lineWidth = 2.6; c.beginPath();
+  for (i = 0; i <= 400; i++) { var P = C.r(C.t0 + (C.t1 - C.t0) * i / 400); i ? c.lineTo(L.px(P[0]), L.py(P[1])) : c.moveTo(L.px(P[0]), L.py(P[1])); }
+  c.stroke();
+  // punto, F y tangente
+  var p = C.r(tt), d = C.dr(tt), nd = Math.hypot(d[0], d[1]), T = [d[0] / nd, d[1] / nd];
+  var Fv = [F.P(p[0], p[1]), F.Q(p[0], p[1])], FT = Fv[0] * T[0] + Fv[1] * T[1];
+  flecha(L, p[0], p[1], p[0] + T[0] * 0.5, p[1] + T[1] * 0.5, VERDE, 2.2);
+  var nF = Math.hypot(Fv[0], Fv[1]); if (nF > 1e-9) flecha(L, p[0], p[1], p[0] + Fv[0] * 0.5 / Math.max(1, nF), p[1] + Fv[1] * 0.5 / Math.max(1, nF), ROJO, 2.4);
+  OVA.punto(L, p[0], p[1], ORO);
+  c.font = 'bold 11px ui-monospace,monospace'; c.fillStyle = ROJO; c.fillText('— F', L.px(L.xmin) + 6, 22); c.fillStyle = VERDE; c.fillText('— T (tangente unitaria)', L.px(L.xmin) + 6, 38);
+
+  // integral de línea numérica
+  var W = simpson1(function (t) { var r = C.r(t), v = C.dr(t); return F.P(r[0], r[1]) * v[0] + F.Q(r[0], r[1]) * v[1]; }, C.t0, C.t1, 800);
+  var html = '<strong>' + F.n + '</strong> sobre <strong>' + C.n + '</strong><br>' +
+    'En t = ' + f2(tt) + ': F = (' + f2(Fv[0]) + ', ' + f2(Fv[1]) + '), F·T = <strong>' + f2(FT) + '</strong> (' + (FT > 0.01 ? 'el campo empuja a favor' : FT < -0.01 ? 'el campo frena' : 'perpendicular: no trabaja') + ') &nbsp;·&nbsp; ' +
+    '∫_C F·dr = ∫ F(r(t))·r′(t) dt = <strong style="color:#c68f2e">' + f3(W) + '</strong><br>';
+  html += 'Criterio: ∂P/∂y = ' + F.Py + ', ∂Q/∂x = ' + F.Qx + ' → ' + (F.cons ? '<strong style="color:#7fd4a4">conservativo</strong> (' + F.sf + ')' : '<strong style="color:#e08b7e">no conservativo</strong>') + '. ';
+  if (F.cons && !C.cerrada) html += 'Teorema fundamental: f' + C.fin + ' − f' + C.ini + ' = ' + f3(F.f(C.r(C.t1)[0], C.r(C.t1)[1]) - F.f(C.r(C.t0)[0], C.r(C.t0)[1])) + ' ✓ (no depende del camino).';
+  if (F.cons && C.cerrada) html += 'Curva cerrada → ∮ F·dr = 0 ✓.';
+  if (!F.cons && C.cerrada) {
+    var rot = (typeof F.Qx === 'number' ? F.Qx : 0) - (typeof F.Py === 'number' ? F.Py : 0);
+    html += 'Green: ∮ P dx + Q dy = ∬ (Q_x − P_y) dA = ' + rot + ' × área ' + f3(C.area) + ' = <strong>' + f3(rot * C.area) + '</strong> ✓.';
+  }
+  if (!F.cons && !C.cerrada) html += 'Compara con el otro camino entre los mismos extremos: el valor cambia porque el campo no es conservativo.';
+  html += '<br><span style="color:#8fb4d9">La integral de línea suma, a lo largo de la curva, la componente del campo en la dirección del movimiento (F·T). Arrastra t y observa el signo de F·T.</span>';
+  q(host, '.viz-readout').innerHTML = html;
+});
+
 })();
