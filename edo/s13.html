@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía 13 · EDO numéricas: método de Euler — Métodos Numéricos · UNIAJC</title>
+<title>Guía 13 · Transformada de Laplace: directa e inversa — Ecuaciones Diferenciales · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260912e">
+<link rel="stylesheet" href="../assets/ova.css?v=20260912f">
 </head>
 <body>
 
@@ -19,7 +19,7 @@ window.MathJax = {
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Guía 13</h1>
+      <h1>Ecuaciones Diferenciales · Guía 13</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -31,11 +31,11 @@ window.MathJax = {
 
 <nav id="guia-nav" aria-label="Secciones de la guía">
   <div class="guia-nav-inner">
-    <a href="#s1">1 · Resolver una EDO con números</a>
-    <a href="#s2">2 · Método de Euler</a>
-    <a href="#s3">3 · El error de Euler</a>
-    <a href="#s4">4 · Mejoras: Heun y punto medio</a>
-    <a href="#s5">5 · Aplicaciones</a>
+    <a href="#s1">1 · La transformada</a>
+    <a href="#s2">2 · Tabla básica y linealidad</a>
+    <a href="#s3">3 · Transformada inversa</a>
+    <a href="#s4">4 · Transformada de derivadas</a>
+    <a href="#s5">5 · Resolver un PVI</a>
     <a href="#s6">6 · Práctica final</a>
   </div>
 </nav>
@@ -44,228 +44,225 @@ window.MathJax = {
 
 <div class="hero">
   <div class="eyebrow">Guía de estudio 13 · Corte III</div>
-  <h2>EDO numéricas: método de Euler</h2>
-  <p>La mayoría de las ecuaciones diferenciales que modelan la realidad no se pueden resolver con una
-     fórmula. Pero sí se pueden <em>simular</em>: desde la condición inicial, avanzar un paso pequeño
-     siguiendo la pendiente que la ecuación dicta, y repetir. Ese es el método de Euler, el más simple
-     de todos. Entender por qué falla y cómo se corrige abre la puerta a los métodos de Runge-Kutta de la
-     próxima guía.</p>
+  <h2>Transformada de Laplace: directa e inversa</h2>
+  <p>Una herramienta distinta para el mismo problema. La transformada de Laplace convierte una función
+     del tiempo en una función de una variable $s$, y —esto es lo importante— convierte <em>derivar</em> en
+     <em>multiplicar por $s$</em>. Así, una ecuación diferencial con condiciones iniciales se vuelve una
+     ecuación algebraica: se despeja, se antitransforma y se obtiene la solución del PVI de una sola vez,
+     sin separar $y_c$ de $y_p$.</p>
   <div class="chips">
-    <span class="chip">Chapra · Cap. 25.1–25.2</span>
-    <span class="chip">Burden · Cap. 5.1–5.2</span>
+    <span class="chip">Zill · Cap. 7.1–7.2</span>
     <span class="chip">Semana 13</span>
     <span class="chip">2 comprobaciones + práctica final</span>
   </div>
 </div>
 
 <div class="nota">
-  <strong>De dónde venimos.</strong> En la Guía 2 vimos la serie de Taylor y en la Guía 12 las diferencias
-  finitas. Euler es exactamente la diferencia hacia adelante leída al revés: si $y'\approx\dfrac{y(x+h)-y(x)}{h}$,
-  entonces $y(x+h)\approx y(x)+h\,y'(x)$.
+  <strong>De dónde venimos.</strong> Las Guías 9 y 11 resolvían $ay''+by'+cy=g$ en dos etapas y luego
+  ajustaban las constantes. Laplace incorpora $y(0)$ y $y'(0)$ desde el primer paso. Para antitransformar
+  usaremos fracciones parciales, la misma técnica que la Guía 7 usaba para integrar.
 </div>
 
 <section class="card" id="s1">
-  <h3 class="card-title">1 · Resolver una EDO con números</h3>
-
-  <div class="callout-dark">
-    <h3>El problema de valor inicial</h3>
-    <p>Una EDO de primer orden $y'=f(x,y)$ con condición inicial $y(x_0)=y_0$ tiene (bajo condiciones
-       suaves) una única solución. Resolverla numéricamente no significa hallar la fórmula de $y(x)$, sino
-       una <strong>tabla</strong> de valores aproximados $y_1,y_2,\dots$ en los puntos $x_1=x_0+h$,
-       $x_2=x_0+2h,\dots$ El tamaño de paso $h$ controla la precisión y el costo.</p>
-    <p>Para aprender, usaremos ecuaciones cuya solución exacta conocemos: así podremos medir el error.
-       En la práctica se usa el método precisamente cuando la exacta no existe.</p>
-  </div>
+  <h3 class="card-title">1 · La transformada de Laplace</h3>
 
   <div class="def">
-    <strong>Ecuaciones de prueba.</strong>
-    <br>• $y'=y$, $y(0)=1$: solución $y=e^{x}$, $y(1)=2{,}71828$.
-    <br>• $y'=x-y$, $y(0)=1$: solución $y=x-1+2e^{-x}$, $y(1)=0{,}7358$.
+    <strong>Definición.</strong> Para $f$ definida en $t\ge0$,
+    $$\mathcal{L}\{f(t)\}=F(s)=\int_{0}^{\infty}e^{-st}f(t)\,dt$$
+    siempre que la integral impropia converja (para $s$ suficientemente grande).
   </div>
-</section>
-
-<section class="card" id="s2">
-  <h3 class="card-title">2 · Método de Euler</h3>
 
   <div class="callout-dark">
-    <h3>Seguir la tangente un paso</h3>
-    <p>En el punto $(x_i,y_i)$ la ecuación nos dice la pendiente: $y'=f(x_i,y_i)$. Euler supone que esa
-       pendiente se mantiene durante todo el paso y avanza en línea recta:
-       $$y_{i+1}=y_i+h\,f(x_i,y_i).$$
-       Luego recalcula la pendiente en el nuevo punto y repite. La solución numérica es una poligonal que
-       sigue, con retraso, a la curva verdadera.</p>
+    <h3>Una integral que «pesa» la función con $e^{-st}$</h3>
+    <p>Para cada valor de $s$, la transformada multiplica $f$ por el factor decreciente $e^{-st}$ y mide el
+       área resultante. Un $s$ grande apaga rápido el integrando y da un número pequeño; un $s$ pequeño
+       deja pasar más área. El resultado es una nueva función $F(s)$ que codifica a $f$.</p>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 1 · $y'=y$, $y(0)=1$, con $h=0{,}5$ hasta $x=1$</h4>
+    <h4>Ejemplo 1 · Desde la definición</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Paso 1</div>
-        Pendiente en $(0,1)$: $f=1$. $y_1=1+0{,}5(1)=1{,}5$ (exacto $e^{0{,}5}=1{,}6487$).
+      <div class="paso"><div class="paso-t">$\mathcal{L}\{1\}$</div>
+        $\displaystyle\int_{0}^{\infty}e^{-st}dt=\Big[-\frac{e^{-st}}{s}\Big]_{0}^{\infty}=0+\frac1s=\frac1s$ para $s\gt0$.
       </div>
-      <div class="paso"><div class="paso-t">Paso 2</div>
-        Pendiente en $(0{,}5,\,1{,}5)$: $f=1{,}5$. $y_2=1{,}5+0{,}5(1{,}5)=2{,}25$ (exacto $e=2{,}7183$).
+      <div class="paso"><div class="paso-t">$\mathcal{L}\{e^{at}\}$</div>
+        $\displaystyle\int_{0}^{\infty}e^{-st}e^{at}dt=\int_{0}^{\infty}e^{-(s-a)t}dt=\frac{1}{s-a}$ para $s\gt a$. Si $s\le a$ el integrando no decae y la integral diverge.
       </div>
-      <div class="paso"><div class="paso-t">Error</div>
-        $2{,}7183-2{,}25=0{,}468$, un $17{,}2\,\%$. Euler se queda corto porque la curva se empina dentro de cada paso y la tangente del inicio no lo sabe.
+      <div class="paso"><div class="paso-t">Una función por tramos</div>
+        $f(t)=0$ si $t\lt3$, $f(t)=2$ si $t\ge3$: $\displaystyle\int_{3}^{\infty}2e^{-st}dt=\frac{2e^{-3s}}{s}$. El salto en $t=3$ se traduce en el factor $e^{-3s}$ (Guía 14).
       </div>
     </div>
   </div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 2 · $y'=x-y$, $y(0)=1$, con $h=0{,}5$</h4>
-    <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Dos pasos</div>
-        $y_1=1+0{,}5(0-1)=0{,}5$; $\quad y_2=0{,}5+0{,}5(0{,}5-0{,}5)=0{,}5$.
-      </div>
-      <div class="paso"><div class="paso-t">Comparar</div>
-        Exacto $y(1)=0{,}7358$: error $0{,}236$. Aquí Euler se pasa de largo al bajar y luego no sube lo suficiente.
-      </div>
-    </div>
-  </div>
-
-  <div class="sub-title">2.1 La poligonal de Euler frente a la solución exacta</div>
-  <div class="viz" data-viz="euler">
+  <div class="sub-title">1.1 La transformada como área</div>
+  <div class="viz" data-viz="laplace">
     <div class="viz-controls">
-      <label for="eu-e">Ecuación</label>
-      <select id="eu-e" class="edo">
-        <option value="ypy">y' = y, y(0) = 1</option>
-        <option value="xmy">y' = x − y, y(0) = 1</option>
-        <option value="logi">P' = 0,5P(1 − P/100), P(0) = 10</option>
-        <option value="enf">T' = −0,1(T − 20), T(0) = 90</option>
+      <label for="lp-f">Función</label>
+      <select id="lp-f">
+        <option value="uno">f(t) = 1</option>
+        <option value="t">f(t) = t</option>
+        <option value="exp">f(t) = eᵗ</option>
+        <option value="sen">f(t) = sen 2t</option>
+        <option value="esc">f(t) = 0 (t<3), 2 (t≥3)</option>
       </select>
-      <label for="eu-m">Método</label>
-      <select id="eu-m" class="metodo">
-        <option value="euler">Euler</option>
-        <option value="heun">Heun</option>
-        <option value="medio">punto medio</option>
-      </select>
-      <label for="eu-h">Paso</label>
-      <input id="eu-h" class="h" type="range" min="0" max="4" step="1" value="1">
-      <span class="h-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="lp-s">Valor de s</label>
+      <input id="lp-s" class="s" type="range" min="0" max="100" step="1" value="40">
+      <span class="s-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Reduce el paso: la poligonal de Euler se acerca a la curva y el error cae a la mitad cada vez. Cambia
-    a Heun o punto medio y observa que el error cae a la cuarta parte.
+    El área naranja es $F(s)$ para el $s$ elegido. Mueve $s$: cuanto mayor, más rápido muere el integrando y
+    menor el área, siguiendo exactamente las fórmulas de la tabla. Para $e^{t}$ el control empieza en
+    $s\gt1$.
   </p>
 </section>
 
-<div class="card">
-  <h3 class="card-title">✓ Comprobación 1 — El método de Euler</h3>
-  <div id="chk1"></div>
-</div>
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Tabla básica y linealidad</h3>
 
-<section class="card" id="s3">
-  <h3 class="card-title">3 · El error de Euler</h3>
-
-  <div class="callout-dark">
-    <h3>Local $O(h^{2})$, global $O(h)$</h3>
-    <p>Por Taylor, $y(x+h)=y+hy'+\tfrac{h^{2}}{2}y''+\cdots$; Euler conserva solo hasta $hy'$, así que el error
-       de <em>un</em> paso (local) es del orden de $h^{2}$. Pero para llegar a $x=b$ hacen falta $(b-a)/h$
-       pasos, y los errores se acumulan: el error <em>global</em> es del orden de $h$. Consecuencia
-       práctica: para ganar una cifra decimal hay que dar diez veces más pasos.</p>
+  <div class="def">
+    <table class="tbl">
+      <tr><th>$f(t)$</th><th>$F(s)=\mathcal{L}\{f\}$</th><th>$f(t)$</th><th>$F(s)$</th></tr>
+      <tr><td>$1$</td><td>$\dfrac1s$</td><td>$e^{at}$</td><td>$\dfrac{1}{s-a}$</td></tr>
+      <tr><td>$t$</td><td>$\dfrac1{s^{2}}$</td><td>$\sin kt$</td><td>$\dfrac{k}{s^{2}+k^{2}}$</td></tr>
+      <tr><td>$t^{n}$</td><td>$\dfrac{n!}{s^{n+1}}$</td><td>$\cos kt$</td><td>$\dfrac{s}{s^{2}+k^{2}}$</td></tr>
+      <tr><td>$\sinh kt$</td><td>$\dfrac{k}{s^{2}-k^{2}}$</td><td>$\cosh kt$</td><td>$\dfrac{s}{s^{2}-k^{2}}$</td></tr>
+    </table>
+    <strong>Linealidad.</strong> $\mathcal{L}\{\alpha f+\beta g\}=\alpha F+\beta G$: se transforma término a término.
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 3 · $y'=y$: el error se parte al partir $h$</h4>
+    <h4>Ejemplo 2 · $\mathcal{L}\{3t^{2}-2e^{-t}+5\sin2t\}$</h4>
     <div class="ejemplo-body">
-      <table class="tbl">
-        <tr><th>$h$</th><th>pasos</th><th>$y(1)$ de Euler</th><th>error</th><th>cociente</th></tr>
-        <tr><td>0,5</td><td>2</td><td>$1{,}5^{2}=2{,}2500$</td><td>0,4683</td><td>—</td></tr>
-        <tr><td>0,25</td><td>4</td><td>$1{,}25^{4}=2{,}4414$</td><td>0,2769</td><td>0,59</td></tr>
-        <tr><td>0,125</td><td>8</td><td>$1{,}125^{8}=2{,}5658$</td><td>0,1525</td><td>0,55</td></tr>
-        <tr><td>0,0625</td><td>16</td><td>$1{,}0625^{16}=2{,}6379$</td><td>0,0804</td><td>0,53</td></tr>
-      </table>
-      <div class="paso"><div class="paso-t">Lectura</div>
-        Para $y'=y$ cada paso multiplica por $(1+h)$, así que $y_N=(1+h)^{1/h}$, que tiende a $e$ muy despacio. El cociente de errores se acerca a $0{,}5$: orden 1.
+      <div class="paso"><div class="paso-t">Término a término</div>
+        $3\cdot\dfrac{2!}{s^{3}}-2\cdot\dfrac{1}{s+1}+5\cdot\dfrac{2}{s^{2}+4}=\dfrac{6}{s^{3}}-\dfrac{2}{s+1}+\dfrac{10}{s^{2}+4}$.
       </div>
-      <div class="paso"><div class="paso-t">El error local, visto en un paso</div>
-        Un paso con $h=0{,}5$ da $1{,}5$ frente a $e^{0{,}5}=1{,}6487$: error $0{,}1487\approx\tfrac{h^{2}}{2}y''=0{,}125$ más términos menores.
+      <div class="paso"><div class="paso-t">Cuidado con los productos</div>
+        La linealidad vale para sumas y múltiplos constantes, no para productos: $\mathcal{L}\{t\,e^{t}\}\neq\mathcal{L}\{t\}\mathcal{L}\{e^{t}\}$ (ese caso lo resuelve la traslación en $s$, Guía 14).
       </div>
     </div>
   </div>
 </section>
 
-<section class="card" id="s4">
-  <h3 class="card-title">4 · Mejoras: Heun y punto medio</h3>
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Transformada inversa</h3>
 
   <div class="callout-dark">
-    <h3>Corregir la pendiente con una segunda evaluación</h3>
-    <p>El defecto de Euler es usar solo la pendiente del inicio del paso. <strong>Heun</strong> da un paso
-       de Euler provisional (<em>predictor</em>), mide la pendiente al final y usa el promedio de las dos
-       (<em>corrector</em>). El <strong>punto medio</strong> usa Euler para llegar a la mitad del paso y toma
-       la pendiente ahí. Ambos cuestan dos evaluaciones de $f$ por paso y tienen error global $O(h^{2})$:
-       partir $h$ divide el error por 4.</p>
-  </div>
-
-  <div class="def">
-    <strong>Heun (predictor-corrector):</strong> $k_1=f(x_i,y_i)$, $\ y^{*}=y_i+hk_1$, $\ k_2=f(x_{i+1},y^{*})$, $\ y_{i+1}=y_i+h\,\dfrac{k_1+k_2}{2}$.
-    <br><strong>Punto medio (Euler modificado):</strong> $k_1=f(x_i,y_i)$, $\ k_2=f\!\big(x_i+\tfrac h2,\ y_i+\tfrac h2k_1\big)$, $\ y_{i+1}=y_i+h\,k_2$.
+    <h3>Leer la tabla al revés</h3>
+    <p>Si $F(s)=\mathcal{L}\{f\}$, entonces $f=\mathcal{L}^{-1}\{F\}$. En la práctica se descompone $F$ en
+       fracciones parciales hasta que cada pieza esté en la tabla, ajustando constantes para que aparezca
+       exactamente $k$ en el numerador de un seno o $n!$ en el de una potencia.</p>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 4 · Heun para $y'=y$, $h=0{,}5$</h4>
+    <h4>Ejemplo 3 · Tres inversas</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Paso 1</div>
-        $k_1=1$; predictor $y^{*}=1+0{,}5(1)=1{,}5$; $k_2=f(0{,}5,\,1{,}5)=1{,}5$; corrector $y_1=1+0{,}5\cdot\dfrac{1+1{,}5}{2}=1{,}625$ (exacto $1{,}6487$).
+      <div class="paso"><div class="paso-t">$\mathcal{L}^{-1}\Big\{\dfrac{1}{s^{4}}\Big\}$</div>
+        La tabla da $3!/s^{4}=6/s^{4}\leftrightarrow t^{3}$, así que $\dfrac{1}{s^{4}}=\dfrac16\cdot\dfrac{6}{s^{4}}\leftrightarrow\dfrac{t^{3}}{6}$.
       </div>
-      <div class="paso"><div class="paso-t">Paso 2</div>
-        Para $y'=y$ cada paso de Heun multiplica por $1+h+\tfrac{h^{2}}{2}=1{,}625$: $y_2=1{,}625^{2}=2{,}6406$. Error $0{,}0777$ frente al $0{,}468$ de Euler: seis veces menor con el doble de evaluaciones.
+      <div class="paso"><div class="paso-t">$\mathcal{L}^{-1}\Big\{\dfrac{2s+3}{s^{2}+9}\Big\}$</div>
+        Separar: $2\cdot\dfrac{s}{s^{2}+9}+\dfrac{3}{s^{2}+9}\leftrightarrow2\cos3t+\sin3t$ (el $3$ del numerador es justo el $k$).
+      </div>
+      <div class="paso"><div class="paso-t">$\mathcal{L}^{-1}\Big\{\dfrac{1}{s^{2}+3s+2}\Big\}$ (fracciones parciales)</div>
+        $\dfrac{1}{(s+1)(s+2)}=\dfrac{A}{s+1}+\dfrac{B}{s+2}$ con $A=1$, $B=-1$: $\leftrightarrow e^{-t}-e^{-2t}$.
       </div>
     </div>
   </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Transformada directa e inversa</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Transformada de derivadas</h3>
+
+  <div class="callout-dark">
+    <h3>Derivar se convierte en multiplicar por $s$</h3>
+    <p>Integrando por partes la definición se obtiene $\mathcal{L}\{y'\}=sY(s)-y(0)$: la derivada se
+       transforma en «$s$ por la transformada», con un término que lleva la condición inicial. Aplicando
+       dos veces aparece $y'(0)$. Es la propiedad que hace útil la transformada para ecuaciones
+       diferenciales.</p>
+  </div>
+
+  <div class="def">
+    $$\mathcal{L}\{y'\}=sY(s)-y(0)\qquad\qquad \mathcal{L}\{y''\}=s^{2}Y(s)-s\,y(0)-y'(0)$$
+  </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 5 · Heun y punto medio para $y'=x-y$, $h=0{,}5$</h4>
+    <h4>Ejemplo 4 · Comprobar con $y=\cos t$</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Heun, paso 1</div>
-        $k_1=f(0,1)=-1$; $y^{*}=1+0{,}5(-1)=0{,}5$; $k_2=f(0{,}5,\,0{,}5)=0$; $y_1=1+0{,}5\cdot\dfrac{-1+0}{2}=0{,}75$.
+      <div class="paso"><div class="paso-t">Directamente</div>
+        $y'=-\sin t$, así que $\mathcal{L}\{y'\}=-\dfrac{1}{s^{2}+1}$.
       </div>
-      <div class="paso"><div class="paso-t">Heun, paso 2</div>
-        $k_1=f(0{,}5,\,0{,}75)=-0{,}25$; $y^{*}=0{,}625$; $k_2=f(1,\,0{,}625)=0{,}375$; $y_2=0{,}75+0{,}5\cdot\dfrac{-0{,}25+0{,}375}{2}=0{,}78125$.
-      </div>
-      <div class="paso"><div class="paso-t">Punto medio</div>
-        $k_1=-1$; $k_2=f(0{,}25,\,0{,}75)=-0{,}5$; $y_1=1+0{,}5(-0{,}5)=0{,}75$. Para esta ecuación lineal coincide con Heun paso a paso: $y_2=0{,}78125$.
-      </div>
-      <div class="paso"><div class="paso-t">Comparar</div>
-        Exacto $0{,}7358$: error $0{,}045$ (Heun y punto medio) frente a $0{,}236$ (Euler).
+      <div class="paso"><div class="paso-t">Con la fórmula</div>
+        $sY-y(0)=s\cdot\dfrac{s}{s^{2}+1}-1=\dfrac{s^{2}-(s^{2}+1)}{s^{2}+1}=-\dfrac{1}{s^{2}+1}$ ✓.
       </div>
     </div>
   </div>
 </section>
 
 <section class="card" id="s5">
-  <h3 class="card-title">5 · Aplicaciones</h3>
+  <h3 class="card-title">5 · Resolver un problema de valor inicial</h3>
+
+  <div class="def">
+    <strong>Procedimiento.</strong> (1) Transformar ambos lados de la EDO usando las fórmulas de derivadas
+    (entran $y(0)$, $y'(0)$). (2) Despejar $Y(s)$: es álgebra. (3) Descomponer $Y$ en fracciones parciales.
+    (4) Antitransformar con la tabla: $y(t)=\mathcal{L}^{-1}\{Y\}$.
+  </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 6 · Crecimiento logístico $P'=0{,}5P\big(1-\tfrac{P}{100}\big)$, $P(0)=10$, $h=1$</h4>
+    <h4>Ejemplo 5 · $y'+2y=e^{-t}$, $\ y(0)=1$</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Euler</div>
-        $P_1=10+1\cdot0{,}5(10)(0{,}9)=14{,}5$; $\quad P_2=14{,}5+0{,}5(14{,}5)(1-0{,}145)=14{,}5+6{,}19875=20{,}699$.
+      <div class="paso"><div class="paso-t">Transformar</div>
+        $sY-1+2Y=\dfrac{1}{s+1}\ \Rightarrow\ (s+2)Y=1+\dfrac{1}{s+1}$.
       </div>
-      <div class="paso"><div class="paso-t">Comparar</div>
-        Exacto $P(2)=\dfrac{100}{1+9e^{-1}}=23{,}197$. Euler va retrasado mientras la población acelera; cerca de la capacidad $100$ el error cambia de signo y puede incluso sobrepasarla si $h$ es grande (pruébalo en el visualizador con el paso mayor).
+      <div class="paso"><div class="paso-t">Despejar y descomponer</div>
+        $Y=\dfrac{1}{s+2}+\dfrac{1}{(s+1)(s+2)}=\dfrac{1}{s+2}+\dfrac{1}{s+1}-\dfrac{1}{s+2}=\dfrac{1}{s+1}$.
+      </div>
+      <div class="paso"><div class="paso-t">Antitransformar y comprobar</div>
+        $y=e^{-t}$. En efecto, $y'+2y=-e^{-t}+2e^{-t}=e^{-t}$ ✓ y $y(0)=1$ ✓.
       </div>
     </div>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 7 · Enfriamiento $T'=-0{,}1(T-20)$, $T(0)=90$, $h=5$ min</h4>
+    <h4>Ejemplo 6 · $y''+y=0$, $\ y(0)=1$, $\ y'(0)=2$</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Euler</div>
-        $T_1=90+5(-0{,}1)(70)=55$; $\quad T_2=55+5(-0{,}1)(35)=37{,}5$.
+      <div class="paso"><div class="paso-t">Transformar</div>
+        $s^{2}Y-s\cdot1-2+Y=0\ \Rightarrow\ Y=\dfrac{s+2}{s^{2}+1}=\dfrac{s}{s^{2}+1}+2\cdot\dfrac{1}{s^{2}+1}$.
       </div>
-      <div class="paso"><div class="paso-t">Comparar</div>
-        Exacto $T(10)=20+70e^{-1}=45{,}75$. Con $h=5$ Euler enfría demasiado rápido: cada paso resta $hk=0{,}5$ de la diferencia con el ambiente, cuando la exacta resta $1-e^{-0{,}5}=0{,}39$. Cada paso multiplica la diferencia $T-20$ por $(1-0{,}1h)$: con $h\gt10$ ese factor es negativo y la solución numérica oscila alrededor de 20; con $h\gt20$ es menor que $-1$ y las oscilaciones crecen sin límite. La estabilidad también depende de $h$.
+      <div class="paso"><div class="paso-t">Antitransformar</div>
+        $y=\cos t+2\sin t$. Las condiciones iniciales quedaron incorporadas: no hubo que calcular $c_1$, $c_2$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · El PVI de la Guía 11 por Laplace: $y''-3y'+2y=4t$, $\ y(0)=1$, $\ y'(0)=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Transformar</div>
+        $(s^{2}Y-s)-3(sY-1)+2Y=\dfrac{4}{s^{2}}\ \Rightarrow\ (s^{2}-3s+2)Y=s-3+\dfrac{4}{s^{2}}$.
+      </div>
+      <div class="paso"><div class="paso-t">Despejar</div>
+        $Y=\dfrac{s-3}{(s-1)(s-2)}+\dfrac{4}{s^{2}(s-1)(s-2)}$.
+      </div>
+      <div class="paso"><div class="paso-t">Fracciones parciales</div>
+        $\dfrac{s-3}{(s-1)(s-2)}=\dfrac{2}{s-1}-\dfrac{1}{s-2}$ y $\dfrac{4}{s^{2}(s-1)(s-2)}=\dfrac{3}{s}+\dfrac{2}{s^{2}}-\dfrac{4}{s-1}+\dfrac{1}{s-2}$.
+        Sumando: $Y=\dfrac3s+\dfrac{2}{s^{2}}-\dfrac{2}{s-1}$.
+      </div>
+      <div class="paso"><div class="paso-t">Antitransformar</div>
+        $y=3+2t-2e^{t}$: la misma respuesta de la Guía 11, $-2e^{t}+2t+3$, obtenida sin separar $y_c$ de $y_p$ ni resolver un sistema para las constantes.
       </div>
     </div>
   </div>
 </section>
 
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 2 — Error y mejoras</h3>
+  <h3 class="card-title">✓ Comprobación 2 — Derivadas y PVI</h3>
   <div id="chk2"></div>
 </div>
 
@@ -276,22 +273,23 @@ window.MathJax = {
     <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      Las proyecciones de adopción de un producto (modelo logístico) y de inventarios con demanda
-      variable son EDO que rara vez tienen fórmula cerrada; Euler es lo que hace una hoja de cálculo
-      cuando proyecta «el valor del mes siguiente = valor actual + tasa × un mes». Reducir el paso a
-      semanas mejora la proyección.</div>
+      La transformada de Laplace de un flujo de ingresos $f(t)$ evaluada en $s=r$ es exactamente su
+      <em>valor presente</em> a tasa continua $r$: $\int_0^\infty e^{-rt}f(t)\,dt$. La tabla de
+      transformadas es, leída así, una tabla de valores presentes de flujos constantes, crecientes o
+      exponenciales.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      Un saldo con interés continuo y aportes variables sigue $S'=rS+a(t)$. La capitalización mensual
-      es, literalmente, el método de Euler con $h=1/12$, y la diferencia entre capitalización mensual y
-      continua es el error de Euler: por eso la tasa efectiva anual supera a la nominal.</div>
+      Un flujo constante $A$ a perpetuidad vale $A/r$ ($\mathcal{L}\{1\}$ en $s=r$); uno que crece
+      linealmente, $A/r^{2}$; uno que crece al $g\,\%$ continuo, $A/(r-g)$ y solo converge si $r\gt g$, igual
+      que $\mathcal{L}\{e^{at}\}$ exige $s\gt a$. La condición de convergencia de la transformada es la
+      condición de Gordon.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      Los motores de física de los videojuegos integran posición y velocidad con Euler (o Euler
-      semi-implícito) en cada cuadro: $h$ es el tiempo entre cuadros. El error de Euler es la causa de
-      que los objetos «ganen energía» o atraviesen paredes cuando el juego se congela y $h$ crece.</div>
+      La función de transferencia de un sistema lineal es $Y(s)/X(s)$: Laplace convierte ecuaciones
+      diferenciales en álgebra de bloques, que es como se diseñan controladores y filtros. La
+      transformada $z$ del procesamiento digital es la versión discreta de la misma idea.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      La carga de un condensador $RC\,v'=V-v$ y la corriente en un inductor son EDO de primer orden que un
-      simulador de circuitos integra paso a paso; el enfriamiento del Ejemplo 7 tiene exactamente la
-      misma forma. La condición de estabilidad $h\lt2RC$ aparece en todo simulador explícito.</div>
+      En el dominio de $s$ una resistencia es $R$, un inductor $Ls$ y un condensador $1/(Cs)$: las leyes
+      de Kirchhoff se escriben como un circuito «resistivo» y el PVI del RLC se resuelve despejando $I(s)$.
+      Las condiciones iniciales (carga y corriente en $t=0$) entran como fuentes.</div>
   </div>
 </section>
 
@@ -306,12 +304,11 @@ window.MathJax = {
 <section class="card">
   <h3 class="card-title">Resumen para llevar</h3>
   <ul>
-    <li><strong>Problema de valor inicial</strong>: $y'=f(x,y)$, $y(x_0)=y_0$; la solución numérica es una tabla de $y_i$ con paso $h$.</li>
-    <li><strong>Euler</strong>: $y_{i+1}=y_i+h\,f(x_i,y_i)$. Para $y'=y$, $h=0{,}5$: $1{,}5$, $2{,}25$ (error 17 %).</li>
-    <li><strong>Error</strong>: local $O(h^{2})$, global $O(h)$; partir $h$ parte el error. Tabla: 0,468 → 0,277 → 0,152 → 0,080.</li>
-    <li><strong>Heun</strong>: predictor de Euler, corrector con el promedio de pendientes. <strong>Punto medio</strong>: pendiente en $x_i+h/2$. Ambos $O(h^{2})$, dos evaluaciones por paso.</li>
-    <li>Para $y'=y$ con $h=0{,}5$: Heun da $1{,}625$, $2{,}6406$ (error 0,078, seis veces menor que Euler).</li>
-    <li>Un $h$ grande no solo pierde precisión: puede volver <strong>inestable</strong> el método (enfriamiento con $h\gt20$).</li>
+    <li><strong>Definición</strong>: $F(s)=\int_0^\infty e^{-st}f(t)\,dt$; converge para $s$ grande ($s\gt a$ para $e^{at}$).</li>
+    <li><strong>Tabla</strong>: $1\to\tfrac1s$, $t^{n}\to\tfrac{n!}{s^{n+1}}$, $e^{at}\to\tfrac{1}{s-a}$, $\sin kt\to\tfrac{k}{s^{2}+k^{2}}$, $\cos kt\to\tfrac{s}{s^{2}+k^{2}}$. Lineal en sumas, no en productos.</li>
+    <li><strong>Inversa</strong>: fracciones parciales y tabla al revés, ajustando constantes ($\tfrac{1}{s^{4}}\to\tfrac{t^{3}}{6}$; $\tfrac{1}{(s+1)(s+2)}\to e^{-t}-e^{-2t}$).</li>
+    <li><strong>Derivadas</strong>: $\mathcal{L}\{y'\}=sY-y(0)$, $\mathcal{L}\{y''\}=s^{2}Y-sy(0)-y'(0)$.</li>
+    <li><strong>PVI</strong>: transformar → despejar $Y$ → fracciones parciales → antitransformar. $y''-3y'+2y=4t$, $y(0)=1$, $y'(0)=0$ → $Y=\tfrac3s+\tfrac{2}{s^{2}}-\tfrac{2}{s-1}$ → $y=3+2t-2e^{t}$.</li>
   </ul>
 </section>
 
@@ -319,18 +316,18 @@ window.MathJax = {
 
 <footer>
   <div class="cred-compacto">
-    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-2-direction-fields-and-numerical-methods" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Método de Euler</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/7-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · EDO de segundo orden</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260912e"></script>
-<script src="../assets/viz-metodos.js?v=20260912e"></script>
+<script src="../assets/ova.js?v=20260912f"></script>
+<script src="../assets/viz-edo.js?v=20260912f"></script>
 <script>
-OVA.quiz({ "destino": "chk1", "titulo": "El método de Euler · 3 preguntas", "items": [ { "etiqueta": "Fórmula", "nivel": 1, "criterio": "Enunciar el paso de Euler (§2)", "enunciado": "El método de Euler para $y'=f(x,y)$ avanza con:", "opciones": [ "$y_{i+1}=y_i+h\\,f(x_i,y_i)$", "$y_{i+1}=y_i+h\\,f(x_{i+1},y_{i+1})$", "$y_{i+1}=f(x_i,y_i)$", "$y_{i+1}=y_i+f(x_i,y_i)$" ], "correcta": 0, "pista": "Sigue la tangente del punto actual durante un paso $h$.", "solucion": "Euler usa la pendiente en el punto conocido: $y_{i+1}=y_i+h\\,f(x_i,y_i)$. Evaluar $f$ en el punto nuevo sería un método implícito; sin el factor $h$ el paso no tendría la escala correcta." }, { "etiqueta": "Dos pasos", "nivel": 2, "criterio": "Aplicar Euler (§2)", "enunciado": "Para $y'=y$, $y(0)=1$ y $h=0{,}5$, Euler da $y(1)\\approx$:", "opciones": [ "$1{,}5$", "$2{,}5$", "$2{,}25$", "$2{,}7183$" ], "correcta": 2, "pista": "Cada paso multiplica por $1+h$.", "solucion": "$y_1=1+0{,}5(1)=1{,}5$ y $y_2=1{,}5+0{,}5(1{,}5)=2{,}25$. El exacto es $e=2{,}7183$; $1{,}5$ es solo el primer paso." }, { "etiqueta": "Por qué falla", "nivel": 2, "criterio": "Explicar el error de Euler (§2–3)", "enunciado": "Para $y'=y$, Euler siempre se queda por debajo de la solución exacta porque:", "opciones": [ "redondea hacia abajo", "la condición inicial está mal", "el paso $h$ es negativo", "usa la pendiente del inicio del paso, y la curva se empina dentro del paso" ], "correcta": 3, "pista": "La pendiente $y'=y$ crece a lo largo del paso.", "solucion": "Euler congela la pendiente del punto inicial durante todo el paso. Como $y'=y$ aumenta mientras $y$ crece, la tangente inicial subestima el avance en cada paso y los errores se acumulan." } ] });
-OVA.quiz({ "destino": "chk2", "titulo": "Error y mejoras · 3 preguntas", "items": [ { "etiqueta": "Orden", "nivel": 2, "criterio": "Relacionar error global con $h$ (§3)", "enunciado": "Si el error global de Euler con $h=0{,}25$ es $0{,}277$, con $h=0{,}125$ será aproximadamente:", "opciones": [ "$0{,}55$ (el doble)", "$0{,}15$ (la mitad): error global $O(h)$", "$0{,}07$ (la cuarta parte)", "$0{,}277$ (no cambia)" ], "correcta": 1, "pista": "Tabla del Ejemplo 3.", "solucion": "El error global de Euler es proporcional a $h$: partir $h$ parte el error. La tabla da $0{,}152$ con $h=0{,}125$. Dividir por 4 corresponde a métodos de segundo orden como Heun." }, { "etiqueta": "Heun", "nivel": 3, "criterio": "Aplicar un paso de Heun (§4)", "enunciado": "Para $y'=y$, $y(0)=1$, $h=0{,}5$, el primer paso de Heun da $y_1=$:", "opciones": [ "$1{,}625$", "$1{,}5$", "$1{,}75$", "$1{,}6487$" ], "correcta": 0, "pista": "Predictor $1{,}5$; promedio de pendientes $(1+1{,}5)/2$.", "solucion": "$k_1=1$, predictor $y^{*}=1{,}5$, $k_2=1{,}5$, corrector $y_1=1+0{,}5\\cdot\\tfrac{1+1{,}5}{2}=1{,}625$. $1{,}5$ es Euler; $1{,}6487$ es el valor exacto $e^{0{,}5}$; $1{,}75$ usaría solo $k_2$." }, { "etiqueta": "Costo", "nivel": 2, "criterio": "Comparar costo y precisión (§4)", "enunciado": "Respecto a Euler, Heun y punto medio:", "opciones": [ "cuestan cuatro evaluaciones y son $O(h^{4})$", "no necesitan evaluar $f$", "cuestan dos evaluaciones de $f$ por paso y su error global es $O(h^{2})$", "cuestan lo mismo y tienen el mismo error" ], "correcta": 2, "pista": "Una evaluación extra por paso mejora el orden en 1.", "solucion": "Ambos evalúan $f$ dos veces por paso (en el inicio y en el punto corregido) y alcanzan orden 2: partir $h$ divide el error por 4. Cuatro evaluaciones y orden 4 es Runge-Kutta 4 (Guía 14)." } ] });
-OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Tabla", "nivel": 1, "criterio": "Entender qué entrega un método numérico (§1)", "enunciado": "Resolver numéricamente $y'=f(x,y)$, $y(x_0)=y_0$ significa obtener:", "opciones": [ "la fórmula exacta de $y(x)$", "solo el valor de $y_0$", "la derivada de $f$", "una tabla de valores aproximados $y_i$ en los puntos $x_i=x_0+ih$" ], "correcta": 3, "pista": "Se avanza paso a paso desde la condición inicial.", "solucion": "El resultado es una tabla $(x_i,y_i)$: la solución se conoce solo en los nodos y de forma aproximada. Se usa justamente cuando la fórmula exacta no existe." }, { "etiqueta": "x−y", "nivel": 2, "criterio": "Aplicar Euler a $y'=x-y$ (§2)", "enunciado": "Para $y'=x-y$, $y(0)=1$, $h=0{,}5$, el primer paso de Euler da $y_1=$:", "opciones": [ "$1$", "$0{,}5$", "$1{,}5$", "$0{,}75$" ], "correcta": 1, "pista": "$f(0,1)=0-1=-1$.", "solucion": "$y_1=1+0{,}5\\cdot f(0,1)=1+0{,}5(-1)=0{,}5$. El segundo paso da $y_2=0{,}5+0{,}5(0{,}5-0{,}5)=0{,}5$; $0{,}75$ es lo que da Heun." }, { "etiqueta": "Local", "nivel": 3, "criterio": "Distinguir error local y global (§3)", "enunciado": "El error de Euler es local $O(h^{2})$ pero global $O(h)$ porque:", "opciones": [ "los errores de los $(b-a)/h$ pasos se acumulan: $\\tfrac{b-a}{h}\\cdot h^{2}\\sim h$", "el error local se cancela de un paso a otro", "el error global es siempre menor que el local", "$h^{2}\\gt h$ cuando $h$ es pequeño" ], "correcta": 0, "pista": "¿Cuántos pasos hacen falta para llegar a $b$?", "solucion": "Cada paso aporta un error $\\sim h^{2}$ y hay $(b-a)/h$ pasos: el total es $\\sim(b-a)h$. Por eso ganar una cifra decimal exige diez veces más pasos. Para $h\\lt1$ se cumple $h^{2}\\lt h$." }, { "etiqueta": "Tabla h", "nivel": 2, "criterio": "Leer la convergencia en la tabla (§3)", "enunciado": "Para $y'=y$, Euler con $h=0{,}0625$ (16 pasos) da $1{,}0625^{16}=2{,}6379$. El error es:", "opciones": [ "cero", "$2{,}6379$", "$0{,}0804$, cerca de la mitad del error con $h=0{,}125$ ($0{,}1525$)", "$0{,}0804$, la cuarta parte del anterior" ], "correcta": 2, "pista": "$e-2{,}6379$.", "solucion": "$2{,}71828-2{,}6379=0{,}0804$, y $0{,}0804/0{,}1525=0{,}53$: aproximadamente la mitad, como corresponde a un método de orden 1." }, { "etiqueta": "Punto medio", "nivel": 3, "criterio": "Aplicar el punto medio (§4)", "enunciado": "Para $y'=x-y$, $y(0)=1$, $h=0{,}5$, el método del punto medio da $y_1=$:", "opciones": [ "$0{,}5$", "$1$", "$0{,}625$", "$0{,}75$" ], "correcta": 3, "pista": "$k_2=f(0{,}25,\\ 1+0{,}25(-1))=f(0{,}25,\\,0{,}75)$.", "solucion": "$k_1=-1$; medio paso: $y=1+0{,}25(-1)=0{,}75$; $k_2=0{,}25-0{,}75=-0{,}5$; $y_1=1+0{,}5(-0{,}5)=0{,}75$. Coincide con Heun para esta ecuación. Euler daba $0{,}5$." }, { "etiqueta": "Heun x−y", "nivel": 3, "criterio": "Completar dos pasos de Heun (§4)", "enunciado": "Continuando con Heun para $y'=x-y$ ($h=0{,}5$, $y_1=0{,}75$), el segundo paso da $y_2=$:", "opciones": [ "$0{,}7358$", "$0{,}78125$ (error $0{,}045$ frente a $0{,}7358$)", "$0{,}5$", "$0{,}625$" ], "correcta": 1, "pista": "$k_1=f(0{,}5,0{,}75)=-0{,}25$; $y^{*}=0{,}625$; $k_2=f(1,0{,}625)=0{,}375$.", "solucion": "$y_2=0{,}75+0{,}5\\cdot\\tfrac{-0{,}25+0{,}375}{2}=0{,}75+0{,}03125=0{,}78125$. Exacto $0{,}7358$: error $0{,}045$, cinco veces menor que el de Euler ($0{,}236$). $0{,}625$ es solo el predictor." }, { "etiqueta": "Logístico", "nivel": 2, "criterio": "Aplicar Euler a un modelo (§5)", "enunciado": "Para $P'=0{,}5P(1-P/100)$, $P(0)=10$, $h=1$, el primer paso de Euler da $P_1=$:", "opciones": [ "$14{,}5$", "$15$", "$10{,}5$", "$19$" ], "correcta": 0, "pista": "$f(0,10)=0{,}5\\cdot10\\cdot0{,}9=4{,}5$.", "solucion": "$P_1=10+1\\cdot4{,}5=14{,}5$. El segundo paso da $20{,}699$ frente al exacto $23{,}197$: Euler se retrasa mientras la población acelera." }, { "etiqueta": "Estabilidad", "nivel": 3, "criterio": "Reconocer la inestabilidad por $h$ grande (§5)", "enunciado": "Para $T'=-0{,}1(T-20)$, cada paso de Euler multiplica $T-20$ por $1-0{,}1h$. Con $h=25$:", "opciones": [ "el método es exacto", "el factor es $2{,}5$ y la temperatura crece", "el factor es $-1{,}5$: la solución numérica oscila con amplitud creciente (inestable)", "el factor es $0{,}75$ y el método converge" ], "correcta": 2, "pista": "$1-0{,}1\\cdot25=-1{,}5$, de valor absoluto mayor que 1.", "solucion": "$1-2{,}5=-1{,}5$: cada paso cambia el signo de $T-20$ y lo agranda 1,5 veces. El método es inestable para $h\\gt20$ aunque la solución exacta decaiga suavemente. Para $h=5$ el factor es $0{,}5$ y todo va bien." } ] });
+OVA.quiz({ "destino": "chk1", "titulo": "Transformada directa e inversa · 3 preguntas", "items": [ { "etiqueta": "Definición", "nivel": 1, "criterio": "Calcular desde la definición (§1)", "enunciado": "$\\mathcal{L}\\{e^{at}\\}=\\displaystyle\\int_{0}^{\\infty}e^{-st}e^{at}dt$ vale:", "opciones": [ "$\\dfrac{1}{s-a}$ para $s\\gt a$", "$\\dfrac{1}{s+a}$ para todo $s$", "$\\dfrac{a}{s}$", "$\\dfrac{1}{s-a}$ para todo $s$" ], "correcta": 0, "pista": "El integrando es $e^{-(s-a)t}$, que solo decae si $s\\gt a$.", "solucion": "$\\int_{0}^{\\infty}e^{-(s-a)t}dt=\\dfrac{1}{s-a}$, pero solo si $s\\gt a$; para $s\\le a$ el integrando no tiende a cero y la integral diverge. La transformada existe únicamente para $s$ suficientemente grande." }, { "etiqueta": "Linealidad", "nivel": 2, "criterio": "Transformar término a término (§2)", "enunciado": "$\\mathcal{L}\\{3t^{2}-2e^{-t}+5\\sin 2t\\}$ es:", "opciones": [ "$\\dfrac{6}{s^{3}}-\\dfrac{2}{s+1}+\\dfrac{5s}{s^{2}+4}$", "$\\dfrac{6}{s^{2}}-\\dfrac{2}{s+1}+\\dfrac{10}{s^{2}+2}$", "$\\dfrac{6}{s^{3}}-\\dfrac{2}{s+1}+\\dfrac{10}{s^{2}+4}$", "$\\dfrac{3}{s^{3}}-\\dfrac{2}{s-1}+\\dfrac{5}{s^{2}+4}$" ], "correcta": 2, "pista": "$t^{2}\\to2!/s^{3}$, $e^{-t}\\to1/(s+1)$, $\\sin2t\\to2/(s^{2}+4)$.", "solucion": "$3\\cdot\\dfrac{2}{s^{3}}-2\\cdot\\dfrac{1}{s+1}+5\\cdot\\dfrac{2}{s^{2}+4}$. Errores típicos: olvidar el $n!$ de $t^{n}$, el signo de $a$ en $e^{at}$, o confundir seno ($k$ arriba) con coseno ($s$ arriba)." }, { "etiqueta": "Inversa", "nivel": 3, "criterio": "Antitransformar con fracciones parciales (§3)", "enunciado": "$\\mathcal{L}^{-1}\\Big\\{\\dfrac{1}{s^{2}+3s+2}\\Big\\}$ es:", "opciones": [ "$e^{-t}+e^{-2t}$", "$e^{t}-e^{2t}$", "$\\dfrac{1}{3}\\sin\\sqrt2t$", "$e^{-t}-e^{-2t}$" ], "correcta": 3, "pista": "$s^{2}+3s+2=(s+1)(s+2)$.", "solucion": "$\\dfrac{1}{(s+1)(s+2)}=\\dfrac{1}{s+1}-\\dfrac{1}{s+2}$ (con $A=1$, $B=-1$), y cada término se antitransforma como exponencial: $e^{-t}-e^{-2t}$. El denominador no es de la forma $s^{2}+k^{2}$, así que no hay seno." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Derivadas y PVI · 3 preguntas", "items": [ { "etiqueta": "y''", "nivel": 2, "criterio": "Transformar una segunda derivada (§4)", "enunciado": "$\\mathcal{L}\\{y''\\}$ es igual a:", "opciones": [ "$sY(s)-y(0)$", "$s^{2}Y(s)-s\\,y(0)-y'(0)$", "$s^{2}Y(s)$", "$s^{2}Y(s)-y(0)-y'(0)$" ], "correcta": 1, "pista": "Aplica dos veces $\\mathcal{L}\\{y'\\}=sY-y(0)$.", "solucion": "$\\mathcal{L}\\{y''\\}=s\\mathcal{L}\\{y'\\}-y'(0)=s(sY-y(0))-y'(0)=s^{2}Y-sy(0)-y'(0)$. El $y(0)$ va multiplicado por $s$; es el error más frecuente." }, { "etiqueta": "PVI 1.º", "nivel": 3, "criterio": "Resolver un PVI de primer orden (§5)", "enunciado": "Para $y'+2y=e^{-t}$, $y(0)=1$, la transformada $Y(s)$ se simplifica a:", "opciones": [ "$\\dfrac{1}{s+1}$, luego $y=e^{-t}$", "$\\dfrac{1}{s+2}$, luego $y=e^{-2t}$", "$\\dfrac{1}{(s+1)(s+2)}$", "$\\dfrac{2}{s+2}$" ], "correcta": 0, "pista": "$(s+2)Y=1+\\dfrac{1}{s+1}$ y $\\dfrac{1}{(s+1)(s+2)}=\\dfrac{1}{s+1}-\\dfrac{1}{s+2}$.", "solucion": "$Y=\\dfrac{1}{s+2}+\\dfrac{1}{(s+1)(s+2)}=\\dfrac{1}{s+2}+\\dfrac{1}{s+1}-\\dfrac{1}{s+2}=\\dfrac{1}{s+1}$, así que $y=e^{-t}$. Comprobación: $-e^{-t}+2e^{-t}=e^{-t}$ ✓, $y(0)=1$ ✓." }, { "etiqueta": "PVI 2.º", "nivel": 3, "criterio": "Resolver un PVI de segundo orden (§5)", "enunciado": "Para $y''+y=0$, $y(0)=1$, $y'(0)=2$, Laplace da:", "opciones": [ "$Y=\\dfrac{s}{s^{2}+1}$, $\\ y=\\cos t$", "$Y=\\dfrac{2s+1}{s^{2}+1}$, $\\ y=2\\cos t+\\sin t$", "$Y=\\dfrac{s+2}{s^{2}+1}$, $\\ y=\\cos t+2\\sin t$", "$Y=\\dfrac{1}{s^{2}+1}$, $\\ y=\\sin t$" ], "correcta": 2, "pista": "$s^{2}Y-s-2+Y=0$.", "solucion": "$(s^{2}+1)Y=s+2\\Rightarrow Y=\\dfrac{s}{s^{2}+1}+2\\cdot\\dfrac{1}{s^{2}+1}$, y la tabla da $\\cos t+2\\sin t$. Las condiciones iniciales ya están incorporadas: $y(0)=1$, $y'(0)=2$ ✓." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "L{1}", "nivel": 1, "criterio": "Transformada de una constante (§1)", "enunciado": "$\\mathcal{L}\\{1\\}$ es igual a:", "opciones": [ "$1$", "$s$", "$\\dfrac{1}{s^{2}}$", "$\\dfrac1s$ para $s\\gt0$" ], "correcta": 3, "pista": "$\\int_{0}^{\\infty}e^{-st}dt$.", "solucion": "$\\Big[-\\dfrac{e^{-st}}{s}\\Big]_{0}^{\\infty}=\\dfrac1s$ si $s\\gt0$. $\\dfrac{1}{s^{2}}$ es la transformada de $t$." }, { "etiqueta": "Potencia", "nivel": 2, "criterio": "Transformar $t^{n}$ (§2)", "enunciado": "$\\mathcal{L}\\{t^{3}\\}$ es:", "opciones": [ "$\\dfrac{6}{s^{3}}$", "$\\dfrac{6}{s^{4}}$", "$\\dfrac{3}{s^{4}}$", "$\\dfrac{1}{s^{4}}$" ], "correcta": 1, "pista": "$\\dfrac{n!}{s^{n+1}}$ con $n=3$.", "solucion": "$\\dfrac{3!}{s^{4}}=\\dfrac{6}{s^{4}}$. Al revés, $\\mathcal{L}^{-1}\\{1/s^{4}\\}=t^{3}/6$: el factorial hay que compensarlo." }, { "etiqueta": "Tramos", "nivel": 2, "criterio": "Transformar una función por tramos (§1)", "enunciado": "Si $f(t)=0$ para $t\\lt3$ y $f(t)=2$ para $t\\ge3$, entonces $\\mathcal{L}\\{f\\}$ es:", "opciones": [ "$\\dfrac{2e^{-3s}}{s}$", "$\\dfrac{2}{s}$", "$\\dfrac{2e^{3s}}{s}$", "$\\dfrac{6}{s}$" ], "correcta": 0, "pista": "La integral empieza en $t=3$.", "solucion": "$\\int_{3}^{\\infty}2e^{-st}dt=\\Big[-\\dfrac{2e^{-st}}{s}\\Big]_{3}^{\\infty}=\\dfrac{2e^{-3s}}{s}$. El retraso de 3 unidades aparece como $e^{-3s}$ (segundo teorema de traslación, Guía 14)." }, { "etiqueta": "Coseno", "nivel": 2, "criterio": "Antitransformar seno y coseno (§3)", "enunciado": "$\\mathcal{L}^{-1}\\Big\\{\\dfrac{2s+3}{s^{2}+9}\\Big\\}$ es:", "opciones": [ "$2\\sin3t+\\cos3t$", "$2e^{3t}+3$", "$2\\cos3t+\\sin3t$", "$2\\cos3t+3\\sin3t$" ], "correcta": 2, "pista": "Separa en $\\dfrac{s}{s^{2}+9}$ y $\\dfrac{3}{s^{2}+9}$.", "solucion": "$2\\cdot\\dfrac{s}{s^{2}+9}\\to2\\cos3t$ y $\\dfrac{3}{s^{2}+9}\\to\\sin3t$ (el $3$ del numerador es exactamente $k$). Escribir $3\\sin3t$ duplica el factor $k$." }, { "etiqueta": "Producto", "nivel": 2, "criterio": "Reconocer el límite de la linealidad (§2)", "enunciado": "¿Es cierto que $\\mathcal{L}\\{t\\,e^{t}\\}=\\mathcal{L}\\{t\\}\\cdot\\mathcal{L}\\{e^{t}\\}$?", "opciones": [ "Sí, siempre", "Sí, porque ambas existen para $s\\gt1$", "No: $\\mathcal{L}\\{te^{t}\\}$ no existe", "No: la linealidad vale para sumas, no para productos; $\\mathcal{L}\\{te^{t}\\}=\\dfrac{1}{(s-1)^{2}}$" ], "correcta": 3, "pista": "Prueba con $s=2$: $\\mathcal{L}\\{t\\}\\mathcal{L}\\{e^{t}\\}=\\tfrac14\\cdot1$, pero la transformada real da $1$.", "solucion": "La transformada de un producto no es el producto de transformadas. $\\mathcal{L}\\{te^{t}\\}=\\dfrac{1}{(s-1)^{2}}$ (traslación en $s$, Guía 14); en $s=2$ vale $1$, mientras que $\\tfrac{1}{s^{2}}\\cdot\\tfrac{1}{s-1}$ vale $\\tfrac14$." }, { "etiqueta": "Comprobar", "nivel": 3, "criterio": "Verificar la fórmula de la derivada (§4)", "enunciado": "Con $y=\\cos t$, la fórmula $\\mathcal{L}\\{y'\\}=sY-y(0)$ da:", "opciones": [ "$-\\dfrac{s}{s^{2}+1}$", "$\\dfrac{s^{2}}{s^{2}+1}-1=-\\dfrac{1}{s^{2}+1}$, que es $\\mathcal{L}\\{-\\sin t\\}$ ✓", "$\\dfrac{s}{s^{2}+1}$", "$\\dfrac{s^{2}}{s^{2}+1}$" ], "correcta": 1, "pista": "$Y=s/(s^{2}+1)$ y $y(0)=1$.", "solucion": "$sY-y(0)=\\dfrac{s^{2}}{s^{2}+1}-1=-\\dfrac{1}{s^{2}+1}$, exactamente la transformada de $y'=-\\sin t$. Sin el término $-y(0)$ la fórmula sería falsa." }, { "etiqueta": "Despejar", "nivel": 3, "criterio": "Transformar un PVI completo (§5)", "enunciado": "Para $y''-3y'+2y=4t$, $y(0)=1$, $y'(0)=0$, al transformar se obtiene:", "opciones": [ "$(s^{2}-3s+2)Y=s-3+\\dfrac{4}{s^{2}}$", "$(s^{2}-3s+2)Y=\\dfrac{4}{s^{2}}$", "$(s^{2}-3s+2)Y=s+3+\\dfrac{4}{s}$", "$(s^{2}+3s+2)Y=s-3+\\dfrac{4}{s^{2}}$" ], "correcta": 0, "pista": "$\\mathcal{L}\\{y''\\}=s^{2}Y-s$, $\\mathcal{L}\\{y'\\}=sY-1$, $\\mathcal{L}\\{4t\\}=4/s^{2}$.", "solucion": "$(s^{2}Y-s)-3(sY-1)+2Y=\\dfrac{4}{s^{2}}$, y agrupando: $(s^{2}-3s+2)Y-s+3=\\dfrac{4}{s^{2}}$. Olvidar las condiciones iniciales deja solo $4/s^{2}$ a la derecha, que correspondería a $y(0)=y'(0)=0$." }, { "etiqueta": "Resultado", "nivel": 3, "criterio": "Cerrar el PVI por Laplace (§5)", "enunciado": "Continuando, $Y=\\dfrac3s+\\dfrac{2}{s^{2}}-\\dfrac{2}{s-1}$ se antitransforma como:", "opciones": [ "$y=3+t^{2}-2e^{t}$", "$y=3s+2s^{2}-2e^{t}$", "$y=3+2t-2e^{t}$, la misma solución de la Guía 11", "$y=3+2t-2e^{-t}$" ], "correcta": 2, "pista": "$\\tfrac3s\\to3$, $\\tfrac{2}{s^{2}}\\to2t$, $\\tfrac{2}{s-1}\\to2e^{t}$.", "solucion": "Término a término: $3+2t-2e^{t}$. Coincide con $-2e^{t}+2t+3$ de la Guía 11 (coeficientes indeterminados + condiciones iniciales), pero aquí salió de una sola vez. $\\tfrac{1}{s-1}$ es $e^{t}$, no $e^{-t}$." } ] });
 </script>
 </body>
 </html>

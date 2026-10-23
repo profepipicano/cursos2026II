@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía 12 · Diferenciación e integración numérica — Métodos Numéricos · UNIAJC</title>
+<title>Guía 12 · Modelos lineales y no lineales — Ecuaciones Diferenciales · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260912e">
+<link rel="stylesheet" href="../assets/ova.css?v=20260912f">
 </head>
 <body>
 
@@ -19,7 +19,7 @@ window.MathJax = {
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Guía 12</h1>
+      <h1>Ecuaciones Diferenciales · Guía 12</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -31,11 +31,11 @@ window.MathJax = {
 
 <nav id="guia-nav" aria-label="Secciones de la guía">
   <div class="guia-nav-inner">
-    <a href="#s1">1 · Derivar con diferencias</a>
-    <a href="#s2">2 · Forma matricial</a>
-    <a href="#s3">3 · Regla del trapecio</a>
-    <a href="#s4">4 · Reglas de Simpson</a>
-    <a href="#s5">5 · Error y datos tabulados</a>
+    <a href="#s1">1 · Movimiento libre</a>
+    <a href="#s2">2 · Amortiguado</a>
+    <a href="#s3">3 · Forzado y resonancia</a>
+    <a href="#s4">4 · Valor frontera</a>
+    <a href="#s5">5 · Modelos no lineales</a>
     <a href="#s6">6 · Práctica final</a>
   </div>
 </nav>
@@ -44,263 +44,244 @@ window.MathJax = {
 
 <div class="hero">
   <div class="eyebrow">Guía de estudio 12 · Corte III</div>
-  <h2>Diferenciación e integración numérica</h2>
-  <p>Cuando la función viene como tabla de mediciones, o cuando no tiene antiderivada elemental, derivar
-     e integrar «a mano» es imposible. Esta guía construye las fórmulas que usa cualquier computador para
-     ambas tareas: cocientes de diferencias para la derivada, y las reglas del trapecio y de Simpson para
-     la integral. El hilo conductor es el mismo de la Guía 2: cada fórmula tiene un error que depende de
-     una potencia del paso $h$.</p>
+  <h2>Modelos lineales y no lineales</h2>
+  <p>Una masa colgada de un resorte es el modelo más útil del curso: su ecuación es la de segundo orden
+     con coeficientes constantes que ya sabes resolver, y con ella se explican vibraciones, circuitos
+     y cualquier sistema que oscila. Esta guía recorre sus regímenes —libre, amortiguado, forzado—, los
+     problemas de valor frontera, y termina con lo que ocurre cuando el modelo deja de ser lineal.</p>
   <div class="chips">
-    <span class="chip">Chapra · Cap. 21 y 23</span>
-    <span class="chip">Burden · Cap. 4.1 y 4.3</span>
+    <span class="chip">Zill · Cap. 5.1 y 5.3</span>
     <span class="chip">Semana 12</span>
     <span class="chip">2 comprobaciones + práctica final</span>
   </div>
 </div>
 
 <div class="nota">
-  <strong>De dónde venimos.</strong> La Guía 2 presentó la serie de Taylor y la Guía 1 las sumas de
-  Riemann. Las fórmulas de diferencias salen de truncar Taylor; las de integración, de reemplazar la
-  función por un polinomio sencillo en cada tramo e integrarlo exactamente.
+  <strong>De dónde venimos.</strong> Todo lo necesario ya está: raíces reales, dobles o complejas de la
+  ecuación característica (Guía 9) y la solución particular con su caso de resonancia (Guía 11). Aquí
+  cada caso recibe nombre físico.
 </div>
 
 <section class="card" id="s1">
-  <h3 class="card-title">1 · Derivar con diferencias finitas</h3>
+  <h3 class="card-title">1 · Movimiento libre no amortiguado</h3>
 
   <div class="callout-dark">
-    <h3>Tres cocientes, dos órdenes de error</h3>
-    <p>La derivada es el límite del cociente $\dfrac{f(x+h)-f(x)}{h}$. Si no tomamos el límite y dejamos un
-       $h$ pequeño, obtenemos la <strong>diferencia hacia adelante</strong>, con error proporcional a $h$.
-       Usar los dos vecinos, $x-h$ y $x+h$, cancela el primer término del error: la
-       <strong>diferencia central</strong> tiene error proporcional a $h^{2}$, mucho menor.</p>
+    <h3>La ley de Hooke y la segunda ley de Newton</h3>
+    <p>Un resorte estirado $x$ unidades ejerce fuerza $-kx$. Con masa $m$ y sin rozamiento,
+       $mx''=-kx$, es decir $x''+\omega^{2}x=0$ con $\omega=\sqrt{k/m}$. Las raíces son $\pm\omega i$ y la
+       solución es una oscilación pura de <strong>frecuencia natural</strong> $\omega$ y periodo
+       $T=2\pi/\omega$, que no depende de la amplitud.</p>
   </div>
 
   <div class="def">
-    $$f'(x)\approx\frac{f(x+h)-f(x)}{h}\ \ (\text{adelante},\,O(h))\qquad
-      f'(x)\approx\frac{f(x)-f(x-h)}{h}\ \ (\text{atrás},\,O(h))\qquad
-      f'(x)\approx\frac{f(x+h)-f(x-h)}{2h}\ \ (\text{central},\,O(h^{2}))$$
-    $$f''(x)\approx\frac{f(x+h)-2f(x)+f(x-h)}{h^{2}}\ \ (O(h^{2}))$$
+    $$x''+\omega^{2}x=0,\qquad x(t)=c_1\cos\omega t+c_2\sin\omega t=A\sin(\omega t+\phi),\qquad A=\sqrt{c_1^{2}+c_2^{2}}$$
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 1 · $f(x)=e^{x}$ en $x=0$ con $h=0{,}1$ (valor exacto $f'(0)=1$)</h4>
+    <h4>Ejemplo 1 · $m=1$, $k=16$: $x''+16x=0$</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Las tres aproximaciones</div>
-        Adelante: $\dfrac{e^{0{,}1}-1}{0{,}1}=1{,}05171$ (error $0{,}0517$). Atrás: $\dfrac{1-e^{-0{,}1}}{0{,}1}=0{,}95163$ (error $0{,}0484$).
-        Central: $\dfrac{e^{0{,}1}-e^{-0{,}1}}{0{,}2}=1{,}00167$ (error $0{,}00167$).
+      <div class="paso"><div class="paso-t">Solución general</div>
+        $\omega=4$: $x=c_1\cos4t+c_2\sin4t$, periodo $T=\pi/2$.
       </div>
-      <div class="paso"><div class="paso-t">Reducir $h$ a la mitad</div>
-        Con $h=0{,}05$ la central da $1{,}000417$: el error pasa de $0{,}00167$ a $0{,}00042$, cuatro veces menor, como corresponde a $O(h^{2})$. Las de adelante y atrás solo lo reducen a la mitad.
+      <div class="paso"><div class="paso-t">Soltada desde $x(0)=1$ en reposo</div>
+        $c_1=1$, $c_2=0$: $x=\cos4t$. Amplitud 1.
       </div>
-      <div class="paso"><div class="paso-t">Segunda derivada</div>
-        $\dfrac{e^{0{,}1}-2+e^{-0{,}1}}{0{,}01}=1{,}00083$, frente al exacto $f''(0)=1$.
+      <div class="paso"><div class="paso-t">Con velocidad inicial $x'(0)=2$</div>
+        $x'=-4c_1\sin4t+4c_2\cos4t$, $x'(0)=4c_2=2\Rightarrow c_2=\tfrac12$: $x=\cos4t+\tfrac12\sin4t$, amplitud $A=\sqrt{1+\tfrac14}=\tfrac{\sqrt5}{2}\approx1{,}118$. El periodo sigue siendo $\pi/2$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Movimiento amortiguado</h3>
+
+  <div class="callout-dark">
+    <h3>Tres regímenes según las raíces</h3>
+    <p>Con una fuerza de rozamiento proporcional a la velocidad, $mx''+\beta x'+kx=0$, que se escribe
+       $x''+2\lambda x'+\omega^{2}x=0$. El signo de $\lambda^{2}-\omega^{2}$ decide el tipo de raíces y, con
+       él, el comportamiento: <strong>sobreamortiguado</strong> (dos raíces reales, vuelve sin oscilar),
+       <strong>críticamente amortiguado</strong> (raíz doble, el retorno más rápido sin oscilar) y
+       <strong>subamortiguado</strong> (raíces complejas, oscila con amplitud decreciente).</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Los tres casos con $x(0)=1$, $x'(0)=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Sobreamortiguado: $x''+5x'+4x=0$</div>
+        $m^{2}+5m+4=(m+1)(m+4)$: $x=c_1e^{-t}+c_2e^{-4t}$. Con las condiciones: $x=\dfrac{4e^{-t}-e^{-4t}}{3}$. Decae sin cruzar el equilibrio.
+      </div>
+      <div class="paso"><div class="paso-t">Crítico: $x''+4x'+4x=0$</div>
+        $(m+2)^{2}=0$: $x=(c_1+c_2t)e^{-2t}$. Con las condiciones: $x=(1+2t)e^{-2t}$.
+      </div>
+      <div class="paso"><div class="paso-t">Subamortiguado: $x''+2x'+10x=0$</div>
+        $m=-1\pm3i$: $x=e^{-t}(c_1\cos3t+c_2\sin3t)$. Con las condiciones: $c_1=1$ y $-1+3c_2=0\Rightarrow c_2=\tfrac13$:
+        $x=e^{-t}\big(\cos3t+\tfrac13\sin3t\big)$. Oscila con cuasiperiodo $2\pi/3\approx2{,}094$ dentro de la envolvente $\pm Ae^{-t}$.
       </div>
     </div>
   </div>
 
-  <div class="sub-title">1.1 Las tres secantes y la tangente</div>
-  <div class="viz" data-viz="derivada">
+  <div class="sub-title">2.1 Los regímenes del resorte</div>
+  <div class="viz" data-viz="resorte">
     <div class="viz-controls">
-      <label for="dv-f">Función</label>
-      <select id="dv-f">
-        <option value="exp">f(x) = eˣ en x₀ = 0</option>
-        <option value="sen">f(x) = sen x en x₀ = 1</option>
-        <option value="cub">f(x) = x³ en x₀ = 1</option>
+      <label for="rs-e">Sistema</label>
+      <select id="rs-e">
+        <option value="libre">x'' + 16x = 0 (libre)</option>
+        <option value="sobre">x'' + 5x' + 4x = 0 (sobreamortiguado)</option>
+        <option value="crit">x'' + 4x' + 4x = 0 (crítico)</option>
+        <option value="sub">x'' + 2x' + 10x = 0 (subamortiguado)</option>
+        <option value="forz">x'' + 4x = 3cos t (forzado)</option>
+        <option value="reson">x'' + 4x = 8cos 2t (resonancia)</option>
       </select>
-      <label for="dv-h">Paso h</label>
-      <input id="dv-h" class="h" type="range" min="2" max="50" step="1" value="20">
-      <span class="h-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="rs-x">x(0)</label>
+      <input id="rs-x" class="x0" type="range" min="-20" max="20" step="1" value="10">
+      <span class="x0-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="rs-v">x'(0)</label>
+      <input id="rs-v" class="v0" type="range" min="-40" max="40" step="1" value="0">
+      <span class="v0-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Reduce $h$ y compara cómo caen los tres errores: la secante central (verde) se pega a la tangente
-    mucho antes que las otras dos. Para $f=x^{3}$ la central con cualquier $h$ da $3+h^{2}$: el término de
-    error es visible.
+    Compara los tres casos amortiguados con las mismas condiciones iniciales: el crítico vuelve al
+    equilibrio antes que el sobreamortiguado, y el subamortiguado lo cruza varias veces dentro de la
+    envolvente roja.
   </p>
 </section>
 
-<section class="card" id="s2">
-  <h3 class="card-title">2 · Desarrollo matricial: derivar toda una tabla a la vez</h3>
-
-  <div class="callout-dark">
-    <h3>La derivada como producto matriz-vector</h3>
-    <p>Si la función se conoce en una malla $x_0,x_1,\dots,x_n$ con paso $h$, aplicar la diferencia central en
-       cada punto interior y una diferencia lateral en los extremos es multiplicar el vector de valores
-       $\mathbf f=(f_0,\dots,f_n)$ por una <strong>matriz de diferenciación</strong> $D$. Es la forma en que
-       se programa: una sola operación en vez de un bucle.</p>
-  </div>
-
-  <div class="def">
-    Para cinco puntos:
-    $$\mathbf f'\approx D\,\mathbf f,\qquad D=\frac{1}{2h}\begin{pmatrix}-2&2&0&0&0\\-1&0&1&0&0\\0&-1&0&1&0\\0&0&-1&0&1\\0&0&0&-2&2\end{pmatrix}$$
-    Las filas interiores son la central $\tfrac{f_{i+1}-f_{i-1}}{2h}$; la primera y la última son adelante y atrás (por eso llevan $\pm2$).
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 2 · $f(x)=x^{2}$ en $x=0,\ 0{,}5,\ 1,\ 1{,}5,\ 2$</h4>
-    <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Vector de valores</div>
-        $\mathbf f=(0,\ 0{,}25,\ 1,\ 2{,}25,\ 4)$, $h=0{,}5$.
-      </div>
-      <div class="paso"><div class="paso-t">Producto $D\mathbf f$</div>
-        $D\mathbf f=(0{,}5,\ 1,\ 2,\ 3,\ 3{,}5)$. En los puntos interiores el resultado es <em>exacto</em> ($f'=2x$ da $1,2,3$): la central no tiene error para polinomios de grado $\le2$. En los extremos las fórmulas laterales dejan error $h=0{,}5$ ($0{,}5$ en vez de $0$; $3{,}5$ en vez de $4$).
-      </div>
-    </div>
-  </div>
-</section>
-
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 1 — Diferenciación numérica</h3>
+  <h3 class="card-title">✓ Comprobación 1 — Movimiento libre y amortiguado</h3>
   <div id="chk1"></div>
 </div>
 
 <section class="card" id="s3">
-  <h3 class="card-title">3 · Regla del trapecio</h3>
+  <h3 class="card-title">3 · Movimiento forzado y resonancia</h3>
 
   <div class="callout-dark">
-    <h3>Rectas en vez de rectángulos</h3>
-    <p>Las sumas de Riemann de la Guía 1 usaban rectángulos. Si en cada segmento unimos los dos
-       extremos con una recta, el área es un trapecio: $\tfrac{h}{2}[f(x_i)+f(x_{i+1})]$. Sumando los $n$
-       trapecios, los puntos interiores se cuentan dos veces.</p>
+    <h3>Una fuerza externa periódica</h3>
+    <p>Si sobre la masa actúa $F_0\cos\gamma t$, la ecuación $x''+\omega^{2}x=F_0\cos\gamma t$ tiene
+       una particular de la misma frecuencia $\gamma$ mientras $\gamma\neq\omega$. Si la fuerza oscila
+       justo a la frecuencia natural, $\gamma=\omega$, entra el caso de duplicación de la Guía 11 y la
+       amplitud crece linealmente: <strong>resonancia pura</strong>.</p>
   </div>
 
   <div class="def">
-    $$\int_{a}^{b}f(x)\,dx\approx\frac{h}{2}\Big[f(x_0)+2f(x_1)+2f(x_2)+\cdots+2f(x_{n-1})+f(x_n)\Big],\qquad h=\frac{b-a}{n}$$
-    Error: proporcional a $h^{2}$ (al duplicar $n$ el error se divide por 4). Cota: $|E|\le\dfrac{(b-a)h^{2}}{12}\max|f''|$.
+    $$\gamma\neq\omega:\quad x_p=\frac{F_0}{\omega^{2}-\gamma^{2}}\cos\gamma t\qquad\qquad \gamma=\omega:\quad x_p=\frac{F_0}{2\omega}\,t\sin\omega t$$
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 3 · $\displaystyle\int_{0}^{2}x^{3}\,dx=4$</h4>
+    <h4>Ejemplo 3 · El mismo resorte, dos fuerzas</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Un solo trapecio ($n=1$, $h=2$)</div>
-        $\tfrac{2}{2}[0+8]=8$. Error $4$.
+      <div class="paso"><div class="paso-t">$x''+4x=3\cos t$ ($\gamma=1\neq\omega=2$)</div>
+        $x_p=A\cos t$: $-A+4A=3\Rightarrow A=1$, $x_p=\cos t$. La solución completa suma dos frecuencias (1 y 2) y permanece acotada.
       </div>
-      <div class="paso"><div class="paso-t">Dos trapecios ($n=2$, $h=1$)</div>
-        $\tfrac{1}{2}[0+2(1)+8]=5$. Error $1$.
+      <div class="paso"><div class="paso-t">$x''+4x=8\cos2t$ ($\gamma=\omega=2$)</div>
+        $x_p=\dfrac{F_0}{2\omega}t\sin\omega t=\dfrac{8}{4}t\sin2t=2t\sin2t$, el resultado del Ejemplo 4 de la Guía 11. La amplitud $2t$ crece sin límite: en un sistema real, el resorte se rompe o el modelo lineal deja de valer.
       </div>
-      <div class="paso"><div class="paso-t">Cuatro trapecios ($n=4$, $h=0{,}5$)</div>
-        $\tfrac{0{,}5}{2}[0+2(0{,}125)+2(1)+2(3{,}375)+8]=4{,}25$. Error $0{,}25$. Cada duplicación divide el error por 4.
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Circuitos.</strong> $Lq''+Rq'+\dfrac{1}{C}q=E(t)$ tiene exactamente la misma forma: $L\leftrightarrow m$, $R\leftrightarrow\beta$, $1/C\leftrightarrow k$, $E(t)\leftrightarrow F(t)$. Todo lo dicho sobre el resorte vale para el circuito RLC, incluida la resonancia.
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Problemas de valor frontera</h3>
+
+  <div class="callout-dark">
+    <h3>Condiciones en dos puntos distintos</h3>
+    <p>Hasta ahora dábamos $y(x_0)$ y $y'(x_0)$ en el mismo punto. Un problema de <strong>valor
+       frontera</strong> fija $y$ en dos puntos, $y(a)$ y $y(b)$. A diferencia del PVI, puede tener una
+       solución, ninguna o infinitas; y para $y''+\lambda y=0$ con $y(0)=y(L)=0$ solo ciertos valores de
+       $\lambda$ —los <strong>valores propios</strong>— admiten solución no trivial.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · $y''+y=0$, $\ y(0)=0$, $\ y(\pi/2)=1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Imponer en dos puntos</div>
+        $y=c_1\cos x+c_2\sin x$; $y(0)=c_1=0$; $y(\pi/2)=c_2=1$. Solución única: $y=\sin x$.
       </div>
-      <div class="paso"><div class="paso-t">La cota</div>
-        Con $n=2$: $\dfrac{(2)(1)^{2}}{12}\max|6x|=\dfrac{2}{12}\cdot12=2\ge1$ ✓.
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Valores propios: $y''+\lambda y=0$, $\ y(0)=0$, $\ y(\pi)=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\lambda\le0$: solo la trivial</div>
+        Con $\lambda=0$, $y=c_1+c_2x$ y las condiciones fuerzan $c_1=c_2=0$. Con $\lambda=-\alpha^{2}\lt0$, $y=c_1\cosh\alpha x+c_2\sinh\alpha x$ y $\sinh\alpha\pi\neq0$ obliga a $c_2=0$.
+      </div>
+      <div class="paso"><div class="paso-t">$\lambda=\alpha^{2}\gt0$</div>
+        $y=c_1\cos\alpha x+c_2\sin\alpha x$; $y(0)=0\Rightarrow c_1=0$; $y(\pi)=c_2\sin\alpha\pi=0$ exige $\alpha=n$ entero.
+      </div>
+      <div class="paso"><div class="paso-t">Resultado</div>
+        Valores propios $\lambda_n=n^{2}$ ($1,4,9,\dots$) con funciones propias $y_n=\sin nx$: las formas en que puede vibrar una cuerda fija en los extremos. Para cualquier otro $\lambda$, la única solución es $y=0$.
       </div>
     </div>
   </div>
 </section>
 
-<section class="card" id="s4">
-  <h3 class="card-title">4 · Reglas de Simpson</h3>
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Modelos no lineales</h3>
 
   <div class="callout-dark">
-    <h3>Parábolas y cúbicas en vez de rectas</h3>
-    <p>Si por cada <em>par</em> de segmentos pasamos una parábola e integramos esa parábola, obtenemos la
-       regla de <strong>Simpson 1/3</strong>; con una cúbica por cada <em>tres</em> segmentos, la regla de
-       <strong>Simpson 3/8</strong>. Ambas integran exactamente polinomios hasta grado 3 y su error es
-       proporcional a $h^{4}$: duplicar $n$ divide el error por 16.</p>
-  </div>
-
-  <div class="def">
-    <strong>Simpson 1/3</strong> ($n$ par): $\displaystyle\int_{a}^{b}f\,dx\approx\frac{h}{3}\Big[f_0+4f_1+2f_2+4f_3+\cdots+4f_{n-1}+f_n\Big]$
-    <br><strong>Simpson 3/8</strong> (3 segmentos): $\displaystyle\int_{x_0}^{x_3}f\,dx\approx\frac{3h}{8}\Big[f_0+3f_1+3f_2+f_3\Big]$
-    <br>Si $n$ es impar, se combinan: 1/3 en un número par de segmentos y 3/8 en los tres restantes.
+    <h3>Cuando la fuerza no es proporcional a $x$</h3>
+    <p>El péndulo obedece $\theta''+\dfrac{g}{l}\sin\theta=0$; un resorte «duro» obedece $x''+x+x^{3}=0$.
+       Son ecuaciones no lineales: no hay ecuación característica ni principio de superposición. Lo que
+       sí se puede hacer es <strong>linealizar</strong> cerca del equilibrio ($\sin\theta\approx\theta$ si
+       $\theta$ es pequeño) o integrar numéricamente (Guía 14 de Métodos). El rasgo nuevo: el periodo
+       depende de la amplitud.</p>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 4 · Las mismas integrales con Simpson</h4>
+    <h4>Ejemplo 6 · El péndulo y su linealización ($g/l=1$)</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">$\displaystyle\int_{0}^{2}x^{3}dx$ con Simpson 1/3, $n=2$</div>
-        $\tfrac{1}{3}[0+4(1)+8]=4$: <strong>exacto</strong>, porque el integrando es cúbico. El trapecio necesitaba muchos segmentos para acercarse.
+      <div class="paso"><div class="paso-t">Modelo lineal</div>
+        $\theta''+\theta=0$: periodo $2\pi\approx6{,}283$ para cualquier amplitud. La aproximación $\sin\theta\approx\theta$ tiene error menor del 1 % hasta unos $14°$.
       </div>
-      <div class="paso"><div class="paso-t">$\displaystyle\int_{0}^{3}x^{3}dx=20{,}25$ con Simpson 3/8 ($h=1$)</div>
-        $\tfrac{3}{8}[0+3(1)+3(8)+27]=\tfrac{3}{8}(54)=20{,}25$: también exacto. El trapecio con $n=3$ da $22{,}5$.
+      <div class="paso"><div class="paso-t">Modelo exacto</div>
+        El periodo real es $T=4K(\sin\tfrac{\theta_0}{2})$, con $K$ la integral elíptica completa. Para $\theta_0=1$ rad ($57°$): $T=6{,}70$, un $6{,}6\,\%$ más que $2\pi$. Para $\theta_0=2$ rad ($115°$): $T=8{,}35$, un $33\,\%$ más.
       </div>
-      <div class="paso"><div class="paso-t">$\displaystyle\int_{0}^{1}e^{x}dx=e-1=1{,}71828$</div>
-        Trapecio: $n=1$: $1{,}85914$; $n=2$: $1{,}75393$; $n=4$: $1{,}72722$. Simpson 1/3: $n=2$: $1{,}71886$; $n=4$: $1{,}71832$.
-        Con solo tres evaluaciones, Simpson ya supera al trapecio con cinco.
+      <div class="paso"><div class="paso-t">Lectura</div>
+        Como $\sin\theta\lt\theta$, la fuerza restauradora real es menor que la lineal: el péndulo tarda más en volver. Cuanto mayor la amplitud, peor la aproximación lineal.
       </div>
     </div>
   </div>
 
-  <div class="sub-title">4.1 Trapecios, parábolas y cúbicas bajo la curva</div>
-  <div class="viz" data-viz="cuadratura">
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · Resorte duro $x''+x+x^{3}=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">El efecto contrario</div>
+        Aquí la fuerza $x+x^{3}$ es <em>mayor</em> que la lineal para $|x|\gt0$: el resorte se endurece y oscila más rápido cuanto mayor es la amplitud. Integrando numéricamente: periodo $5{,}77$ con amplitud $0{,}5$ y $3{,}18$ con amplitud $2$ (el lineal daría $2\pi$ en ambos casos).
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">5.1 No lineal frente a linealizado</div>
+  <div class="viz" data-viz="pendulo">
     <div class="viz-controls">
-      <label for="cq-f">Integral</label>
-      <select id="cq-f">
-        <option value="cub">∫₀² x³ dx = 4</option>
-        <option value="exp">∫₀¹ eˣ dx = e − 1</option>
-        <option value="arc">∫₀¹ dx/(1+x²) = π/4</option>
-        <option value="sen">∫₀^π sen x dx = 2</option>
+      <label for="pe-m">Modelo</label>
+      <select id="pe-m">
+        <option value="pendulo">péndulo θ'' + sen θ = 0</option>
+        <option value="duro">resorte duro x'' + x + x³ = 0</option>
       </select>
-      <label for="cq-m">Regla</label>
-      <select id="cq-m" class="metodo">
-        <option value="trap">trapecio</option>
-        <option value="s13">Simpson 1/3</option>
-        <option value="s38">Simpson 3/8</option>
-      </select>
-      <label for="cq-n">Segmentos n</label>
-      <input id="cq-n" class="n" type="range" min="1" max="24" step="1" value="2">
-      <span class="n-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="pe-a">Amplitud inicial</label>
+      <input id="pe-a" class="th0" type="range" min="5" max="170" step="1" value="57">
+      <span class="th0-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Con $x^{3}$, Simpson es exacto desde $n=2$; con $e^{x}$ o $1/(1+x^{2})$ ningún método es exacto, pero al
-    duplicar $n$ el error del trapecio cae a la cuarta parte y el de Simpson a la dieciseisava.
+    Con amplitudes pequeñas las dos curvas se superponen; al aumentarla, el péndulo se retrasa respecto
+    al modelo lineal (periodo mayor) y el resorte duro se adelanta (periodo menor).
   </p>
 </section>
 
-<section class="card" id="s5">
-  <h3 class="card-title">5 · Orden del error y datos tabulados</h3>
-
-  <div class="def">
-    <table class="tbl">
-      <tr><th>Regla</th><th>Polinomio por tramo</th><th>Error</th><th>Exacta hasta grado</th><th>Evaluaciones</th></tr>
-      <tr><td>Trapecio</td><td>recta (2 puntos)</td><td>$O(h^{2})$: ÷4 al duplicar $n$</td><td>1</td><td>$n+1$</td></tr>
-      <tr><td>Simpson 1/3</td><td>parábola (3 puntos)</td><td>$O(h^{4})$: ÷16 al duplicar $n$</td><td>3</td><td>$n+1$, $n$ par</td></tr>
-      <tr><td>Simpson 3/8</td><td>cúbica (4 puntos)</td><td>$O(h^{4})$</td><td>3</td><td>$n+1$, $n$ múltiplo de 3</td></tr>
-    </table>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 5 · Ver el orden en $\displaystyle\int_{0}^{1}e^{x}dx$</h4>
-    <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Trapecio</div>
-        Errores: $0{,}1409$ ($n=1$), $0{,}0357$ ($n=2$), $0{,}0089$ ($n=4$): cada uno es cerca de la cuarta parte del anterior.
-      </div>
-      <div class="paso"><div class="paso-t">Simpson 1/3</div>
-        Errores: $5{,}8\times10^{-4}$ ($n=2$), $3{,}7\times10^{-5}$ ($n=4$): cociente $\approx16$.
-      </div>
-      <div class="paso"><div class="paso-t">$n=5$ (impar): combinar</div>
-        Simpson 1/3 en los dos primeros segmentos y 3/8 en los tres últimos ($h=0{,}2$): $1{,}71830$, error $1{,}6\times10^{-5}$.
-      </div>
-    </div>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 6 · Distancia a partir de velocidades medidas</h4>
-    <div class="ejemplo-body">
-      <table class="tbl">
-        <tr><th>$t$ (s)</th><td>0</td><td>2</td><td>4</td><td>6</td><td>8</td></tr>
-        <tr><th>$v$ (m/s)</th><td>0</td><td>4</td><td>7</td><td>9</td><td>10</td></tr>
-      </table>
-      <div class="paso"><div class="paso-t">Trapecio ($h=2$)</div>
-        $d=\tfrac{2}{2}[0+2(4)+2(7)+2(9)+10]=50$ m.
-      </div>
-      <div class="paso"><div class="paso-t">Simpson 1/3 ($n=4$)</div>
-        $d=\tfrac{2}{3}[0+4(4)+2(7)+4(9)+10]=\tfrac{2}{3}(76)=50{,}667$ m.
-      </div>
-      <div class="paso"><div class="paso-t">Lectura</div>
-        Con datos tabulados no hay «valor exacto» para comparar: Simpson es la mejor estimación disponible si la velocidad varía suavemente, y la diferencia entre ambas ($0{,}67$ m) da una idea de la incertidumbre.
-      </div>
-    </div>
-  </div>
-</section>
-
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 2 — Trapecio y Simpson</h3>
+  <h3 class="card-title">✓ Comprobación 2 — Forzado, frontera y no lineal</h3>
   <div id="chk2"></div>
 </div>
 
@@ -311,22 +292,25 @@ window.MathJax = {
     <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      La tasa de crecimiento de las ventas de un mes a otro es una diferencia finita; el acumulado de un
-      flujo medido mes a mes (ingresos, inventario, demanda) es una integral numérica de datos
-      tabulados: el trapecio es lo que hace una hoja de cálculo al promediar valores consecutivos.</div>
+      Los ciclos de inventario-producción se comportan como un sistema amortiguado: una política de
+      reposición agresiva es «subamortiguada» (sobrerreacciona y oscila), una lenta es
+      «sobreamortiguada», y la bien ajustada es la crítica. La resonancia es lo que ocurre cuando las
+      promociones se sincronizan con el ciclo natural de la demanda.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      El costo marginal a partir de una tabla de costos totales se estima con diferencias (central si hay
-      datos a ambos lados); el costo total de un tramo de producción, integrando el marginal tabulado
-      con el trapecio o Simpson. Las curvas de aprendizaje y depreciación se tratan igual.</div>
+      Un problema de valor frontera aparece al planear un fondo que debe partir de un saldo dado y
+      llegar a otro en una fecha fija: no se conoce la «velocidad inicial» (el aporte), se despeja. Y el
+      ciclo económico modelado como oscilador amortiguado explica por qué las perturbaciones se
+      extinguen —o se amplifican si hay resonancia con la política fiscal—.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      La matriz de diferenciación $D$ es la forma vectorizada que usan NumPy y las GPU: una multiplicación
-      en vez de un bucle. Los filtros de detección de bordes en imágenes son diferencias finitas
-      centrales en dos dimensiones, y Simpson es el método por defecto en varias bibliotecas de
-      integración.</div>
+      Un controlador PID se sintoniza para que el sistema sea críticamente amortiguado: el retorno más
+      rápido sin oscilar. Las animaciones «con muelle» de las interfaces usan exactamente $x''+2\lambda
+      x'+\omega^{2}x=0$ subamortiguado, y los modelos no lineales son los que exigen integración
+      numérica (RK4) en toda simulación física.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      Un osciloscopio digital entrega muestras: la corriente de un condensador, $i=C\,dv/dt$, se obtiene
-      con diferencias centrales de la tensión muestreada, y la carga o la energía con el trapecio o
-      Simpson sobre las muestras. El paso $h$ es el periodo de muestreo.</div>
+      El circuito RLC serie es el resorte: $R$ amortigua, $1/\sqrt{LC}$ es la frecuencia natural y un
+      filtro sintonizado es resonancia controlada. Los valores propios del problema de frontera son los
+      modos de una línea de transmisión o de una cavidad; y el diodo o el transistor, elementos no
+      lineales, se linealizan alrededor del punto de operación igual que el péndulo.</div>
   </div>
 </section>
 
@@ -341,12 +325,11 @@ window.MathJax = {
 <section class="card">
   <h3 class="card-title">Resumen para llevar</h3>
   <ul>
-    <li><strong>Diferencias</strong>: adelante y atrás $O(h)$; central $\dfrac{f(x+h)-f(x-h)}{2h}$ es $O(h^{2})$; segunda derivada $\dfrac{f(x+h)-2f(x)+f(x-h)}{h^{2}}$.</li>
-    <li><strong>Matriz $D$</strong>: deriva toda una tabla con un producto matriz-vector; interior central, extremos laterales.</li>
-    <li><strong>Trapecio</strong>: $\tfrac h2[f_0+2f_1+\cdots+2f_{n-1}+f_n]$, error $O(h^{2})$, exacto para rectas.</li>
-    <li><strong>Simpson 1/3</strong> ($n$ par): $\tfrac h3[f_0+4f_1+2f_2+\cdots+f_n]$; <strong>3/8</strong> (3 segmentos): $\tfrac{3h}{8}[f_0+3f_1+3f_2+f_3]$. Error $O(h^{4})$, exactas hasta grado 3.</li>
-    <li>Duplicar $n$: trapecio ÷4, Simpson ÷16. $\int_0^2x^3=4$: trapecio 8, 5, 4,25; Simpson 1/3 exacto con $n=2$.</li>
-    <li>Con <strong>datos tabulados</strong> ($h$ fijo) se aplican las mismas fórmulas: velocidades → distancia 50 (trapecio) o 50,667 (Simpson).</li>
+    <li><strong>Libre</strong>: $x''+\omega^{2}x=0$, $\omega=\sqrt{k/m}$, $x=c_1\cos\omega t+c_2\sin\omega t$, amplitud $\sqrt{c_1^{2}+c_2^{2}}$, periodo $2\pi/\omega$ independiente de la amplitud.</li>
+    <li><strong>Amortiguado</strong> $x''+2\lambda x'+\omega^{2}x=0$: sobre (raíces reales), crítico (doble), sub (complejas, $e^{-\lambda t}$ por oscilación). Ejemplos: $(4e^{-t}-e^{-4t})/3$; $(1+2t)e^{-2t}$; $e^{-t}(\cos3t+\tfrac13\sin3t)$.</li>
+    <li><strong>Forzado</strong>: $x_p=\dfrac{F_0}{\omega^{2}-\gamma^{2}}\cos\gamma t$ si $\gamma\neq\omega$; <strong>resonancia</strong> $x_p=\dfrac{F_0}{2\omega}t\sin\omega t$ si $\gamma=\omega$. RLC: misma ecuación.</li>
+    <li><strong>Valor frontera</strong>: condiciones en dos puntos; $y''+\lambda y=0$, $y(0)=y(\pi)=0$ → $\lambda_n=n^{2}$, $y_n=\sin nx$.</li>
+    <li><strong>No lineal</strong>: sin superposición; linealizar cerca del equilibrio o integrar numéricamente. El periodo depende de la amplitud: péndulo $+6{,}6\,\%$ a $57°$; resorte duro, periodo menor a mayor amplitud.</li>
   </ul>
 </section>
 
@@ -354,18 +337,18 @@ window.MathJax = {
 
 <footer>
   <div class="cred-compacto">
-    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/3-6-numerical-integration" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Integración numérica</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/7-3-applications" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Aplicaciones</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260912e"></script>
-<script src="../assets/viz-metodos.js?v=20260912e"></script>
+<script src="../assets/ova.js?v=20260912f"></script>
+<script src="../assets/viz-edo.js?v=20260912f"></script>
 <script>
-OVA.quiz({ "destino": "chk1", "titulo": "Diferenciación numérica · 3 preguntas", "items": [ { "etiqueta": "Central", "nivel": 2, "criterio": "Aplicar la diferencia central (§1)", "enunciado": "Para $f(x)=e^{x}$ en $x=0$ con $h=0{,}1$, la diferencia central $\\dfrac{f(0{,}1)-f(-0{,}1)}{0{,}2}$ da:", "opciones": [ "$1{,}00167$ (error $0{,}00167$)", "$1{,}05171$ (error $0{,}0517$)", "$0{,}95163$", "$1$ exacto" ], "correcta": 0, "pista": "$e^{0{,}1}=1{,}10517$, $e^{-0{,}1}=0{,}90484$.", "solucion": "$\\dfrac{1{,}10517-0{,}90484}{0{,}2}=1{,}00167$: error $0{,}00167$, unas 30 veces menor que el de la diferencia hacia adelante ($1{,}05171$). Ninguna fórmula con $h\\gt0$ es exacta para $e^{x}$." }, { "etiqueta": "Orden", "nivel": 2, "criterio": "Relacionar orden del error con $h$ (§1)", "enunciado": "Si se reduce $h$ a la mitad, el error de la diferencia central se divide aproximadamente por:", "opciones": [ "$16$", "no cambia", "$4$, porque es $O(h^{2})$", "$2$, porque es $O(h)$" ], "correcta": 2, "pista": "Ejemplo 1: de $0{,}00167$ a $0{,}00042$.", "solucion": "El error de la central es proporcional a $h^{2}$: $(h/2)^{2}=h^{2}/4$. Las fórmulas de adelante y atrás, $O(h)$, solo lo dividen por 2. Dividir por 16 corresponde a $O(h^{4})$, el orden de Simpson." }, { "etiqueta": "Matriz", "nivel": 3, "criterio": "Interpretar la matriz de diferenciación (§2)", "enunciado": "Para $f(x)=x^{2}$ en la malla $0,\\ 0{,}5,\\ 1,\\ 1{,}5,\\ 2$, el producto $D\\mathbf f$ da $(0{,}5,\\ 1,\\ 2,\\ 3,\\ 3{,}5)$. Esto muestra que:", "opciones": [ "la matriz $D$ está mal construida", "todas las filas tienen error $h$", "la derivada de $x^{2}$ es $2x+0{,}5$", "las filas centrales son exactas para $x^{2}$ y las de los extremos (adelante/atrás) tienen error $h=0{,}5$" ], "correcta": 3, "pista": "$f'=2x$ vale $0,1,2,3,4$ en la malla.", "solucion": "Los valores exactos son $0,1,2,3,4$. Los interiores coinciden (la central no tiene error para grado $\\le2$); en los extremos, $0{,}5$ y $3{,}5$ difieren en $h=0{,}5$, el error $O(h)$ de las fórmulas laterales." } ] });
-OVA.quiz({ "destino": "chk2", "titulo": "Trapecio y Simpson · 3 preguntas", "items": [ { "etiqueta": "Trapecio", "nivel": 2, "criterio": "Aplicar la regla del trapecio (§3)", "enunciado": "$\\displaystyle\\int_{0}^{2}x^{3}dx$ con la regla del trapecio y $n=2$ ($h=1$) da:", "opciones": [ "$4{,}25$", "$5$", "$4$", "$8$" ], "correcta": 1, "pista": "$\\tfrac{h}{2}[f(0)+2f(1)+f(2)]$.", "solucion": "$\\tfrac12[0+2(1)+8]=5$, error $1$ respecto al exacto $4$. Con $n=1$ da $8$ y con $n=4$, $4{,}25$: el error se divide por 4 en cada duplicación." }, { "etiqueta": "Simpson", "nivel": 2, "criterio": "Aplicar Simpson 1/3 (§4)", "enunciado": "$\\displaystyle\\int_{0}^{2}x^{3}dx$ con Simpson 1/3 y $n=2$ da:", "opciones": [ "$4$, exacto, porque Simpson integra cúbicas sin error", "$5$", "$4{,}25$", "$4{,}0833$" ], "correcta": 0, "pista": "$\\tfrac{h}{3}[f_0+4f_1+f_2]$.", "solucion": "$\\tfrac13[0+4(1)+8]=4$. Simpson 1/3 es exacta para polinomios hasta grado 3 (una ganancia inesperada: la parábola interpolante se equivoca, pero sus errores a ambos lados del punto medio se cancelan)." }, { "etiqueta": "3/8", "nivel": 3, "criterio": "Aplicar Simpson 3/8 (§4)", "enunciado": "$\\displaystyle\\int_{0}^{3}x^{3}dx$ con Simpson 3/8 ($h=1$) da:", "opciones": [ "$22{,}5$", "$\\tfrac{3}{8}[0+1+8+27]$", "$\\tfrac{3}{8}[0+3(1)+3(8)+27]=20{,}25$", "$\\tfrac{1}{3}[0+4(1)+2(8)+27]$" ], "correcta": 2, "pista": "Pesos 1-3-3-1 por $3h/8$.", "solucion": "$\\tfrac38(0+3+24+27)=\\tfrac38(54)=20{,}25=\\tfrac{81}{4}$, exacto. Simpson 1/3 no aplica con $n=3$ (impar); $22{,}5$ es el trapecio con $n=3$." } ] });
-OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Adelante", "nivel": 1, "criterio": "Aplicar la diferencia hacia adelante (§1)", "enunciado": "La diferencia hacia adelante para $f'(x)$ es:", "opciones": [ "$\\dfrac{f(x+h)-f(x-h)}{2h}$", "$\\dfrac{f(x)-f(x-h)}{h}$", "$\\dfrac{f(x+h)-2f(x)+f(x-h)}{h^{2}}$", "$\\dfrac{f(x+h)-f(x)}{h}$, con error $O(h)$" ], "correcta": 3, "pista": "Usa el punto actual y el siguiente.", "solucion": "Adelante: $\\tfrac{f(x+h)-f(x)}{h}$, error $O(h)$. La segunda opción es la central ($O(h^{2})$), la tercera la de atrás y la cuarta aproxima $f''$." }, { "etiqueta": "x³", "nivel": 3, "criterio": "Ver el término de error de la central (§1)", "enunciado": "Para $f(x)=x^{3}$ en $x=1$, la diferencia central con paso $h$ da exactamente:", "opciones": [ "$3h^{2}$", "$3+h^{2}$", "$3$", "$3+3h$" ], "correcta": 1, "pista": "Desarrolla $(1+h)^{3}-(1-h)^{3}=6h+2h^{3}$.", "solucion": "$\\dfrac{(1+h)^{3}-(1-h)^{3}}{2h}=\\dfrac{6h+2h^{3}}{2h}=3+h^{2}$. El valor exacto es $3$ y el error $h^{2}$ es exactamente el término $O(h^{2})$ de la fórmula: con $h=0{,}2$, error $0{,}04$." }, { "etiqueta": "Segunda", "nivel": 2, "criterio": "Aproximar la segunda derivada (§1)", "enunciado": "Para $f(x)=e^{x}$ en $x=0$ con $h=0{,}1$, $\\dfrac{f(0{,}1)-2f(0)+f(-0{,}1)}{0{,}01}$ aproxima:", "opciones": [ "$f''(0)=1$, dando $1{,}00083$", "$f'(0)$", "$f(0)$", "la integral de $f$ en $[-0{,}1,\\,0{,}1]$" ], "correcta": 0, "pista": "Pesos $1,-2,1$ sobre $h^{2}$.", "solucion": "Es la fórmula central de la segunda derivada, $O(h^{2})$: $\\dfrac{1{,}10517-2+0{,}90484}{0{,}01}=1{,}00083$, frente a $f''(0)=1$." }, { "etiqueta": "Pesos", "nivel": 2, "criterio": "Reconocer los pesos del trapecio compuesto (§3)", "enunciado": "En la regla del trapecio compuesta, los valores interiores $f_1,\\dots,f_{n-1}$ se multiplican por:", "opciones": [ "$4$", "$h$", "$2$, porque cada punto interior pertenece a dos trapecios", "$1$" ], "correcta": 2, "pista": "Suma los $n$ trapecios $\\tfrac h2[f_i+f_{i+1}]$.", "solucion": "Al sumar $\\tfrac h2[f_0+f_1]+\\tfrac h2[f_1+f_2]+\\cdots$ cada interior aparece dos veces: $\\tfrac h2[f_0+2f_1+\\cdots+2f_{n-1}+f_n]$. El peso $4$ es el de los impares en Simpson 1/3." }, { "etiqueta": "e^x", "nivel": 3, "criterio": "Comparar trapecio y Simpson (§4–5)", "enunciado": "Para $\\displaystyle\\int_{0}^{1}e^{x}dx=1{,}71828$, el trapecio con $n=4$ da $1{,}72722$ y Simpson 1/3 con $n=2$ da $1{,}71886$. Por tanto:", "opciones": [ "el trapecio es más exacto", "ambos tienen el mismo error", "Simpson es exacto", "Simpson con 3 evaluaciones es más exacto que el trapecio con 5" ], "correcta": 3, "pista": "Compara los errores: $0{,}0089$ frente a $0{,}00058$.", "solucion": "Error del trapecio ($n=4$): $0{,}0089$; de Simpson ($n=2$): $0{,}00058$, 15 veces menor con menos evaluaciones. Simpson no es exacto para $e^{x}$ (solo para polinomios de grado $\\le3$)." }, { "etiqueta": "Cota", "nivel": 3, "criterio": "Usar la cota del error del trapecio (§3)", "enunciado": "La cota $|E|\\le\\dfrac{(b-a)h^{2}}{12}\\max|f''|$ para $\\displaystyle\\int_{0}^{2}x^{3}dx$ con $n=2$ vale:", "opciones": [ "$12$", "$2$ (y el error real es $1$)", "$1$", "$0{,}5$" ], "correcta": 1, "pista": "$b-a=2$, $h=1$, $\\max|6x|=12$ en $[0,2]$.", "solucion": "$\\dfrac{2\\cdot1^{2}}{12}\\cdot12=2$. El error real, $5-4=1$, está dentro de la cota. La cota usa el máximo de $|f''|$, por eso suele sobreestimar." }, { "etiqueta": "Impar", "nivel": 2, "criterio": "Manejar $n$ impar (§4–5)", "enunciado": "Si se tienen $n=5$ segmentos de igual ancho, la mejor estrategia con Simpson es:", "opciones": [ "Simpson 1/3 en 2 segmentos y Simpson 3/8 en los otros 3", "Simpson 1/3 en los 5 segmentos", "descartar un dato y usar 1/3 con $n=4$", "usar solo el trapecio" ], "correcta": 0, "pista": "1/3 exige un número par de segmentos; 3/8 exige tres.", "solucion": "Simpson 1/3 necesita $n$ par y 3/8 necesita múltiplos de 3; con $n=5$ se combinan $2+3$. Ambas son $O(h^{4})$, así que la precisión se conserva (para $e^{x}$ en $[0,1]$: $1{,}71830$). Descartar un dato desperdicia información." }, { "etiqueta": "Datos", "nivel": 3, "criterio": "Integrar datos tabulados (§5)", "enunciado": "Con velocidades $0,4,7,9,10$ m/s medidas cada 2 s, la distancia por Simpson 1/3 es:", "opciones": [ "$\\tfrac{2}{3}[0+4+7+9+10]=20$ m", "$30$ m", "$\\tfrac{2}{3}[0+4(4)+2(7)+4(9)+10]=50{,}667$ m", "$50$ m (trapecio)" ], "correcta": 2, "pista": "Pesos 1-4-2-4-1 por $h/3$.", "solucion": "$\\tfrac23(0+16+14+36+10)=\\tfrac23(76)=50{,}667$ m. El trapecio da $50$ m; la diferencia de $0{,}67$ m indica la incertidumbre de integrar solo cinco mediciones." } ] });
+OVA.quiz({ "destino": "chk1", "titulo": "Movimiento libre y amortiguado · 3 preguntas", "items": [ { "etiqueta": "Frecuencia", "nivel": 1, "criterio": "Identificar ω y el periodo (§1)", "enunciado": "Para $x''+16x=0$, la frecuencia natural y el periodo son:", "opciones": [ "$\\omega=4$, $\\ T=\\pi/2$", "$\\omega=16$, $\\ T=\\pi/8$", "$\\omega=4$, $\\ T=2\\pi$", "$\\omega=8$, $\\ T=\\pi/4$" ], "correcta": 0, "pista": "$\\omega^{2}=16$ y $T=2\\pi/\\omega$.", "solucion": "$\\omega=\\sqrt{16}=4$ y $T=2\\pi/4=\\pi/2$. El coeficiente de $x$ es $\\omega^{2}$, no $\\omega$. El periodo no depende de la amplitud ni de las condiciones iniciales." }, { "etiqueta": "Amplitud", "nivel": 2, "criterio": "Calcular la amplitud (§1)", "enunciado": "Si $x''+16x=0$ con $x(0)=1$, $x'(0)=2$, la solución y su amplitud son:", "opciones": [ "$x=\\cos4t$, $\\ A=1$", "$x=2\\cos4t+\\sin4t$, $\\ A=\\sqrt5$", "$x=\\cos4t+\\tfrac12\\sin4t$, $\\ A=\\sqrt5/2\\approx1{,}118$", "$x=\\cos4t+2\\sin4t$, $\\ A=\\sqrt5$" ], "correcta": 2, "pista": "$x'(0)=4c_2=2$.", "solucion": "$c_1=x(0)=1$ y $x'(0)=4c_2=2\\Rightarrow c_2=\\tfrac12$. Amplitud $\\sqrt{c_1^{2}+c_2^{2}}=\\sqrt{1+\\tfrac14}=\\tfrac{\\sqrt5}{2}$. Tomar $c_2=2$ olvida el factor $\\omega=4$ al derivar." }, { "etiqueta": "Régimen", "nivel": 2, "criterio": "Clasificar el amortiguamiento (§2)", "enunciado": "$x''+2x'+10x=0$ es un movimiento:", "opciones": [ "sobreamortiguado: dos raíces reales", "críticamente amortiguado: raíz doble", "libre no amortiguado", "subamortiguado: raíces $-1\\pm3i$, oscila con amplitud $e^{-t}$ decreciente" ], "correcta": 3, "pista": "$m^{2}+2m+10=0$: discriminante $4-40\\lt0$.", "solucion": "Raíces complejas $m=-1\\pm3i$: la solución $e^{-t}(c_1\\cos3t+c_2\\sin3t)$ oscila dentro de la envolvente $\\pm Ae^{-t}$. Sobreamortiguado sería $x''+5x'+4x=0$ (raíces $-1,-4$) y crítico $x''+4x'+4x=0$ (raíz doble $-2$)." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Forzado, frontera y no lineal · 3 preguntas", "items": [ { "etiqueta": "Resonancia", "nivel": 3, "criterio": "Reconocer la resonancia (§3)", "enunciado": "Para $x''+4x=8\\cos2t$ la solución particular es $x_p=2t\\sin2t$. Esto significa que:", "opciones": [ "la solución es periódica y acotada", "la fuerza oscila a la frecuencia natural $\\omega=2$ y la amplitud crece sin límite (resonancia)", "la fuerza es demasiado débil", "el sistema está amortiguado" ], "correcta": 1, "pista": "$\\gamma=\\omega=2$.", "solucion": "Como $\\gamma=\\omega$, entra la duplicación: $x_p=\\tfrac{F_0}{2\\omega}t\\sin\\omega t=2t\\sin2t$, cuya amplitud $2t$ crece linealmente. Con $\\gamma\\neq\\omega$ (por ejemplo $3\\cos t$) la particular es acotada: $\\cos t$." }, { "etiqueta": "Frontera", "nivel": 2, "criterio": "Resolver un problema de valor frontera (§4)", "enunciado": "La solución de $y''+y=0$ con $y(0)=0$, $y(\\pi/2)=1$ es:", "opciones": [ "$y=\\sin x$", "$y=\\cos x$", "$y=\\sin x+\\cos x$", "no existe" ], "correcta": 0, "pista": "$y=c_1\\cos x+c_2\\sin x$; impón las dos condiciones.", "solucion": "$y(0)=c_1=0$ y $y(\\pi/2)=c_2=1$: $y=\\sin x$, solución única. Un problema de frontera también puede no tener solución o tener infinitas, según los puntos y valores elegidos." }, { "etiqueta": "Péndulo", "nivel": 2, "criterio": "Interpretar la no linealidad (§5)", "enunciado": "En el péndulo $\\theta''+\\sin\\theta=0$, a diferencia del modelo lineal $\\theta''+\\theta=0$:", "opciones": [ "no oscila", "el periodo decrece con la amplitud", "el periodo crece con la amplitud: $6{,}70$ para $\\theta_0=1$ rad frente a $2\\pi=6{,}28$", "el periodo no depende de la amplitud" ], "correcta": 2, "pista": "$\\sin\\theta\\lt\\theta$: menos fuerza restauradora.", "solucion": "Como $\\sin\\theta\\lt\\theta$, el péndulo real tiene menos fuerza de retorno y tarda más: $T=4K(\\sin\\tfrac{\\theta_0}{2})$ da $6{,}70$ para $57°$ (+6,6 %) y $8{,}35$ para $115°$. El resorte duro $x''+x+x^{3}=0$ hace lo contrario: periodo menor a mayor amplitud." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Modelo", "nivel": 1, "criterio": "Plantear la ecuación del resorte (§1)", "enunciado": "Una masa $m$ en un resorte de constante $k$, sin rozamiento, obedece:", "opciones": [ "$mx'+kx=0$", "$mx''=kx$", "$x''+kx'=0$", "$mx''+kx=0$, es decir $x''+\\omega^{2}x=0$ con $\\omega=\\sqrt{k/m}$" ], "correcta": 3, "pista": "Segunda ley de Newton con la fuerza de Hooke $-kx$.", "solucion": "$mx''=-kx$ (la fuerza se opone al desplazamiento), o $x''+(k/m)x=0$. El signo es esencial: con $mx''=kx$ la solución sería exponencial, no oscilatoria." }, { "etiqueta": "Sobre", "nivel": 3, "criterio": "Resolver el caso sobreamortiguado (§2)", "enunciado": "Para $x''+5x'+4x=0$ con $x(0)=1$, $x'(0)=0$, la solución es:", "opciones": [ "$x=(1+t)e^{-t}$", "$x=\\dfrac{4e^{-t}-e^{-4t}}{3}$", "$x=e^{-t}-e^{-4t}$", "$x=\\dfrac{e^{-t}+e^{-4t}}{2}$" ], "correcta": 1, "pista": "$c_1+c_2=1$ y $-c_1-4c_2=0$.", "solucion": "De $x=c_1e^{-t}+c_2e^{-4t}$: $c_1+c_2=1$ y $-c_1-4c_2=0\\Rightarrow c_1=\\tfrac43$, $c_2=-\\tfrac13$. Comprobación: $x(0)=1$ ✓, $x'(0)=-\\tfrac43+\\tfrac43=0$ ✓. La curva decae sin cruzar el equilibrio." }, { "etiqueta": "Crítico", "nivel": 2, "criterio": "Reconocer el amortiguamiento crítico (§2)", "enunciado": "$x''+4x'+4x=0$ con $x(0)=1$, $x'(0)=0$ tiene solución:", "opciones": [ "$x=(1+2t)e^{-2t}$", "$x=e^{-2t}$", "$x=\\cos2t$", "$x=e^{-2t}\\cos2t$" ], "correcta": 0, "pista": "Raíz doble $m=-2$: $x=(c_1+c_2t)e^{-2t}$.", "solucion": "$c_1=1$ y $x'=c_2e^{-2t}-2(c_1+c_2t)e^{-2t}$, $x'(0)=c_2-2=0\\Rightarrow c_2=2$. Es el caso crítico: el retorno más rápido posible sin oscilar." }, { "etiqueta": "Sub", "nivel": 3, "criterio": "Resolver el caso subamortiguado (§2)", "enunciado": "Para $x''+2x'+10x=0$ con $x(0)=1$, $x'(0)=0$, la solución es:", "opciones": [ "$x=\\cos3t+\\tfrac13\\sin3t$", "$x=e^{-t}(\\cos3t+3\\sin3t)$", "$x=e^{-t}\\big(\\cos3t+\\tfrac13\\sin3t\\big)$", "$x=e^{-t}\\cos3t$" ], "correcta": 2, "pista": "$x'(0)=-c_1+3c_2=0$.", "solucion": "$c_1=1$; derivando, $x'(0)=-c_1+3c_2=0\\Rightarrow c_2=\\tfrac13$. Sin el $\\tfrac13\\sin3t$ la velocidad inicial sería $-1$, no $0$. El cuasiperiodo es $2\\pi/3$." }, { "etiqueta": "Forzado", "nivel": 2, "criterio": "Calcular la particular forzada (§3)", "enunciado": "Para $x''+4x=3\\cos t$, la solución particular es:", "opciones": [ "$x_p=3\\cos t$", "$x_p=\\tfrac32t\\sin t$", "$x_p=\\tfrac34\\cos t$", "$x_p=\\cos t$" ], "correcta": 3, "pista": "$x_p=A\\cos t$: $-A+4A=3$.", "solucion": "$x_p=\\dfrac{F_0}{\\omega^{2}-\\gamma^{2}}\\cos\\gamma t=\\dfrac{3}{4-1}\\cos t=\\cos t$. No hay resonancia porque $\\gamma=1\\neq\\omega=2$; la respuesta es acotada." }, { "etiqueta": "RLC", "nivel": 1, "criterio": "Reconocer la analogía con el circuito (§3)", "enunciado": "En $Lq''+Rq'+\\dfrac1Cq=E(t)$, los papeles de masa, amortiguamiento y constante del resorte los juegan:", "opciones": [ "$E$, $R$ y $L$", "$L$, $R$ y $1/C$", "$R$, $L$ y $C$", "$C$, $R$ y $L$" ], "correcta": 1, "pista": "Compara término a término con $mx''+\\beta x'+kx=F(t)$.", "solucion": "$L$ multiplica a $q''$ (como $m$ a $x''$), $R$ a $q'$ (como $\\beta$) y $1/C$ a $q$ (como $k$). La fuente $E(t)$ es la fuerza externa; la frecuencia natural es $1/\\sqrt{LC}$." }, { "etiqueta": "Propios", "nivel": 3, "criterio": "Hallar valores propios (§4)", "enunciado": "Para $y''+\\lambda y=0$ con $y(0)=0$, $y(\\pi)=0$, hay soluciones no triviales solo si:", "opciones": [ "$\\lambda=n^{2}$ ($n=1,2,3,\\dots$), con $y_n=\\sin nx$", "$\\lambda$ es cualquier número positivo", "$\\lambda=0$", "$\\lambda=n$ ($n=1,2,\\dots$), con $y_n=\\cos nx$" ], "correcta": 0, "pista": "$y=c_2\\sin\\alpha x$ con $\\sin\\alpha\\pi=0$.", "solucion": "Con $\\lambda=\\alpha^{2}$, $y(0)=0$ elimina el coseno y $y(\\pi)=c_2\\sin\\alpha\\pi=0$ exige $\\alpha=n$ entero: $\\lambda_n=n^{2}$, $y_n=\\sin nx$. Para $\\lambda\\le0$ solo queda la solución trivial." }, { "etiqueta": "Duro", "nivel": 2, "criterio": "Interpretar el resorte duro (§5)", "enunciado": "En el resorte duro $x''+x+x^{3}=0$, al aumentar la amplitud el periodo:", "opciones": [ "no cambia: siempre $2\\pi$", "se vuelve infinito", "disminuye (5,77 con amplitud 0,5; 3,18 con amplitud 2), porque la fuerza crece más que linealmente", "aumenta, como en el péndulo" ], "correcta": 2, "pista": "La fuerza $x+x^{3}$ supera a $x$ para $|x|\\gt0$.", "solucion": "A mayor amplitud, el término $x^{3}$ añade fuerza restauradora y la masa vuelve más rápido: periodo menor. En el péndulo ocurre lo contrario ($\\sin\\theta\\lt\\theta$). Solo en el modelo lineal el periodo es independiente de la amplitud." } ] });
 </script>
 </body>
 </html>

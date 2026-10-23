@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía 14 · Métodos de Runge-Kutta — Métodos Numéricos · UNIAJC</title>
+<title>Guía 14 · Teoremas de traslación — Ecuaciones Diferenciales · UNIAJC</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260912e">
+<link rel="stylesheet" href="../assets/ova.css?v=20260912f">
 </head>
 <body>
 
@@ -19,7 +19,7 @@ window.MathJax = {
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Guía 14</h1>
+      <h1>Ecuaciones Diferenciales · Guía 14</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -31,11 +31,11 @@ window.MathJax = {
 
 <nav id="guia-nav" aria-label="Secciones de la guía">
   <div class="guia-nav-inner">
-    <a href="#s1">1 · La idea de Runge-Kutta</a>
-    <a href="#s2">2 · RK4 clásico</a>
-    <a href="#s3">3 · Orden y costo</a>
-    <a href="#s4">4 · Sistemas de EDO</a>
-    <a href="#s5">5 · Orden superior</a>
+    <a href="#s1">1 · Traslación en s</a>
+    <a href="#s2">2 · Escalón unitario</a>
+    <a href="#s3">3 · Traslación en t</a>
+    <a href="#s4">4 · PVI con fuerza por tramos</a>
+    <a href="#s5">5 · Propiedades adicionales</a>
     <a href="#s6">6 · Práctica final</a>
   </div>
 </nav>
@@ -44,223 +44,250 @@ window.MathJax = {
 
 <div class="hero">
   <div class="eyebrow">Guía de estudio 14 · Corte III</div>
-  <h2>Métodos de Runge-Kutta</h2>
-  <p>Si una segunda evaluación de la pendiente dentro del paso mejora a Euler de orden 1 a orden 2,
-     ¿qué pasa con cuatro evaluaciones bien elegidas? El método de Runge-Kutta de cuarto orden (RK4) es
-     la respuesta: el caballo de batalla de la simulación numérica, con error global $O(h^{4})$. Y como
-     cualquier EDO de orden superior se convierte en un sistema de primer orden, RK4 resuelve también
-     osciladores, circuitos y modelos con varias variables.</p>
+  <h2>Teoremas de traslación</h2>
+  <p>La tabla de la Guía 13 se queda corta enseguida: ¿qué transformada tiene $e^{-t}\cos 2t$, o una
+     fuerza que se enciende en $t=3$? Dos teoremas la amplían sin calcular más integrales: trasladar en
+     $s$ (para productos con exponenciales) y trasladar en $t$ (para funciones que arrancan tarde). Con
+     ellos, Laplace resuelve problemas con fuerzas por tramos que los métodos del Corte II no podían
+     manejar. Cierra el curso una colección de propiedades que amplían aún más la tabla.</p>
   <div class="chips">
-    <span class="chip">Chapra · Cap. 25.3–25.4</span>
-    <span class="chip">Burden · Cap. 5.4 y 5.9</span>
+    <span class="chip">Zill · Cap. 7.3–7.4</span>
     <span class="chip">Semana 14</span>
     <span class="chip">2 comprobaciones + práctica final</span>
   </div>
 </div>
 
 <div class="nota">
-  <strong>De dónde venimos.</strong> La Guía 13 mostró que Heun y el punto medio —dos evaluaciones de $f$
-  por paso— duplican el orden de Euler. Ambos son, de hecho, métodos de Runge-Kutta de segundo orden.
-  Aquí seguimos el mismo camino hasta el cuarto orden y lo aplicamos a sistemas.
+  <strong>De dónde venimos.</strong> La Guía 13 dio la definición, la tabla básica, la transformada de
+  derivadas y el método para resolver un PVI. Todo eso sigue valiendo; esta guía solo agranda la tabla
+  y el tipo de lado derecho que podemos manejar.
 </div>
 
 <section class="card" id="s1">
-  <h3 class="card-title">1 · La idea de Runge-Kutta</h3>
+  <h3 class="card-title">1 · Primer teorema: traslación en $s$</h3>
 
   <div class="callout-dark">
-    <h3>Promediar varias pendientes dentro del paso</h3>
-    <p>Todos los métodos de Runge-Kutta tienen la forma $y_{i+1}=y_i+h\,\phi$, donde $\phi$ es una
-       <strong>pendiente promedio</strong> construida con evaluaciones de $f$ en puntos intermedios del
-       paso. Euler usa una ($\phi=k_1$); Heun promedia dos ($\phi=\tfrac{k_1+k_2}{2}$); RK4 combina cuatro
-       con pesos $1,2,2,1$. Los pesos y los puntos se eligen para que el desarrollo de Taylor de $y_{i+1}$
-       coincida con el de la solución exacta hasta el orden deseado.</p>
+    <h3>Multiplicar por $e^{at}$ desplaza la transformada</h3>
+    <p>En la definición, $e^{at}f(t)$ multiplicado por $e^{-st}$ da $e^{-(s-a)t}f(t)$: la misma integral de
+       $f$ pero evaluada en $s-a$. Por eso la transformada de $e^{at}f(t)$ es $F(s-a)$: la gráfica de $F$
+       desplazada $a$ unidades. Para usarlo al revés, se <strong>completa el cuadrado</strong> en el
+       denominador hasta que aparezca $s-a$.</p>
   </div>
 
   <div class="def">
-    <strong>Métodos de segundo orden (RK2).</strong> Heun: $\phi=\tfrac12k_1+\tfrac12k_2$ con $k_2=f(x_i+h,\,y_i+hk_1)$.
-    Punto medio: $\phi=k_2$ con $k_2=f(x_i+\tfrac h2,\,y_i+\tfrac h2k_1)$. Ambos: error global $O(h^{2})$, dos evaluaciones por paso.
+    $$\mathcal{L}\{e^{at}f(t)\}=F(s-a)\qquad\qquad \mathcal{L}^{-1}\{F(s-a)\}=e^{at}f(t)$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Directas</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\mathcal{L}\{e^{2t}t^{3}\}$</div>
+        $\mathcal{L}\{t^{3}\}=\dfrac{6}{s^{4}}$; sustituyendo $s\to s-2$: $\dfrac{6}{(s-2)^{4}}$.
+      </div>
+      <div class="paso"><div class="paso-t">$\mathcal{L}\{e^{-t}\cos2t\}$</div>
+        $\mathcal{L}\{\cos2t\}=\dfrac{s}{s^{2}+4}$; con $a=-1$, $s\to s+1$: $\dfrac{s+1}{(s+1)^{2}+4}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Inversas completando el cuadrado</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\mathcal{L}^{-1}\Big\{\dfrac{1}{s^{2}+2s+5}\Big\}$</div>
+        $s^{2}+2s+5=(s+1)^{2}+4$: es $\dfrac{2}{(s+1)^{2}+4}$ dividido por 2, o sea $\tfrac12\,\mathcal{L}\{\sin2t\}$ trasladada en $a=-1$: $\tfrac12e^{-t}\sin2t$.
+      </div>
+      <div class="paso"><div class="paso-t">$\mathcal{L}^{-1}\Big\{\dfrac{s}{s^{2}+4s+13}\Big\}$</div>
+        $s^{2}+4s+13=(s+2)^{2}+9$. El numerador debe escribirse en términos de $s+2$: $\dfrac{s}{(s+2)^{2}+9}=\dfrac{s+2}{(s+2)^{2}+9}-\dfrac{2}{3}\cdot\dfrac{3}{(s+2)^{2}+9}$, luego $e^{-2t}\big(\cos3t-\tfrac23\sin3t\big)$.
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="card" id="s2">
-  <h3 class="card-title">2 · RK4 clásico</h3>
+  <h3 class="card-title">2 · La función escalón unitario</h3>
 
   <div class="def">
-    $$k_1=f(x_i,\,y_i)\qquad k_2=f\!\Big(x_i+\frac h2,\ y_i+\frac h2k_1\Big)\qquad k_3=f\!\Big(x_i+\frac h2,\ y_i+\frac h2k_2\Big)\qquad k_4=f(x_i+h,\ y_i+hk_3)$$
-    $$y_{i+1}=y_i+\frac{h}{6}\big(k_1+2k_2+2k_3+k_4\big)$$
-    $k_1$ es la pendiente al inicio; $k_2$ y $k_3$ son dos estimaciones en el punto medio; $k_4$ es la pendiente al final. Los pesos $1,2,2,1$ sobre $6$ son los de Simpson 1/3.
+    <strong>Escalón unitario.</strong> $\mathcal{U}(t-a)=0$ si $0\le t\lt a$ y $\mathcal{U}(t-a)=1$ si $t\ge a$.
+    Es un «interruptor» que se enciende en $t=a$. Su transformada: $\mathcal{L}\{\mathcal{U}(t-a)\}=\dfrac{e^{-as}}{s}$.
+  </div>
+
+  <div class="callout-dark">
+    <h3>Escribir funciones por tramos con escalones</h3>
+    <p>Una función que vale $g(t)$ hasta $t=a$ y $h(t)$ después es $g(t)+\big[h(t)-g(t)\big]\mathcal{U}(t-a)$:
+       en $t=a$ se «apaga» $g$ y se «enciende» $h$. Así cualquier fuerza por tramos —un voltaje que se
+       conecta, una carga que se retira— se escribe en una sola línea y se puede transformar.</p>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 1 · $y'=y$, $y(0)=1$, $h=0{,}5$</h4>
+    <h4>Ejemplo 3 · Dos funciones por tramos</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Las cuatro pendientes</div>
-        $k_1=1$; $\ k_2=1+0{,}25(1)=1{,}25$; $\ k_3=1+0{,}25(1{,}25)=1{,}3125$; $\ k_4=1+0{,}5(1{,}3125)=1{,}65625$.
+      <div class="paso"><div class="paso-t">$f(t)=2$ si $0\le t\lt3$, $\ 0$ si $t\ge3$</div>
+        $f(t)=2-2\,\mathcal{U}(t-3)$, y $\mathcal{L}\{f\}=\dfrac2s-\dfrac{2e^{-3s}}{s}$.
       </div>
-      <div class="paso"><div class="paso-t">El paso</div>
-        $y_1=1+\dfrac{0{,}5}{6}\big(1+2{,}5+2{,}625+1{,}65625\big)=1+\dfrac{0{,}5}{6}(7{,}78125)=1{,}6484375$. Exacto $e^{0{,}5}=1{,}64872$: error $2{,}9\times10^{-4}$.
+      <div class="paso"><div class="paso-t">La función de la Guía 13</div>
+        $f(t)=0$ si $t\lt3$, $\ 2$ si $t\ge3$ es $2\,\mathcal{U}(t-3)$, con transformada $\dfrac{2e^{-3s}}{s}$: lo que allí calculamos integrando.
       </div>
-      <div class="paso"><div class="paso-t">Segundo paso</div>
-        Para $y'=y$ cada paso multiplica por el mismo factor: $y_2=1{,}6484375^{2}=2{,}71735$. Exacto $2{,}71828$: error $9{,}3\times10^{-4}$, frente a $0{,}468$ de Euler y $0{,}078$ de Heun con el mismo $h$.
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Segundo teorema: traslación en $t$</h3>
+
+  <div class="callout-dark">
+    <h3>Retrasar la función multiplica la transformada por $e^{-as}$</h3>
+    <p>Si $f$ se desplaza $a$ unidades a la derecha y se mantiene en cero antes de $a$ —es decir,
+       $f(t-a)\mathcal{U}(t-a)$—, su transformada es la de $f$ multiplicada por $e^{-as}$. El factor exponencial
+       en $s$ es la huella de un retraso en $t$. Cuando la función que acompaña al escalón no viene
+       escrita como $f(t-a)$, se usa la forma alternativa con $g(t+a)$.</p>
+  </div>
+
+  <div class="def">
+    $$\mathcal{L}\{f(t-a)\,\mathcal{U}(t-a)\}=e^{-as}F(s)\qquad\qquad \mathcal{L}\{g(t)\,\mathcal{U}(t-a)\}=e^{-as}\mathcal{L}\{g(t+a)\}$$
+    $$\mathcal{L}^{-1}\{e^{-as}F(s)\}=f(t-a)\,\mathcal{U}(t-a)$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Directas e inversa</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\mathcal{L}\{(t-2)^{2}\,\mathcal{U}(t-2)\}$</div>
+        Ya tiene la forma $f(t-2)\mathcal{U}(t-2)$ con $f(t)=t^{2}$: $e^{-2s}\cdot\dfrac{2}{s^{3}}$.
       </div>
-      <div class="paso"><div class="paso-t">Por qué funciona tan bien</div>
-        Ese factor $1+h+\tfrac{h^{2}}{2}+\tfrac{h^{3}}{6}+\tfrac{h^{4}}{24}$ son los cinco primeros términos de la serie de $e^{h}$: RK4 reproduce Taylor hasta $h^{4}$.
+      <div class="paso"><div class="paso-t">$\mathcal{L}\{t\,\mathcal{U}(t-1)\}$ (forma alternativa)</div>
+        $g(t)=t$, $a=1$: $g(t+1)=t+1$, así que $e^{-s}\,\mathcal{L}\{t+1\}=e^{-s}\Big(\dfrac{1}{s^{2}}+\dfrac1s\Big)$.
+      </div>
+      <div class="paso"><div class="paso-t">$\mathcal{L}^{-1}\Big\{\dfrac{e^{-3s}}{s^{2}+1}\Big\}$</div>
+        $F=\dfrac{1}{s^{2}+1}\leftrightarrow\sin t$, retrasada 3: $\sin(t-3)\,\mathcal{U}(t-3)$. Vale cero hasta $t=3$ y luego es un seno que arranca desde cero.
       </div>
     </div>
   </div>
 
-  <div class="ejemplo">
-    <h4>Ejemplo 2 · $y'=x+y$, $y(0)=1$, un paso con $h=0{,}1$</h4>
-    <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Pendientes</div>
-        $k_1=0+1=1$; $\ k_2=0{,}05+(1+0{,}05\cdot1)=1{,}1$; $\ k_3=0{,}05+(1+0{,}05\cdot1{,}1)=1{,}105$; $\ k_4=0{,}1+(1+0{,}1\cdot1{,}105)=1{,}2105$.
-      </div>
-      <div class="paso"><div class="paso-t">Resultado</div>
-        $y_1=1+\dfrac{0{,}1}{6}(1+2{,}2+2{,}21+1{,}2105)=1{,}110342$. La solución exacta es $y=2e^{x}-x-1$, con $y(0{,}1)=1{,}110342$: coinciden en seis decimales. Euler habría dado $1{,}1$.
-      </div>
-    </div>
-  </div>
-
-  <div class="sub-title">2.1 Euler, Heun y RK4 con el mismo paso</div>
-  <div class="viz" data-viz="rungekutta">
+  <div class="sub-title">3.1 Retrasar en $t$, multiplicar por $e^{-as}$ en $s$</div>
+  <div class="viz" data-viz="traslacion">
     <div class="viz-controls">
-      <label for="rk-e">Ecuación</label>
-      <select id="rk-e" class="edo">
-        <option value="ypy">y' = y, y(0) = 1</option>
-        <option value="xmy">y' = x − y, y(0) = 1</option>
-        <option value="logi">P' = 0,5P(1 − P/100), P(0) = 10</option>
+      <label for="tr-f">Función</label>
+      <select id="tr-f">
+        <option value="sen">f(t) = sen t</option>
+        <option value="cuad">f(t) = t²/4</option>
+        <option value="dec">f(t) = 2e^{−t/2}</option>
       </select>
-      <label for="rk-m">Método</label>
-      <select id="rk-m" class="metodo">
-        <option value="rk4">Runge-Kutta 4</option>
-        <option value="heun">Heun (RK2)</option>
-        <option value="euler">Euler</option>
-      </select>
-      <label for="rk-h">Paso</label>
-      <input id="rk-h" class="h" type="range" min="0" max="4" step="1" value="0">
-      <span class="h-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="tr-a">Retraso a</label>
+      <input id="tr-a" class="a" type="range" min="0" max="60" step="1" value="20">
+      <span class="a-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Con el paso más grande, RK4 ya casi no se distingue de la curva exacta mientras Euler se desvía
-    visiblemente. El cociente de errores al partir $h$ tiende a 2 (Euler), 4 (Heun) y 16 (RK4).
+    La curva azul es $f(t-a)\mathcal{U}(t-a)$: cero hasta $a$ y luego la copia de $f$. El visualizador calcula
+    numéricamente su transformada en $s=1$ y la compara con $e^{-a}F(1)$.
   </p>
 </section>
 
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 1 — RK4</h3>
+  <h3 class="card-title">✓ Comprobación 1 — Los dos teoremas de traslación</h3>
   <div id="chk1"></div>
 </div>
 
-<section class="card" id="s3">
-  <h3 class="card-title">3 · Orden y costo</h3>
+<section class="card" id="s4">
+  <h3 class="card-title">4 · PVI con fuerza por tramos</h3>
 
   <div class="callout-dark">
-    <h3>Más evaluaciones por paso, pero muchos menos pasos</h3>
-    <p>RK4 cuesta cuatro evaluaciones de $f$ por paso, cuatro veces más que Euler. Pero su error global
-       es $O(h^{4})$: partir $h$ divide el error por 16, no por 2. Para una precisión dada, RK4 necesita
-       tantísimos menos pasos que gana por amplio margen, salvo que $f$ sea muy costosa o se necesite
-       muy poca precisión.</p>
+    <h3>Lo que los métodos clásicos no podían</h3>
+    <p>Coeficientes indeterminados exige un $g(t)$ de la tabla y continuo; una fuerza que se conecta en
+       $t=a$ no lo es. Con Laplace, el escalón se transforma como cualquier otra función, el factor
+       $e^{-as}$ viaja por el álgebra y al final el segundo teorema lo devuelve como un retraso en la
+       solución.</p>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 3 · $y'=y$ en $[0,1]$: error en $y(1)$ según el método y el paso</h4>
+    <h4>Ejemplo 5 · $y'+y=\mathcal{U}(t-1)$, $\ y(0)=0$</h4>
     <div class="ejemplo-body">
-      <table class="tbl">
-        <tr><th>$h$</th><th>Euler (1 eval./paso)</th><th>Heun (2)</th><th>RK4 (4)</th></tr>
-        <tr><td>0,5</td><td>0,468</td><td>0,0777</td><td>$9{,}3\times10^{-4}$</td></tr>
-        <tr><td>0,25</td><td>0,277</td><td>0,0234</td><td>$7{,}2\times10^{-5}$</td></tr>
-        <tr><td>0,125</td><td>0,152</td><td>0,0064</td><td>$5{,}0\times10^{-6}$</td></tr>
-        <tr><td>cociente</td><td>≈ 1,8 → 2</td><td>≈ 3,3–3,6 → 4</td><td>≈ 13–14 → 16</td></tr>
-      </table>
-      <div class="paso"><div class="paso-t">Comparar a igual costo</div>
-        RK4 con $h=0{,}5$ (8 evaluaciones) tiene error $9{,}3\times10^{-4}$; Euler con $h=0{,}0625$ (16 evaluaciones) tiene error $0{,}080$: RK4 es casi cien veces más exacto con la mitad del trabajo.
+      <div class="paso"><div class="paso-t">Transformar y despejar</div>
+        $sY+Y=\dfrac{e^{-s}}{s}\ \Rightarrow\ Y=e^{-s}\cdot\dfrac{1}{s(s+1)}=e^{-s}\Big(\dfrac1s-\dfrac{1}{s+1}\Big)$.
       </div>
-      <div class="paso"><div class="paso-t">Leer el orden en una gráfica</div>
-        En escala log-log, error contra $h$ es una recta de pendiente igual al orden: 1, 2 y 4.
+      <div class="paso"><div class="paso-t">Antitransformar con el segundo teorema</div>
+        $\dfrac1s-\dfrac{1}{s+1}\leftrightarrow1-e^{-t}$; con el retraso $a=1$: $y=\big(1-e^{-(t-1)}\big)\,\mathcal{U}(t-1)$.
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        Nada ocurre hasta $t=1$; desde entonces, $y$ sube hacia 1 como la carga de un condensador. Comprobación: para $t\gt1$, $y'+y=e^{-(t-1)}+1-e^{-(t-1)}=1$ ✓.
       </div>
     </div>
   </div>
 
-  <div class="sub-title">3.1 El orden como pendiente en escala log-log</div>
-  <div class="viz" data-viz="ordenerror">
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · $y''+4y=\mathcal{U}(t-\pi)$, $\ y(0)=y'(0)=0$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Transformar</div>
+        $(s^{2}+4)Y=\dfrac{e^{-\pi s}}{s}\ \Rightarrow\ Y=e^{-\pi s}\cdot\dfrac{1}{s(s^{2}+4)}=e^{-\pi s}\Big(\dfrac{1/4}{s}-\dfrac14\cdot\dfrac{s}{s^{2}+4}\Big)$.
+      </div>
+      <div class="paso"><div class="paso-t">Antitransformar</div>
+        $\dfrac14(1-\cos2t)$ retrasado $\pi$: $y=\dfrac14\big(1-\cos2(t-\pi)\big)\,\mathcal{U}(t-\pi)=\dfrac14(1-\cos2t)\,\mathcal{U}(t-\pi)$, porque $\cos$ tiene periodo $\pi$ al duplicar el ángulo.
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        Un resorte sin amortiguar en reposo recibe una fuerza constante desde $t=\pi$: oscila entre 0 y $\tfrac12$ alrededor de la nueva posición de equilibrio $\tfrac14$.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 Respuesta a una fuerza que se enciende en $t=a$</div>
+  <div class="viz" data-viz="escalon">
     <div class="viz-controls">
-      <label for="oe-e">Ecuación</label>
-      <select id="oe-e" class="edo">
-        <option value="ypy">y' = y, y(0) = 1</option>
-        <option value="xmy">y' = x − y, y(0) = 1</option>
-        <option value="logi">P' = 0,5P(1 − P/100), P(0) = 10</option>
-        <option value="enf">T' = −0,1(T − 20), T(0) = 90</option>
+      <label for="es-e">Problema</label>
+      <select id="es-e">
+        <option value="rc">y' + y = U(t − a), y(0) = 0</option>
+        <option value="osc">y'' + 4y = U(t − a), y(0) = y'(0) = 0</option>
       </select>
+      <label for="es-a">Instante a</label>
+      <input id="es-a" class="a" type="range" min="0" max="60" step="1" value="20">
+      <span class="a-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
     </div>
     <canvas></canvas>
     <div class="viz-readout"></div>
   </div>
   <p style="font-size:.86rem;color:var(--muted)">
-    Cada punto es el error en el extremo del intervalo para un $h$; cada decena en $h$ baja el error de
-    Euler una decena y el de RK4 cuatro decenas. Las pendientes ajustadas confirman los órdenes.
+    Mueve $a$: la respuesta es siempre la misma curva, solo desplazada. Eso es exactamente lo que dice el
+    factor $e^{-as}$ en $Y(s)$.
   </p>
 </section>
 
-<section class="card" id="s4">
-  <h3 class="card-title">4 · Sistemas de ecuaciones diferenciales</h3>
-
-  <div class="callout-dark">
-    <h3>Las mismas fórmulas, con vectores</h3>
-    <p>Un sistema $y'=f(x,y,z)$, $z'=g(x,y,z)$ se resuelve con cualquiera de los métodos aplicando la
-       fórmula a las dos variables <strong>a la vez</strong>: en cada paso se calculan las pendientes de
-       todas las variables con los valores actuales, y luego se actualizan todas. En RK4, cada $k$ es un
-       vector.</p>
-  </div>
-
-  <div class="ejemplo">
-    <h4>Ejemplo 4 · Oscilador $y'=z$, $z'=-y$, $y(0)=1$, $z(0)=0$ (exacta $y=\cos x$)</h4>
-    <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Euler con $h=0{,}5$</div>
-        Paso 1: $y_1=1+0{,}5(0)=1$, $z_1=0+0{,}5(-1)=-0{,}5$. Paso 2: $y_2=1+0{,}5(-0{,}5)=0{,}75$, $z_2=-0{,}5+0{,}5(-1)=-1$.
-        Exacto $y(1)=\cos1=0{,}5403$: error $0{,}21$.
-      </div>
-      <div class="paso"><div class="paso-t">Euler gana energía</div>
-        La exacta conserva $y^{2}+z^{2}=1$; Euler da $0{,}75^{2}+1^{2}=1{,}5625$. Las oscilaciones numéricas crecen paso a paso: Euler es especialmente malo para osciladores.
-      </div>
-      <div class="paso"><div class="paso-t">RK4 con $h=0{,}5$</div>
-        Dos pasos vectoriales dan $y(1)\approx0{,}5406$, error $2{,}9\times10^{-4}$, y $y^{2}+z^{2}=0{,}9996$: la energía se conserva casi exactamente (Euler la había inflado a $1{,}5625$).
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="card" id="s5">
-  <h3 class="card-title">5 · EDO de orden superior</h3>
+  <h3 class="card-title">5 · Propiedades operacionales adicionales</h3>
 
-  <div class="callout-dark">
-    <h3>Una ecuación de segundo orden es un sistema de dos de primer orden</h3>
-    <p>Dada $y''=F(x,y,y')$, se define $z=y'$: entonces $y'=z$ y $z'=F(x,y,z)$. Con dos condiciones
-       iniciales, $y(x_0)$ y $y'(x_0)=z(x_0)$, el sistema se resuelve con RK4 como en §4. Lo mismo vale
-       para orden $n$: $n$ ecuaciones de primer orden.</p>
+  <div class="def">
+    <table class="tbl">
+      <tr><th>Propiedad</th><th>Fórmula</th><th>Ejemplo</th></tr>
+      <tr><td>Derivada de la transformada</td><td>$\mathcal{L}\{t\,f(t)\}=-F'(s)$</td><td>$\mathcal{L}\{t\sin2t\}=-\dfrac{d}{ds}\dfrac{2}{s^{2}+4}=\dfrac{4s}{(s^{2}+4)^{2}}$</td></tr>
+      <tr><td>Convolución</td><td>$\mathcal{L}\{f*g\}=F(s)G(s)$, $\ (f*g)(t)=\displaystyle\int_0^t f(\tau)g(t-\tau)\,d\tau$</td><td>$\mathcal{L}^{-1}\Big\{\dfrac{1}{s^{2}(s+1)}\Big\}=t*e^{-t}=t-1+e^{-t}$</td></tr>
+      <tr><td>Transformada de una integral</td><td>$\mathcal{L}\Big\{\displaystyle\int_0^t f(\tau)d\tau\Big\}=\dfrac{F(s)}{s}$</td><td>$\mathcal{L}\Big\{\displaystyle\int_0^t\cos2\tau\,d\tau\Big\}=\dfrac{1}{s^{2}+4}$</td></tr>
+      <tr><td>Función periódica de periodo $T$</td><td>$\mathcal{L}\{f\}=\dfrac{1}{1-e^{-sT}}\displaystyle\int_0^T e^{-st}f(t)\,dt$</td><td>onda cuadrada (1 en $[0,1)$, 0 en $[1,2)$): $\dfrac{1}{s(1+e^{-s})}$</td></tr>
+    </table>
   </div>
 
   <div class="ejemplo">
-    <h4>Ejemplo 5 · Masa-resorte $x''=-4x$, $x(0)=1$, $x'(0)=0$</h4>
+    <h4>Ejemplo 7 · Tres aplicaciones</h4>
     <div class="ejemplo-body">
-      <div class="paso"><div class="paso-t">Convertir</div>
-        $v=x'$: el sistema es $x'=v$, $v'=-4x$, con $x(0)=1$, $v(0)=0$. Solución exacta $x=\cos2t$ (por ejemplo, $x(0{,}3)=0{,}8253$).
+      <div class="paso"><div class="paso-t">Derivada de la transformada: $\mathcal{L}\{t\,e^{3t}\}$</div>
+        $-\dfrac{d}{ds}\dfrac{1}{s-3}=\dfrac{1}{(s-3)^{2}}$. El primer teorema da lo mismo: $\mathcal{L}\{t\}=1/s^{2}$ trasladada a $s-3$.
       </div>
-      <div class="paso"><div class="paso-t">Un paso de RK4 ($h=0{,}1$)</div>
-        $k_1=(v,\,-4x)=(0,\,-4)$; $\ k_2$ en $(x,v)=(1,\,-0{,}2)$: $(-0{,}2,\,-4)$; $\ k_3$ en $(0{,}99,\,-0{,}2)$: $(-0{,}2,\,-3{,}96)$; $\ k_4$ en $(0{,}98,\,-0{,}396)$: $(-0{,}396,\,-3{,}92)$.
-        $x_1=1+\tfrac{0{,}1}{6}(0-0{,}4-0{,}4-0{,}396)=0{,}98007$; exacto $\cos0{,}2=0{,}98007$.
+      <div class="paso"><div class="paso-t">Convolución: $\mathcal{L}^{-1}\Big\{\dfrac{1}{s^{2}(s+1)}\Big\}$</div>
+        $\dfrac{1}{s^{2}}\cdot\dfrac{1}{s+1}\leftrightarrow t*e^{-t}=\displaystyle\int_0^t\tau e^{-(t-\tau)}d\tau=t-1+e^{-t}$. Coincide con las fracciones parciales $-\tfrac1s+\tfrac{1}{s^{2}}+\tfrac{1}{s+1}$.
       </div>
-      <div class="paso"><div class="paso-t">Con amortiguamiento y fuerza</div>
-        $m x''+c x'+k x=F(t)$ se convierte igual: $x'=v$, $v'=\big(F(t)-cv-kx\big)/m$. Es la forma en que todo simulador de estructuras, vehículos o circuitos RLC integra sus ecuaciones.
+      <div class="paso"><div class="paso-t">Onda cuadrada de periodo 2</div>
+        $\displaystyle\int_0^2e^{-st}f(t)\,dt=\int_0^1e^{-st}dt=\frac{1-e^{-s}}{s}$, y $\dfrac{1}{1-e^{-2s}}\cdot\dfrac{1-e^{-s}}{s}=\dfrac{1}{s(1+e^{-s})}$ porque $1-e^{-2s}=(1-e^{-s})(1+e^{-s})$.
       </div>
     </div>
+  </div>
+
+  <div class="nota">
+    <strong>Fin del curso.</strong> Separables, lineales, exactas, orden superior con coeficientes
+    constantes, no homogéneas, modelos y Laplace: todo converge en una sola idea, convertir la ecuación
+    diferencial en álgebra y volver. Lo que no se pueda hacer así lo hace la integración numérica.
   </div>
 </section>
 
 <div class="card">
-  <h3 class="card-title">✓ Comprobación 2 — Orden, sistemas y orden superior</h3>
+  <h3 class="card-title">✓ Comprobación 2 — PVI por tramos y propiedades</h3>
   <div id="chk2"></div>
 </div>
 
@@ -271,22 +298,24 @@ window.MathJax = {
     <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
     <select data-programa aria-label="Programa académico"></select>
     <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
-      Los modelos de dinámica de sistemas (inventarios, cadenas de suministro, competencia entre
-      productos) son sistemas de EDO acopladas; el software que los simula integra con RK4 y la
-      «precisión del modelo» depende del paso elegido, exactamente como en esta guía.</div>
+      Una campaña que empieza en el mes $a$, un impuesto que entra en vigor o un contrato que vence son
+      escalones $\mathcal{U}(t-a)$: la respuesta del sistema tiene la misma forma pero retrasada, y el factor
+      $e^{-as}$ es, en términos financieros, el descuento del retraso. La convolución es la forma de
+      acumular los efectos de muchas decisiones escalonadas.</div>
     <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
-      Un fondo con aportes, retiros y rendimiento variable es un sistema de EDO (saldo, aportes
-      acumulados, intereses acumulados). Integrarlo con RK4 en vez de proyectar mes a mes (Euler) reduce
-      el error de la proyección a largo plazo sin aumentar el número de periodos.</div>
+      El valor presente de un flujo que empieza en $t=a$ es $e^{-ra}$ veces el del mismo flujo desde
+      $t=0$: el segundo teorema de traslación es la regla del descuento diferido. Y la transformada de
+      una función periódica es la fórmula del valor presente de una serie de pagos que se repite.</div>
     <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
-      RK4 es el integrador por defecto de las bibliotecas científicas (<code>scipy.integrate.solve_ivp</code>
-      usa una variante con paso adaptativo), y los motores de física de precisión lo prefieren a Euler.
-      Convertir orden superior en sistema es lo que permite escribir cualquier simulación como «vector de
-      estado + función de derivadas».</div>
+      La convolución es la operación central del procesamiento de señales: la salida de un sistema
+      lineal es la entrada convolucionada con su respuesta al impulso, y en el dominio de $s$ (o de $z$)
+      se vuelve un producto. Un escalón es la entrada de prueba estándar para medir el tiempo de respuesta
+      de un sistema.</div>
     <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
-      Un circuito RLC es $Lq''+Rq'+q/C=V(t)$: con $i=q'$ queda un sistema de dos ecuaciones que RK4
-      integra con precisión. La energía numérica que Euler «inventa» en el oscilador del Ejemplo 4 es
-      el mismo fenómeno que haría divergir un simulador de circuitos mal integrado.</div>
+      Conectar una fuente en $t=a$ es $\mathcal{U}(t-a)$ y el Ejemplo 5 es un circuito RC alimentado desde ese
+      instante. Los pulsos y las ondas cuadradas de los relojes digitales se transforman con la fórmula
+      de la función periódica, y la traslación en $s$ describe las señales moduladas por exponenciales
+      (amortiguadas).</div>
   </div>
 </section>
 
@@ -301,11 +330,11 @@ window.MathJax = {
 <section class="card">
   <h3 class="card-title">Resumen para llevar</h3>
   <ul>
-    <li><strong>Runge-Kutta</strong>: $y_{i+1}=y_i+h\phi$ con $\phi$ una pendiente promedio de evaluaciones dentro del paso. Heun y punto medio son RK2.</li>
-    <li><strong>RK4</strong>: $k_1$ al inicio, $k_2,k_3$ en el medio, $k_4$ al final; $y_{i+1}=y_i+\tfrac h6(k_1+2k_2+2k_3+k_4)$. Para $y'=y$, $h=0{,}5$: $1{,}6484375$, $2{,}71735$ (error $9{,}3\times10^{-4}$).</li>
-    <li><strong>Orden 4</strong>: partir $h$ divide el error por 16; en log-log, recta de pendiente 4. Cuatro evaluaciones por paso, pero muchísimos menos pasos.</li>
-    <li><strong>Sistemas</strong>: las mismas fórmulas con vectores; se calculan todas las pendientes antes de actualizar. Euler gana energía en osciladores ($y^{2}+z^{2}$: 1,5625); RK4 la conserva casi exactamente (0,9996).</li>
-    <li><strong>Orden superior</strong>: $y''=F(x,y,y')$ → $y'=z$, $z'=F(x,y,z)$. Masa-resorte $x''=-4x$: $x'=v$, $v'=-4x$.</li>
+    <li><strong>Traslación en $s$</strong>: $\mathcal{L}\{e^{at}f\}=F(s-a)$. Para invertir, completar el cuadrado: $\tfrac{1}{s^{2}+2s+5}\to\tfrac12e^{-t}\sin2t$.</li>
+    <li><strong>Escalón</strong> $\mathcal{U}(t-a)$: interruptor en $t=a$; $\mathcal{L}\{\mathcal{U}(t-a)\}=e^{-as}/s$. Función por tramos: $g+(h-g)\,\mathcal{U}(t-a)$.</li>
+    <li><strong>Traslación en $t$</strong>: $\mathcal{L}\{f(t-a)\mathcal{U}(t-a)\}=e^{-as}F(s)$; alternativa $\mathcal{L}\{g(t)\mathcal{U}(t-a)\}=e^{-as}\mathcal{L}\{g(t+a)\}$. Inversa: $e^{-as}F\to f(t-a)\mathcal{U}(t-a)$.</li>
+    <li><strong>PVI por tramos</strong>: $y'+y=\mathcal{U}(t-1)$, $y(0)=0$ → $y=(1-e^{-(t-1)})\mathcal{U}(t-1)$; $y''+4y=\mathcal{U}(t-\pi)$ → $\tfrac14(1-\cos2t)\mathcal{U}(t-\pi)$.</li>
+    <li><strong>Propiedades</strong>: $\mathcal{L}\{tf\}=-F'(s)$; $\mathcal{L}\{f*g\}=FG$; $\mathcal{L}\{\int_0^tf\}=F/s$; periódica: $\frac{1}{1-e^{-sT}}\int_0^Te^{-st}f\,dt$.</li>
   </ul>
 </section>
 
@@ -313,18 +342,18 @@ window.MathJax = {
 
 <footer>
   <div class="cred-compacto">
-    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-2-direction-fields-and-numerical-methods" target="_blank" rel="noopener">OpenStax Calculus Vol. 2</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/7-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · EDO de segundo orden</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260912e"></script>
-<script src="../assets/viz-metodos.js?v=20260912e"></script>
+<script src="../assets/ova.js?v=20260912f"></script>
+<script src="../assets/viz-edo.js?v=20260912f"></script>
 <script>
-OVA.quiz({ "destino": "chk1", "titulo": "RK4 · 3 preguntas", "items": [ { "etiqueta": "Pesos", "nivel": 1, "criterio": "Recordar la fórmula de RK4 (§2)", "enunciado": "En RK4 clásico, el paso es $y_{i+1}=y_i+\\dfrac h6(\\;\\cdots\\;)$ con:", "opciones": [ "$k_1+2k_2+2k_3+k_4$", "$k_1+k_2+k_3+k_4$", "$k_1+4k_2+k_3$", "$6k_4$" ], "correcta": 0, "pista": "Pesos 1-2-2-1, como Simpson 1/3.", "solucion": "$y_{i+1}=y_i+\\tfrac h6(k_1+2k_2+2k_3+k_4)$: las dos estimaciones del punto medio pesan el doble que las de los extremos, igual que en la regla de Simpson. Con pesos iguales el método no alcanzaría orden 4." }, { "etiqueta": "k's", "nivel": 3, "criterio": "Calcular las pendientes de RK4 (§2)", "enunciado": "Para $y'=y$, $y(0)=1$, $h=0{,}5$, las cuatro pendientes de RK4 son:", "opciones": [ "$1;\\ 1{,}25;\\ 1{,}25;\\ 1{,}5$", "$1;\\ 1;\\ 1;\\ 1$", "$1;\\ 1{,}25;\\ 1{,}3125;\\ 1{,}65625$", "$1;\\ 1{,}5;\\ 1{,}5;\\ 2{,}25$" ], "correcta": 2, "pista": "$k_2=f(0{,}25,\\,1+0{,}25k_1)$, $k_3=f(0{,}25,\\,1+0{,}25k_2)$, $k_4=f(0{,}5,\\,1+0{,}5k_3)$.", "solucion": "$k_1=1$; $k_2=1+0{,}25=1{,}25$; $k_3=1+0{,}25(1{,}25)=1{,}3125$; $k_4=1+0{,}5(1{,}3125)=1{,}65625$. Entonces $y_1=1+\\tfrac{0{,}5}{6}(7{,}78125)=1{,}6484375$, frente a $e^{0{,}5}=1{,}64872$." }, { "etiqueta": "Precisión", "nivel": 2, "criterio": "Comparar RK4 con Euler y Heun (§2–3)", "enunciado": "Para $y'=y$ en $[0,1]$ con $h=0{,}5$, los errores de Euler, Heun y RK4 son, respectivamente:", "opciones": [ "$0{,}468$ los tres", "$9{,}3\\times10^{-4};\\ 0{,}078;\\ 0{,}468$", "$0;\\ 0;\\ 0$", "$0{,}468;\\ 0{,}078;\\ 9{,}3\\times10^{-4}$" ], "correcta": 3, "pista": "Más orden, menos error con el mismo $h$.", "solucion": "Euler $2{,}25$ (error $0{,}468$), Heun $2{,}6406$ ($0{,}078$), RK4 $2{,}71735$ ($9{,}3\\times10^{-4}$) frente a $e=2{,}71828$. Con solo dos pasos, RK4 ya es 500 veces más exacto que Euler." } ] });
-OVA.quiz({ "destino": "chk2", "titulo": "Orden, sistemas y orden superior · 3 preguntas", "items": [ { "etiqueta": "Orden 4", "nivel": 2, "criterio": "Relacionar orden y reducción de $h$ (§3)", "enunciado": "Al partir $h$ a la mitad, el error global de RK4 se divide aproximadamente por:", "opciones": [ "$8$", "$16$", "$4$", "$2$" ], "correcta": 1, "pista": "$O(h^{4})$: $(h/2)^{4}=h^{4}/16$.", "solucion": "RK4 es de orden 4: el error es proporcional a $h^{4}$ y partir $h$ lo divide por $2^{4}=16$. En la tabla del Ejemplo 3 el cociente es 13–14 y tiende a 16 cuando $h$ decrece. Heun divide por 4 y Euler por 2." }, { "etiqueta": "Sistema", "nivel": 3, "criterio": "Aplicar Euler a un sistema (§4)", "enunciado": "Para $y'=z$, $z'=-y$ con $y(0)=1$, $z(0)=0$ y $h=0{,}5$, dos pasos de Euler dan $(y_2,z_2)=$:", "opciones": [ "$(0{,}75,\\,-1)$", "$(1,\\,-0{,}5)$", "$(0{,}5403,\\,-0{,}8415)$", "$(0{,}5,\\,-1)$" ], "correcta": 0, "pista": "Paso 1: $(1,\\,-0{,}5)$; usa esos valores para el paso 2.", "solucion": "Paso 1: $y_1=1+0{,}5(0)=1$, $z_1=0+0{,}5(-1)=-0{,}5$. Paso 2: $y_2=1+0{,}5(-0{,}5)=0{,}75$, $z_2=-0{,}5+0{,}5(-1)=-1$. El exacto es $(\\cos1,-\\sin1)=(0{,}5403,-0{,}8415)$; además $y_2^{2}+z_2^{2}=1{,}5625\\gt1$: Euler gana energía." }, { "etiqueta": "Convertir", "nivel": 2, "criterio": "Convertir orden superior en sistema (§5)", "enunciado": "La ecuación $x''=-4x$ con $x(0)=1$, $x'(0)=0$ equivale al sistema:", "opciones": [ "$x'=v,\\ v'=-4v$", "$x'=-4,\\ v'=x$", "$x'=v,\\ v'=-4x$, con $x(0)=1$, $v(0)=0$", "$x'=-4x$, con $x(0)=1$" ], "correcta": 2, "pista": "Define $v=x'$.", "solucion": "Con $v=x'$: $x'=v$ y $v'=x''=-4x$; las condiciones iniciales son $x(0)=1$ y $v(0)=x'(0)=0$. La solución exacta es $x=\\cos2t$. Reducir a $x'=-4x$ cambiaría la ecuación (sería de primer orden)." } ] });
-OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Familia", "nivel": 1, "criterio": "Reconocer la forma de los métodos RK (§1)", "enunciado": "Todos los métodos de Runge-Kutta tienen la forma $y_{i+1}=y_i+h\\phi$, donde $\\phi$ es:", "opciones": [ "la derivada exacta en $x_{i+1}$", "una constante fija", "la integral de $f$", "una pendiente promedio construida con evaluaciones de $f$ dentro del paso" ], "correcta": 3, "pista": "Euler: $\\phi=k_1$; Heun: $\\phi=(k_1+k_2)/2$.", "solucion": "$\\phi$ es una combinación ponderada de pendientes $k_j$ evaluadas en puntos del paso; los pesos se eligen para igualar la serie de Taylor hasta cierto orden. Euler, Heun, punto medio y RK4 son casos particulares." }, { "etiqueta": "x+y", "nivel": 3, "criterio": "Ejecutar un paso de RK4 (§2)", "enunciado": "Para $y'=x+y$, $y(0)=1$, $h=0{,}1$, un paso de RK4 da $y_1=$:", "opciones": [ "$1{,}2105$", "$1{,}110342$ (exacto en seis decimales)", "$1{,}1$", "$1{,}105$" ], "correcta": 1, "pista": "$k_1=1$, $k_2=1{,}1$, $k_3=1{,}105$, $k_4=1{,}2105$.", "solucion": "$y_1=1+\\tfrac{0{,}1}{6}(1+2{,}2+2{,}21+1{,}2105)=1{,}110342$; la exacta $y=2e^{x}-x-1$ da $1{,}110342$. $1{,}1$ es Euler; $1{,}105$ y $1{,}2105$ son $k_3$ y $k_4$, no el resultado." }, { "etiqueta": "Taylor", "nivel": 2, "criterio": "Explicar el orden de RK4 (§2)", "enunciado": "Para $y'=y$, un paso de RK4 multiplica $y$ por $1+h+\\tfrac{h^{2}}{2}+\\tfrac{h^{3}}{6}+\\tfrac{h^{4}}{24}$. Eso muestra que RK4:", "opciones": [ "reproduce la serie de Taylor de $e^{h}$ hasta el término $h^{4}$: orden 4", "es exacto para $y'=y$", "reproduce Taylor solo hasta $h$", "no depende de $h$" ], "correcta": 0, "pista": "Compara con $e^{h}=1+h+h^{2}/2+h^{3}/6+h^{4}/24+h^{5}/120+\\cdots$", "solucion": "El factor coincide con $e^{h}$ hasta $h^{4}$; el primer término que falta es $h^{5}/120$, el error local. Euler solo reproduce $1+h$ y Heun $1+h+h^{2}/2$." }, { "etiqueta": "Costo", "nivel": 3, "criterio": "Comparar a igual costo (§3)", "enunciado": "RK4 con $h=0{,}5$ (8 evaluaciones) frente a Euler con $h=0{,}0625$ (16 evaluaciones) para $y'=y$ en $[0,1]$:", "opciones": [ "tienen el mismo error", "RK4 cuesta más y por eso no conviene", "RK4 es mucho más exacto ($9{,}3\\times10^{-4}$ frente a $0{,}080$) con la mitad del trabajo", "Euler es más exacto porque da más pasos" ], "correcta": 2, "pista": "Cuenta evaluaciones de $f$, no pasos.", "solucion": "RK4: 2 pasos × 4 evaluaciones = 8, error $9{,}3\\times10^{-4}$. Euler: 16 pasos × 1 = 16, error $0{,}080$. A igual o menor costo, el método de orden alto gana por casi dos órdenes de magnitud." }, { "etiqueta": "Log-log", "nivel": 2, "criterio": "Leer el orden en una gráfica log-log (§3)", "enunciado": "En una gráfica de $\\log(\\text{error})$ contra $\\log h$, un método de orden $p$ aparece como:", "opciones": [ "una curva exponencial", "una recta horizontal", "una recta de pendiente $1/p$", "una recta de pendiente $p$" ], "correcta": 3, "pista": "error $\\approx Ch^{p}$ ⇒ $\\log(\\text{error})=\\log C+p\\log h$.", "solucion": "Tomando logaritmos en error $\\approx Ch^{p}$ queda una recta de pendiente $p$: 1 para Euler, 2 para Heun, 4 para RK4. Es la forma estándar de verificar el orden de un programa." }, { "etiqueta": "Vectorial", "nivel": 2, "criterio": "Aplicar RK a sistemas (§4)", "enunciado": "Al resolver un sistema de dos EDO con RK4:", "opciones": [ "se necesita eliminar una variable primero", "cada $k_j$ es un vector con las pendientes de ambas variables, calculadas con los mismos valores intermedios", "se resuelve primero una ecuación completa y luego la otra", "solo se puede usar Euler" ], "correcta": 1, "pista": "Las variables están acopladas: hay que actualizarlas a la vez.", "solucion": "En cada etapa se evalúan las pendientes de todas las variables con el mismo punto intermedio, y al final se actualizan todas. Resolver una variable primero ignoraría el acoplamiento." }, { "etiqueta": "Energía", "nivel": 3, "criterio": "Interpretar la ganancia de energía de Euler (§4)", "enunciado": "Para el oscilador $y'=z$, $z'=-y$, la solución exacta cumple $y^{2}+z^{2}=1$. Tras dos pasos de Euler ($h=0{,}5$) se obtiene $0{,}75^{2}+1^{2}=1{,}5625$. Esto indica que:", "opciones": [ "Euler inyecta energía: sus oscilaciones crecen aunque las exactas no", "Euler conserva la energía", "la solución exacta es incorrecta", "el sistema es inestable" ], "correcta": 0, "pista": "Compara con RK4: $0{,}9996$.", "solucion": "La cantidad conservada crece paso a paso con Euler: la amplitud numérica aumenta sin que la física lo justifique. RK4 con el mismo $h$ da $0{,}9996$. Es el motivo por el que Euler se evita en osciladores y órbitas." }, { "etiqueta": "Masa-resorte", "nivel": 3, "criterio": "Verificar un paso de RK4 en un sistema (§5)", "enunciado": "Para $x'=v$, $v'=-4x$ con $(x,v)(0)=(1,0)$ y $h=0{,}1$, las pendientes de $x$ en las cuatro etapas de RK4 son $0,\\ -0{,}2,\\ -0{,}2,\\ -0{,}396$. Entonces $x_1=$:", "opciones": [ "$1-0{,}1(0{,}396)=0{,}9604$", "$0{,}8253$", "$1+\\tfrac{0{,}1}{6}(0-0{,}4-0{,}4-0{,}396)=0{,}98007$", "$1+0{,}1(0)=1$" ], "correcta": 2, "pista": "Pesos 1-2-2-1 sobre 6; exacto $\\cos0{,}2=0{,}98007$.", "solucion": "$x_1=1+\\tfrac{0{,}1}{6}(-1{,}196)=0{,}98007$, igual a $\\cos(0{,}2)$ en cinco decimales. Euler habría dado $1$ (pendiente inicial cero); $0{,}8253$ es $\\cos(0{,}6)$, el valor en $t=0{,}3$." } ] });
+OVA.quiz({ "destino": "chk1", "titulo": "Los dos teoremas de traslación · 3 preguntas", "items": [ { "etiqueta": "En s", "nivel": 2, "criterio": "Aplicar la traslación en s (§1)", "enunciado": "$\\mathcal{L}\\{e^{-t}\\cos 2t\\}$ es:", "opciones": [ "$\\dfrac{s+1}{(s+1)^{2}+4}$", "$\\dfrac{s}{(s+1)^{2}+4}$", "$\\dfrac{s-1}{(s-1)^{2}+4}$", "$\\dfrac{s}{s^{2}+4}\\cdot\\dfrac{1}{s+1}$" ], "correcta": 0, "pista": "$F(s)=\\dfrac{s}{s^{2}+4}$ con $s\\to s+1$ (porque $a=-1$).", "solucion": "Se sustituye $s$ por $s-a=s+1$ en toda la expresión, también en el numerador: $\\dfrac{s+1}{(s+1)^{2}+4}$. Dejar $s$ arriba o multiplicar por $\\tfrac{1}{s+1}$ son los errores clásicos." }, { "etiqueta": "Cuadrado", "nivel": 3, "criterio": "Invertir completando el cuadrado (§1)", "enunciado": "$\\mathcal{L}^{-1}\\Big\\{\\dfrac{1}{s^{2}+2s+5}\\Big\\}$ es:", "opciones": [ "$\\tfrac12e^{t}\\sin2t$", "$e^{-t}\\cos2t$", "$\\tfrac12e^{-t}\\sin2t$", "$e^{-t}\\sin2t$" ], "correcta": 2, "pista": "$s^{2}+2s+5=(s+1)^{2}+4$; el seno necesita un 2 arriba.", "solucion": "$\\dfrac{1}{(s+1)^{2}+4}=\\tfrac12\\cdot\\dfrac{2}{(s+1)^{2}+4}$, que es $\\tfrac12\\mathcal{L}\\{\\sin2t\\}$ trasladada en $a=-1$: $\\tfrac12e^{-t}\\sin2t$. Sin el $\\tfrac12$ se olvida que $k=2$ debe estar en el numerador." }, { "etiqueta": "En t", "nivel": 2, "criterio": "Aplicar la traslación en t (§3)", "enunciado": "$\\mathcal{L}^{-1}\\Big\\{\\dfrac{e^{-3s}}{s^{2}+1}\\Big\\}$ es:", "opciones": [ "$\\sin t\\,\\mathcal{U}(t-3)$", "$e^{-3t}\\sin t$", "$\\sin(t+3)$", "$\\sin(t-3)\\,\\mathcal{U}(t-3)$" ], "correcta": 3, "pista": "$e^{-as}F(s)\\to f(t-a)\\mathcal{U}(t-a)$ con $f=\\sin t$.", "solucion": "El factor $e^{-3s}$ es un retraso de 3: la función es $\\sin(t-3)$ encendida en $t=3$. Debe desplazarse el argumento, no solo multiplicar por el escalón; $e^{-3t}\\sin t$ correspondería a una traslación en $s$." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "PVI por tramos y propiedades · 3 preguntas", "items": [ { "etiqueta": "Escalón", "nivel": 3, "criterio": "Resolver un PVI con escalón (§4)", "enunciado": "Para $y'+y=\\mathcal{U}(t-1)$, $y(0)=0$, la solución es:", "opciones": [ "$y=e^{-(t-1)}\\,\\mathcal{U}(t-1)$", "$y=\\big(1-e^{-(t-1)}\\big)\\,\\mathcal{U}(t-1)$", "$y=1-e^{-t}$", "$y=\\big(1-e^{-t}\\big)\\,\\mathcal{U}(t-1)$" ], "correcta": 1, "pista": "$Y=e^{-s}\\Big(\\dfrac1s-\\dfrac{1}{s+1}\\Big)$.", "solucion": "$1/(s(s+1))\\to1-e^{-t}$, y el factor $e^{-s}$ lo retrasa una unidad: $(1-e^{-(t-1)})\\mathcal{U}(t-1)$. Antes de $t=1$ la solución es cero; $1-e^{-t}$ sería la respuesta a una fuerza encendida desde $t=0$." }, { "etiqueta": "Resorte", "nivel": 3, "criterio": "Interpretar la respuesta a un escalón (§4)", "enunciado": "La solución de $y''+4y=\\mathcal{U}(t-\\pi)$, $y(0)=y'(0)=0$, es $y=\\tfrac14(1-\\cos2t)\\,\\mathcal{U}(t-\\pi)$. Para $t\\gt\\pi$ la masa:", "opciones": [ "oscila entre $0$ y $\\tfrac12$ alrededor del nuevo equilibrio $\\tfrac14$", "permanece en reposo", "crece sin límite (resonancia)", "decae exponencialmente a cero" ], "correcta": 0, "pista": "$1-\\cos2t$ va de 0 a 2.", "solucion": "Una fuerza constante desplaza el equilibrio a $\\tfrac14$ y, sin amortiguamiento, la masa oscila alrededor de él con amplitud $\\tfrac14$: entre $0$ y $\\tfrac12$. No hay resonancia porque la fuerza es constante, no periódica a la frecuencia natural." }, { "etiqueta": "Derivada", "nivel": 2, "criterio": "Usar la derivada de la transformada (§5)", "enunciado": "$\\mathcal{L}\\{t\\sin 2t\\}$ es:", "opciones": [ "$\\dfrac{2}{(s^{2}+4)^{2}}$", "$-\\dfrac{4s}{(s^{2}+4)^{2}}$", "$\\dfrac{4s}{(s^{2}+4)^{2}}$", "$\\dfrac{2}{s^{2}(s^{2}+4)}$" ], "correcta": 2, "pista": "$\\mathcal{L}\\{tf\\}=-F'(s)$ con $F=\\dfrac{2}{s^{2}+4}$.", "solucion": "$-\\dfrac{d}{ds}\\dfrac{2}{s^{2}+4}=-\\dfrac{-2\\cdot2s}{(s^{2}+4)^{2}}=\\dfrac{4s}{(s^{2}+4)^{2}}$. El signo menos de la fórmula cancela el de la derivada; multiplicar por $1/s^{2}$ sería tratar el producto como si fuera lineal." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "t³e^{2t}", "nivel": 2, "criterio": "Traslación en s directa (§1)", "enunciado": "$\\mathcal{L}\\{e^{2t}t^{3}\\}$ es:", "opciones": [ "$\\dfrac{6}{(s+2)^{4}}$", "$\\dfrac{6}{s^{4}}\\cdot\\dfrac{1}{s-2}$", "$\\dfrac{3}{(s-2)^{4}}$", "$\\dfrac{6}{(s-2)^{4}}$" ], "correcta": 3, "pista": "$\\mathcal{L}\\{t^{3}\\}=6/s^{4}$, luego $s\\to s-2$.", "solucion": "$F(s-a)$ con $a=2$: $\\dfrac{6}{(s-2)^{4}}$. El signo es $s-a$ (con $a=2$ queda $s-2$) y el $3!=6$ se conserva." }, { "etiqueta": "Numerador", "nivel": 3, "criterio": "Ajustar el numerador al completar el cuadrado (§1)", "enunciado": "$\\mathcal{L}^{-1}\\Big\\{\\dfrac{s}{s^{2}+4s+13}\\Big\\}$ es:", "opciones": [ "$\\cos3t-\\tfrac23\\sin3t$", "$e^{-2t}\\big(\\cos3t-\\tfrac23\\sin3t\\big)$", "$e^{-2t}\\cos3t$", "$e^{2t}\\cos3t$" ], "correcta": 1, "pista": "$s=(s+2)-2$ sobre $(s+2)^{2}+9$.", "solucion": "$\\dfrac{s}{(s+2)^{2}+9}=\\dfrac{s+2}{(s+2)^{2}+9}-\\dfrac23\\cdot\\dfrac{3}{(s+2)^{2}+9}$, que se antitransforma como $e^{-2t}\\cos3t-\\tfrac23e^{-2t}\\sin3t$. Olvidar el ajuste del numerador deja fuera el término del seno." }, { "etiqueta": "Interruptor", "nivel": 1, "criterio": "Escribir una función por tramos con escalones (§2)", "enunciado": "La función $f(t)=2$ para $0\\le t\\lt3$ y $f(t)=0$ para $t\\ge3$ se escribe:", "opciones": [ "$2-2\\,\\mathcal{U}(t-3)$, con $\\mathcal{L}\\{f\\}=\\dfrac2s-\\dfrac{2e^{-3s}}{s}$", "$2\\,\\mathcal{U}(t-3)$", "$2\\,\\mathcal{U}(t+3)$", "$2e^{-3t}$" ], "correcta": 0, "pista": "Empieza en 2 y se apaga en $t=3$.", "solucion": "Vale 2 desde el inicio y en $t=3$ se le resta 2: $2-2\\,\\mathcal{U}(t-3)$. Su transformada es $\\tfrac2s-\\tfrac{2e^{-3s}}{s}$. $2\\,\\mathcal{U}(t-3)$ es la función contraria (encendida desde 3)." }, { "etiqueta": "Alternativa", "nivel": 3, "criterio": "Usar la forma alternativa del segundo teorema (§3)", "enunciado": "$\\mathcal{L}\\{t\\,\\mathcal{U}(t-1)\\}$ es:", "opciones": [ "$\\dfrac{e^{-s}}{s}$", "$\\dfrac{1}{s^{2}}-e^{-s}$", "$e^{-s}\\Big(\\dfrac{1}{s^{2}}+\\dfrac1s\\Big)$", "$\\dfrac{e^{-s}}{s^{2}}$" ], "correcta": 2, "pista": "$g(t)=t$ no está escrita como $f(t-1)$: usa $e^{-as}\\mathcal{L}\\{g(t+a)\\}$.", "solucion": "$g(t+1)=t+1$, así que $\\mathcal{L}\\{t\\,\\mathcal{U}(t-1)\\}=e^{-s}\\mathcal{L}\\{t+1\\}=e^{-s}\\big(\\tfrac{1}{s^{2}}+\\tfrac1s\\big)$. $\\tfrac{e^{-s}}{s^{2}}$ sería la transformada de $(t-1)\\,\\mathcal{U}(t-1)$, una función distinta." }, { "etiqueta": "Retraso", "nivel": 2, "criterio": "Interpretar el factor $e^{-as}$ (§3–4)", "enunciado": "Si $Y(s)=e^{-2s}F(s)$ y $\\mathcal{L}^{-1}\\{F\\}=f(t)$, entonces $y(t)$:", "opciones": [ "es $f(t)$ multiplicada por $e^{-2t}$", "es $f(t+2)$", "es $f(t)$ para todo $t$", "es $f(t-2)\\,\\mathcal{U}(t-2)$: cero hasta $t=2$ y luego la copia de $f$ retrasada" ], "correcta": 3, "pista": "Exponencial en $s$ = retraso en $t$.", "solucion": "El segundo teorema: $e^{-as}F(s)$ es la transformada de $f(t-a)\\mathcal{U}(t-a)$. El visualizador de la §4 muestra que la respuesta a una fuerza encendida en $t=a$ es la misma curva desplazada $a$." }, { "etiqueta": "Convolución", "nivel": 3, "criterio": "Aplicar el teorema de convolución (§5)", "enunciado": "$\\mathcal{L}^{-1}\\Big\\{\\dfrac{1}{s^{2}(s+1)}\\Big\\}$ calculada como $t*e^{-t}$ da:", "opciones": [ "$\\dfrac{t^{2}}{2}e^{-t}$", "$t-1+e^{-t}$", "$t\\,e^{-t}$", "$t+e^{-t}$" ], "correcta": 1, "pista": "$\\int_0^t\\tau e^{-(t-\\tau)}d\\tau$, o fracciones parciales $-\\tfrac1s+\\tfrac{1}{s^{2}}+\\tfrac{1}{s+1}$.", "solucion": "$\\dfrac{1}{s^{2}}\\cdot\\dfrac{1}{s+1}=\\mathcal{L}\\{t\\}\\mathcal{L}\\{e^{-t}\\}$, así que la inversa es la convolución $t*e^{-t}=t-1+e^{-t}$. El producto puntual $te^{-t}$ (cuya transformada es $\\tfrac{1}{(s+1)^{2}}$) es otra cosa." }, { "etiqueta": "Integral", "nivel": 2, "criterio": "Transformar una integral (§5)", "enunciado": "$\\mathcal{L}\\Big\\{\\displaystyle\\int_0^t\\cos 2\\tau\\,d\\tau\\Big\\}$ es:", "opciones": [ "$\\dfrac{1}{s^{2}+4}$", "$\\dfrac{s^{2}}{s^{2}+4}$", "$\\dfrac{2}{s^{2}+4}$", "$\\dfrac{s}{s^{2}+4}$" ], "correcta": 0, "pista": "$F(s)/s$ con $F=\\dfrac{s}{s^{2}+4}$.", "solucion": "$\\dfrac{1}{s}\\cdot\\dfrac{s}{s^{2}+4}=\\dfrac{1}{s^{2}+4}$. Se confirma directamente: la integral vale $\\tfrac12\\sin2t$, cuya transformada es $\\tfrac12\\cdot\\tfrac{2}{s^{2}+4}$." }, { "etiqueta": "Periódica", "nivel": 3, "criterio": "Transformar una función periódica (§5)", "enunciado": "La onda cuadrada de periodo 2 (vale 1 en $[0,1)$ y 0 en $[1,2)$) tiene transformada:", "opciones": [ "$\\dfrac{1-e^{-s}}{s}$", "$\\dfrac{1}{s(1-e^{-s})}$", "$\\dfrac{1}{s(1+e^{-s})}$", "$\\dfrac{1}{s}$" ], "correcta": 2, "pista": "$\\dfrac{1}{1-e^{-2s}}\\cdot\\dfrac{1-e^{-s}}{s}$ y $1-e^{-2s}=(1-e^{-s})(1+e^{-s})$.", "solucion": "La integral sobre un periodo es $\\int_0^1e^{-st}dt=\\tfrac{1-e^{-s}}{s}$; dividiendo por $1-e^{-2s}=(1-e^{-s})(1+e^{-s})$ queda $\\tfrac{1}{s(1+e^{-s})}$. $\\tfrac{1-e^{-s}}{s}$ es solo un pulso, no la onda repetida." } ] });
 </script>
 </body>
 </html>
