@@ -1020,7 +1020,7 @@ OVA.viz.registrar('condicion', function (host) {
 });
 
 /* ══════ S07 · Jacobi y Gauss-Seidel iterando ══════ */
-var ITER = {
+var ITERSEL = {   // (antes ITER: colisionaba con el ITER de S02 y rompía «iteracion»)
   a: { n: '10x−y+2z=6 ; −x+11y−z+3w=25 ; 2x−y+10z−w=−11 ; 3y−z+8w=15',
        A: [[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]],
        b: [6, 25, -11, 15], v: ['x', 'y', 'z', 'w'], sol: [1, 2, -1, 1], dom: true },
@@ -1049,7 +1049,7 @@ function iterar(cfg, metodo, n) {
 }
 
 OVA.viz.registrar('iterativos', function (host) {
-  var cfg = ITER[q(host, 'select').value] || ITER.a;
+  var cfg = ITERSEL[q(host, 'select').value] || ITERSEL.a;
   var metodo = q(host, '.metodo').value;
   var it = parseInt(q(host, '.iter').value, 10);
   q(host, '.iter-val').textContent = it + ' iteraciones';
@@ -1372,4 +1372,254 @@ document.addEventListener('DOMContentLoaded', function () {
     h.addEventListener('change', function () { OVA.viz.redibujar(); });
   });
 });
+/* ══════════════════════════════════════════════════════════
+   CORTE III · S11–S14
+   regresion (S11) · derivada · cuadratura (S12) · euler (S13)
+   rungekutta · ordenerror (S14)
+   ══════════════════════════════════════════════════════════ */
+function marcoM(cv, alto, xmin, xmax, ymin, ymax) {
+  var L = OVA.lienzo(cv, { alto: alto });
+  var padL = 46, padR = 14, padT = 14, padB = 26;
+  L.sx = (L.w - padL - padR) / (xmax - xmin); L.sy = (L.h - padT - padB) / (ymax - ymin);
+  L.ox = padL - xmin * L.sx; L.oy = padT + ymax * L.sy;
+  L.xmin = xmin; L.xmax = xmax; L.ymin = ymin; L.ymax = ymax;
+  return L;
+}
+function ejesM(L, px, py, logy) {
+  var c = L.ctx, grid = OVA.color('cv-grid'), axis = OVA.color('cv-axis'), txt = OVA.color('cv-text'), v, p;
+  c.strokeStyle = grid; c.lineWidth = 1; c.fillStyle = txt; c.font = '10px ui-monospace,monospace';
+  for (v = Math.ceil(L.xmin / px - 1e-9) * px; v <= L.xmax + 1e-9; v += px) {
+    p = L.px(v); c.beginPath(); c.moveTo(p, L.py(L.ymin)); c.lineTo(p, L.py(L.ymax)); c.stroke();
+    c.fillText(String(Math.round(v * 1000) / 1000), p - 6, L.py(L.ymin) + 13);
+  }
+  for (v = Math.ceil(L.ymin / py - 1e-9) * py; v <= L.ymax + 1e-9; v += py) {
+    p = L.py(v); c.beginPath(); c.moveTo(L.px(L.xmin), p); c.lineTo(L.px(L.xmax), p); c.stroke();
+    c.fillText(logy ? ('1e' + Math.round(v)) : String(Math.round(v * 100) / 100), L.px(L.xmin) - 40, p + 3);
+  }
+  c.strokeStyle = axis; c.lineWidth = 1.6;
+  var yA = Math.min(Math.max(0, L.ymin), L.ymax), xA = Math.min(Math.max(0, L.xmin), L.xmax);
+  c.beginPath(); c.moveTo(L.px(L.xmin), L.py(yA)); c.lineTo(L.px(L.xmax), L.py(yA)); c.stroke();
+  c.beginPath(); c.moveTo(L.px(xA), L.py(L.ymin)); c.lineTo(L.px(xA), L.py(L.ymax)); c.stroke();
+}
+function clipM(L, fn) { var c = L.ctx; c.save(); c.beginPath(); c.rect(L.px(L.xmin), L.py(L.ymax), L.px(L.xmax) - L.px(L.xmin), L.py(L.ymin) - L.py(L.ymax)); c.clip(); fn(); c.restore(); }
+function d3(v) { return (Math.round(v * 1000) / 1000).toFixed(3); }
+function d4(v) { return (Math.round(v * 10000) / 10000).toFixed(4); }
+function d5(v) { return (Math.round(v * 100000) / 100000).toFixed(5); }
+function poli(L, pts, color, ancho) { var c = L.ctx; c.strokeStyle = color; c.lineWidth = ancho || 2.4; c.beginPath(); pts.forEach(function (p, i) { i ? c.lineTo(L.px(p[0]), L.py(p[1])) : c.moveTo(L.px(p[0]), L.py(p[1])); }); c.stroke(); }
+/* resuelve A x = b (Gauss con pivoteo parcial), matrices pequeñas */
+function solveM(A, b) {
+  var n = b.length, M = A.map(function (r, i) { return r.concat([b[i]]); }), i, j, k;
+  for (i = 0; i < n; i++) {
+    var p = i; for (k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[p][i])) p = k;
+    var t = M[i]; M[i] = M[p]; M[p] = t;
+    for (k = i + 1; k < n; k++) { var f = M[k][i] / M[i][i]; for (j = i; j <= n; j++) M[k][j] -= f * M[i][j]; }
+  }
+  var x = new Array(n);
+  for (i = n - 1; i >= 0; i--) { var s = M[i][n]; for (j = i + 1; j < n; j++) s -= M[i][j] * x[j]; x[i] = s / M[i][i]; }
+  return x;
+}
+function ajusteMC(xs, ys, grado) {   // mínimos cuadrados polinomial, devuelve [a0..ag]
+  var m = grado + 1, A = [], b = [], i, j, k;
+  for (i = 0; i < m; i++) { A.push([]); for (j = 0; j < m; j++) { var s = 0; for (k = 0; k < xs.length; k++) s += Math.pow(xs[k], i + j); A[i].push(s); } var t = 0; for (k = 0; k < xs.length; k++) t += ys[k] * Math.pow(xs[k], i); b.push(t); }
+  return solveM(A, b);
+}
+function evalP(a, x) { var s = 0, i; for (i = a.length - 1; i >= 0; i--) s = s * x + a[i]; return s; }
+
+/* ══════════ S11 · Regresión por mínimos cuadrados ══════════ */
+var DATOS = {
+  lineal: { x: [1, 2, 3, 4, 5], y: [3, 4, 6, 7, 10], n: '5 puntos (Ejemplo 1)', r: [0, 6, 0, 12], modelo: 'recta', sA: 'y = 0,9 + 1,7x', tip: 'La recta de mínimos cuadrados tiene S_r = 1,10; ninguna otra recta baja de ahí.' },
+  cuad:   { x: [0, 1, 2, 3, 4, 5], y: [2.1, 7.7, 13.6, 27.2, 40.9, 61.1], n: '6 puntos (Ejemplo 2, Chapra)', r: [-0.5, 5.5, 0, 65], modelo: 'parábola', sA: 'y = 2,4786 + 2,3593x + 1,8607x²', tip: 'Compara con la recta: S_r pasa de 133,0 a 3,75. El modelo correcto se nota en los residuos.' },
+  expo:   { x: [0, 1, 2, 3], y: [2, 3.2974, 5.4366, 8.9634], n: '4 puntos de y = 2e^{0,5x}', r: [-0.5, 3.5, 0, 10], modelo: 'exponencial', sA: 'y = 2e^{0,5x}', tip: 'Se ajusta la recta a ln y: pendiente 0,5 e intercepto ln 2. Los datos son exactos, por eso S_r = 0.' }
+};
+
+OVA.viz.registrar('regresion', function (host) {
+  var cfg = DATOS[q(host, 'select').value] || DATOS.lineal;
+  var a0 = parseFloat(q(host, '.a0').value) / 10, a1 = parseFloat(q(host, '.a1').value) / 10;
+  q(host, '.a0-val').textContent = 'a₀ = ' + a0.toFixed(1); q(host, '.a1-val').textContent = 'a₁ = ' + a1.toFixed(1);
+  var xs = cfg.x, ys = cfg.y, i, L = marcoM(q(host, 'canvas'), 320, cfg.r[0], cfg.r[1], cfg.r[2], cfg.r[3]);
+  ejesM(L, 1, cfg.r[3] > 20 ? 10 : 2);
+  var c = L.ctx, mejor, fMejor, SrMejor = 0, SrManual = 0, fManual = function (x) { return a0 + a1 * x; };
+  if (cfg.modelo === 'recta') { mejor = ajusteMC(xs, ys, 1); fMejor = function (x) { return evalP(mejor, x); }; }
+  else if (cfg.modelo === 'parábola') { mejor = ajusteMC(xs, ys, 2); fMejor = function (x) { return evalP(mejor, x); }; }
+  else { var lny = ys.map(Math.log); mejor = ajusteMC(xs, lny, 1); fMejor = function (x) { return Math.exp(mejor[0] + mejor[1] * x); }; }
+  for (i = 0; i < xs.length; i++) { SrMejor += Math.pow(ys[i] - fMejor(xs[i]), 2); SrManual += Math.pow(ys[i] - fManual(xs[i]), 2); }
+  clipM(L, function () {
+    OVA.curva(L, fManual, 'rgba(176,57,44,.8)', 1.8);
+    OVA.curva(L, fMejor, VERDE, 2.8);
+    for (i = 0; i < xs.length; i++) {
+      c.strokeStyle = 'rgba(176,57,44,.6)'; c.lineWidth = 1.4; c.setLineDash([3, 3]);
+      c.beginPath(); c.moveTo(L.px(xs[i]), L.py(ys[i])); c.lineTo(L.px(xs[i]), L.py(fManual(xs[i]))); c.stroke(); c.setLineDash([]);
+      OVA.punto(L, xs[i], ys[i], AZUL);
+    }
+  });
+  c.font = 'bold 11px ui-monospace,monospace'; c.fillStyle = VERDE; c.fillText('— mínimos cuadrados: ' + cfg.sA, L.px(L.xmin) + 6, 22);
+  c.fillStyle = ROJO; c.fillText('— recta manual y = a₀ + a₁x', L.px(L.xmin) + 6, 38);
+  var ymed = 0; for (i = 0; i < ys.length; i++) ymed += ys[i] / ys.length; var St = 0; for (i = 0; i < ys.length; i++) St += Math.pow(ys[i] - ymed, 2);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · modelo de mínimos cuadrados (verde): <strong>' + cfg.sA + '</strong>, S_r = <strong style="color:#7fd4a4">' + d3(SrMejor) + '</strong>, r² = ' + d4(1 - SrMejor / St) + '<br>' +
+    'Tu recta (roja) y = ' + a0.toFixed(1) + ' + ' + a1.toFixed(1) + 'x: suma de cuadrados de los residuos (segmentos punteados) S_r = <strong style="color:#e08b7e">' + d3(SrManual) + '</strong>' +
+    (SrManual < SrMejor - 1e-9 ? ' — ¡menor! (solo posible si el modelo verde no es una recta)' : SrManual - SrMejor < 1e-6 ? ' — es la óptima' : ' — mayor que la óptima') + '<br>' +
+    '<span style="color:#8fb4d9">' + cfg.tip + ' Mueve a₀ y a₁ e intenta bajar S_r.</span>';
+});
+
+/* ══════════ S12 · Diferenciación numérica ══════════ */
+var DFUN = {
+  exp: { f: Math.exp, df: Math.exp, n: 'f(x) = eˣ', x0: 0, r: [-0.8, 0.8, 0, 2.4] },
+  sen: { f: Math.sin, df: Math.cos, n: 'f(x) = sen x', x0: 1, r: [0.2, 1.8, 0, 1.2] },
+  cub: { f: function (x) { return x * x * x; }, df: function (x) { return 3 * x * x; }, n: 'f(x) = x³', x0: 1, r: [0.2, 1.8, 0, 4] }
+};
+OVA.viz.registrar('derivada', function (host) {
+  var cfg = DFUN[q(host, 'select').value] || DFUN.exp;
+  var h = parseFloat(q(host, '.h').value) / 100;
+  q(host, '.h-val').textContent = 'h = ' + h.toFixed(2);
+  var f = cfg.f, x0 = cfg.x0, ex = cfg.df(x0);
+  var ad = (f(x0 + h) - f(x0)) / h, at = (f(x0) - f(x0 - h)) / h, ce = (f(x0 + h) - f(x0 - h)) / (2 * h);
+  var L = marcoM(q(host, 'canvas'), 320, cfg.r[0], cfg.r[1], cfg.r[2], cfg.r[3]);
+  ejesM(L, 0.2, cfg.r[3] > 3 ? 1 : 0.5);
+  var c = L.ctx;
+  clipM(L, function () {
+    OVA.curva(L, f, AZUL, 2.6);
+    var y0 = f(x0), ext = 0.55;
+    [[ad, ROJO], [at, ORO], [ce, VERDE]].forEach(function (s) { c.strokeStyle = s[1]; c.lineWidth = 1.8; c.beginPath(); c.moveTo(L.px(x0 - ext), L.py(y0 - s[0] * ext)); c.lineTo(L.px(x0 + ext), L.py(y0 + s[0] * ext)); c.stroke(); });
+    c.setLineDash([4, 3]); c.strokeStyle = MORADO; c.lineWidth = 1.6; c.beginPath(); c.moveTo(L.px(x0 - ext), L.py(y0 - ex * ext)); c.lineTo(L.px(x0 + ext), L.py(y0 + ex * ext)); c.stroke(); c.setLineDash([]);
+    OVA.punto(L, x0 - h, f(x0 - h), ORO, true); OVA.punto(L, x0 + h, f(x0 + h), ROJO, true); OVA.punto(L, x0, y0, AZUL);
+  });
+  c.font = 'bold 11px ui-monospace,monospace';
+  c.fillStyle = ROJO; c.fillText('— adelante', L.px(L.xmin) + 6, 22); c.fillStyle = ORO; c.fillText('— atrás', L.px(L.xmin) + 6, 38);
+  c.fillStyle = VERDE; c.fillText('— central', L.px(L.xmin) + 6, 54); c.fillStyle = MORADO; c.fillText('- - tangente exacta', L.px(L.xmin) + 6, 70);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + ' en x₀ = ' + x0 + '</strong>, h = ' + h.toFixed(2) + ' · derivada exacta f′(x₀) = <strong>' + d5(ex) + '</strong><br>' +
+    'Adelante <span style="color:#e08b7e">' + d5(ad) + '</span> (error ' + d5(Math.abs(ad - ex)) + ') · Atrás <span style="color:#f0c674">' + d5(at) + '</span> (error ' + d5(Math.abs(at - ex)) + ') · Central <strong style="color:#7fd4a4">' + d5(ce) + '</strong> (error ' + d5(Math.abs(ce - ex)) + ')<br>' +
+    '<span style="color:#8fb4d9">Reduce h a la mitad: los errores de adelante y atrás se dividen por 2 (orden h); el de la central, por 4 (orden h²). La central usa los dos puntos vecinos y los errores de primer orden se cancelan.</span>';
+});
+
+/* ══════════ S12 · Cuadratura: trapecio y Simpson ══════════ */
+var QFUN = {
+  cub:  { f: function (x) { return x * x * x; }, a: 0, b: 2, ex: 4, sEx: '4', n: '∫₀² x³ dx', ymax: 8.5 },
+  exp:  { f: Math.exp, a: 0, b: 1, ex: Math.E - 1, sEx: 'e − 1 ≈ 1,71828', n: '∫₀¹ eˣ dx', ymax: 3 },
+  arc:  { f: function (x) { return 1 / (1 + x * x); }, a: 0, b: 1, ex: Math.PI / 4, sEx: 'π/4 ≈ 0,78540', n: '∫₀¹ dx/(1+x²)', ymax: 1.2 },
+  sen:  { f: Math.sin, a: 0, b: Math.PI, ex: 2, sEx: '2', n: '∫₀^π sen x dx', ymax: 1.2 }
+};
+OVA.viz.registrar('cuadratura', function (host) {
+  var cfg = QFUN[q(host, 'select').value] || QFUN.cub;
+  var met = q(host, '.metodo').value, n = parseInt(q(host, '.n').value, 10);
+  if (met === 's13' && n % 2) n += 1;
+  if (met === 's38') n = 3 * Math.max(1, Math.round(n / 3));
+  q(host, '.n-val').textContent = 'n = ' + n;
+  var f = cfg.f, a = cfg.a, b = cfg.b, h = (b - a) / n, i, k, aprox = 0;
+  var L = marcoM(q(host, 'canvas'), 320, a - 0.08 * (b - a), b + 0.08 * (b - a), -0.08 * cfg.ymax, cfg.ymax);
+  ejesM(L, (b - a) / 4, cfg.ymax > 4 ? 2 : 0.5);
+  var c = L.ctx;
+  clipM(L, function () {
+    if (met === 'trap') {
+      for (i = 0; i < n; i++) {
+        var x0 = a + i * h, x1 = x0 + h;
+        c.fillStyle = 'rgba(198,143,46,.35)'; c.strokeStyle = ORO; c.lineWidth = 1;
+        c.beginPath(); c.moveTo(L.px(x0), L.py(0)); c.lineTo(L.px(x0), L.py(f(x0))); c.lineTo(L.px(x1), L.py(f(x1))); c.lineTo(L.px(x1), L.py(0)); c.closePath(); c.fill(); c.stroke();
+        aprox += h * (f(x0) + f(x1)) / 2;
+      }
+    } else {
+      var paso = met === 's13' ? 2 : 3;
+      for (i = 0; i < n; i += paso) {
+        var xs = [], ys = [];
+        for (k = 0; k <= paso; k++) { xs.push(a + (i + k) * h); ys.push(f(a + (i + k) * h)); }
+        // polinomio interpolante de Lagrange sobre el tramo
+        var P = function (x) { var s = 0, j, m; for (j = 0; j <= paso; j++) { var t = ys[j]; for (m = 0; m <= paso; m++) if (m !== j) t *= (x - xs[m]) / (xs[j] - xs[m]); s += t; } return s; };
+        c.fillStyle = paso === 2 ? 'rgba(28,122,76,.3)' : 'rgba(125,79,158,.3)'; c.strokeStyle = paso === 2 ? VERDE : MORADO; c.lineWidth = 1.2;
+        c.beginPath(); c.moveTo(L.px(xs[0]), L.py(0));
+        for (k = 0; k <= 30; k++) { var xx = xs[0] + (xs[paso] - xs[0]) * k / 30; c.lineTo(L.px(xx), L.py(P(xx))); }
+        c.lineTo(L.px(xs[paso]), L.py(0)); c.closePath(); c.fill(); c.stroke();
+        aprox += paso === 2 ? h / 3 * (ys[0] + 4 * ys[1] + ys[2]) : 3 * h / 8 * (ys[0] + 3 * ys[1] + 3 * ys[2] + ys[3]);
+      }
+    }
+    OVA.curva(L, f, AZUL, 2.6);
+    for (i = 0; i <= n; i++) OVA.punto(L, a + i * h, f(a + i * h), AZUL);
+  });
+  var nom = met === 'trap' ? 'trapecio' : met === 's13' ? 'Simpson 1/3' : 'Simpson 3/8', err = aprox - cfg.ex;
+  c.fillStyle = OVA.color('cv-text'); c.font = 'bold 11px ui-monospace,monospace'; c.fillText(cfg.n + ' · ' + nom, L.px(L.xmin) + 6, 22);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> con <strong>' + nom + '</strong>, n = ' + n + ' segmentos, h = ' + d4(h) + '<br>' +
+    'Aproximación: <strong style="color:#c68f2e">' + d5(aprox) + '</strong> · exacto ' + cfg.sEx + ' · error ' + (err >= 0 ? '+' : '') + d5(err) +
+    (Math.abs(err) < 1e-12 ? ' <strong>(exacto: el método integra polinomios de grado ≤ ' + (met === 'trap' ? 1 : 3) + ' sin error)</strong>' : '') + '<br>' +
+    '<span style="color:#8fb4d9">El trapecio une los puntos con rectas (error ~h²); Simpson 1/3 pasa parábolas por cada par de segmentos y Simpson 3/8 cúbicas por cada tres (error ~h⁴). Duplica n y mira cuánto cae el error.</span>';
+});
+
+/* ══════════ S13 / S14 · EDO: Euler, Heun, punto medio, RK4 ══════════ */
+var EDOS = {
+  ypy:  { f: function (x, y) { return y; }, ex: Math.exp, x0: 0, y0: 1, b: 2, n: "y' = y, y(0) = 1", sEx: 'y = eˣ', r: [0, 2, 0, 8] },
+  xmy:  { f: function (x, y) { return x - y; }, ex: function (x) { return x - 1 + 2 * Math.exp(-x); }, x0: 0, y0: 1, b: 3, n: "y' = x − y, y(0) = 1", sEx: 'y = x − 1 + 2e^{−x}', r: [0, 3, 0, 2.2] },
+  logi: { f: function (t, P) { return 0.5 * P * (1 - P / 100); }, ex: function (t) { return 100 / (1 + 9 * Math.exp(-0.5 * t)); }, x0: 0, y0: 10, b: 12, n: "P' = 0,5P(1 − P/100), P(0) = 10", sEx: 'P = 100/(1 + 9e^{−0,5t})', r: [0, 12, 0, 110] },
+  enf:  { f: function (t, T) { return -0.1 * (T - 20); }, ex: function (t) { return 20 + 70 * Math.exp(-0.1 * t); }, x0: 0, y0: 90, b: 30, n: "T' = −0,1(T − 20), T(0) = 90", sEx: 'T = 20 + 70e^{−0,1t}', r: [0, 30, 0, 100] }
+};
+function pasoEDO(met, f, x, y, h) {
+  var k1 = f(x, y), k2, k3, k4;
+  if (met === 'euler') return y + h * k1;
+  if (met === 'heun') { k2 = f(x + h, y + h * k1); return y + h * (k1 + k2) / 2; }
+  if (met === 'medio') { k2 = f(x + h / 2, y + h / 2 * k1); return y + h * k2; }
+  k2 = f(x + h / 2, y + h / 2 * k1); k3 = f(x + h / 2, y + h / 2 * k2); k4 = f(x + h, y + h * k3);
+  return y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+}
+function integrarEDO(met, cfg, h) {
+  var pts = [[cfg.x0, cfg.y0]], x = cfg.x0, y = cfg.y0, N = Math.round((cfg.b - cfg.x0) / h), i;
+  for (i = 0; i < N; i++) { y = pasoEDO(met, cfg.f, x, y, h); x = cfg.x0 + (i + 1) * h; pts.push([x, y]); }
+  return pts;
+}
+var NOMBRES = { euler: 'Euler', heun: 'Heun (predictor-corrector)', medio: 'punto medio', rk4: 'Runge-Kutta 4' };
+var EVALS = { euler: 1, heun: 2, medio: 2, rk4: 4 };
+function dibujarEDO(host, permitidos) {
+  var cfg = EDOS[q(host, '.edo').value] || EDOS.ypy;
+  var met = q(host, '.metodo').value; if (permitidos.indexOf(met) < 0) met = permitidos[0];
+  var hs = [cfg.b / 2, cfg.b / 4, cfg.b / 8, cfg.b / 16, cfg.b / 32], h = hs[parseInt(q(host, '.h').value, 10)] || hs[1];
+  q(host, '.h-val').textContent = 'h = ' + (Math.round(h * 1000) / 1000);
+  var pts = integrarEDO(met, cfg, h), L = marcoM(q(host, 'canvas'), 320, cfg.r[0], cfg.r[1], cfg.r[2], cfg.r[3]);
+  ejesM(L, cfg.b / 4, cfg.r[3] > 50 ? 20 : cfg.r[3] > 5 ? 2 : 0.5);
+  var c = L.ctx;
+  clipM(L, function () {
+    OVA.curva(L, cfg.ex, VERDE, 2.4);
+    poli(L, pts, ORO, 2.2);
+    pts.forEach(function (p) { OVA.punto(L, p[0], p[1], ORO); });
+  });
+  c.font = 'bold 11px ui-monospace,monospace'; c.fillStyle = VERDE; c.fillText('— solución exacta ' + cfg.sEx, L.px(L.xmin) + 6, 22);
+  c.fillStyle = ORO; c.fillText('— ' + NOMBRES[met], L.px(L.xmin) + 6, 38);
+  var yN = pts[pts.length - 1][1], yEx = cfg.ex(cfg.b), err = Math.abs(yN - yEx);
+  var pts2 = integrarEDO(met, cfg, h / 2), err2 = Math.abs(pts2[pts2.length - 1][1] - yEx);
+  return { cfg: cfg, met: met, h: h, pts: pts, yN: yN, yEx: yEx, err: err, err2: err2, N: pts.length - 1 };
+}
+OVA.viz.registrar('euler', function (host) {
+  var R = dibujarEDO(host, ['euler', 'heun', 'medio']);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + R.cfg.n + '</strong> · ' + NOMBRES[R.met] + ' con h = ' + d3(R.h) + ' (' + R.N + ' pasos, ' + EVALS[R.met] * R.N + ' evaluaciones de f)<br>' +
+    'En x = ' + R.cfg.b + ': aproximación <strong style="color:#c68f2e">' + d4(R.yN) + '</strong> · exacta ' + d4(R.yEx) + ' · error <strong>' + d4(R.err) + '</strong>' +
+    ' · con h/2 el error sería ' + d4(R.err2) + ' (cociente ' + (R.err2 > 0 ? (R.err / R.err2).toFixed(2) : '—') + ')<br>' +
+    '<span style="color:#8fb4d9">Euler sigue la tangente del punto actual durante todo el paso (error global ~h: al partir h, el error se parte). Heun y punto medio corrigen la pendiente con una segunda evaluación (error ~h²: se divide por 4).</span>';
+});
+OVA.viz.registrar('rungekutta', function (host) {
+  var R = dibujarEDO(host, ['rk4', 'heun', 'euler']);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + R.cfg.n + '</strong> · ' + NOMBRES[R.met] + ' con h = ' + d3(R.h) + ' (' + R.N + ' pasos, ' + EVALS[R.met] * R.N + ' evaluaciones de f)<br>' +
+    'En x = ' + R.cfg.b + ': aproximación <strong style="color:#c68f2e">' + d5(R.yN) + '</strong> · exacta ' + d5(R.yEx) + ' · error <strong>' + (R.err < 1e-3 ? R.err.toExponential(2) : d5(R.err)) + '</strong>' +
+    ' · con h/2: ' + (R.err2 < 1e-3 ? R.err2.toExponential(2) : d5(R.err2)) + ' (cociente ' + (R.err2 > 0 ? (R.err / R.err2).toFixed(1) : '—') + ')<br>' +
+    '<span style="color:#8fb4d9">RK4 evalúa la pendiente cuatro veces por paso y las promedia con pesos 1-2-2-1: error global ~h⁴, el cociente tiende a 16. Con el mismo número de evaluaciones de f, RK4 suele ganar por mucho a Euler.</span>';
+});
+
+/* ══════════ S14 · Orden de convergencia: error vs h (log-log) ══════════ */
+OVA.viz.registrar('ordenerror', function (host) {
+  var cfg = EDOS[q(host, '.edo').value] || EDOS.ypy;
+  var mets = ['euler', 'heun', 'rk4'], cols = { euler: ROJO, heun: ORO, rk4: VERDE }, hs = [1 / 8, 1 / 16, 1 / 32, 1 / 64, 1 / 128, 1 / 256].map(function (t) { return cfg.b * t; });
+  var L = marcoM(q(host, 'canvas'), 320, Math.log10(hs[5]) - 0.2, Math.log10(hs[0]) + 0.2, -12, 1);
+  ejesM(L, 0.5, 2, true);
+  var c = L.ctx, series = {}, pend = {};
+  mets.forEach(function (m) {
+    var pts = hs.map(function (h) { var p = integrarEDO(m, cfg, h); var e = Math.abs(p[p.length - 1][1] - cfg.ex(cfg.b)); return [Math.log10(h), Math.log10(Math.max(e, 1e-14))]; });
+    series[m] = pts; clipM(L, function () { poli(L, pts, cols[m], 2.2); pts.forEach(function (p) { OVA.punto(L, p[0], p[1], cols[m]); }); });
+    pend[m] = (pts[3][1] - pts[5][1]) / (pts[3][0] - pts[5][0]);   // pendiente en la zona asintótica (h pequeño)
+  });
+  c.font = 'bold 11px ui-monospace,monospace'; c.fillStyle = ROJO; c.fillText('— Euler', L.px(L.xmin) + 6, 22); c.fillStyle = ORO; c.fillText('— Heun', L.px(L.xmin) + 6, 38); c.fillStyle = VERDE; c.fillText('— RK4', L.px(L.xmin) + 6, 54);
+  c.fillStyle = OVA.color('cv-text'); c.fillText('log₁₀ h →', L.px(L.xmax) - 70, L.py(L.ymin) - 6); c.fillText('log₁₀ error', L.px(L.xmin) + 6, L.py(L.ymax) + 12 + 60);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · error en x = ' + cfg.b + ' frente al tamaño de paso h, en escala log-log (h desde ' + d3(hs[0]) + ' hasta ' + d4(hs[5]) + ')<br>' +
+    'Pendientes (tramo de h más pequeño): Euler <strong style="color:#e08b7e">' + pend.euler.toFixed(2) + '</strong> (orden 1) · Heun <strong style="color:#f0c674">' + pend.heun.toFixed(2) + '</strong> (orden 2) · RK4 <strong style="color:#7fd4a4">' + pend.rk4.toFixed(2) + '</strong> (orden 4)<br>' +
+    '<span style="color:#8fb4d9">En escala log-log, error ≈ C·hᵖ es una recta de pendiente p: el orden del método. Cada vez que h se divide por 10, el error de RK4 cae 10⁴ veces y el de Euler solo 10.</span>';
+});
+
 })();
