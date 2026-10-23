@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 13 · EDO numéricas: método de Euler — Métodos Numéricos · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260827c">
+<title>Guía 13 · EDO numéricas: método de Euler — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912e">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Métodos Numéricos · Semana 13</h1>
+      <h1>Métodos Numéricos · Guía 13</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,308 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Resolver una EDO con números</a>
+    <a href="#s2">2 · Método de Euler</a>
+    <a href="#s3">3 · El error de Euler</a>
+    <a href="#s4">4 · Mejoras: Heun y punto medio</a>
+    <a href="#s5">5 · Aplicaciones</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 13 · EDO numéricas: método de Euler</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 13 · Corte III</div>
+  <h2>EDO numéricas: método de Euler</h2>
+  <p>La mayoría de las ecuaciones diferenciales que modelan la realidad no se pueden resolver con una
+     fórmula. Pero sí se pueden <em>simular</em>: desde la condición inicial, avanzar un paso pequeño
+     siguiendo la pendiente que la ecuación dicta, y repetir. Ese es el método de Euler, el más simple
+     de todos. Entender por qué falla y cómo se corrige abre la puerta a los métodos de Runge-Kutta de la
+     próxima guía.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 25.1–25.2</span>
+    <span class="chip">Burden · Cap. 5.1–5.2</span>
+    <span class="chip">Semana 13</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En la Guía 2 vimos la serie de Taylor y en la Guía 12 las diferencias
+  finitas. Euler es exactamente la diferencia hacia adelante leída al revés: si $y'\approx\dfrac{y(x+h)-y(x)}{h}$,
+  entonces $y(x+h)\approx y(x)+h\,y'(x)$.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Resolver una EDO con números</h3>
+
+  <div class="callout-dark">
+    <h3>El problema de valor inicial</h3>
+    <p>Una EDO de primer orden $y'=f(x,y)$ con condición inicial $y(x_0)=y_0$ tiene (bajo condiciones
+       suaves) una única solución. Resolverla numéricamente no significa hallar la fórmula de $y(x)$, sino
+       una <strong>tabla</strong> de valores aproximados $y_1,y_2,\dots$ en los puntos $x_1=x_0+h$,
+       $x_2=x_0+2h,\dots$ El tamaño de paso $h$ controla la precisión y el costo.</p>
+    <p>Para aprender, usaremos ecuaciones cuya solución exacta conocemos: así podremos medir el error.
+       En la práctica se usa el método precisamente cuando la exacta no existe.</p>
+  </div>
+
+  <div class="def">
+    <strong>Ecuaciones de prueba.</strong>
+    <br>• $y'=y$, $y(0)=1$: solución $y=e^{x}$, $y(1)=2{,}71828$.
+    <br>• $y'=x-y$, $y(0)=1$: solución $y=x-1+2e^{-x}$, $y(1)=0{,}7358$.
+  </div>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Método de Euler</h3>
+
+  <div class="callout-dark">
+    <h3>Seguir la tangente un paso</h3>
+    <p>En el punto $(x_i,y_i)$ la ecuación nos dice la pendiente: $y'=f(x_i,y_i)$. Euler supone que esa
+       pendiente se mantiene durante todo el paso y avanza en línea recta:
+       $$y_{i+1}=y_i+h\,f(x_i,y_i).$$
+       Luego recalcula la pendiente en el nuevo punto y repite. La solución numérica es una poligonal que
+       sigue, con retraso, a la curva verdadera.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $y'=y$, $y(0)=1$, con $h=0{,}5$ hasta $x=1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Paso 1</div>
+        Pendiente en $(0,1)$: $f=1$. $y_1=1+0{,}5(1)=1{,}5$ (exacto $e^{0{,}5}=1{,}6487$).
+      </div>
+      <div class="paso"><div class="paso-t">Paso 2</div>
+        Pendiente en $(0{,}5,\,1{,}5)$: $f=1{,}5$. $y_2=1{,}5+0{,}5(1{,}5)=2{,}25$ (exacto $e=2{,}7183$).
+      </div>
+      <div class="paso"><div class="paso-t">Error</div>
+        $2{,}7183-2{,}25=0{,}468$, un $17{,}2\,\%$. Euler se queda corto porque la curva se empina dentro de cada paso y la tangente del inicio no lo sabe.
+      </div>
     </div>
   </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $y'=x-y$, $y(0)=1$, con $h=0{,}5$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Dos pasos</div>
+        $y_1=1+0{,}5(0-1)=0{,}5$; $\quad y_2=0{,}5+0{,}5(0{,}5-0{,}5)=0{,}5$.
+      </div>
+      <div class="paso"><div class="paso-t">Comparar</div>
+        Exacto $y(1)=0{,}7358$: error $0{,}236$. Aquí Euler se pasa de largo al bajar y luego no sube lo suficiente.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">2.1 La poligonal de Euler frente a la solución exacta</div>
+  <div class="viz" data-viz="euler">
+    <div class="viz-controls">
+      <label for="eu-e">Ecuación</label>
+      <select id="eu-e" class="edo">
+        <option value="ypy">y' = y, y(0) = 1</option>
+        <option value="xmy">y' = x − y, y(0) = 1</option>
+        <option value="logi">P' = 0,5P(1 − P/100), P(0) = 10</option>
+        <option value="enf">T' = −0,1(T − 20), T(0) = 90</option>
+      </select>
+      <label for="eu-m">Método</label>
+      <select id="eu-m" class="metodo">
+        <option value="euler">Euler</option>
+        <option value="heun">Heun</option>
+        <option value="medio">punto medio</option>
+      </select>
+      <label for="eu-h">Paso</label>
+      <input id="eu-h" class="h" type="range" min="0" max="4" step="1" value="1">
+      <span class="h-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Reduce el paso: la poligonal de Euler se acerca a la curva y el error cae a la mitad cada vez. Cambia
+    a Heun o punto medio y observa que el error cae a la cuarta parte.
+  </p>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — El método de Euler</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · El error de Euler</h3>
+
+  <div class="callout-dark">
+    <h3>Local $O(h^{2})$, global $O(h)$</h3>
+    <p>Por Taylor, $y(x+h)=y+hy'+\tfrac{h^{2}}{2}y''+\cdots$; Euler conserva solo hasta $hy'$, así que el error
+       de <em>un</em> paso (local) es del orden de $h^{2}$. Pero para llegar a $x=b$ hacen falta $(b-a)/h$
+       pasos, y los errores se acumulan: el error <em>global</em> es del orden de $h$. Consecuencia
+       práctica: para ganar una cifra decimal hay que dar diez veces más pasos.</p>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · $y'=y$: el error se parte al partir $h$</h4>
+    <div class="ejemplo-body">
+      <table class="tbl">
+        <tr><th>$h$</th><th>pasos</th><th>$y(1)$ de Euler</th><th>error</th><th>cociente</th></tr>
+        <tr><td>0,5</td><td>2</td><td>$1{,}5^{2}=2{,}2500$</td><td>0,4683</td><td>—</td></tr>
+        <tr><td>0,25</td><td>4</td><td>$1{,}25^{4}=2{,}4414$</td><td>0,2769</td><td>0,59</td></tr>
+        <tr><td>0,125</td><td>8</td><td>$1{,}125^{8}=2{,}5658$</td><td>0,1525</td><td>0,55</td></tr>
+        <tr><td>0,0625</td><td>16</td><td>$1{,}0625^{16}=2{,}6379$</td><td>0,0804</td><td>0,53</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        Para $y'=y$ cada paso multiplica por $(1+h)$, así que $y_N=(1+h)^{1/h}$, que tiende a $e$ muy despacio. El cociente de errores se acerca a $0{,}5$: orden 1.
+      </div>
+      <div class="paso"><div class="paso-t">El error local, visto en un paso</div>
+        Un paso con $h=0{,}5$ da $1{,}5$ frente a $e^{0{,}5}=1{,}6487$: error $0{,}1487\approx\tfrac{h^{2}}{2}y''=0{,}125$ más términos menores.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Mejoras: Heun y punto medio</h3>
+
+  <div class="callout-dark">
+    <h3>Corregir la pendiente con una segunda evaluación</h3>
+    <p>El defecto de Euler es usar solo la pendiente del inicio del paso. <strong>Heun</strong> da un paso
+       de Euler provisional (<em>predictor</em>), mide la pendiente al final y usa el promedio de las dos
+       (<em>corrector</em>). El <strong>punto medio</strong> usa Euler para llegar a la mitad del paso y toma
+       la pendiente ahí. Ambos cuestan dos evaluaciones de $f$ por paso y tienen error global $O(h^{2})$:
+       partir $h$ divide el error por 4.</p>
+  </div>
+
+  <div class="def">
+    <strong>Heun (predictor-corrector):</strong> $k_1=f(x_i,y_i)$, $\ y^{*}=y_i+hk_1$, $\ k_2=f(x_{i+1},y^{*})$, $\ y_{i+1}=y_i+h\,\dfrac{k_1+k_2}{2}$.
+    <br><strong>Punto medio (Euler modificado):</strong> $k_1=f(x_i,y_i)$, $\ k_2=f\!\big(x_i+\tfrac h2,\ y_i+\tfrac h2k_1\big)$, $\ y_{i+1}=y_i+h\,k_2$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Heun para $y'=y$, $h=0{,}5$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Paso 1</div>
+        $k_1=1$; predictor $y^{*}=1+0{,}5(1)=1{,}5$; $k_2=f(0{,}5,\,1{,}5)=1{,}5$; corrector $y_1=1+0{,}5\cdot\dfrac{1+1{,}5}{2}=1{,}625$ (exacto $1{,}6487$).
+      </div>
+      <div class="paso"><div class="paso-t">Paso 2</div>
+        Para $y'=y$ cada paso de Heun multiplica por $1+h+\tfrac{h^{2}}{2}=1{,}625$: $y_2=1{,}625^{2}=2{,}6406$. Error $0{,}0777$ frente al $0{,}468$ de Euler: seis veces menor con el doble de evaluaciones.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Heun y punto medio para $y'=x-y$, $h=0{,}5$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Heun, paso 1</div>
+        $k_1=f(0,1)=-1$; $y^{*}=1+0{,}5(-1)=0{,}5$; $k_2=f(0{,}5,\,0{,}5)=0$; $y_1=1+0{,}5\cdot\dfrac{-1+0}{2}=0{,}75$.
+      </div>
+      <div class="paso"><div class="paso-t">Heun, paso 2</div>
+        $k_1=f(0{,}5,\,0{,}75)=-0{,}25$; $y^{*}=0{,}625$; $k_2=f(1,\,0{,}625)=0{,}375$; $y_2=0{,}75+0{,}5\cdot\dfrac{-0{,}25+0{,}375}{2}=0{,}78125$.
+      </div>
+      <div class="paso"><div class="paso-t">Punto medio</div>
+        $k_1=-1$; $k_2=f(0{,}25,\,0{,}75)=-0{,}5$; $y_1=1+0{,}5(-0{,}5)=0{,}75$. Para esta ecuación lineal coincide con Heun paso a paso: $y_2=0{,}78125$.
+      </div>
+      <div class="paso"><div class="paso-t">Comparar</div>
+        Exacto $0{,}7358$: error $0{,}045$ (Heun y punto medio) frente a $0{,}236$ (Euler).
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Aplicaciones</h3>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Crecimiento logístico $P'=0{,}5P\big(1-\tfrac{P}{100}\big)$, $P(0)=10$, $h=1$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Euler</div>
+        $P_1=10+1\cdot0{,}5(10)(0{,}9)=14{,}5$; $\quad P_2=14{,}5+0{,}5(14{,}5)(1-0{,}145)=14{,}5+6{,}19875=20{,}699$.
+      </div>
+      <div class="paso"><div class="paso-t">Comparar</div>
+        Exacto $P(2)=\dfrac{100}{1+9e^{-1}}=23{,}197$. Euler va retrasado mientras la población acelera; cerca de la capacidad $100$ el error cambia de signo y puede incluso sobrepasarla si $h$ es grande (pruébalo en el visualizador con el paso mayor).
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 7 · Enfriamiento $T'=-0{,}1(T-20)$, $T(0)=90$, $h=5$ min</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Euler</div>
+        $T_1=90+5(-0{,}1)(70)=55$; $\quad T_2=55+5(-0{,}1)(35)=37{,}5$.
+      </div>
+      <div class="paso"><div class="paso-t">Comparar</div>
+        Exacto $T(10)=20+70e^{-1}=45{,}75$. Con $h=5$ Euler enfría demasiado rápido: cada paso resta $hk=0{,}5$ de la diferencia con el ambiente, cuando la exacta resta $1-e^{-0{,}5}=0{,}39$. Cada paso multiplica la diferencia $T-20$ por $(1-0{,}1h)$: con $h\gt10$ ese factor es negativo y la solución numérica oscila alrededor de 20; con $h\gt20$ es menor que $-1$ y las oscilaciones crecen sin límite. La estabilidad también depende de $h$.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Error y mejoras</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      Las proyecciones de adopción de un producto (modelo logístico) y de inventarios con demanda
+      variable son EDO que rara vez tienen fórmula cerrada; Euler es lo que hace una hoja de cálculo
+      cuando proyecta «el valor del mes siguiente = valor actual + tasa × un mes». Reducir el paso a
+      semanas mejora la proyección.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Un saldo con interés continuo y aportes variables sigue $S'=rS+a(t)$. La capitalización mensual
+      es, literalmente, el método de Euler con $h=1/12$, y la diferencia entre capitalización mensual y
+      continua es el error de Euler: por eso la tasa efectiva anual supera a la nominal.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      Los motores de física de los videojuegos integran posición y velocidad con Euler (o Euler
+      semi-implícito) en cada cuadro: $h$ es el tiempo entre cuadros. El error de Euler es la causa de
+      que los objetos «ganen energía» o atraviesen paredes cuando el juego se congela y $h$ crece.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      La carga de un condensador $RC\,v'=V-v$ y la corriente en un inductor son EDO de primer orden que un
+      simulador de circuitos integra paso a paso; el enfriamiento del Ejemplo 7 tiene exactamente la
+      misma forma. La condición de estabilidad $h\lt2RC$ aparece en todo simulador explícito.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Problema de valor inicial</strong>: $y'=f(x,y)$, $y(x_0)=y_0$; la solución numérica es una tabla de $y_i$ con paso $h$.</li>
+    <li><strong>Euler</strong>: $y_{i+1}=y_i+h\,f(x_i,y_i)$. Para $y'=y$, $h=0{,}5$: $1{,}5$, $2{,}25$ (error 17 %).</li>
+    <li><strong>Error</strong>: local $O(h^{2})$, global $O(h)$; partir $h$ parte el error. Tabla: 0,468 → 0,277 → 0,152 → 0,080.</li>
+    <li><strong>Heun</strong>: predictor de Euler, corrector con el promedio de pendientes. <strong>Punto medio</strong>: pendiente en $x_i+h/2$. Ambos $O(h^{2})$, dos evaluaciones por paso.</li>
+    <li>Para $y'=y$ con $h=0{,}5$: Heun da $1{,}625$, $2{,}6406$ (error 0,078, seis veces menor que Euler).</li>
+    <li>Un $h$ grande no solo pierde precisión: puede volver <strong>inestable</strong> el método (enfriamiento con $h\gt20$).</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/4-2-direction-fields-and-numerical-methods" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Método de Euler</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260827c"></script>
+
+<script src="../assets/ova.js?v=20260912e"></script>
+<script src="../assets/viz-metodos.js?v=20260912e"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "El método de Euler · 3 preguntas", "items": [ { "etiqueta": "Fórmula", "nivel": 1, "criterio": "Enunciar el paso de Euler (§2)", "enunciado": "El método de Euler para $y'=f(x,y)$ avanza con:", "opciones": [ "$y_{i+1}=y_i+h\\,f(x_i,y_i)$", "$y_{i+1}=y_i+h\\,f(x_{i+1},y_{i+1})$", "$y_{i+1}=f(x_i,y_i)$", "$y_{i+1}=y_i+f(x_i,y_i)$" ], "correcta": 0, "pista": "Sigue la tangente del punto actual durante un paso $h$.", "solucion": "Euler usa la pendiente en el punto conocido: $y_{i+1}=y_i+h\\,f(x_i,y_i)$. Evaluar $f$ en el punto nuevo sería un método implícito; sin el factor $h$ el paso no tendría la escala correcta." }, { "etiqueta": "Dos pasos", "nivel": 2, "criterio": "Aplicar Euler (§2)", "enunciado": "Para $y'=y$, $y(0)=1$ y $h=0{,}5$, Euler da $y(1)\\approx$:", "opciones": [ "$1{,}5$", "$2{,}5$", "$2{,}25$", "$2{,}7183$" ], "correcta": 2, "pista": "Cada paso multiplica por $1+h$.", "solucion": "$y_1=1+0{,}5(1)=1{,}5$ y $y_2=1{,}5+0{,}5(1{,}5)=2{,}25$. El exacto es $e=2{,}7183$; $1{,}5$ es solo el primer paso." }, { "etiqueta": "Por qué falla", "nivel": 2, "criterio": "Explicar el error de Euler (§2–3)", "enunciado": "Para $y'=y$, Euler siempre se queda por debajo de la solución exacta porque:", "opciones": [ "redondea hacia abajo", "la condición inicial está mal", "el paso $h$ es negativo", "usa la pendiente del inicio del paso, y la curva se empina dentro del paso" ], "correcta": 3, "pista": "La pendiente $y'=y$ crece a lo largo del paso.", "solucion": "Euler congela la pendiente del punto inicial durante todo el paso. Como $y'=y$ aumenta mientras $y$ crece, la tangente inicial subestima el avance en cada paso y los errores se acumulan." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Error y mejoras · 3 preguntas", "items": [ { "etiqueta": "Orden", "nivel": 2, "criterio": "Relacionar error global con $h$ (§3)", "enunciado": "Si el error global de Euler con $h=0{,}25$ es $0{,}277$, con $h=0{,}125$ será aproximadamente:", "opciones": [ "$0{,}55$ (el doble)", "$0{,}15$ (la mitad): error global $O(h)$", "$0{,}07$ (la cuarta parte)", "$0{,}277$ (no cambia)" ], "correcta": 1, "pista": "Tabla del Ejemplo 3.", "solucion": "El error global de Euler es proporcional a $h$: partir $h$ parte el error. La tabla da $0{,}152$ con $h=0{,}125$. Dividir por 4 corresponde a métodos de segundo orden como Heun." }, { "etiqueta": "Heun", "nivel": 3, "criterio": "Aplicar un paso de Heun (§4)", "enunciado": "Para $y'=y$, $y(0)=1$, $h=0{,}5$, el primer paso de Heun da $y_1=$:", "opciones": [ "$1{,}625$", "$1{,}5$", "$1{,}75$", "$1{,}6487$" ], "correcta": 0, "pista": "Predictor $1{,}5$; promedio de pendientes $(1+1{,}5)/2$.", "solucion": "$k_1=1$, predictor $y^{*}=1{,}5$, $k_2=1{,}5$, corrector $y_1=1+0{,}5\\cdot\\tfrac{1+1{,}5}{2}=1{,}625$. $1{,}5$ es Euler; $1{,}6487$ es el valor exacto $e^{0{,}5}$; $1{,}75$ usaría solo $k_2$." }, { "etiqueta": "Costo", "nivel": 2, "criterio": "Comparar costo y precisión (§4)", "enunciado": "Respecto a Euler, Heun y punto medio:", "opciones": [ "cuestan cuatro evaluaciones y son $O(h^{4})$", "no necesitan evaluar $f$", "cuestan dos evaluaciones de $f$ por paso y su error global es $O(h^{2})$", "cuestan lo mismo y tienen el mismo error" ], "correcta": 2, "pista": "Una evaluación extra por paso mejora el orden en 1.", "solucion": "Ambos evalúan $f$ dos veces por paso (en el inicio y en el punto corregido) y alcanzan orden 2: partir $h$ divide el error por 4. Cuatro evaluaciones y orden 4 es Runge-Kutta 4 (Guía 14)." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Tabla", "nivel": 1, "criterio": "Entender qué entrega un método numérico (§1)", "enunciado": "Resolver numéricamente $y'=f(x,y)$, $y(x_0)=y_0$ significa obtener:", "opciones": [ "la fórmula exacta de $y(x)$", "solo el valor de $y_0$", "la derivada de $f$", "una tabla de valores aproximados $y_i$ en los puntos $x_i=x_0+ih$" ], "correcta": 3, "pista": "Se avanza paso a paso desde la condición inicial.", "solucion": "El resultado es una tabla $(x_i,y_i)$: la solución se conoce solo en los nodos y de forma aproximada. Se usa justamente cuando la fórmula exacta no existe." }, { "etiqueta": "x−y", "nivel": 2, "criterio": "Aplicar Euler a $y'=x-y$ (§2)", "enunciado": "Para $y'=x-y$, $y(0)=1$, $h=0{,}5$, el primer paso de Euler da $y_1=$:", "opciones": [ "$1$", "$0{,}5$", "$1{,}5$", "$0{,}75$" ], "correcta": 1, "pista": "$f(0,1)=0-1=-1$.", "solucion": "$y_1=1+0{,}5\\cdot f(0,1)=1+0{,}5(-1)=0{,}5$. El segundo paso da $y_2=0{,}5+0{,}5(0{,}5-0{,}5)=0{,}5$; $0{,}75$ es lo que da Heun." }, { "etiqueta": "Local", "nivel": 3, "criterio": "Distinguir error local y global (§3)", "enunciado": "El error de Euler es local $O(h^{2})$ pero global $O(h)$ porque:", "opciones": [ "los errores de los $(b-a)/h$ pasos se acumulan: $\\tfrac{b-a}{h}\\cdot h^{2}\\sim h$", "el error local se cancela de un paso a otro", "el error global es siempre menor que el local", "$h^{2}\\gt h$ cuando $h$ es pequeño" ], "correcta": 0, "pista": "¿Cuántos pasos hacen falta para llegar a $b$?", "solucion": "Cada paso aporta un error $\\sim h^{2}$ y hay $(b-a)/h$ pasos: el total es $\\sim(b-a)h$. Por eso ganar una cifra decimal exige diez veces más pasos. Para $h\\lt1$ se cumple $h^{2}\\lt h$." }, { "etiqueta": "Tabla h", "nivel": 2, "criterio": "Leer la convergencia en la tabla (§3)", "enunciado": "Para $y'=y$, Euler con $h=0{,}0625$ (16 pasos) da $1{,}0625^{16}=2{,}6379$. El error es:", "opciones": [ "cero", "$2{,}6379$", "$0{,}0804$, cerca de la mitad del error con $h=0{,}125$ ($0{,}1525$)", "$0{,}0804$, la cuarta parte del anterior" ], "correcta": 2, "pista": "$e-2{,}6379$.", "solucion": "$2{,}71828-2{,}6379=0{,}0804$, y $0{,}0804/0{,}1525=0{,}53$: aproximadamente la mitad, como corresponde a un método de orden 1." }, { "etiqueta": "Punto medio", "nivel": 3, "criterio": "Aplicar el punto medio (§4)", "enunciado": "Para $y'=x-y$, $y(0)=1$, $h=0{,}5$, el método del punto medio da $y_1=$:", "opciones": [ "$0{,}5$", "$1$", "$0{,}625$", "$0{,}75$" ], "correcta": 3, "pista": "$k_2=f(0{,}25,\\ 1+0{,}25(-1))=f(0{,}25,\\,0{,}75)$.", "solucion": "$k_1=-1$; medio paso: $y=1+0{,}25(-1)=0{,}75$; $k_2=0{,}25-0{,}75=-0{,}5$; $y_1=1+0{,}5(-0{,}5)=0{,}75$. Coincide con Heun para esta ecuación. Euler daba $0{,}5$." }, { "etiqueta": "Heun x−y", "nivel": 3, "criterio": "Completar dos pasos de Heun (§4)", "enunciado": "Continuando con Heun para $y'=x-y$ ($h=0{,}5$, $y_1=0{,}75$), el segundo paso da $y_2=$:", "opciones": [ "$0{,}7358$", "$0{,}78125$ (error $0{,}045$ frente a $0{,}7358$)", "$0{,}5$", "$0{,}625$" ], "correcta": 1, "pista": "$k_1=f(0{,}5,0{,}75)=-0{,}25$; $y^{*}=0{,}625$; $k_2=f(1,0{,}625)=0{,}375$.", "solucion": "$y_2=0{,}75+0{,}5\\cdot\\tfrac{-0{,}25+0{,}375}{2}=0{,}75+0{,}03125=0{,}78125$. Exacto $0{,}7358$: error $0{,}045$, cinco veces menor que el de Euler ($0{,}236$). $0{,}625$ es solo el predictor." }, { "etiqueta": "Logístico", "nivel": 2, "criterio": "Aplicar Euler a un modelo (§5)", "enunciado": "Para $P'=0{,}5P(1-P/100)$, $P(0)=10$, $h=1$, el primer paso de Euler da $P_1=$:", "opciones": [ "$14{,}5$", "$15$", "$10{,}5$", "$19$" ], "correcta": 0, "pista": "$f(0,10)=0{,}5\\cdot10\\cdot0{,}9=4{,}5$.", "solucion": "$P_1=10+1\\cdot4{,}5=14{,}5$. El segundo paso da $20{,}699$ frente al exacto $23{,}197$: Euler se retrasa mientras la población acelera." }, { "etiqueta": "Estabilidad", "nivel": 3, "criterio": "Reconocer la inestabilidad por $h$ grande (§5)", "enunciado": "Para $T'=-0{,}1(T-20)$, cada paso de Euler multiplica $T-20$ por $1-0{,}1h$. Con $h=25$:", "opciones": [ "el método es exacto", "el factor es $2{,}5$ y la temperatura crece", "el factor es $-1{,}5$: la solución numérica oscila con amplitud creciente (inestable)", "el factor es $0{,}75$ y el método converge" ], "correcta": 2, "pista": "$1-0{,}1\\cdot25=-1{,}5$, de valor absoluto mayor que 1.", "solucion": "$1-2{,}5=-1{,}5$: cada paso cambia el signo de $T-20$ y lo agranda 1,5 veces. El método es inestable para $h\\gt20$ aunque la solución exacta decaiga suavemente. Para $h=5$ el factor es $0{,}5$ y todo va bien." } ] });
+</script>
 </body>
 </html>
