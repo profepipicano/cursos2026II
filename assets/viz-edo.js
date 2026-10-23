@@ -916,4 +916,226 @@ OVA.viz.registrar('superposicion', function (host) {
     'transitorio que se desvanece; la y_p, la respuesta permanente.</span>';
 });
 
+/* ══════════════════════════════════════════════════════════
+   CORTE III · S11–S14
+   particular (S11) · resorte · pendulo (S12) · laplace (S13)
+   traslacion · escalon (S14)
+   ══════════════════════════════════════════════════════════ */
+function marcoE(cv, alto, xmin, xmax, ymin, ymax) {
+  var L = OVA.lienzo(cv, { alto: alto });
+  var padL = 44, padR = 14, padT = 14, padB = 26;
+  L.sx = (L.w - padL - padR) / (xmax - xmin); L.sy = (L.h - padT - padB) / (ymax - ymin);
+  L.ox = padL - xmin * L.sx; L.oy = padT + ymax * L.sy;
+  L.xmin = xmin; L.xmax = xmax; L.ymin = ymin; L.ymax = ymax; return L;
+}
+function ejesE(L, px, py) {
+  var c = L.ctx, grid = OVA.color('cv-grid'), axis = OVA.color('cv-axis'), txt = OVA.color('cv-text'), v, p;
+  c.strokeStyle = grid; c.lineWidth = 1; c.fillStyle = txt; c.font = '10px ui-monospace,monospace';
+  for (v = Math.ceil(L.xmin / px - 1e-9) * px; v <= L.xmax + 1e-9; v += px) { p = L.px(v); c.beginPath(); c.moveTo(p, L.py(L.ymin)); c.lineTo(p, L.py(L.ymax)); c.stroke(); if (Math.abs(v) > 1e-9) c.fillText(String(Math.round(v * 100) / 100), p - 6, L.py(L.ymin) + 13); }
+  for (v = Math.ceil(L.ymin / py - 1e-9) * py; v <= L.ymax + 1e-9; v += py) { p = L.py(v); c.beginPath(); c.moveTo(L.px(L.xmin), p); c.lineTo(L.px(L.xmax), p); c.stroke(); if (Math.abs(v) > 1e-9) c.fillText(String(Math.round(v * 100) / 100), L.px(L.xmin) - 34, p + 3); }
+  c.strokeStyle = axis; c.lineWidth = 1.6;
+  var yA = Math.min(Math.max(0, L.ymin), L.ymax), xA = Math.min(Math.max(0, L.xmin), L.xmax);
+  c.beginPath(); c.moveTo(L.px(L.xmin), L.py(yA)); c.lineTo(L.px(L.xmax), L.py(yA)); c.stroke();
+  c.beginPath(); c.moveTo(L.px(xA), L.py(L.ymin)); c.lineTo(L.px(xA), L.py(L.ymax)); c.stroke();
+}
+function clipE(L, fn) { var c = L.ctx; c.save(); c.beginPath(); c.rect(L.px(L.xmin), L.py(L.ymax), L.px(L.xmax) - L.px(L.xmin), L.py(L.ymin) - L.py(L.ymax)); c.clip(); fn(); c.restore(); }
+function n3(v) { return (Math.round(v * 1000) / 1000).toFixed(3); }
+function n4(v) { return (Math.round(v * 10000) / 10000).toFixed(4); }
+function der1(f, x) { var h = 1e-4; return (f(x + h) - f(x - h)) / (2 * h); }
+function der2(f, x) { var h = 1e-3; return (f(x + h) - 2 * f(x) + f(x - h)) / (h * h); }
+function leyenda(L, items) { var c = L.ctx; c.font = 'bold 11px ui-monospace,monospace'; items.forEach(function (it, i) { c.fillStyle = it[1]; c.fillText(it[0], L.px(L.xmin) + 6, 22 + 16 * i); }); }
+
+/* ══════════ S11 · y = y_c + y_p: la particular y la ecuación ══════════ */
+var PART = {
+  lin:  { n: "y'' − 3y' + 2y = 4x", y1: function (x) { return Math.exp(x); }, y2: function (x) { return Math.exp(2 * x); }, yp: function (x) { return 2 * x + 3; },
+          g: function (x) { return 4 * x; }, ode: function (x, y, yp, ypp) { return ypp - 3 * yp + 2 * y; }, syp: 'y_p = 2x + 3', syc: 'c₁eˣ + c₂e²ˣ', r: [0, 2, -6, 10], met: 'coeficientes indeterminados (g polinomio → y_p = Ax + B)' },
+  exp:  { n: "y'' + y = e^{2x}", y1: Math.cos, y2: Math.sin, yp: function (x) { return Math.exp(2 * x) / 5; },
+          g: function (x) { return Math.exp(2 * x); }, ode: function (x, y, yp, ypp) { return ypp + y; }, syp: 'y_p = e²ˣ/5', syc: 'c₁cos x + c₂sen x', r: [0, 3, -4, 8], met: 'coeficientes indeterminados (g exponencial → y_p = Ae²ˣ)' },
+  res:  { n: "y'' + 4y = 8cos 2x (resonancia)", y1: function (x) { return Math.cos(2 * x); }, y2: function (x) { return Math.sin(2 * x); }, yp: function (x) { return 2 * x * Math.sin(2 * x); },
+          g: function (x) { return 8 * Math.cos(2 * x); }, ode: function (x, y, yp, ypp) { return ypp + 4 * y; }, syp: 'y_p = 2x·sen 2x', syc: 'c₁cos 2x + c₂sen 2x', r: [0, 12, -25, 25], met: 'duplicación: g ya está en y_c → se multiplica por x; la amplitud crece sin límite' },
+  dup:  { n: "y'' − 3y' + 2y = eˣ", y1: function (x) { return Math.exp(x); }, y2: function (x) { return Math.exp(2 * x); }, yp: function (x) { return -x * Math.exp(x); },
+          g: Math.exp, ode: function (x, y, yp, ypp) { return ypp - 3 * yp + 2 * y; }, syp: 'y_p = −x·eˣ', syc: 'c₁eˣ + c₂e²ˣ', r: [0, 2, -6, 10], met: 'duplicación: eˣ es solución homogénea → y_p = Ax·eˣ' },
+  sec:  { n: "y'' + y = sec x", y1: Math.cos, y2: Math.sin, yp: function (x) { return Math.cos(x) * Math.log(Math.abs(Math.cos(x))) + x * Math.sin(x); },
+          g: function (x) { return 1 / Math.cos(x); }, ode: function (x, y, yp, ypp) { return ypp + y; }, syp: 'y_p = cos x·ln|cos x| + x·sen x', syc: 'c₁cos x + c₂sen x', r: [0, 1.4, -2, 4], met: 'variación de parámetros (sec x no admite coeficientes indeterminados)' }
+};
+OVA.viz.registrar('particular', function (host) {
+  var cfg = PART[q(host, 'select').value] || PART.lin;
+  var c1 = parseFloat(q(host, '.c1').value) / 10, c2 = parseFloat(q(host, '.c2').value) / 10;
+  q(host, '.c1-val').textContent = 'c₁ = ' + c1.toFixed(1); q(host, '.c2-val').textContent = 'c₂ = ' + c2.toFixed(1);
+  var y = function (x) { return c1 * cfg.y1(x) + c2 * cfg.y2(x) + cfg.yp(x); };
+  var L = marcoE(q(host, 'canvas'), 320, cfg.r[0], cfg.r[1], cfg.r[2], cfg.r[3]);
+  ejesE(L, cfg.r[1] > 5 ? 2 : 0.5, (cfg.r[3] - cfg.r[2]) > 20 ? 10 : 2);
+  clipE(L, function () {
+    OVA.curva(L, cfg.g, 'rgba(150,167,181,.9)', 1.4);
+    OVA.curva(L, cfg.yp, ORO, 2.2);
+    OVA.curva(L, y, AZUL, 3);
+  });
+  leyenda(L, [['— y = y_c + y_p', AZUL], ['— ' + cfg.syp, ORO], ['— g(x) (lado derecho)', 'rgba(150,167,181,.9)']]);
+  var x0 = cfg.r[0] + 0.45 * (cfg.r[1] - cfg.r[0]);
+  var resid = cfg.ode(x0, y(x0), der1(y, x0), der2(y, x0)) - cfg.g(x0);
+  var residP = cfg.ode(x0, cfg.yp(x0), der1(cfg.yp, x0), der2(cfg.yp, x0)) - cfg.g(x0);
+  var residC = cfg.ode(x0, c1 * cfg.y1(x0) + c2 * cfg.y2(x0), der1(function (x) { return c1 * cfg.y1(x) + c2 * cfg.y2(x); }, x0), der2(function (x) { return c1 * cfg.y1(x) + c2 * cfg.y2(x); }, x0));
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · y_c = ' + cfg.syc + ' · ' + cfg.syp + ' por ' + cfg.met + '.<br>' +
+    'Comprobación numérica en x = ' + x0.toFixed(2) + ': la parte homogénea deja residuo <strong>' + n4(residC) + '</strong> (≈0), la particular reproduce g con residuo <strong>' + n4(residP) + '</strong> (≈0) y la suma también: <strong style="color:#c68f2e">' + n4(resid) + '</strong>.<br>' +
+    '<span style="color:#8fb4d9">Mueve c₁ y c₂: cambian la curva pero no el residuo, porque y_c aporta cero al lado izquierdo. y_p es una sola función fija que «absorbe» el lado derecho.</span>';
+});
+
+/* ══════════ S12 · Masa-resorte: libre, amortiguado, forzado ══════════ */
+var RES = {
+  libre: { n: "x'' + 16x = 0 (libre, ω = 4)", f: function (t, x, v) { return -16 * x; }, tmax: 4, tipo: 'sin amortiguar: amplitud constante, periodo 2π/4 = π/2' },
+  sobre: { n: "x'' + 5x' + 4x = 0 (sobreamortiguado)", f: function (t, x, v) { return -5 * v - 4 * x; }, tmax: 6, tipo: 'raíces −1 y −4: vuelve al equilibrio sin oscilar' },
+  crit:  { n: "x'' + 4x' + 4x = 0 (crítico)", f: function (t, x, v) { return -4 * v - 4 * x; }, tmax: 6, tipo: 'raíz doble −2: el retorno más rápido sin oscilar' },
+  sub:   { n: "x'' + 2x' + 10x = 0 (subamortiguado)", f: function (t, x, v) { return -2 * v - 10 * x; }, tmax: 6, tipo: 'm = −1 ± 3i: oscila con amplitude e^{−t} decreciente' },
+  forz:  { n: "x'' + 4x = 3cos t (forzado, no resonante)", f: function (t, x, v) { return -4 * x + 3 * Math.cos(t); }, tmax: 12, tipo: 'x_p = cos t: suma de dos frecuencias (γ = 1, ω = 2), acotada' },
+  reson: { n: "x'' + 4x = 8cos 2t (resonancia, γ = ω)", f: function (t, x, v) { return -4 * x + 8 * Math.cos(2 * t); }, tmax: 12, tipo: 'x_p = 2t·sen 2t: la amplitud crece linealmente, sin límite' }
+};
+function rk4sis(f, t, x, v, h) {   // una EDO de 2.º orden x'' = f(t,x,v)
+  var k1x = v, k1v = f(t, x, v);
+  var k2x = v + h / 2 * k1v, k2v = f(t + h / 2, x + h / 2 * k1x, v + h / 2 * k1v);
+  var k3x = v + h / 2 * k2v, k3v = f(t + h / 2, x + h / 2 * k2x, v + h / 2 * k2v);
+  var k4x = v + h * k3v, k4v = f(t + h, x + h * k3x, v + h * k3v);
+  return [x + h / 6 * (k1x + 2 * k2x + 2 * k3x + k4x), v + h / 6 * (k1v + 2 * k2v + 2 * k3v + k4v)];
+}
+OVA.viz.registrar('resorte', function (host) {
+  var cfg = RES[q(host, 'select').value] || RES.libre;
+  var x0 = parseFloat(q(host, '.x0').value) / 10, v0 = parseFloat(q(host, '.v0').value) / 10;
+  q(host, '.x0-val').textContent = 'x(0) = ' + x0.toFixed(1); q(host, '.v0-val').textContent = "x'(0) = " + v0.toFixed(1);
+  var pts = [[0, x0]], t = 0, x = x0, v = v0, h = cfg.tmax / 1200, i, xmax = Math.max(1.2, Math.abs(x0) * 1.2), vmax = v;
+  for (i = 0; i < 1200; i++) { var r = rk4sis(cfg.f, t, x, v, h); x = r[0]; v = r[1]; t += h; pts.push([t, x]); if (Math.abs(x) > xmax) xmax = Math.abs(x); }
+  xmax = Math.min(xmax, 30) * 1.1;
+  var L = marcoE(q(host, 'canvas'), 320, 0, cfg.tmax, -xmax, xmax);
+  ejesE(L, cfg.tmax > 8 ? 2 : 1, xmax > 10 ? 10 : xmax > 3 ? 1 : 0.5);
+  var c = L.ctx;
+  clipE(L, function () {
+    if (cfg === RES.sub) { OVA.curva(L, function (t) { return Math.sqrt(x0 * x0 + Math.pow((v0 + x0) / 3, 2)) * Math.exp(-t); }, 'rgba(176,57,44,.55)', 1.2); OVA.curva(L, function (t) { return -Math.sqrt(x0 * x0 + Math.pow((v0 + x0) / 3, 2)) * Math.exp(-t); }, 'rgba(176,57,44,.55)', 1.2); }
+    c.strokeStyle = AZUL; c.lineWidth = 2.6; c.beginPath(); pts.forEach(function (p, k) { k ? c.lineTo(L.px(p[0]), L.py(p[1])) : c.moveTo(L.px(p[0]), L.py(p[1])); }); c.stroke();
+    OVA.punto(L, 0, x0, ORO);
+  });
+  leyenda(L, [['— x(t)', AZUL]].concat(cfg === RES.sub ? [['— envolvente ±A e^{−t}', 'rgba(176,57,44,.8)']] : []));
+  var xfin = pts[pts.length - 1][1], amax = 0; pts.forEach(function (p) { if (Math.abs(p[1]) > amax) amax = Math.abs(p[1]); });
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> con x(0) = ' + x0.toFixed(1) + ", x'(0) = " + v0.toFixed(1) + ' · ' + cfg.tipo + '.<br>' +
+    'En t = ' + cfg.tmax + ': x = <strong>' + n3(xfin) + '</strong> · desplazamiento máximo en la ventana: <strong style="color:#c68f2e">' + n3(amax) + '</strong><br>' +
+    '<span style="color:#8fb4d9">Cambia las condiciones iniciales: en los casos amortiguados la forma de la curva no cambia (la fija la ecuación), solo su tamaño. En resonancia, la amplitud crece sin importar de dónde parta.</span>';
+});
+
+/* ══════════ S12 · Péndulo no lineal frente a su linealización ══════════ */
+OVA.viz.registrar('pendulo', function (host) {
+  var th0 = parseFloat(q(host, '.th0').value) * Math.PI / 180;
+  var modelo = q(host, 'select').value;   // pendulo | duro
+  q(host, '.th0-val').textContent = 'θ₀ = ' + Math.round(th0 * 180 / Math.PI) + '°';
+  var fNL = modelo === 'duro' ? function (t, x, v) { return -x - x * x * x; } : function (t, x, v) { return -Math.sin(x); };
+  var fL = function (t, x, v) { return -x; };
+  var tmax = 14, N = 2000, h = tmax / N, i, t, x, v, r, pNL = [[0, th0]], pL = [[0, th0]], cruces = [];
+  t = 0; x = th0; v = 0;
+  for (i = 0; i < N; i++) { var xa = x; r = rk4sis(fNL, t, x, v, h); x = r[0]; v = r[1]; t += h; pNL.push([t, x]); if (xa > 0 && x <= 0) cruces.push(t); }
+  t = 0; x = th0; v = 0;
+  for (i = 0; i < N; i++) { r = rk4sis(fL, t, x, v, h); x = r[0]; v = r[1]; t += h; pL.push([t, x]); }
+  var T = cruces.length >= 2 ? cruces[1] - cruces[0] : NaN, ymax = Math.max(th0 * 1.15, 0.5);
+  var L = marcoE(q(host, 'canvas'), 320, 0, tmax, -ymax, ymax);
+  ejesE(L, 2, ymax > 2 ? 1 : 0.5);
+  var c = L.ctx;
+  clipE(L, function () {
+    [[pL, 'rgba(150,167,181,.9)', 1.6], [pNL, AZUL, 2.6]].forEach(function (s) { c.strokeStyle = s[1]; c.lineWidth = s[2]; c.beginPath(); s[0].forEach(function (p, k) { k ? c.lineTo(L.px(p[0]), L.py(p[1])) : c.moveTo(L.px(p[0]), L.py(p[1])); }); c.stroke(); });
+  });
+  leyenda(L, [['— ' + (modelo === 'duro' ? "resorte duro x'' + x + x³ = 0" : "péndulo θ'' + sen θ = 0"), AZUL], ['— linealizado x″ + x = 0 (T = 2π)', 'rgba(150,167,181,.9)']]);
+  var dif = (T - 2 * Math.PI) / (2 * Math.PI) * 100;
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + (modelo === 'duro' ? "Resorte duro x'' + x + x³ = 0" : "Péndulo θ'' + sen θ = 0") + '</strong> con amplitud inicial ' + Math.round(th0 * 180 / Math.PI) + '° (' + n3(th0) + ' rad), velocidad inicial 0.<br>' +
+    'Periodo medido (integración RK4): <strong style="color:#c68f2e">' + n3(T) + '</strong> · periodo del modelo lineal: 2π = 6.283 · diferencia <strong>' + (dif >= 0 ? '+' : '') + dif.toFixed(1) + ' %</strong><br>' +
+    '<span style="color:#8fb4d9">' + (modelo === 'duro' ? 'En el resorte duro la fuerza crece más rápido que x: a mayor amplitud, oscila más deprisa (periodo menor).' : 'En el péndulo, sen θ &lt; θ: la fuerza restauradora es menor que la lineal y el periodo crece con la amplitud. Con ángulos pequeños las dos curvas coinciden.') + ' El periodo de un sistema no lineal depende de la amplitud; el del lineal, no.</span>';
+});
+
+/* ══════════ S13 · La transformada de Laplace como integral ══════════ */
+var LAP = {
+  uno: { f: function (t) { return 1; }, F: function (s) { return 1 / s; }, n: 'f(t) = 1', sF: 'F(s) = 1/s', smin: 0.3 },
+  t:   { f: function (t) { return t; }, F: function (s) { return 1 / (s * s); }, n: 'f(t) = t', sF: 'F(s) = 1/s²', smin: 0.3 },
+  exp: { f: function (t) { return Math.exp(t); }, F: function (s) { return 1 / (s - 1); }, n: 'f(t) = eᵗ', sF: 'F(s) = 1/(s − 1), s > 1', smin: 1.3 },
+  sen: { f: function (t) { return Math.sin(2 * t); }, F: function (s) { return 2 / (s * s + 4); }, n: 'f(t) = sen 2t', sF: 'F(s) = 2/(s² + 4)', smin: 0.3 },
+  esc: { f: function (t) { return t >= 3 ? 2 : 0; }, F: function (s) { return 2 * Math.exp(-3 * s) / s; }, n: 'f(t) = 0 (t<3), 2 (t≥3)', sF: 'F(s) = 2e^{−3s}/s', smin: 0.3 }
+};
+OVA.viz.registrar('laplace', function (host) {
+  var cfg = LAP[q(host, 'select').value] || LAP.uno;
+  var s = cfg.smin + parseFloat(q(host, '.s').value) / 100 * 4;
+  q(host, '.s-val').textContent = 's = ' + s.toFixed(2);
+  var tmax = 8, L = marcoE(q(host, 'canvas'), 320, 0, tmax, -1.2, 2.4);
+  ejesE(L, 1, 0.5);
+  var g = function (t) { return Math.exp(-s * t) * cfg.f(t); };
+  var n = 1600, h = tmax / n, I = 0, i;
+  for (i = 0; i <= n; i++) { var w = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2); I += w * g(i * h); }
+  I *= h / 3;
+  var c = L.ctx;
+  clipE(L, function () {
+    c.fillStyle = 'rgba(198,143,46,.35)'; c.beginPath(); c.moveTo(L.px(0), L.py(0));
+    for (i = 0; i <= 400; i++) { var t = tmax * i / 400; c.lineTo(L.px(t), L.py(g(t))); }
+    c.lineTo(L.px(tmax), L.py(0)); c.closePath(); c.fill();
+    OVA.curva(L, function (t) { return t >= 0 ? cfg.f(t) : NaN; }, AZUL, 2.2);
+    OVA.curva(L, function (t) { return t >= 0 ? Math.exp(-s * t) : NaN; }, 'rgba(150,167,181,.9)', 1.3);
+    OVA.curva(L, function (t) { return t >= 0 ? g(t) : NaN; }, ORO, 2.4);
+  });
+  leyenda(L, [['— f(t)', AZUL], ['— e^{−st}', 'rgba(150,167,181,.9)'], ['— f(t)·e^{−st}  (área = F(s))', ORO]]);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · ' + cfg.sF + '<br>' +
+    'Con s = ' + s.toFixed(2) + ': área bajo f(t)e^{−st} en [0, ' + tmax + '] = <strong style="color:#c68f2e">' + n4(I) + '</strong> · fórmula F(' + s.toFixed(2) + ') = <strong>' + n4(cfg.F(s)) + '</strong>' +
+    (Math.abs(I - cfg.F(s)) > 2e-3 ? ' (la cola más allá de t = 8 aún aporta: el decaimiento e^{−st} es lento para s pequeño)' : ' ✓') + '<br>' +
+    '<span style="color:#8fb4d9">La transformada es una integral: multiplica f por el «amortiguador» e^{−st} y mide el área. Cuanto mayor es s, más rápido se apaga el integrando y menor es F(s). Para eᵗ hace falta s &gt; 1, o el área diverge.</span>';
+});
+
+/* ══════════ S14 · Traslación en t: f(t − a)·U(t − a) ══════════ */
+var TRAS = {
+  sen:  { f: function (t) { return Math.sin(t); }, F: function (s) { return 1 / (s * s + 1); }, n: 'f(t) = sen t', sF: 'F(s) = 1/(s² + 1)' },
+  cuad: { f: function (t) { return t * t / 4; }, F: function (s) { return 0.5 / (s * s * s); }, n: 'f(t) = t²/4', sF: 'F(s) = 1/(2s³)' },
+  dec:  { f: function (t) { return 2 * Math.exp(-0.5 * t); }, F: function (s) { return 2 / (s + 0.5); }, n: 'f(t) = 2e^{−t/2}', sF: 'F(s) = 2/(s + 1/2)' }
+};
+OVA.viz.registrar('traslacion', function (host) {
+  var cfg = TRAS[q(host, 'select').value] || TRAS.sen;
+  var a = parseFloat(q(host, '.a').value) / 10, s = 1.0;
+  q(host, '.a-val').textContent = 'a = ' + a.toFixed(1);
+  var tmax = 10, L = marcoE(q(host, 'canvas'), 320, 0, tmax, -1.5, 2.5);
+  ejesE(L, 1, 0.5);
+  var fa = function (t) { return t >= a ? cfg.f(t - a) : 0; };
+  var n = 2000, h = tmax * 3 / n, I = 0, i;   // integral hasta 30 (e^{−t} ya es despreciable)
+  for (i = 0; i <= n; i++) { var w = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2); I += w * Math.exp(-s * i * h) * fa(i * h); }
+  I *= h / 3;
+  var c = L.ctx;
+  clipE(L, function () {
+    OVA.curva(L, function (t) { return t >= 0 ? cfg.f(t) : NaN; }, 'rgba(150,167,181,.9)', 1.4);
+    OVA.curva(L, function (t) { return t >= 0 && t < a - 1e-9 ? 0 : NaN; }, AZUL, 3);
+    OVA.curva(L, function (t) { return t >= a ? cfg.f(t - a) : NaN; }, AZUL, 3);
+    c.strokeStyle = 'rgba(176,57,44,.6)'; c.setLineDash([4, 3]); c.lineWidth = 1.4; c.beginPath(); c.moveTo(L.px(a), L.py(L.ymin)); c.lineTo(L.px(a), L.py(L.ymax)); c.stroke(); c.setLineDash([]);
+    OVA.punto(L, a, 0, ROJO);
+  });
+  leyenda(L, [['— f(t − a)·U(t − a)', AZUL], ['— f(t) original', 'rgba(150,167,181,.9)']]);
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong>, ' + cfg.sF + ' · desplazada y «encendida» en t = a = ' + a.toFixed(1) + '<br>' +
+    'Segundo teorema de traslación: L{f(t − a)U(t − a)} = e^{−as}F(s). En s = 1: e^{−' + a.toFixed(1) + '}·F(1) = <strong>' + n4(Math.exp(-a * s) * cfg.F(s)) + '</strong> · integral numérica de e^{−t}f(t−a)U(t−a) = <strong style="color:#c68f2e">' + n4(I) + '</strong> ✓<br>' +
+    '<span style="color:#8fb4d9">Retrasar la función a unidades multiplica su transformada por e^{−as}: la forma F(s) no cambia, solo aparece el factor exponencial. Observa que antes de t = a la función vale cero: es «apagar hasta a y luego arrancar desde cero».</span>';
+});
+
+/* ══════════ S14 · Respuesta a un escalón: PVI con U(t − a) ══════════ */
+var ESC = {
+  rc:  { n: "y' + y = U(t − a), y(0) = 0", sol: function (t, a) { return t >= a ? 1 - Math.exp(-(t - a)) : 0; }, sY: 'Y = e^{−as}/(s(s+1))', sy: 'y = (1 − e^{−(t−a)})·U(t − a)', ymax: 1.4, desc: 'carga de un condensador que se conecta en t = a: sube hacia 1 sin sobrepasarlo' },
+  osc: { n: "y'' + 4y = U(t − a), y(0) = y'(0) = 0", sol: function (t, a) { return t >= a ? 0.25 * (1 - Math.cos(2 * (t - a))) : 0; }, sY: 'Y = e^{−as}/(s(s²+4))', sy: 'y = ¼(1 − cos 2(t−a))·U(t − a)', ymax: 0.7, desc: 'un resorte sin amortiguar al que se le aplica una fuerza constante desde t = a: oscila entre 0 y ½ alrededor de ¼' }
+};
+OVA.viz.registrar('escalon', function (host) {
+  var cfg = ESC[q(host, 'select').value] || ESC.rc;
+  var a = parseFloat(q(host, '.a').value) / 10;
+  q(host, '.a-val').textContent = 'a = ' + a.toFixed(1);
+  var tmax = 12, L = marcoE(q(host, 'canvas'), 320, 0, tmax, -0.2, cfg.ymax);
+  ejesE(L, 1, 0.25);
+  var c = L.ctx;
+  clipE(L, function () {
+    OVA.curva(L, function (t) { return t >= 0 ? (t >= a ? 1 : 0) * (cfg.ymax > 1 ? 1 : 0.5) : NaN; }, 'rgba(150,167,181,.9)', 1.4);
+    OVA.curva(L, function (t) { return t >= 0 ? cfg.sol(t, a) : NaN; }, AZUL, 3);
+    c.strokeStyle = 'rgba(176,57,44,.6)'; c.setLineDash([4, 3]); c.lineWidth = 1.4; c.beginPath(); c.moveTo(L.px(a), L.py(L.ymin)); c.lineTo(L.px(a), L.py(L.ymax)); c.stroke(); c.setLineDash([]);
+  });
+  leyenda(L, [['— y(t)', AZUL], ['— fuerza U(t − a)' + (cfg.ymax > 1 ? '' : ' (escala ½)'), 'rgba(150,167,181,.9)']]);
+  var t1 = a + 1, res = cfg === ESC.rc ? der1(function (t) { return cfg.sol(t, a); }, t1) + cfg.sol(t1, a) - 1 : der2(function (t) { return cfg.sol(t, a); }, t1) + 4 * cfg.sol(t1, a) - 1;
+  q(host, '.viz-readout').innerHTML =
+    '<strong>' + cfg.n + '</strong> · ' + cfg.sY + ' → <strong>' + cfg.sy + '</strong><br>' +
+    'Antes de t = a la solución es idénticamente cero (nada la empuja); desde a, la respuesta es la misma curva sin importar el valor de a, solo desplazada. Comprobación numérica de la EDO en t = a + 1: residuo <strong style="color:#c68f2e">' + n4(res) + '</strong> ≈ 0.<br>' +
+    '<span style="color:#8fb4d9">' + cfg.desc + '. El factor e^{−as} de la transformada es exactamente ese retraso.</span>';
+});
+
 })();
