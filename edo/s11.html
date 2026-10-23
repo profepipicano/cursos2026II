@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 11 · Coeficientes indeterminados y variación de parámetros — Ecuaciones Diferenciales · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 11 · Regresión y mínimos cuadrados — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912e">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Ecuaciones Diferenciales · Semana 11</h1>
+      <h1>Métodos Numéricos · Guía 11</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,312 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Ajustar, no interpolar</a>
+    <a href="#s2">2 · Regresión lineal</a>
+    <a href="#s3">3 · Regresión polinomial</a>
+    <a href="#s4">4 · Múltiple y general</a>
+    <a href="#s5">5 · Linealización</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 11 · Coeficientes indeterminados y variación de parámetros</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 11 · Corte III</div>
+  <h2>Regresión y mínimos cuadrados</h2>
+  <p>Los datos medidos traen ruido: no hay una curva que pase exactamente por todos, ni conviene que la
+     haya. La regresión busca la curva que <em>mejor</em> los resume, con un criterio preciso —minimizar
+     la suma de los cuadrados de los errores— que convierte el problema en un sistema de ecuaciones
+     lineales: las ecuaciones normales. Es la herramienta estándar para extraer un modelo de una tabla
+     de mediciones.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 17</span>
+    <span class="chip">Burden · Cap. 8.1</span>
+    <span class="chip">Semana 11</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> En el Corte I aprendiste a resolver sistemas lineales (Gauss, LU) y
+  en el Corte II a medir errores. Aquí los dos hilos se juntan: elegir el modelo que minimiza el error
+  cuadrático conduce siempre a un sistema lineal pequeño, y resolverlo es rutina.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Ajustar, no interpolar</h3>
+
+  <div class="callout-dark">
+    <h3>El criterio de mínimos cuadrados</h3>
+    <p>Dados $n$ puntos $(x_i,y_i)$ y un modelo —por ejemplo una recta $y=a_0+a_1x$—, cada punto deja un
+       <strong>residuo</strong> $e_i=y_i-(a_0+a_1x_i)$: la distancia vertical del dato a la curva. La recta
+       de mínimos cuadrados es la que hace mínima la suma de los cuadrados de esos residuos,
+       $$S_r=\sum_{i=1}^{n}e_i^{2}=\sum_{i=1}^{n}\big(y_i-a_0-a_1x_i\big)^{2}.$$
+       Elevar al cuadrado evita que residuos positivos y negativos se cancelen y penaliza más los errores grandes.</p>
+    <p>A diferencia de la interpolación, la curva <em>no</em> pasa por los puntos: pasa entre ellos, lo más cerca posible de todos.</p>
+  </div>
+
+  <div class="sub-title">1.1 Mueve la recta e intenta bajar $S_r$</div>
+  <div class="viz" data-viz="regresion">
+    <div class="viz-controls">
+      <label for="rg-d">Datos y modelo</label>
+      <select id="rg-d">
+        <option value="lineal">5 puntos · recta (Ejemplo 1)</option>
+        <option value="cuad">6 puntos · parábola (Ejemplo 2)</option>
+        <option value="expo">4 puntos · exponencial linealizada (Ejemplo 4)</option>
+      </select>
+      <label for="rg-a0">a₀</label>
+      <input id="rg-a0" class="a0" type="range" min="-50" max="100" step="1" value="10">
+      <span class="a0-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+      <label for="rg-a1">a₁</label>
+      <input id="rg-a1" class="a1" type="range" min="-20" max="150" step="1" value="15">
+      <span class="a1-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Los segmentos punteados son los residuos de tu recta roja. La curva verde es la de mínimos cuadrados:
+    ninguna recta logra un $S_r$ menor que ella. Con los datos del Ejemplo 2, ninguna recta se acerca a
+    lo que logra la parábola.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Regresión lineal: las ecuaciones normales</h3>
+
+  <div class="def">
+    <strong>Recta de mínimos cuadrados.</strong> Derivando $S_r$ respecto a $a_0$ y $a_1$ e igualando a cero
+    se obtienen las <strong>ecuaciones normales</strong>, un sistema $2\times2$ cuya solución es
+    $$a_1=\frac{n\sum x_iy_i-\sum x_i\sum y_i}{n\sum x_i^{2}-\big(\sum x_i\big)^{2}},\qquad a_0=\bar y-a_1\bar x .$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · Ajustar una recta a cinco mediciones</h4>
+    <div class="ejemplo-body">
+      <table class="tbl">
+        <tr><th>$x_i$</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+        <tr><th>$y_i$</th><td>3</td><td>4</td><td>6</td><td>7</td><td>10</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Sumas</div>
+        $n=5$, $\sum x_i=15$, $\sum y_i=30$, $\sum x_iy_i=3+8+18+28+50=107$, $\sum x_i^{2}=55$.
+      </div>
+      <div class="paso"><div class="paso-t">Pendiente e intercepto</div>
+        $a_1=\dfrac{5(107)-15(30)}{5(55)-15^{2}}=\dfrac{535-450}{275-225}=\dfrac{85}{50}=1{,}7$;
+        $\quad a_0=\bar y-a_1\bar x=6-1{,}7(3)=0{,}9$. Recta: $y=0{,}9+1{,}7x$.
+      </div>
+      <div class="paso"><div class="paso-t">Residuos y calidad del ajuste</div>
+        Predicciones $2{,}6;\ 4{,}3;\ 6{,}0;\ 7{,}7;\ 9{,}4$; residuos $0{,}4;\ -0{,}3;\ 0;\ -0{,}7;\ 0{,}6$; $S_r=1{,}10$.
+        La dispersión total alrededor de la media es $S_t=\sum(y_i-\bar y)^{2}=30$, así que el
+        <strong>coeficiente de determinación</strong> es $r^{2}=\dfrac{S_t-S_r}{S_t}=\dfrac{28{,}9}{30}=0{,}9633$ ($r=0{,}9815$):
+        la recta explica el 96 % de la variación de $y$.
+      </div>
+      <div class="paso"><div class="paso-t">Cualquier otra recta es peor</div>
+        La recta «a ojo» $y=1+1{,}5x$ da $S_r=2{,}75$, más del doble. El error estándar del ajuste es $s_{y/x}=\sqrt{S_r/(n-2)}=\sqrt{1{,}10/3}=0{,}6055$.
+      </div>
     </div>
   </div>
+</section>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Regresión polinomial</h3>
+
+  <div class="callout-dark">
+    <h3>El mismo criterio, más coeficientes</h3>
+    <p>Si los datos se curvan, se ajusta $y=a_0+a_1x+a_2x^{2}$ (o un grado mayor). El criterio es el
+       mismo —minimizar $S_r$— y las ecuaciones normales son ahora un sistema $3\times3$ con las sumas de
+       potencias de $x$. El modelo sigue siendo <em>lineal en los coeficientes</em>, por eso el sistema es
+       lineal aunque la curva no lo sea.</p>
+  </div>
+
+  <div class="def">
+    $$\begin{pmatrix} n & \sum x_i & \sum x_i^{2}\\ \sum x_i & \sum x_i^{2} & \sum x_i^{3}\\ \sum x_i^{2} & \sum x_i^{3} & \sum x_i^{4}\end{pmatrix}
+      \begin{pmatrix}a_0\\a_1\\a_2\end{pmatrix}=\begin{pmatrix}\sum y_i\\ \sum x_iy_i\\ \sum x_i^{2}y_i\end{pmatrix}$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · Parábola de mínimos cuadrados</h4>
+    <div class="ejemplo-body">
+      <table class="tbl">
+        <tr><th>$x_i$</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+        <tr><th>$y_i$</th><td>2,1</td><td>7,7</td><td>13,6</td><td>27,2</td><td>40,9</td><td>61,1</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Sumas</div>
+        $n=6$, $\sum x_i=15$, $\sum x_i^{2}=55$, $\sum x_i^{3}=225$, $\sum x_i^{4}=979$, $\sum y_i=152{,}6$, $\sum x_iy_i=585{,}6$, $\sum x_i^{2}y_i=2488{,}8$.
+      </div>
+      <div class="paso"><div class="paso-t">Sistema y solución (Gauss, Guía 3)</div>
+        $\begin{pmatrix}6&15&55\\15&55&225\\55&225&979\end{pmatrix}\begin{pmatrix}a_0\\a_1\\a_2\end{pmatrix}=\begin{pmatrix}152{,}6\\585{,}6\\2488{,}8\end{pmatrix}
+        \ \Rightarrow\ a_0=2{,}4786,\ a_1=2{,}3593,\ a_2=1{,}8607.$
+      </div>
+      <div class="paso"><div class="paso-t">Calidad</div>
+        $y=2{,}4786+2{,}3593x+1{,}8607x^{2}$ deja $S_r=3{,}7466$ y $r^{2}=0{,}99851$. Una recta a los mismos datos deja $S_r=133{,}0$: el patrón de los residuos (todos positivos en los extremos, negativos en el centro) delata que el modelo lineal es inadecuado.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Recta y parábola de mínimos cuadrados</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Regresión múltiple y mínimos cuadrados general</h3>
+
+  <div class="callout-dark">
+    <h3>Varias variables de entrada</h3>
+    <p>Cuando $y$ depende de dos o más variables, $y=a_0+a_1x_1+a_2x_2$, el ajuste es un plano en vez de
+       una recta. Y en general, para cualquier modelo lineal en los coeficientes $y=a_0z_0+a_1z_1+\cdots+a_mz_m$
+       (las $z_j$ pueden ser $x$, $x^{2}$, $x_1x_2$, $\sin x$, …), todo se escribe en forma matricial.</p>
+  </div>
+
+  <div class="def">
+    <strong>Forma general.</strong> Con la matriz $Z$ ($n$ filas, una por dato; $m+1$ columnas, una por función base),
+    las ecuaciones normales son
+    $$\big(Z^{T}Z\big)\,\mathbf a=Z^{T}\mathbf y .$$
+    Para la recta, $Z$ tiene columnas $(1,\,x_i)$; para la parábola, $(1,\,x_i,\,x_i^{2})$; para el plano, $(1,\,x_{1i},\,x_{2i})$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · Un plano por seis puntos</h4>
+    <div class="ejemplo-body">
+      <table class="tbl">
+        <tr><th>$x_1$</th><td>0</td><td>2</td><td>2,5</td><td>1</td><td>4</td><td>7</td></tr>
+        <tr><th>$x_2$</th><td>0</td><td>1</td><td>2</td><td>3</td><td>6</td><td>2</td></tr>
+        <tr><th>$y$</th><td>5</td><td>10</td><td>9</td><td>0</td><td>3</td><td>27</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Ecuaciones normales</div>
+        $\begin{pmatrix}6&16{,}5&14\\16{,}5&76{,}25&48\\14&48&54\end{pmatrix}\begin{pmatrix}a_0\\a_1\\a_2\end{pmatrix}=\begin{pmatrix}54\\243{,}5\\100\end{pmatrix}$.
+      </div>
+      <div class="paso"><div class="paso-t">Solución</div>
+        $a_0=5$, $a_1=4$, $a_2=-3$: el plano $y=5+4x_1-3x_2$ pasa exactamente por los seis puntos ($S_r=0$), porque los datos se generaron con ese modelo sin ruido.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Linealización de modelos no lineales</h3>
+
+  <div class="callout-dark">
+    <h3>Transformar para poder usar la recta</h3>
+    <p>Muchos fenómenos siguen leyes de potencias, exponenciales o de saturación. Esos modelos no son
+       lineales en los parámetros, pero una transformación (casi siempre un logaritmo) los convierte en
+       una recta, se ajusta la recta y se deshace la transformación.</p>
+  </div>
+
+  <div class="def">
+    <table class="tbl">
+      <tr><th>Modelo</th><th>Transformación</th><th>Recta ajustada</th><th>Parámetros</th></tr>
+      <tr><td>Exponencial $y=\alpha e^{\beta x}$</td><td>$\ln y$ contra $x$</td><td>$\ln y=\ln\alpha+\beta x$</td><td>$\beta=$ pendiente, $\alpha=e^{\text{intercepto}}$</td></tr>
+      <tr><td>Potencia $y=\alpha x^{\beta}$</td><td>$\ln y$ contra $\ln x$</td><td>$\ln y=\ln\alpha+\beta\ln x$</td><td>$\beta=$ pendiente, $\alpha=e^{\text{intercepto}}$</td></tr>
+      <tr><td>Logístico $y=\dfrac{L}{1+e^{-k(x-x_0)}}$ ($L$ conocido)</td><td>$\ln\!\big(\tfrac{L}{y}-1\big)$ contra $x$</td><td>$\ln\!\big(\tfrac{L}{y}-1\big)=kx_0-kx$</td><td>$k=-$pendiente, $x_0=\text{intercepto}/k$</td></tr>
+    </table>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Un modelo exponencial</h4>
+    <div class="ejemplo-body">
+      <table class="tbl">
+        <tr><th>$x$</th><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+        <tr><th>$y$</th><td>2</td><td>3,2974</td><td>5,4366</td><td>8,9634</td></tr>
+        <tr><th>$\ln y$</th><td>0,6931</td><td>1,1931</td><td>1,6931</td><td>2,1931</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Recta a $(x,\ln y)$</div>
+        Los $\ln y$ crecen exactamente $0{,}5$ por unidad: pendiente $\beta=0{,}5$, intercepto $0{,}6931=\ln2$.
+      </div>
+      <div class="paso"><div class="paso-t">Deshacer la transformación</div>
+        $\alpha=e^{0{,}6931}=2$: el modelo es $y=2e^{0{,}5x}$, que reproduce los datos sin residuo.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Potencia y logístico</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Potencia</div>
+        Con $x=1,2,4,8$ e $y=3,12,48,192$ (es decir, $y=3x^{2}$): la recta de $\ln y$ contra $\ln x$ tiene pendiente $\beta=2$ e intercepto $\ln3$, así que $\alpha=3$.
+      </div>
+      <div class="paso"><div class="paso-t">Logístico con $L=100$</div>
+        Para datos $y=1{,}799;\ 8{,}317;\ 31{,}003;\ 68{,}997;\ 91{,}683$ en $x=0,2,4,6,8$, la recta de $\ln(100/y-1)$ contra $x$
+        tiene pendiente $-0{,}8$ e intercepto $4$: $k=0{,}8$ y $x_0=4/0{,}8=5$. Modelo: $y=\dfrac{100}{1+e^{-0{,}8(x-5)}}$.
+      </div>
+      <div class="paso"><div class="paso-t">Advertencia</div>
+        Al linealizar se minimizan los residuos de la variable transformada ($\ln y$), no los de $y$: el resultado es muy bueno, pero no es exactamente el ajuste de mínimos cuadrados del modelo original.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Múltiple, general y linealización</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La regresión múltiple es el modelo base de los pronósticos de ventas: ventas contra precio,
+      publicidad y temporada. El $r^{2}$ dice qué fracción de las ventas explica el modelo, y los
+      residuos muestran qué meses se desvían de lo esperado.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      Separar costos fijos y variables a partir de datos históricos es exactamente una recta de
+      mínimos cuadrados: el intercepto $a_0$ estima el costo fijo y la pendiente $a_1$ el costo variable
+      unitario. Es el método que reemplaza al de «punto alto-punto bajo».</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La regresión lineal es el primer modelo de aprendizaje automático: las ecuaciones normales
+      $(Z^{T}Z)\mathbf a=Z^{T}\mathbf y$ son la solución cerrada que el descenso de gradiente aproxima
+      cuando los datos son enormes. Ajustar una ley de potencias a tiempos de ejecución contra tamaño de
+      entrada estima el orden de un algoritmo.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Calibrar un sensor es ajustar una recta (o un polinomio) a pares (lectura, valor real). La curva
+      característica de un diodo, $I=I_s e^{V/nV_T}$, se linealiza con $\ln I$ contra $V$ para estimar
+      $I_s$ y $n$ a partir de mediciones.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Mínimos cuadrados</strong>: elegir los coeficientes que minimizan $S_r=\sum e_i^{2}$; la curva pasa <em>entre</em> los datos, no por ellos.</li>
+    <li><strong>Recta</strong>: $a_1=\dfrac{n\sum xy-\sum x\sum y}{n\sum x^{2}-(\sum x)^{2}}$, $a_0=\bar y-a_1\bar x$. Ejemplo 1: $y=0{,}9+1{,}7x$, $S_r=1{,}10$, $r^{2}=0{,}9633$.</li>
+    <li><strong>Calidad</strong>: $r^{2}=(S_t-S_r)/S_t$; error estándar $s_{y/x}=\sqrt{S_r/(n-2)}$. Mira el patrón de los residuos.</li>
+    <li><strong>Polinomial, múltiple y general</strong>: mismo criterio, sistema lineal $(Z^{T}Z)\mathbf a=Z^{T}\mathbf y$ (lineal en los coeficientes).</li>
+    <li><strong>Linealización</strong>: exponencial → $\ln y$ vs $x$; potencia → $\ln y$ vs $\ln x$; logístico → $\ln(L/y-1)$ vs $x$. Luego deshacer la transformación.</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/introductory-statistics-2e/pages/12-3-the-regression-equation" target="_blank" rel="noopener">OpenStax · Regresión</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912e"></script>
+<script src="../assets/viz-metodos.js?v=20260912e"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Recta y parábola de mínimos cuadrados · 3 preguntas", "items": [ { "etiqueta": "Criterio", "nivel": 1, "criterio": "Enunciar el criterio de mínimos cuadrados (§1)", "enunciado": "La recta de mínimos cuadrados es la que:", "opciones": [ "minimiza la suma de los cuadrados de los residuos $\\sum(y_i-a_0-a_1x_i)^{2}$", "pasa por todos los puntos", "minimiza la suma de los residuos $\\sum(y_i-a_0-a_1x_i)$", "pasa por el primer y el último punto" ], "correcta": 0, "pista": "Los residuos se elevan al cuadrado para que no se cancelen.", "solucion": "Se minimiza $S_r=\\sum e_i^{2}$. Sin el cuadrado, residuos positivos y negativos se cancelarían y muchas rectas darían suma cero. Una recta que pase por todos los puntos no existe en general (eso sería interpolación)." }, { "etiqueta": "Pendiente", "nivel": 3, "criterio": "Calcular la recta de mínimos cuadrados (§2)", "enunciado": "Con $n=5$, $\\sum x=15$, $\\sum y=30$, $\\sum xy=107$, $\\sum x^{2}=55$, la pendiente $a_1$ es:", "opciones": [ "$2{,}0$", "$0{,}9$", "$1{,}7$", "$1{,}5$" ], "correcta": 2, "pista": "$a_1=\\dfrac{n\\sum xy-\\sum x\\sum y}{n\\sum x^{2}-(\\sum x)^{2}}$.", "solucion": "$a_1=\\dfrac{5(107)-15(30)}{5(55)-225}=\\dfrac{85}{50}=1{,}7$. El intercepto es $a_0=\\bar y-a_1\\bar x=6-5{,}1=0{,}9$; la opción $0{,}9$ confunde $a_0$ con $a_1$." }, { "etiqueta": "r²", "nivel": 2, "criterio": "Interpretar el coeficiente de determinación (§2)", "enunciado": "Si $S_t=30$ y $S_r=1{,}10$, el coeficiente de determinación $r^{2}$ vale:", "opciones": [ "$0{,}0367$", "$1{,}10/30=0{,}0367$ y es la fracción explicada", "$30-1{,}10=28{,}9$", "$0{,}9633$: la recta explica el 96 % de la variación" ], "correcta": 3, "pista": "$r^{2}=(S_t-S_r)/S_t$.", "solucion": "$r^{2}=\\dfrac{30-1{,}10}{30}=0{,}9633$: la fracción de la dispersión de $y$ que el modelo explica. $S_r/S_t=0{,}0367$ es la fracción <em>no</em> explicada; $28{,}9$ es la diferencia sin normalizar." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Múltiple, general y linealización · 3 preguntas", "items": [ { "etiqueta": "Normales", "nivel": 2, "criterio": "Reconocer las ecuaciones normales generales (§4)", "enunciado": "Para cualquier modelo lineal en los coeficientes, las ecuaciones normales son:", "opciones": [ "$(ZZ^{T})\\,\\mathbf a=\\mathbf y$", "$(Z^{T}Z)\\,\\mathbf a=Z^{T}\\mathbf y$", "$Z\\,\\mathbf a=\\mathbf y$ resuelto por Gauss", "$\\mathbf a=Z^{-1}\\mathbf y$" ], "correcta": 1, "pista": "$Z$ tiene $n$ filas y $m+1$ columnas: no es cuadrada.", "solucion": "Como $Z$ no es cuadrada, $Z\\mathbf a=\\mathbf y$ no tiene solución exacta en general. Multiplicar por $Z^{T}$ da el sistema cuadrado $(Z^{T}Z)\\mathbf a=Z^{T}\\mathbf y$, de tamaño $(m+1)\\times(m+1)$, cuya solución minimiza $S_r$." }, { "etiqueta": "Lineal en coef.", "nivel": 2, "criterio": "Distinguir modelos lineales en los coeficientes (§3–4)", "enunciado": "¿Cuál de estos modelos NO es lineal en sus coeficientes (y por eso no da ecuaciones normales lineales)?", "opciones": [ "$y=\\alpha e^{\\beta x}$", "$y=a_0+a_1x+a_2x^{2}$", "$y=a_0+a_1x_1+a_2x_2$", "$y=a_0+a_1\\sin x$" ], "correcta": 0, "pista": "¿Aparece algún coeficiente dentro de una función no lineal?", "solucion": "En $\\alpha e^{\\beta x}$ el parámetro $\\beta$ está en el exponente: el modelo no es lineal en $\\beta$. Los otros tres son combinaciones lineales de funciones conocidas de $x$ (incluido $\\sin x$), así que sus ecuaciones normales son lineales. Para la exponencial se linealiza con $\\ln y$." }, { "etiqueta": "Exponencial", "nivel": 3, "criterio": "Linealizar un modelo exponencial (§5)", "enunciado": "Al ajustar una recta a $(x,\\ln y)$ se obtiene pendiente $0{,}5$ e intercepto $0{,}6931$. El modelo $y=\\alpha e^{\\beta x}$ es:", "opciones": [ "$y=0{,}5e^{2x}$", "$y=2x^{0{,}5}$", "$y=2e^{0{,}5x}$", "$y=0{,}6931e^{0{,}5x}$" ], "correcta": 2, "pista": "$\\ln y=\\ln\\alpha+\\beta x$: el intercepto es $\\ln\\alpha$, no $\\alpha$.", "solucion": "$\\beta=0{,}5$ es la pendiente y $\\ln\\alpha=0{,}6931$, luego $\\alpha=e^{0{,}6931}=2$: $y=2e^{0{,}5x}$. Usar el intercepto directamente como $\\alpha$ es el error más común. La forma $\\alpha x^{\\beta}$ exigiría $\\ln x$ en el eje horizontal." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Residuo", "nivel": 1, "criterio": "Calcular un residuo (§1)", "enunciado": "Con la recta $y=0{,}9+1{,}7x$, el residuo del dato $(4,\\,7)$ es:", "opciones": [ "$0{,}7$", "$7{,}7$", "$0$", "$-0{,}7$" ], "correcta": 3, "pista": "$e_i=y_i-(a_0+a_1x_i)$.", "solucion": "La recta predice $0{,}9+1{,}7(4)=7{,}7$ y el residuo es $7-7{,}7=-0{,}7$: el punto está por debajo de la recta. El signo importa para ver patrones, aunque en $S_r$ se eleve al cuadrado." }, { "etiqueta": "Intercepto", "nivel": 2, "criterio": "Calcular $a_0$ (§2)", "enunciado": "Si $\\bar x=3$, $\\bar y=6$ y $a_1=1{,}7$, el intercepto $a_0$ es:", "opciones": [ "$11{,}1$", "$0{,}9$", "$6$", "$1{,}7$" ], "correcta": 1, "pista": "La recta pasa por $(\\bar x,\\bar y)$.", "solucion": "$a_0=\\bar y-a_1\\bar x=6-1{,}7(3)=0{,}9$. La recta de mínimos cuadrados siempre pasa por el punto medio $(\\bar x,\\bar y)$; $11{,}1$ corresponde a sumar en vez de restar." }, { "etiqueta": "Comparar", "nivel": 2, "criterio": "Comparar ajustes por $S_r$ (§1–2)", "enunciado": "Para los mismos datos, la recta A tiene $S_r=1{,}10$ y la recta B tiene $S_r=2{,}75$. Entonces:", "opciones": [ "A es mejor: deja menos error cuadrático; es la de mínimos cuadrados si ninguna recta baja de 1,10", "B es mejor porque su $S_r$ es mayor", "ambas son igual de buenas", "no se pueden comparar sin $r$" ], "correcta": 0, "pista": "Menor $S_r$ = mejor ajuste.", "solucion": "El criterio es minimizar $S_r$: la recta A ajusta mejor. La recta de mínimos cuadrados es la de $S_r$ mínimo entre todas las rectas; en el Ejemplo 1, $1{,}10$ es ese mínimo y la recta «a ojo» $y=1+1{,}5x$ da $2{,}75$." }, { "etiqueta": "Parábola", "nivel": 3, "criterio": "Plantear las ecuaciones normales cuadráticas (§3)", "enunciado": "Para ajustar $y=a_0+a_1x+a_2x^{2}$, la matriz de las ecuaciones normales contiene:", "opciones": [ "las sumas $\\sum y_i^{k}$", "los valores $x_i$ y $x_i^{2}$ de cada dato, fila por fila", "las sumas $\\sum x_i^{k}$ para $k=0,\\dots,4$ (de $n$ hasta $\\sum x_i^{4}$)", "solo $n$, $\\sum x_i$ y $\\sum x_i^{2}$" ], "correcta": 2, "pista": "Es un sistema $3\\times3$ simétrico.", "solucion": "El sistema es $\\begin{pmatrix}n&\\sum x&\\sum x^{2}\\\\\\sum x&\\sum x^{2}&\\sum x^{3}\\\\\\sum x^{2}&\\sum x^{3}&\\sum x^{4}\\end{pmatrix}$ con lado derecho $(\\sum y,\\sum xy,\\sum x^{2}y)$. Los valores fila por fila forman la matriz $Z$, no $Z^{T}Z$." }, { "etiqueta": "Residuos", "nivel": 2, "criterio": "Leer el patrón de los residuos (§3)", "enunciado": "Al ajustar una recta a datos que siguen una parábola, los residuos:", "opciones": [ "son todos cero", "se distribuyen al azar alrededor de cero", "son todos del mismo signo", "muestran un patrón (positivos en los extremos, negativos en el centro): el modelo es inadecuado" ], "correcta": 3, "pista": "Ejemplo 2: la recta deja $S_r=133{,}0$ frente a $3{,}75$ de la parábola.", "solucion": "Una recta no puede seguir la curvatura: queda por debajo en los extremos y por encima en el centro, y los residuos muestran ese patrón sistemático. Residuos sin patrón, repartidos alrededor de cero, son la señal de un modelo adecuado." }, { "etiqueta": "Plano", "nivel": 3, "criterio": "Interpretar un ajuste múltiple (§4)", "enunciado": "Para los datos del Ejemplo 3, las ecuaciones normales dan $a_0=5$, $a_1=4$, $a_2=-3$ con $S_r=0$. Esto significa que:", "opciones": [ "el sistema no tenía solución", "el plano $y=5+4x_1-3x_2$ pasa exactamente por los seis puntos", "el ajuste falló", "los datos no dependen de $x_2$" ], "correcta": 1, "pista": "$S_r=0$ ⇔ todos los residuos son cero.", "solucion": "$S_r=0$ significa que cada dato cumple $y_i=5+4x_{1i}-3x_{2i}$ exactamente: los datos se generaron con ese modelo sin ruido. Con mediciones reales, $S_r$ sería pequeño pero positivo." }, { "etiqueta": "Potencia", "nivel": 3, "criterio": "Linealizar un modelo de potencia (§5)", "enunciado": "Para ajustar $y=\\alpha x^{\\beta}$ con una recta se grafica:", "opciones": [ "$\\ln y$ contra $\\ln x$: pendiente $\\beta$, intercepto $\\ln\\alpha$", "$\\ln y$ contra $x$", "$y$ contra $\\ln x$", "$y$ contra $x^{2}$" ], "correcta": 0, "pista": "Toma logaritmo a ambos lados: $\\ln y=\\ln\\alpha+\\beta\\ln x$.", "solucion": "$\\ln y=\\ln\\alpha+\\beta\\ln x$ es una recta en las variables $\\ln x$ y $\\ln y$. Con $y=3x^{2}$ se obtiene pendiente $2$ e intercepto $\\ln3$. Graficar $\\ln y$ contra $x$ corresponde al modelo exponencial." }, { "etiqueta": "Logístico", "nivel": 3, "criterio": "Linealizar el modelo logístico (§5)", "enunciado": "Con $L=100$, la recta de $\\ln(100/y-1)$ contra $x$ tiene pendiente $-0{,}8$ e intercepto $4$. Entonces:", "opciones": [ "$k=4$ y $x_0=0{,}8$", "$k=0{,}8$ y $x_0=4$", "$k=0{,}8$ y $x_0=5$", "$k=-0{,}8$ y $x_0=4$" ], "correcta": 2, "pista": "$\\ln(L/y-1)=kx_0-kx$: la pendiente es $-k$ y el intercepto $kx_0$.", "solucion": "Comparando con $\\ln(L/y-1)=kx_0-kx$: $-k=-0{,}8\\Rightarrow k=0{,}8$, y $kx_0=4\\Rightarrow x_0=4/0{,}8=5$. El modelo es $y=100/(1+e^{-0{,}8(x-5)})$ y $x_0$ es el punto donde $y=L/2$." } ] });
+</script>
 </body>
 </html>

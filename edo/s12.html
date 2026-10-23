@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana 12 · Modelos lineales y no lineales — Ecuaciones Diferenciales · UNIAJC</title>
-<link rel="stylesheet" href="../assets/ova.css?v=20260911c">
+<title>Guía 12 · Diferenciación e integración numérica — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912e">
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="top-inner">
     <span class="badge">DCB</span>
     <div class="top-titles">
-      <h1>Ecuaciones Diferenciales · Semana 12</h1>
+      <h1>Métodos Numéricos · Guía 12</h1>
       <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
     </div>
     <div class="top-actions">
@@ -22,25 +29,343 @@
   </div>
 </header>
 
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#s1">1 · Derivar con diferencias</a>
+    <a href="#s2">2 · Forma matricial</a>
+    <a href="#s3">3 · Regla del trapecio</a>
+    <a href="#s4">4 · Reglas de Simpson</a>
+    <a href="#s5">5 · Error y datos tabulados</a>
+    <a href="#s6">6 · Práctica final</a>
+  </div>
+</nav>
+
 <main>
-  <div class="aviso-borrador">
-    <span class="icono" aria-hidden="true">🛠</span>
-    <h3>Semana 12 · Modelos lineales y no lineales</h3>
-    <p>Esta guía todavía no está publicada. Aparecerá aquí, en este mismo enlace,
-       cuando esté lista.</p>
-    <div class="acciones">
-      <a class="btn" href="./">Ver todas las sesiones</a>
-      <a class="btn ghost" href="../">Otros cursos</a>
+
+<div class="hero">
+  <div class="eyebrow">Guía de estudio 12 · Corte III</div>
+  <h2>Diferenciación e integración numérica</h2>
+  <p>Cuando la función viene como tabla de mediciones, o cuando no tiene antiderivada elemental, derivar
+     e integrar «a mano» es imposible. Esta guía construye las fórmulas que usa cualquier computador para
+     ambas tareas: cocientes de diferencias para la derivada, y las reglas del trapecio y de Simpson para
+     la integral. El hilo conductor es el mismo de la Guía 2: cada fórmula tiene un error que depende de
+     una potencia del paso $h$.</p>
+  <div class="chips">
+    <span class="chip">Chapra · Cap. 21 y 23</span>
+    <span class="chip">Burden · Cap. 4.1 y 4.3</span>
+    <span class="chip">Semana 12</span>
+    <span class="chip">2 comprobaciones + práctica final</span>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>De dónde venimos.</strong> La Guía 2 presentó la serie de Taylor y la Guía 1 las sumas de
+  Riemann. Las fórmulas de diferencias salen de truncar Taylor; las de integración, de reemplazar la
+  función por un polinomio sencillo en cada tramo e integrarlo exactamente.
+</div>
+
+<section class="card" id="s1">
+  <h3 class="card-title">1 · Derivar con diferencias finitas</h3>
+
+  <div class="callout-dark">
+    <h3>Tres cocientes, dos órdenes de error</h3>
+    <p>La derivada es el límite del cociente $\dfrac{f(x+h)-f(x)}{h}$. Si no tomamos el límite y dejamos un
+       $h$ pequeño, obtenemos la <strong>diferencia hacia adelante</strong>, con error proporcional a $h$.
+       Usar los dos vecinos, $x-h$ y $x+h$, cancela el primer término del error: la
+       <strong>diferencia central</strong> tiene error proporcional a $h^{2}$, mucho menor.</p>
+  </div>
+
+  <div class="def">
+    $$f'(x)\approx\frac{f(x+h)-f(x)}{h}\ \ (\text{adelante},\,O(h))\qquad
+      f'(x)\approx\frac{f(x)-f(x-h)}{h}\ \ (\text{atrás},\,O(h))\qquad
+      f'(x)\approx\frac{f(x+h)-f(x-h)}{2h}\ \ (\text{central},\,O(h^{2}))$$
+    $$f''(x)\approx\frac{f(x+h)-2f(x)+f(x-h)}{h^{2}}\ \ (O(h^{2}))$$
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 1 · $f(x)=e^{x}$ en $x=0$ con $h=0{,}1$ (valor exacto $f'(0)=1$)</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Las tres aproximaciones</div>
+        Adelante: $\dfrac{e^{0{,}1}-1}{0{,}1}=1{,}05171$ (error $0{,}0517$). Atrás: $\dfrac{1-e^{-0{,}1}}{0{,}1}=0{,}95163$ (error $0{,}0484$).
+        Central: $\dfrac{e^{0{,}1}-e^{-0{,}1}}{0{,}2}=1{,}00167$ (error $0{,}00167$).
+      </div>
+      <div class="paso"><div class="paso-t">Reducir $h$ a la mitad</div>
+        Con $h=0{,}05$ la central da $1{,}000417$: el error pasa de $0{,}00167$ a $0{,}00042$, cuatro veces menor, como corresponde a $O(h^{2})$. Las de adelante y atrás solo lo reducen a la mitad.
+      </div>
+      <div class="paso"><div class="paso-t">Segunda derivada</div>
+        $\dfrac{e^{0{,}1}-2+e^{-0{,}1}}{0{,}01}=1{,}00083$, frente al exacto $f''(0)=1$.
+      </div>
     </div>
   </div>
+
+  <div class="sub-title">1.1 Las tres secantes y la tangente</div>
+  <div class="viz" data-viz="derivada">
+    <div class="viz-controls">
+      <label for="dv-f">Función</label>
+      <select id="dv-f">
+        <option value="exp">f(x) = eˣ en x₀ = 0</option>
+        <option value="sen">f(x) = sen x en x₀ = 1</option>
+        <option value="cub">f(x) = x³ en x₀ = 1</option>
+      </select>
+      <label for="dv-h">Paso h</label>
+      <input id="dv-h" class="h" type="range" min="2" max="50" step="1" value="20">
+      <span class="h-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Reduce $h$ y compara cómo caen los tres errores: la secante central (verde) se pega a la tangente
+    mucho antes que las otras dos. Para $f=x^{3}$ la central con cualquier $h$ da $3+h^{2}$: el término de
+    error es visible.
+  </p>
+</section>
+
+<section class="card" id="s2">
+  <h3 class="card-title">2 · Desarrollo matricial: derivar toda una tabla a la vez</h3>
+
+  <div class="callout-dark">
+    <h3>La derivada como producto matriz-vector</h3>
+    <p>Si la función se conoce en una malla $x_0,x_1,\dots,x_n$ con paso $h$, aplicar la diferencia central en
+       cada punto interior y una diferencia lateral en los extremos es multiplicar el vector de valores
+       $\mathbf f=(f_0,\dots,f_n)$ por una <strong>matriz de diferenciación</strong> $D$. Es la forma en que
+       se programa: una sola operación en vez de un bucle.</p>
+  </div>
+
+  <div class="def">
+    Para cinco puntos:
+    $$\mathbf f'\approx D\,\mathbf f,\qquad D=\frac{1}{2h}\begin{pmatrix}-2&2&0&0&0\\-1&0&1&0&0\\0&-1&0&1&0\\0&0&-1&0&1\\0&0&0&-2&2\end{pmatrix}$$
+    Las filas interiores son la central $\tfrac{f_{i+1}-f_{i-1}}{2h}$; la primera y la última son adelante y atrás (por eso llevan $\pm2$).
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 2 · $f(x)=x^{2}$ en $x=0,\ 0{,}5,\ 1,\ 1{,}5,\ 2$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Vector de valores</div>
+        $\mathbf f=(0,\ 0{,}25,\ 1,\ 2{,}25,\ 4)$, $h=0{,}5$.
+      </div>
+      <div class="paso"><div class="paso-t">Producto $D\mathbf f$</div>
+        $D\mathbf f=(0{,}5,\ 1,\ 2,\ 3,\ 3{,}5)$. En los puntos interiores el resultado es <em>exacto</em> ($f'=2x$ da $1,2,3$): la central no tiene error para polinomios de grado $\le2$. En los extremos las fórmulas laterales dejan error $h=0{,}5$ ($0{,}5$ en vez de $0$; $3{,}5$ en vez de $4$).
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 1 — Diferenciación numérica</h3>
+  <div id="chk1"></div>
+</div>
+
+<section class="card" id="s3">
+  <h3 class="card-title">3 · Regla del trapecio</h3>
+
+  <div class="callout-dark">
+    <h3>Rectas en vez de rectángulos</h3>
+    <p>Las sumas de Riemann de la Guía 1 usaban rectángulos. Si en cada segmento unimos los dos
+       extremos con una recta, el área es un trapecio: $\tfrac{h}{2}[f(x_i)+f(x_{i+1})]$. Sumando los $n$
+       trapecios, los puntos interiores se cuentan dos veces.</p>
+  </div>
+
+  <div class="def">
+    $$\int_{a}^{b}f(x)\,dx\approx\frac{h}{2}\Big[f(x_0)+2f(x_1)+2f(x_2)+\cdots+2f(x_{n-1})+f(x_n)\Big],\qquad h=\frac{b-a}{n}$$
+    Error: proporcional a $h^{2}$ (al duplicar $n$ el error se divide por 4). Cota: $|E|\le\dfrac{(b-a)h^{2}}{12}\max|f''|$.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 3 · $\displaystyle\int_{0}^{2}x^{3}\,dx=4$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Un solo trapecio ($n=1$, $h=2$)</div>
+        $\tfrac{2}{2}[0+8]=8$. Error $4$.
+      </div>
+      <div class="paso"><div class="paso-t">Dos trapecios ($n=2$, $h=1$)</div>
+        $\tfrac{1}{2}[0+2(1)+8]=5$. Error $1$.
+      </div>
+      <div class="paso"><div class="paso-t">Cuatro trapecios ($n=4$, $h=0{,}5$)</div>
+        $\tfrac{0{,}5}{2}[0+2(0{,}125)+2(1)+2(3{,}375)+8]=4{,}25$. Error $0{,}25$. Cada duplicación divide el error por 4.
+      </div>
+      <div class="paso"><div class="paso-t">La cota</div>
+        Con $n=2$: $\dfrac{(2)(1)^{2}}{12}\max|6x|=\dfrac{2}{12}\cdot12=2\ge1$ ✓.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s4">
+  <h3 class="card-title">4 · Reglas de Simpson</h3>
+
+  <div class="callout-dark">
+    <h3>Parábolas y cúbicas en vez de rectas</h3>
+    <p>Si por cada <em>par</em> de segmentos pasamos una parábola e integramos esa parábola, obtenemos la
+       regla de <strong>Simpson 1/3</strong>; con una cúbica por cada <em>tres</em> segmentos, la regla de
+       <strong>Simpson 3/8</strong>. Ambas integran exactamente polinomios hasta grado 3 y su error es
+       proporcional a $h^{4}$: duplicar $n$ divide el error por 16.</p>
+  </div>
+
+  <div class="def">
+    <strong>Simpson 1/3</strong> ($n$ par): $\displaystyle\int_{a}^{b}f\,dx\approx\frac{h}{3}\Big[f_0+4f_1+2f_2+4f_3+\cdots+4f_{n-1}+f_n\Big]$
+    <br><strong>Simpson 3/8</strong> (3 segmentos): $\displaystyle\int_{x_0}^{x_3}f\,dx\approx\frac{3h}{8}\Big[f_0+3f_1+3f_2+f_3\Big]$
+    <br>Si $n$ es impar, se combinan: 1/3 en un número par de segmentos y 3/8 en los tres restantes.
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 4 · Las mismas integrales con Simpson</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">$\displaystyle\int_{0}^{2}x^{3}dx$ con Simpson 1/3, $n=2$</div>
+        $\tfrac{1}{3}[0+4(1)+8]=4$: <strong>exacto</strong>, porque el integrando es cúbico. El trapecio necesitaba muchos segmentos para acercarse.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int_{0}^{3}x^{3}dx=20{,}25$ con Simpson 3/8 ($h=1$)</div>
+        $\tfrac{3}{8}[0+3(1)+3(8)+27]=\tfrac{3}{8}(54)=20{,}25$: también exacto. El trapecio con $n=3$ da $22{,}5$.
+      </div>
+      <div class="paso"><div class="paso-t">$\displaystyle\int_{0}^{1}e^{x}dx=e-1=1{,}71828$</div>
+        Trapecio: $n=1$: $1{,}85914$; $n=2$: $1{,}75393$; $n=4$: $1{,}72722$. Simpson 1/3: $n=2$: $1{,}71886$; $n=4$: $1{,}71832$.
+        Con solo tres evaluaciones, Simpson ya supera al trapecio con cinco.
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">4.1 Trapecios, parábolas y cúbicas bajo la curva</div>
+  <div class="viz" data-viz="cuadratura">
+    <div class="viz-controls">
+      <label for="cq-f">Integral</label>
+      <select id="cq-f">
+        <option value="cub">∫₀² x³ dx = 4</option>
+        <option value="exp">∫₀¹ eˣ dx = e − 1</option>
+        <option value="arc">∫₀¹ dx/(1+x²) = π/4</option>
+        <option value="sen">∫₀^π sen x dx = 2</option>
+      </select>
+      <label for="cq-m">Regla</label>
+      <select id="cq-m" class="metodo">
+        <option value="trap">trapecio</option>
+        <option value="s13">Simpson 1/3</option>
+        <option value="s38">Simpson 3/8</option>
+      </select>
+      <label for="cq-n">Segmentos n</label>
+      <input id="cq-n" class="n" type="range" min="1" max="24" step="1" value="2">
+      <span class="n-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+  <p style="font-size:.86rem;color:var(--muted)">
+    Con $x^{3}$, Simpson es exacto desde $n=2$; con $e^{x}$ o $1/(1+x^{2})$ ningún método es exacto, pero al
+    duplicar $n$ el error del trapecio cae a la cuarta parte y el de Simpson a la dieciseisava.
+  </p>
+</section>
+
+<section class="card" id="s5">
+  <h3 class="card-title">5 · Orden del error y datos tabulados</h3>
+
+  <div class="def">
+    <table class="tbl">
+      <tr><th>Regla</th><th>Polinomio por tramo</th><th>Error</th><th>Exacta hasta grado</th><th>Evaluaciones</th></tr>
+      <tr><td>Trapecio</td><td>recta (2 puntos)</td><td>$O(h^{2})$: ÷4 al duplicar $n$</td><td>1</td><td>$n+1$</td></tr>
+      <tr><td>Simpson 1/3</td><td>parábola (3 puntos)</td><td>$O(h^{4})$: ÷16 al duplicar $n$</td><td>3</td><td>$n+1$, $n$ par</td></tr>
+      <tr><td>Simpson 3/8</td><td>cúbica (4 puntos)</td><td>$O(h^{4})$</td><td>3</td><td>$n+1$, $n$ múltiplo de 3</td></tr>
+    </table>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 5 · Ver el orden en $\displaystyle\int_{0}^{1}e^{x}dx$</h4>
+    <div class="ejemplo-body">
+      <div class="paso"><div class="paso-t">Trapecio</div>
+        Errores: $0{,}1409$ ($n=1$), $0{,}0357$ ($n=2$), $0{,}0089$ ($n=4$): cada uno es cerca de la cuarta parte del anterior.
+      </div>
+      <div class="paso"><div class="paso-t">Simpson 1/3</div>
+        Errores: $5{,}8\times10^{-4}$ ($n=2$), $3{,}7\times10^{-5}$ ($n=4$): cociente $\approx16$.
+      </div>
+      <div class="paso"><div class="paso-t">$n=5$ (impar): combinar</div>
+        Simpson 1/3 en los dos primeros segmentos y 3/8 en los tres últimos ($h=0{,}2$): $1{,}71830$, error $1{,}6\times10^{-5}$.
+      </div>
+    </div>
+  </div>
+
+  <div class="ejemplo">
+    <h4>Ejemplo 6 · Distancia a partir de velocidades medidas</h4>
+    <div class="ejemplo-body">
+      <table class="tbl">
+        <tr><th>$t$ (s)</th><td>0</td><td>2</td><td>4</td><td>6</td><td>8</td></tr>
+        <tr><th>$v$ (m/s)</th><td>0</td><td>4</td><td>7</td><td>9</td><td>10</td></tr>
+      </table>
+      <div class="paso"><div class="paso-t">Trapecio ($h=2$)</div>
+        $d=\tfrac{2}{2}[0+2(4)+2(7)+2(9)+10]=50$ m.
+      </div>
+      <div class="paso"><div class="paso-t">Simpson 1/3 ($n=4$)</div>
+        $d=\tfrac{2}{3}[0+4(4)+2(7)+4(9)+10]=\tfrac{2}{3}(76)=50{,}667$ m.
+      </div>
+      <div class="paso"><div class="paso-t">Lectura</div>
+        Con datos tabulados no hay «valor exacto» para comparar: Simpson es la mejor estimación disponible si la velocidad varía suavemente, y la diferencia entre ambas ($0{,}67$ m) da una idea de la incertidumbre.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <h3 class="card-title">✓ Comprobación 2 — Trapecio y Simpson</h3>
+  <div id="chk2"></div>
+</div>
+
+<section class="card">
+  <h3 class="card-title">Según tu programa</h3>
+  <div class="carrera">
+    <h4>Selecciona tu programa académico</h4>
+    <p class="hint">Se guarda en este navegador y se aplica a todas las guías.</p>
+    <select data-programa aria-label="Programa académico"></select>
+    <div class="ctx-box" data-prog="adm"><strong>Administración.</strong>
+      La tasa de crecimiento de las ventas de un mes a otro es una diferencia finita; el acumulado de un
+      flujo medido mes a mes (ingresos, inventario, demanda) es una integral numérica de datos
+      tabulados: el trapecio es lo que hace una hoja de cálculo al promediar valores consecutivos.</div>
+    <div class="ctx-box" data-prog="con"><strong>Contaduría.</strong>
+      El costo marginal a partir de una tabla de costos totales se estima con diferencias (central si hay
+      datos a ambos lados); el costo total de un tramo de producción, integrando el marginal tabulado
+      con el trapecio o Simpson. Las curvas de aprendizaje y depreciación se tratan igual.</div>
+    <div class="ctx-box" data-prog="sis"><strong>Sistemas.</strong>
+      La matriz de diferenciación $D$ es la forma vectorizada que usan NumPy y las GPU: una multiplicación
+      en vez de un bucle. Los filtros de detección de bordes en imágenes son diferencias finitas
+      centrales en dos dimensiones, y Simpson es el método por defecto en varias bibliotecas de
+      integración.</div>
+    <div class="ctx-box" data-prog="ele"><strong>Electrónica.</strong>
+      Un osciloscopio digital entrega muestras: la corriente de un condensador, $i=C\,dv/dt$, se obtiene
+      con diferencias centrales de la tensión muestreada, y la carga o la energía con el trapecio o
+      Simpson sobre las muestras. El paso $h$ es el periodo de muestreo.</div>
+  </div>
+</section>
+
+<section class="card" id="s6">
+  <h3 class="card-title">6 · Práctica final integradora</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Ocho preguntas que recorren toda la guía. Si fallas alguna, la explicación te indica a qué
+    sección volver.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li><strong>Diferencias</strong>: adelante y atrás $O(h)$; central $\dfrac{f(x+h)-f(x-h)}{2h}$ es $O(h^{2})$; segunda derivada $\dfrac{f(x+h)-2f(x)+f(x-h)}{h^{2}}$.</li>
+    <li><strong>Matriz $D$</strong>: deriva toda una tabla con un producto matriz-vector; interior central, extremos laterales.</li>
+    <li><strong>Trapecio</strong>: $\tfrac h2[f_0+2f_1+\cdots+2f_{n-1}+f_n]$, error $O(h^{2})$, exacto para rectas.</li>
+    <li><strong>Simpson 1/3</strong> ($n$ par): $\tfrac h3[f_0+4f_1+2f_2+\cdots+f_n]$; <strong>3/8</strong> (3 segmentos): $\tfrac{3h}{8}[f_0+3f_1+3f_2+f_3]$. Error $O(h^{4})$, exactas hasta grado 3.</li>
+    <li>Duplicar $n$: trapecio ÷4, Simpson ÷16. $\int_0^2x^3=4$: trapecio 8, 5, 4,25; Simpson 1/3 exacto con $n=2$.</li>
+    <li>Con <strong>datos tabulados</strong> ($h$ fijo) se aplican las mismas fórmulas: velocidades → distancia 50 (trapecio) o 50,667 (Simpson).</li>
+  </ul>
+</section>
+
 </main>
 
 <footer>
   <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-2/pages/3-6-numerical-integration" target="_blank" rel="noopener">OpenStax Calculus Vol. 2 · Integración numérica</a> · <a href="https://www.geogebra.org/graphing" target="_blank" rel="noopener">GeoGebra</a> · <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos</a></div>
     <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
     <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
   </div>
 </footer>
-<script src="../assets/ova.js?v=20260911c"></script>
+
+<script src="../assets/ova.js?v=20260912e"></script>
+<script src="../assets/viz-metodos.js?v=20260912e"></script>
+<script>
+OVA.quiz({ "destino": "chk1", "titulo": "Diferenciación numérica · 3 preguntas", "items": [ { "etiqueta": "Central", "nivel": 2, "criterio": "Aplicar la diferencia central (§1)", "enunciado": "Para $f(x)=e^{x}$ en $x=0$ con $h=0{,}1$, la diferencia central $\\dfrac{f(0{,}1)-f(-0{,}1)}{0{,}2}$ da:", "opciones": [ "$1{,}00167$ (error $0{,}00167$)", "$1{,}05171$ (error $0{,}0517$)", "$0{,}95163$", "$1$ exacto" ], "correcta": 0, "pista": "$e^{0{,}1}=1{,}10517$, $e^{-0{,}1}=0{,}90484$.", "solucion": "$\\dfrac{1{,}10517-0{,}90484}{0{,}2}=1{,}00167$: error $0{,}00167$, unas 30 veces menor que el de la diferencia hacia adelante ($1{,}05171$). Ninguna fórmula con $h\\gt0$ es exacta para $e^{x}$." }, { "etiqueta": "Orden", "nivel": 2, "criterio": "Relacionar orden del error con $h$ (§1)", "enunciado": "Si se reduce $h$ a la mitad, el error de la diferencia central se divide aproximadamente por:", "opciones": [ "$16$", "no cambia", "$4$, porque es $O(h^{2})$", "$2$, porque es $O(h)$" ], "correcta": 2, "pista": "Ejemplo 1: de $0{,}00167$ a $0{,}00042$.", "solucion": "El error de la central es proporcional a $h^{2}$: $(h/2)^{2}=h^{2}/4$. Las fórmulas de adelante y atrás, $O(h)$, solo lo dividen por 2. Dividir por 16 corresponde a $O(h^{4})$, el orden de Simpson." }, { "etiqueta": "Matriz", "nivel": 3, "criterio": "Interpretar la matriz de diferenciación (§2)", "enunciado": "Para $f(x)=x^{2}$ en la malla $0,\\ 0{,}5,\\ 1,\\ 1{,}5,\\ 2$, el producto $D\\mathbf f$ da $(0{,}5,\\ 1,\\ 2,\\ 3,\\ 3{,}5)$. Esto muestra que:", "opciones": [ "la matriz $D$ está mal construida", "todas las filas tienen error $h$", "la derivada de $x^{2}$ es $2x+0{,}5$", "las filas centrales son exactas para $x^{2}$ y las de los extremos (adelante/atrás) tienen error $h=0{,}5$" ], "correcta": 3, "pista": "$f'=2x$ vale $0,1,2,3,4$ en la malla.", "solucion": "Los valores exactos son $0,1,2,3,4$. Los interiores coinciden (la central no tiene error para grado $\\le2$); en los extremos, $0{,}5$ y $3{,}5$ difieren en $h=0{,}5$, el error $O(h)$ de las fórmulas laterales." } ] });
+OVA.quiz({ "destino": "chk2", "titulo": "Trapecio y Simpson · 3 preguntas", "items": [ { "etiqueta": "Trapecio", "nivel": 2, "criterio": "Aplicar la regla del trapecio (§3)", "enunciado": "$\\displaystyle\\int_{0}^{2}x^{3}dx$ con la regla del trapecio y $n=2$ ($h=1$) da:", "opciones": [ "$4{,}25$", "$5$", "$4$", "$8$" ], "correcta": 1, "pista": "$\\tfrac{h}{2}[f(0)+2f(1)+f(2)]$.", "solucion": "$\\tfrac12[0+2(1)+8]=5$, error $1$ respecto al exacto $4$. Con $n=1$ da $8$ y con $n=4$, $4{,}25$: el error se divide por 4 en cada duplicación." }, { "etiqueta": "Simpson", "nivel": 2, "criterio": "Aplicar Simpson 1/3 (§4)", "enunciado": "$\\displaystyle\\int_{0}^{2}x^{3}dx$ con Simpson 1/3 y $n=2$ da:", "opciones": [ "$4$, exacto, porque Simpson integra cúbicas sin error", "$5$", "$4{,}25$", "$4{,}0833$" ], "correcta": 0, "pista": "$\\tfrac{h}{3}[f_0+4f_1+f_2]$.", "solucion": "$\\tfrac13[0+4(1)+8]=4$. Simpson 1/3 es exacta para polinomios hasta grado 3 (una ganancia inesperada: la parábola interpolante se equivoca, pero sus errores a ambos lados del punto medio se cancelan)." }, { "etiqueta": "3/8", "nivel": 3, "criterio": "Aplicar Simpson 3/8 (§4)", "enunciado": "$\\displaystyle\\int_{0}^{3}x^{3}dx$ con Simpson 3/8 ($h=1$) da:", "opciones": [ "$22{,}5$", "$\\tfrac{3}{8}[0+1+8+27]$", "$\\tfrac{3}{8}[0+3(1)+3(8)+27]=20{,}25$", "$\\tfrac{1}{3}[0+4(1)+2(8)+27]$" ], "correcta": 2, "pista": "Pesos 1-3-3-1 por $3h/8$.", "solucion": "$\\tfrac38(0+3+24+27)=\\tfrac38(54)=20{,}25=\\tfrac{81}{4}$, exacto. Simpson 1/3 no aplica con $n=3$ (impar); $22{,}5$ es el trapecio con $n=3$." } ] });
+OVA.quiz({ "destino": "final", "titulo": "Práctica final · 8 preguntas", "items": [ { "etiqueta": "Adelante", "nivel": 1, "criterio": "Aplicar la diferencia hacia adelante (§1)", "enunciado": "La diferencia hacia adelante para $f'(x)$ es:", "opciones": [ "$\\dfrac{f(x+h)-f(x-h)}{2h}$", "$\\dfrac{f(x)-f(x-h)}{h}$", "$\\dfrac{f(x+h)-2f(x)+f(x-h)}{h^{2}}$", "$\\dfrac{f(x+h)-f(x)}{h}$, con error $O(h)$" ], "correcta": 3, "pista": "Usa el punto actual y el siguiente.", "solucion": "Adelante: $\\tfrac{f(x+h)-f(x)}{h}$, error $O(h)$. La segunda opción es la central ($O(h^{2})$), la tercera la de atrás y la cuarta aproxima $f''$." }, { "etiqueta": "x³", "nivel": 3, "criterio": "Ver el término de error de la central (§1)", "enunciado": "Para $f(x)=x^{3}$ en $x=1$, la diferencia central con paso $h$ da exactamente:", "opciones": [ "$3h^{2}$", "$3+h^{2}$", "$3$", "$3+3h$" ], "correcta": 1, "pista": "Desarrolla $(1+h)^{3}-(1-h)^{3}=6h+2h^{3}$.", "solucion": "$\\dfrac{(1+h)^{3}-(1-h)^{3}}{2h}=\\dfrac{6h+2h^{3}}{2h}=3+h^{2}$. El valor exacto es $3$ y el error $h^{2}$ es exactamente el término $O(h^{2})$ de la fórmula: con $h=0{,}2$, error $0{,}04$." }, { "etiqueta": "Segunda", "nivel": 2, "criterio": "Aproximar la segunda derivada (§1)", "enunciado": "Para $f(x)=e^{x}$ en $x=0$ con $h=0{,}1$, $\\dfrac{f(0{,}1)-2f(0)+f(-0{,}1)}{0{,}01}$ aproxima:", "opciones": [ "$f''(0)=1$, dando $1{,}00083$", "$f'(0)$", "$f(0)$", "la integral de $f$ en $[-0{,}1,\\,0{,}1]$" ], "correcta": 0, "pista": "Pesos $1,-2,1$ sobre $h^{2}$.", "solucion": "Es la fórmula central de la segunda derivada, $O(h^{2})$: $\\dfrac{1{,}10517-2+0{,}90484}{0{,}01}=1{,}00083$, frente a $f''(0)=1$." }, { "etiqueta": "Pesos", "nivel": 2, "criterio": "Reconocer los pesos del trapecio compuesto (§3)", "enunciado": "En la regla del trapecio compuesta, los valores interiores $f_1,\\dots,f_{n-1}$ se multiplican por:", "opciones": [ "$4$", "$h$", "$2$, porque cada punto interior pertenece a dos trapecios", "$1$" ], "correcta": 2, "pista": "Suma los $n$ trapecios $\\tfrac h2[f_i+f_{i+1}]$.", "solucion": "Al sumar $\\tfrac h2[f_0+f_1]+\\tfrac h2[f_1+f_2]+\\cdots$ cada interior aparece dos veces: $\\tfrac h2[f_0+2f_1+\\cdots+2f_{n-1}+f_n]$. El peso $4$ es el de los impares en Simpson 1/3." }, { "etiqueta": "e^x", "nivel": 3, "criterio": "Comparar trapecio y Simpson (§4–5)", "enunciado": "Para $\\displaystyle\\int_{0}^{1}e^{x}dx=1{,}71828$, el trapecio con $n=4$ da $1{,}72722$ y Simpson 1/3 con $n=2$ da $1{,}71886$. Por tanto:", "opciones": [ "el trapecio es más exacto", "ambos tienen el mismo error", "Simpson es exacto", "Simpson con 3 evaluaciones es más exacto que el trapecio con 5" ], "correcta": 3, "pista": "Compara los errores: $0{,}0089$ frente a $0{,}00058$.", "solucion": "Error del trapecio ($n=4$): $0{,}0089$; de Simpson ($n=2$): $0{,}00058$, 15 veces menor con menos evaluaciones. Simpson no es exacto para $e^{x}$ (solo para polinomios de grado $\\le3$)." }, { "etiqueta": "Cota", "nivel": 3, "criterio": "Usar la cota del error del trapecio (§3)", "enunciado": "La cota $|E|\\le\\dfrac{(b-a)h^{2}}{12}\\max|f''|$ para $\\displaystyle\\int_{0}^{2}x^{3}dx$ con $n=2$ vale:", "opciones": [ "$12$", "$2$ (y el error real es $1$)", "$1$", "$0{,}5$" ], "correcta": 1, "pista": "$b-a=2$, $h=1$, $\\max|6x|=12$ en $[0,2]$.", "solucion": "$\\dfrac{2\\cdot1^{2}}{12}\\cdot12=2$. El error real, $5-4=1$, está dentro de la cota. La cota usa el máximo de $|f''|$, por eso suele sobreestimar." }, { "etiqueta": "Impar", "nivel": 2, "criterio": "Manejar $n$ impar (§4–5)", "enunciado": "Si se tienen $n=5$ segmentos de igual ancho, la mejor estrategia con Simpson es:", "opciones": [ "Simpson 1/3 en 2 segmentos y Simpson 3/8 en los otros 3", "Simpson 1/3 en los 5 segmentos", "descartar un dato y usar 1/3 con $n=4$", "usar solo el trapecio" ], "correcta": 0, "pista": "1/3 exige un número par de segmentos; 3/8 exige tres.", "solucion": "Simpson 1/3 necesita $n$ par y 3/8 necesita múltiplos de 3; con $n=5$ se combinan $2+3$. Ambas son $O(h^{4})$, así que la precisión se conserva (para $e^{x}$ en $[0,1]$: $1{,}71830$). Descartar un dato desperdicia información." }, { "etiqueta": "Datos", "nivel": 3, "criterio": "Integrar datos tabulados (§5)", "enunciado": "Con velocidades $0,4,7,9,10$ m/s medidas cada 2 s, la distancia por Simpson 1/3 es:", "opciones": [ "$\\tfrac{2}{3}[0+4+7+9+10]=20$ m", "$30$ m", "$\\tfrac{2}{3}[0+4(4)+2(7)+4(9)+10]=50{,}667$ m", "$50$ m (trapecio)" ], "correcta": 2, "pista": "Pesos 1-4-2-4-1 por $h/3$.", "solucion": "$\\tfrac23(0+16+14+36+10)=\\tfrac23(76)=50{,}667$ m. El trapecio da $50$ m; la diferencia de $0{,}67$ m indica la incertidumbre de integrar solo cinco mediciones." } ] });
+</script>
 </body>
 </html>
