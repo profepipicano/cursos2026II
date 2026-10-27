@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 10 · Avance del proyecto y taller de repaso — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912h">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Métodos Numéricos · Semana 10</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#reglas">Avance del proyecto</a>
+    <a href="#t6">Semana 6</a>
+    <a href="#t7">Semana 7</a>
+    <a href="#t8">Semana 8</a>
+    <a href="#t9">Semana 9</a>
+    <a href="#simulacro">Simulacro</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Semana 10 · Corte II · Evaluación</div>
+  <h2>Avance del proyecto y taller de repaso · Corte II</h2>
+  <p>La evaluación del Corte II de Métodos Numéricos no es un examen: es la <strong>entrega del
+     avance del proyecto de curso</strong> en video, por la tarea de Teams. Esta página reúne las
+     reglas de esa entrega y la plantilla del documento que la acompaña. Además, para afianzar
+     los temas de las semanas 6 a 9 que el proyecto va a necesitar, trae un taller de 12
+     ejercicios y un simulacro autocalificado de 12 preguntas, <strong>sin nota</strong>.</p>
+  <div class="chips">
+    <span class="chip">Peso: 50 % de la nota del corte</span>
+    <span class="chip">Video de máximo 10 minutos</span>
+    <span class="chip">Un solo entregable por grupo</span>
+    <span class="chip">Taller + simulacro de repaso</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">📄</span>
+  <h3>Descarga la plantilla del documento de avance</h3>
+  <p>Un archivo de Word de una a dos páginas con lo que debe acompañar al video: la tabla de
+     integrantes del grupo, el espacio para el enlace del video, el cronograma de la propuesta
+     con su estado real (cumplido, parcial, pendiente), el resumen del avance, el plan hasta la
+     semana 15 y la declaración de uso de IA. Ábrelo y solo tienes que escribir tu contenido.</p>
+  <div class="acciones">
+    <a class="btn" href="Plantilla_Avance_Proyecto.docx" download>Descargar plantilla (.docx)</a>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>La fecha y la hora límite se publican en la tarea de Teams.</strong> Esta página
+  describe <em>qué</em> se entrega y <em>cómo</em> se califica; el plazo exacto está en el
+  anuncio del curso. La <em>Guía del Proyecto de Curso</em> en PDF sigue siendo el documento
+  normativo: ante cualquier diferencia, vale lo que dice el PDF.
+</div>
+
+<section class="card" id="reglas">
+  <h3 class="card-title">Cómo es la evaluación: avance del proyecto en video</h3>
+
+  <div class="sub-title">Qué se entrega</div>
+  <ol>
+    <li><strong>Un video de máximo 10 minutos</strong> en el que el grupo exponga completamente su
+        avance. Lo que pase del minuto 10 <strong>no se evalúa</strong>.</li>
+    <li><strong>El documento de avance</strong> (1–2 páginas, con la plantilla de arriba): nombre
+        completo de todos los integrantes, el cronograma de la propuesta actualizado —qué se
+        comprometió para este corte, qué se cumplió y qué queda pendiente— y la declaración de
+        uso de IA.</li>
+    <li>El video puede subirse como <strong>archivo</strong> en la tarea de Teams o como
+        <strong>enlace</strong> (YouTube sin listar, OneDrive, Stream, etc.). Si entregan enlace,
+        es responsabilidad del grupo verificar que abra <em>sin pedir permisos</em>: un enlace
+        que no funcione se considera <strong>actividad no presentada</strong>.</li>
+    <li><strong>Entrega tardía: cero.</strong> La fecha y hora límite están en la tarea de Teams.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>Un solo integrante entrega por el grupo</h3>
+    <p>La entrega la hace <strong>un solo integrante</strong>. No suban el mismo video varias
+       veces: el documento de avance, con el nombre de todos los integrantes, es lo que asigna la
+       nota a cada miembro del grupo. <strong>Quien no aparezca en ese documento no recibe
+       nota.</strong></p>
+  </div>
+
+  <div class="sub-title">Qué debe tener el video</div>
+  <ul>
+    <li>El <strong>problema</strong> y los <strong>métodos numéricos</strong> elegidos (breve: un minuto).</li>
+    <li>Lo <strong>comprometido en el cronograma</strong> de la propuesta y lo que se cumplió.</li>
+    <li><strong>Demostración del código funcionando</strong> en pantalla —no capturas de imagen—,
+        explicando qué hace cada parte. Recuerda: los métodos los implementa el grupo; NumPy o
+        SciPy sirven para graficar, leer datos o validar, no para reemplazar la implementación.</li>
+    <li><strong>Resultados parciales</strong> y, si ya los tienen, análisis de error o de convergencia.</li>
+    <li><strong>Dificultades</strong> encontradas y lo que falta para la entrega final de la semana 15.</li>
+  </ul>
+
+  <div class="sub-title">Participación</div>
+  <ul>
+    <li><strong>Todos los integrantes deben hablar</strong> en el video, con tiempo comparable, y
+        presentarse con su nombre al intervenir.</li>
+    <li>Todos deben conocer el proyecto completo: quien explica el código no tiene que ser quien
+        lo escribió.</li>
+    <li>Un grupo en el que algún integrante no participe no recibe la nota completa.</li>
+  </ul>
+
+  <div class="sub-title">Cómo se califica</div>
+  <table class="tbl">
+    <thead><tr><th>Criterio</th><th>Qué se mira</th></tr></thead>
+    <tbody>
+      <tr><td>Cumplimiento del cronograma</td><td>Lo prometido en la propuesta para las semanas 6–9 frente a lo mostrado. Se evalúa <em>cumplir</em>, no prometer mucho.</td></tr>
+      <tr><td>Funcionamiento del código</td><td>Corre, hace lo que dice, implementación propia de los métodos; pruebas con casos de solución conocida.</td></tr>
+      <tr><td>Claridad de la explicación</td><td>Orden, precisión en el lenguaje matemático y demostración comprensible.</td></tr>
+      <tr><td>Participación equilibrada</td><td>Todos hablan, con tiempo comparable, y cualquiera puede explicar cualquier parte.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="nota">
+    <strong>Formato.</strong> Un solo video, audio claro, nombre del archivo o del enlace con el
+    nombre del grupo. Ensayen con cronómetro: con cuatro integrantes y diez minutos, cada uno
+    tiene unos dos minutos y medio.
+  </div>
+</section>
+
+<div class="hero" style="margin-top:1.2rem">
+  <div class="eyebrow">Repaso voluntario · Semanas 6 a 9</div>
+  <h2>Taller de repaso y simulacro</h2>
+  <p>Normas y condicionamiento, Jacobi y Gauss-Seidel, ecuaciones no lineales y Newton para
+     sistemas: lo que el proyecto va a necesitar en las próximas semanas. Doce ejercicios para
+     resolver en papel (fácil → desafiante, varios en contexto de ingeniería), con el resultado
+     final revelable, y doce preguntas de opción múltiple autocalificadas. No tiene nota: es
+     para que lleguen a la semana 15 dominando las herramientas.</p>
+  <div class="chips">
+    <span class="chip">Taller · 12 ejercicios</span>
+    <span class="chip">Simulacro · 12 preguntas</span>
+    <span class="chip">Sin nota</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">✎</span>
+  <h3>Resuelve primero, revela después</h3>
+  <p>Cada ejercicio trae un botón «Ver respuesta» con el <strong>resultado final</strong>, no el
+     procedimiento. Úsalo para comparar lo que ya resolviste; en el proyecto vas a tener que
+     programar estos métodos, y eso solo se aprende calculando a mano unas cuantas iteraciones.</p>
+</div>
+
+<!-- ═══════════════ SEMANA 6 ═══════════════ -->
+<section class="card" id="t6">
+  <h3 class="card-title">Semana 6 · Normas y condicionamiento</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 6. $\|A\|_1$ = mayor suma de columna, $\|A\|_\infty$ = mayor suma de fila;
+    $\operatorname{cond}(A)=\|A\|\,\|A^{-1}\|$ y
+    $\dfrac{\|\delta\mathbf x\|}{\|\mathbf x\|}\le\operatorname{cond}(A)\,\dfrac{\|\delta\mathbf b\|}{\|\mathbf b\|}$.</p>
+
+  <div class="ejemplo" id="e1">
+    <h4>Ejercicio 1 · Normas de un vector y de una matriz <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Calcula $\|\mathbf x\|_1$, $\|\mathbf x\|_2$ y $\|\mathbf x\|_\infty$ para
+         $\mathbf x=(3,-4,12)$, y $\|A\|_1$ y $\|A\|_\infty$ para
+         $A=\begin{pmatrix}4&-1\\2&5\end{pmatrix}$.</p>
+      <button class="btn ghost" type="button" data-resp="r1">Ver respuesta</button>
+      <div class="q-sol" id="r1">$\|\mathbf x\|_1=19$, $\|\mathbf x\|_2=13$, $\|\mathbf x\|_\infty=12$;
+        $\|A\|_1=6$ (columna 1: $4+2$; columna 2: $1+5$) y $\|A\|_\infty=7$ (fila 2: $2+5$).</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e2">
+    <h4>Ejercicio 2 · Número de condición <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p>Para $A=\begin{pmatrix}4&3\\3&4\end{pmatrix}$, halla $A^{-1}$, calcula
+         $\operatorname{cond}_\infty(A)=\|A\|_\infty\|A^{-1}\|_\infty$ y resuelve $A\mathbf x=(7,7)^T$.
+         Compara con el visualizador (sistema «moderado (cond ≈ 7)»).</p>
+      <button class="btn ghost" type="button" data-resp="r2">Ver respuesta</button>
+      <div class="q-sol" id="r2">$A^{-1}=\dfrac17\begin{pmatrix}4&-3\\-3&4\end{pmatrix}$;
+        $\|A\|_\infty=7$, $\|A^{-1}\|_\infty=1$, $\operatorname{cond}_\infty(A)=7$;
+        $\mathbf x=(1,1)$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e3">
+    <h4>Ejercicio 3 · Dos sensores casi redundantes · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p>Dos sensores miden combinaciones de dos caudales $x$, $y$ (L/s): el primero da $x+y=2$
+         y el segundo $x+1{,}01y=2{,}01$. <strong>a)</strong> Resuelve el sistema.
+         <strong>b)</strong> El segundo sensor tiene un error de calibración y en realidad marca
+         $2{,}02$. Resuelve de nuevo y calcula el cambio relativo de $\mathbf b$ y el de
+         $\mathbf x$ (norma $\infty$). <strong>c)</strong> Calcula $\operatorname{cond}_\infty(A)$
+         y verifica que el cambio observado respeta la cota
+         $\|\delta\mathbf x\|/\|\mathbf x\|\le\operatorname{cond}(A)\,\|\delta\mathbf b\|/\|\mathbf b\|$.
+         Compara con el visualizador (sistema «mal condicionado»).</p>
+      <button class="btn ghost" type="button" data-resp="r3">Ver respuesta</button>
+      <div class="q-sol" id="r3"><strong>a)</strong> $\mathbf x=(1,1)$. <strong>b)</strong>
+        $\mathbf x=(0,2)$: $\mathbf b$ cambió un $0{,}01/2{,}01\approx0{,}5\,\%$ y $\mathbf x$ cambió un
+        $100\,\%$ (200 veces más). <strong>c)</strong> $A^{-1}=\begin{pmatrix}101&-100\\-100&100\end{pmatrix}$,
+        $\operatorname{cond}_\infty(A)=2{,}01\cdot201\approx404$; la cota da
+        $404\cdot0{,}005\approx2{,}0$ (200 %), y el $100\,\%$ observado la respeta.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba la amplificación del error</div>
+  <div class="viz" data-viz="condicion">
+    <div class="viz-controls">
+      <label for="cn-s">Sistema</label>
+      <select id="cn-s">
+        <option value="medio">moderado (cond ≈ 7)</option>
+        <option value="bien">bien condicionado (cond ≈ 1,5)</option>
+        <option value="mal">mal condicionado (cond ≈ 402)</option>
+        <option value="peor">casi singular (cond ≈ 40000)</option>
+      </select>
+      <label for="cn-p">Perturbar b</label>
+      <input id="cn-p" class="pert" type="range" min="0" max="50" value="0">
+      <span class="pert-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SEMANA 7 ═══════════════ -->
+<section class="card" id="t7">
+  <h3 class="card-title">Semana 7 · Jacobi y Gauss-Seidel</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 7. Despeja la incógnita de la diagonal en cada ecuación. Jacobi usa solo la iteración
+    anterior; Gauss-Seidel usa los valores ya actualizados. Dominancia diagonal
+    ($|a_{ii}|\gt\sum_{j\ne i}|a_{ij}|$) garantiza la convergencia.</p>
+
+  <div class="ejemplo" id="e4">
+    <h4>Ejercicio 4 · Dos iteraciones de Jacobi <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Para el sistema $4x+y=9$, $x+3y=8$: verifica la dominancia diagonal, halla la solución
+         exacta y calcula dos iteraciones de Jacobi desde $(0,0)$.</p>
+      <button class="btn ghost" type="button" data-resp="r4">Ver respuesta</button>
+      <div class="q-sol" id="r4">Dominante ($4\gt1$, $3\gt1$). Exacta:
+        $\left(\tfrac{19}{11},\tfrac{23}{11}\right)\approx(1{,}7273,\,2{,}0909)$. Jacobi:
+        $\mathbf x^{(1)}=(2{,}25,\,2{,}6667)$, $\mathbf x^{(2)}=(1{,}5833,\,1{,}9167)$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e5">
+    <h4>Ejercicio 5 · Gauss-Seidel contra Jacobi <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p>Con el mismo sistema, calcula dos iteraciones de Gauss-Seidel desde $(0,0)$ y compara el
+         error $\|\mathbf x^{(2)}-\mathbf x^*\|_\infty$ de ambos métodos. Compara con el
+         visualizador (sistema «$4x+y=9$ ; $x+3y=8$», 2 iteraciones, cada método).</p>
+      <button class="btn ghost" type="button" data-resp="r5">Ver respuesta</button>
+      <div class="q-sol" id="r5">Gauss-Seidel: $\mathbf x^{(1)}=(2{,}25,\,1{,}9167)$,
+        $\mathbf x^{(2)}=(1{,}7708,\,2{,}0764)$. Error tras dos iteraciones: Gauss-Seidel
+        $\approx0{,}0436$, Jacobi $\approx0{,}1742$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e6">
+    <h4>Ejercicio 6 · Reordenar y una red eléctrica · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p><strong>a)</strong> El sistema $x+2y=5$, $3x+y=5$ no es diagonalmente dominante y
+         Jacobi diverge desde $(0,0)$ (compruébalo en el visualizador, sistema «NO dominante»).
+         Reordena las ecuaciones para que lo sea, justifica, y calcula dos iteraciones de
+         Gauss-Seidel desde $(0,0)$. ¿Hacia qué solución se acerca?</p>
+      <p><strong>b)</strong> El análisis nodal de un circuito con tres nodos (voltajes $V_1,V_2,V_3$
+         en voltios) da
+         $$5V_1-2V_2=10,\qquad -2V_1+6V_2-3V_3=0,\qquad -3V_2+5V_3=15.$$
+         Verifica que es diagonalmente dominante, calcula la primera iteración de Jacobi y la
+         de Gauss-Seidel desde $(0,0,0)$, y halla la solución exacta (por eliminación) para
+         saber hacia dónde convergen.</p>
+      <button class="btn ghost" type="button" data-resp="r6">Ver respuesta</button>
+      <div class="q-sol" id="r6"><strong>a)</strong> $3x+y=5$, $x+2y=5$ ($3\gt1$, $2\gt1$).
+        Gauss-Seidel: $(1{,}6667,\,1{,}6667)$, luego $(1{,}1111,\,1{,}9444)$, acercándose a
+        $(1,2)$. <strong>b)</strong> Dominante ($5\gt2$, $6\gt5$, $5\gt3$). Jacobi:
+        $(2,\,0,\,3)$; Gauss-Seidel: $(2,\,0{,}6667,\,3{,}4)$. Exacta:
+        $\left(\tfrac{60}{17},\tfrac{65}{17},\tfrac{90}{17}\right)\approx(3{,}5294,\,3{,}8235,\,5{,}2941)$ V.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba ambos métodos</div>
+  <div class="viz" data-viz="iterativos">
+    <div class="viz-controls">
+      <label for="it-s">Sistema</label>
+      <select id="it-s">
+        <option value="b">4x+y=9 ; x+3y=8</option>
+        <option value="a">4×4 diagonalmente dominante</option>
+        <option value="c">x+2y=5 ; 3x+y=5 &nbsp;(NO dominante)</option>
+      </select>
+      <label for="it-m">Método</label>
+      <select id="it-m" class="metodo">
+        <option value="gs">Gauss-Seidel</option>
+        <option value="jacobi">Jacobi</option>
+      </select>
+      <label for="it-n">Iteraciones</label>
+      <input id="it-n" class="iter" type="range" min="1" max="30" value="2">
+      <span class="iter-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="tabla" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SEMANA 8 ═══════════════ -->
+<section class="card" id="t8">
+  <h3 class="card-title">Semana 8 · Ecuaciones no lineales</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 8. Bisección: cambio de signo, punto medio, error $\le(b-a)/2^{n}$. Newton:
+    $x_{k+1}=x_k-f(x_k)/f'(x_k)$. Secante: reemplaza $f'$ por la pendiente entre los dos últimos puntos.</p>
+
+  <div class="ejemplo" id="e7">
+    <h4>Ejercicio 7 · Tres pasos de bisección <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Para $f(x)=x^{3}-x-2$ en $[1,2]$: verifica el cambio de signo, haz tres iteraciones de
+         bisección (indica el intervalo que queda y la aproximación con su cota de error) y
+         compara con la raíz que muestra el visualizador («$x^{3}-x-2=0$», Bisección, 3
+         iteraciones).</p>
+      <button class="btn ghost" type="button" data-resp="r7">Ver respuesta</button>
+      <div class="q-sol" id="r7">$f(1)=-2$, $f(2)=4$. Puntos medios: $1{,}5$ ($f=-0{,}125$),
+        $1{,}75$ ($f\approx1{,}6094$), $1{,}625$ ($f\approx0{,}6660$). Queda $[1{,}5,\,1{,}625]$:
+        aproximación $1{,}5625$ con error $\le0{,}0625$. Raíz: $\approx1{,}5214$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e8">
+    <h4>Ejercicio 8 · Newton y secante para $\sqrt2$ <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p><strong>a)</strong> Aplica dos iteraciones de Newton-Raphson a $f(x)=x^{2}-2$ desde
+         $x_0=1{,}5$ y calcula el error de $x_2$ respecto de $\sqrt2=1{,}41421356$.
+         <strong>b)</strong> Aplica dos iteraciones del método de la secante desde $x_0=1$,
+         $x_1=2$.</p>
+      <button class="btn ghost" type="button" data-resp="r8">Ver respuesta</button>
+      <div class="q-sol" id="r8"><strong>a)</strong> $x_1=1{,}41667$, $x_2=1{,}414216$; error
+        $\approx2{,}1\times10^{-6}$ (convergencia cuadrática). <strong>b)</strong>
+        $x_2=1{,}3333$, $x_3=1{,}4000$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e9">
+    <h4>Ejercicio 9 · Nivel en un tanque esférico · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p>El volumen de líquido en un tanque esférico de radio $R=1$ m, lleno hasta una altura
+         $h$, es $V=\dfrac{\pi h^{2}(3R-h)}{3}$. Se quiere la altura para la que $V=1\ \text{m}^{3}$,
+         es decir, la raíz de $f(h)=\dfrac{\pi h^{2}(3-h)}{3}-1$.</p>
+      <p><strong>a)</strong> Muestra con Bolzano que hay una raíz en $[0{,}5,\,1]$.
+         <strong>b)</strong> Halla $f'(h)$ y aplica dos iteraciones de Newton desde $h_0=0{,}6$.
+         <strong>c)</strong> ¿Cuántas iteraciones de bisección en $[0{,}5,\,1]$ garantizan un
+         error menor que $10^{-4}$?</p>
+      <button class="btn ghost" type="button" data-resp="r9">Ver respuesta</button>
+      <div class="q-sol" id="r9"><strong>a)</strong> $f(0{,}5)\lt0\lt f(1)$. <strong>b)</strong>
+        $f'(h)=\pi(2h-h^{2})$; $f(0{,}6)\approx-0{,}0952$, $f'(0{,}6)\approx2{,}6389$,
+        $h_1\approx0{,}6361$, $h_2\approx0{,}6355$ (raíz $0{,}6355$ m). <strong>c)</strong>
+        $0{,}5/2^{n}\lt10^{-4}\Rightarrow n\ge13$.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba y compara los métodos</div>
+  <div class="viz" data-viz="raices-nolineal">
+    <div class="viz-controls">
+      <label for="rn-f">Ecuación</label>
+      <select id="rn-f">
+        <option value="cubica">x³ − x − 2 = 0</option>
+        <option value="trig">cos x − x = 0</option>
+        <option value="exp">e^{−x} − x = 0</option>
+        <option value="poli">x² − 2 = 0 &nbsp;(raíz = √2)</option>
+      </select>
+      <label for="rn-m">Método</label>
+      <select id="rn-m" class="metodo">
+        <option value="biseccion">Bisección</option>
+        <option value="falsa">Falsa posición</option>
+        <option value="newton">Newton-Raphson</option>
+      </select>
+      <label for="rn-i">Iteraciones</label>
+      <input id="rn-i" class="iter" type="range" min="1" max="10" value="3">
+      <span class="iter-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="tabla" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SEMANA 9 ═══════════════ -->
+<section class="card" id="t9">
+  <h3 class="card-title">Semana 9 · Newton para sistemas no lineales</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 9. $J$ es la matriz de parciales. En cada paso: resolver
+    $J(\mathbf x_k)\,\Delta\mathbf x=-\mathbf F(\mathbf x_k)$ y actualizar
+    $\mathbf x_{k+1}=\mathbf x_k+\Delta\mathbf x$.</p>
+
+  <div class="ejemplo" id="e10">
+    <h4>Ejercicio 10 · El Jacobiano en un punto <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Para el sistema $x^{2}+y^{2}=4$, $y=x^{2}$, escribe $\mathbf F(x,y)$ y $J(x,y)$, y
+         evalúa ambos en $(1,1)$, junto con $\det J(1,1)$.</p>
+      <button class="btn ghost" type="button" data-resp="r10">Ver respuesta</button>
+      <div class="q-sol" id="r10">$\mathbf F=(x^{2}+y^{2}-4,\;y-x^{2})$,
+        $J=\begin{pmatrix}2x&2y\\-2x&1\end{pmatrix}$; $\mathbf F(1,1)=(-2,0)$,
+        $J(1,1)=\begin{pmatrix}2&2\\-2&1\end{pmatrix}$, $\det J(1,1)=6$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e11">
+    <h4>Ejercicio 11 · Dos pasos de Newton <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p>Con el sistema anterior, aplica dos iteraciones de Newton desde $(1,1)$: en cada paso
+         resuelve $J\,\Delta\mathbf x=-\mathbf F$ y actualiza. Compara con el visualizador
+         («$x^{2}+y^{2}=4\ \cap\ y=x^{2}$», 2 iteraciones).</p>
+      <button class="btn ghost" type="button" data-resp="r11">Ver respuesta</button>
+      <div class="q-sol" id="r11">Paso 1: $\Delta\mathbf x=\left(\tfrac13,\tfrac23\right)$,
+        $\mathbf x_1=\left(\tfrac43,\tfrac53\right)\approx(1{,}3333,\,1{,}6667)$. Paso 2:
+        $\mathbf F(\mathbf x_1)=\left(\tfrac59,-\tfrac19\right)$,
+        $J(\mathbf x_1)=\begin{pmatrix}8/3&10/3\\-8/3&1\end{pmatrix}$,
+        $\mathbf x_2\approx(1{,}2532,\,1{,}5641)$. Solución: $(1{,}2496,\,1{,}5616)$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e12">
+    <h4>Ejercicio 12 · Cinemática inversa de un brazo robótico · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p>Un brazo plano tiene dos eslabones de longitud $1$ m con ángulos $\theta_1$ (hombro) y
+         $\theta_2$ (codo). La posición de la mano es
+         $x=\cos\theta_1+\cos(\theta_1+\theta_2)$, $\;y=\sin\theta_1+\sin(\theta_1+\theta_2)$.
+         Se quiere llevar la mano al punto $(1{,}2,\;0{,}8)$.</p>
+      <p><strong>a)</strong> Escribe $\mathbf F(\theta_1,\theta_2)$ y su Jacobiano.
+         <strong>b)</strong> Aplica una iteración de Newton desde $(\theta_1,\theta_2)=(1{,}2,\,-1{,}4)$
+         (ángulos en radianes). <strong>c)</strong> Newton converge a $(1{,}3534,\,-1{,}5308)$;
+         desde $(0,\,1{,}5)$ converge a $(-0{,}1774,\,1{,}5308)$. Explica por qué hay dos
+         soluciones y qué significa cada una físicamente.</p>
+      <button class="btn ghost" type="button" data-resp="r12">Ver respuesta</button>
+      <div class="q-sol" id="r12"><strong>a)</strong>
+        $\mathbf F=\big(\cos\theta_1+\cos(\theta_1+\theta_2)-1{,}2,\;\sin\theta_1+\sin(\theta_1+\theta_2)-0{,}8\big)$,
+        $J=\begin{pmatrix}-\sin\theta_1-\sin(\theta_1+\theta_2)&-\sin(\theta_1+\theta_2)\\
+        \cos\theta_1+\cos(\theta_1+\theta_2)&\cos(\theta_1+\theta_2)\end{pmatrix}$.
+        <strong>b)</strong> $\mathbf F\approx(0{,}1424,\,-0{,}0666)$,
+        $J\approx\begin{pmatrix}-0{,}7334&0{,}1987\\1{,}3424&0{,}9801\end{pmatrix}$,
+        $\mathbf x_1\approx(1{,}3551,\,-1{,}5444)$. <strong>c)</strong> El mismo punto se alcanza
+        con el codo doblado hacia un lado o hacia el otro («codo arriba» con $\theta_2\lt0$ y
+        «codo abajo» con $\theta_2\gt0$): dos configuraciones, y Newton llega a la más cercana al
+        punto de partida.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba Newton sobre la intersección de dos curvas</div>
+  <div class="viz" data-viz="newton-sistema">
+    <div class="viz-controls">
+      <label for="ns-s">Sistema</label>
+      <select id="ns-s">
+        <option value="circ">x² + y² = 4 ∩ y = x²</option>
+        <option value="hiper">xy = 1 ∩ x² + y² = 4</option>
+        <option value="senos">y = sen x ∩ y = x/2</option>
+      </select>
+      <label for="ns-i">Iteraciones</label>
+      <input id="ns-i" class="iter" type="range" min="0" max="8" value="2">
+      <span class="iter-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <div class="tabla" style="overflow-x:auto;margin-bottom:.8rem"></div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SIMULACRO ═══════════════ -->
+<section class="card" id="simulacro">
+  <h3 class="card-title">Simulacro · 12 preguntas de opción múltiple</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Tres preguntas por semana, de fácil a desafiante. Preséntalo sin apuntes y en una sola
+    sentada; al final verás qué semana conviene repasar antes de seguir con el proyecto.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen del corte para llevar</h3>
+  <ul>
+    <li><strong>Normas</strong>: $\|\cdot\|_1$ suma, $\|\cdot\|_2$ euclídea, $\|\cdot\|_\infty$ máximo; para matrices, mayor suma de columna ($1$) o de fila ($\infty$).</li>
+    <li><strong>Condicionamiento</strong>: $\operatorname{cond}(A)=\|A\|\|A^{-1}\|$ amplifica el error relativo de los datos; grande ($10^{3}$ o más) exige cuidado o reformular.</li>
+    <li><strong>Jacobi / Gauss-Seidel</strong>: despejar la diagonal e iterar; con dominancia diagonal convergen; Gauss-Seidel suele hacerlo en la mitad de iteraciones. Reordenar filas puede crear la dominancia.</li>
+    <li><strong>Raíces</strong>: bisección (segura, error $\le(b-a)/2^{n}$), Newton (rápido, necesita $f'$ y buen $x_0$), secante (sin derivada), punto fijo (si $|g'(r)|\lt1$).</li>
+    <li><strong>Sistemas no lineales</strong>: Newton con el Jacobiano; falla si $J$ es singular o si $\mathbf x_0$ está lejos; varias soluciones = varias cuencas de convergencia.</li>
+    <li><strong>Proyecto</strong>: implementa el método, pruébalo con un caso de solución conocida y mide el error; eso es lo que se muestra en el video.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://www.python.org/" target="_blank" rel="noopener">Python</a> · <a href="https://numpy.org/" target="_blank" rel="noopener">NumPy (solo para validar)</a> · <a href="https://www.geogebra.org/" target="_blank" rel="noopener">GeoGebra</a></div>
+    <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
+    <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
+  </div>
+</footer>
+
+<script src="../assets/ova.js?v=20260912h"></script>
+<script src="../assets/viz-metodos.js?v=20260912h"></script>
+<script>
+OVA.quiz({ "destino": "final", "titulo": "Simulacro Corte II · 12 preguntas", "items": [ { "etiqueta": "S6 · Fácil", "nivel": 1, "criterio": "Calcular la norma euclídea de un vector (Semana 6)", "enunciado": "La norma $\\|\\mathbf x\\|_2$ del vector $\\mathbf x=(1,-2,2)$ es:", "opciones": [ "$3$", "$5$", "$1$", "$9$" ], "correcta": 0, "pista": "Raíz cuadrada de la suma de los cuadrados.", "solucion": "$\\|\\mathbf x\\|_2=\\sqrt{1+4+4}=\\sqrt9=3$. La opción $5$ es la norma $1$ (suma de valores absolutos) y $9$ es la suma de cuadrados sin la raíz." }, { "etiqueta": "S6 · Medio", "nivel": 2, "criterio": "Calcular la norma infinito de una matriz (Semana 6)", "enunciado": "Para $A=\\begin{pmatrix}2&-5\\\\1&3\\end{pmatrix}$, la norma $\\|A\\|_\\infty$ es:", "opciones": [ "$5$", "$3$", "$7$", "$8$" ], "correcta": 2, "pista": "Norma infinito: la mayor suma de fila, en valor absoluto.", "solucion": "Filas: $|2|+|-5|=7$ y $|1|+|3|=4$; el máximo es $7$. La opción $8$ es $\\|A\\|_1$ (mayor suma de columna: $5+3$)." }, { "etiqueta": "S6 · Desafiante", "nivel": 3, "criterio": "Interpretar el número de condición (Semana 6)", "enunciado": "Un sistema tiene $\\operatorname{cond}(A)\\approx10^{4}$ y el vector $\\mathbf b$ se conoce con error relativo $10^{-6}$. El error relativo de la solución puede llegar hasta:", "opciones": [ "$10^{-10}$", "$10^{-6}$, el condicionamiento no lo cambia", "$10^{4}$", "$10^{-2}$" ], "correcta": 3, "pista": "$\\dfrac{\\|\\delta\\mathbf x\\|}{\\|\\mathbf x\\|}\\le\\operatorname{cond}(A)\\dfrac{\\|\\delta\\mathbf b\\|}{\\|\\mathbf b\\|}$.", "solucion": "La cota es $10^{4}\\cdot10^{-6}=10^{-2}$: un error de una parte por millón en los datos puede convertirse en un $1\\,\\%$ en la solución. Por eso el número de condición importa aunque la aritmética sea exacta." }, { "etiqueta": "S7 · Fácil", "nivel": 1, "criterio": "Verificar la dominancia diagonal (Semana 7)", "enunciado": "La matriz $A=\\begin{pmatrix}5&2&1\\\\1&4&-2\\\\2&1&6\\end{pmatrix}$ es diagonalmente dominante:", "opciones": [ "solo si se reordenan las filas", "sí, en las tres filas", "no: falla la fila 2", "no: falla la fila 3" ], "correcta": 1, "pista": "En cada fila compara $|a_{ii}|$ con la suma de los demás valores absolutos.", "solucion": "Fila 1: $5\\gt2+1$; fila 2: $4\\gt1+2$; fila 3: $6\\gt2+1$. Se cumple en todas, así que Jacobi y Gauss-Seidel convergen desde cualquier punto de partida." }, { "etiqueta": "S7 · Medio", "nivel": 2, "criterio": "Calcular un paso de Jacobi (Semana 7)", "enunciado": "Para $5x-y=4$, $x+4y=9$, desde $(0,0)$, la primera iteración de <strong>Jacobi</strong> da:", "opciones": [ "$(0{,}8,\\;2{,}25)$", "$(0{,}8,\\;2{,}05)$", "$(4,\\;9)$", "$(0{,}8,\\;2{,}0)$" ], "correcta": 0, "pista": "Jacobi usa solo los valores de la iteración anterior: $x=(4+y_0)/5$, $y=(9-x_0)/4$.", "solucion": "$x^{(1)}=(4+0)/5=0{,}8$ y $y^{(1)}=(9-0)/4=2{,}25$. La opción $(0{,}8,\\;2{,}05)$ es el primer paso de Gauss-Seidel, que ya usa $x^{(1)}=0{,}8$ en la segunda ecuación." }, { "etiqueta": "S7 · Desafiante", "nivel": 3, "criterio": "Explicar por qué Gauss-Seidel converge más rápido (Semana 7)", "enunciado": "Gauss-Seidel suele converger en menos iteraciones que Jacobi porque:", "opciones": [ "resuelve el sistema de forma directa en una sola pasada", "usa la derivada del sistema, como Newton", "en cada ecuación usa los valores recién calculados en la misma pasada", "no necesita que la matriz sea diagonalmente dominante" ], "correcta": 2, "pista": "Mira la única diferencia entre las dos fórmulas: el primer sumatorio.", "solucion": "La fórmula de Gauss-Seidel usa $x_j^{(k+1)}$ para $j\\lt i$: cada incógnita aprovecha de inmediato la información nueva, y por eso el error baja más rápido. Sigue siendo iterativo y sigue necesitando condiciones de convergencia como la dominancia diagonal." }, { "etiqueta": "S8 · Fácil", "nivel": 1, "criterio": "Aplicar el teorema de Bolzano (Semana 8)", "enunciado": "Para $f(x)=x^{3}-4x+1$ en $[0,1]$, ¿garantiza Bolzano una raíz?", "opciones": [ "No: $f(0)\\cdot f(1)\\gt0$", "No se puede saber sin calcular $f'$", "Sí, porque todo polinomio tiene raíz en $[0,1]$", "Sí: $f(0)=1$ y $f(1)=-2$ tienen signos opuestos" ], "correcta": 3, "pista": "Evalúa $f$ en los extremos y compara los signos.", "solucion": "$f(0)=1\\gt0$ y $f(1)=1-4+1=-2\\lt0$; como $f$ es continua, hay al menos una raíz en $(0,1)$. Bolzano no necesita la derivada." }, { "etiqueta": "S8 · Medio", "nivel": 2, "criterio": "Calcular un paso de Newton-Raphson (Semana 8)", "enunciado": "Para $f(x)=x^{2}-3$ con $x_0=2$, el primer paso de Newton-Raphson da $x_1=$", "opciones": [ "$2{,}25$", "$1{,}75$", "$1{,}5$", "$1{,}732$" ], "correcta": 1, "pista": "$x_1=x_0-\\dfrac{f(x_0)}{f'(x_0)}$ con $f'(x)=2x$.", "solucion": "$x_1=2-\\dfrac{4-3}{4}=2-0{,}25=1{,}75$. La opción $1{,}732$ es $\\sqrt3$, la raíz exacta, que Newton todavía no alcanza en un paso; $2{,}25$ suma en vez de restar." }, { "etiqueta": "S8 · Desafiante", "nivel": 3, "criterio": "Estimar las iteraciones de bisección (Semana 8)", "enunciado": "Con bisección en $[1,2]$, ¿cuántas iteraciones garantizan un error menor que $10^{-3}$?", "opciones": [ "$10$", "$7$", "$20$", "$1000$" ], "correcta": 0, "pista": "Tras $n$ iteraciones el error es a lo sumo $(b-a)/2^{n}$.", "solucion": "$\\dfrac{1}{2^{n}}\\lt10^{-3}\\iff2^{n}\\gt1000\\iff n\\ge10$ (porque $2^{10}=1024$). Con $7$ iteraciones el error solo baja a $1/128\\approx0{,}0078$." }, { "etiqueta": "S9 · Fácil", "nivel": 1, "criterio": "Escribir el Jacobiano de un sistema (Semana 9)", "enunciado": "El Jacobiano de $\\mathbf F(x,y)=(x^{2}+y^{2}-4,\\;xy-1)$ es:", "opciones": [ "$\\begin{pmatrix}2x&2y\\\\x&y\\end{pmatrix}$", "$\\begin{pmatrix}x^{2}&y^{2}\\\\x&y\\end{pmatrix}$", "$\\begin{pmatrix}2x&2y\\\\y&x\\end{pmatrix}$", "$\\begin{pmatrix}2x&y\\\\2y&x\\end{pmatrix}$" ], "correcta": 2, "pista": "Fila $i$: las parciales de $f_i$ respecto de $x$ y de $y$, en ese orden.", "solucion": "$\\partial_x f_1=2x$, $\\partial_y f_1=2y$, $\\partial_x f_2=y$, $\\partial_y f_2=x$. La segunda opción transpone la matriz; la tercera intercambia las parciales de $f_2$." }, { "etiqueta": "S9 · Medio", "nivel": 2, "criterio": "Calcular el paso de Newton para sistemas (Semana 9)", "enunciado": "En cierto punto, $J=\\begin{pmatrix}2&0\\\\0&2\\end{pmatrix}$ y $\\mathbf F=(1,-1)$. El paso de Newton $\\Delta\\mathbf x$ es:", "opciones": [ "$(0{,}5,\\;-0{,}5)$", "$(2,\\;-2)$", "$(-2,\\;2)$", "$(-0{,}5,\\;0{,}5)$" ], "correcta": 3, "pista": "Resuelve $J\\,\\Delta\\mathbf x=-\\mathbf F$, no $J\\,\\Delta\\mathbf x=\\mathbf F$.", "solucion": "$2\\Delta x=-1$ y $2\\Delta y=1$: $\\Delta\\mathbf x=(-0{,}5,\\;0{,}5)$. La opción $(0{,}5,-0{,}5)$ olvida el signo menos de $-\\mathbf F$; $(-2,2)$ multiplica por $J$ en vez de resolver." }, { "etiqueta": "S9 · Desafiante", "nivel": 3, "criterio": "Diagnosticar fallas de Newton para sistemas (Semana 9)", "enunciado": "El método de Newton para sistemas falla o se comporta mal sobre todo cuando:", "opciones": [ "el punto de partida está exactamente sobre una de las curvas", "el Jacobiano en el punto actual es singular o casi singular", "el sistema tiene más de una solución", "las ecuaciones no son polinómicas" ], "correcta": 1, "pista": "¿Qué se necesita para resolver $J\\,\\Delta\\mathbf x=-\\mathbf F$ en cada paso?", "solucion": "Cada paso resuelve un sistema lineal con $J$; si $\\det J\\approx0$ el paso es enorme o indefinido. Tener varias soluciones no es una falla (Newton llega a una de ellas según el punto de partida), y las ecuaciones pueden ser cualesquiera con parciales continuas." } ] });
+</script>
+<script>
+// Botones «Ver respuesta» del taller (reutilizan el estilo .q-sol del motor de quices)
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest('button[data-resp]');
+  if (!b) return;
+  var caja = document.getElementById(b.getAttribute('data-resp'));
+  var on = caja.classList.toggle('on');
+  b.textContent = on ? 'Ocultar respuesta' : 'Ver respuesta';
+});
+</script>
+</body>
+</html>
