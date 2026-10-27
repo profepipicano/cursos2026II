@@ -308,6 +308,10 @@ body.dark .enlace-correo:hover{color:#fff}
 }
 
 @media (max-width:600px){
+  /* cabecera en pantallas angostas: título a lo ancho y botones debajo */
+  .top-inner{flex-wrap:wrap;gap:.5rem .7rem;padding:.55rem .9rem}
+  .top-titles{flex:1 1 0;min-width:12rem}
+  .top-actions{flex:1 1 100%}
   main{padding:.8rem}
   .card{padding:1rem}
   .hero{padding:1.1rem}
