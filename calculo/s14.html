@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260912c">
+<link rel="stylesheet" href="../assets/ova.css?v=20260912g">
 </head>
 <body>
 
@@ -355,8 +355,8 @@ window.MathJax = {
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260912c"></script>
-<script src="../assets/viz-calculo.js?v=20260912c"></script>
+<script src="../assets/ova.js?v=20260912g"></script>
+<script src="../assets/viz-calculo.js?v=20260912g"></script>
 <script>
 OVA.quiz({ "destino": "chk1", "titulo": "Área entre curvas · 3 preguntas", "items": [ { "etiqueta": "Integrando", "nivel": 1, "criterio": "Plantear el área entre curvas (§1)", "enunciado": "Si $f$ va por encima de $g$ en $[a,b]$, el área entre ambas es:", "opciones": [ "$\\displaystyle\\int_{a}^{b}[f(x)-g(x)]\\,dx$", "$\\displaystyle\\int_{a}^{b}f(x)\\,dx\\cdot\\int_{a}^{b}g(x)\\,dx$", "$\\displaystyle\\int_{a}^{b}[f(x)+g(x)]\\,dx$", "$\\displaystyle\\int_{a}^{b}[g(x)-f(x)]\\,dx$" ], "correcta": 0, "pista": "Cada franja tiene altura «arriba menos abajo».", "solucion": "La altura de cada franja es $f(x)-g(x)$ (arriba menos abajo), así que $A=\\int_{a}^{b}[f-g]\\,dx$. Restar al revés daría el área con signo negativo." }, { "etiqueta": "Cortes", "nivel": 2, "criterio": "Hallar los límites de integración (§1)", "enunciado": "Los puntos de corte de $y=x+2$ y $y=x^{2}$ son:", "opciones": [ "$x=0$ y $x=2$", "$x=-1$ y $x=1$", "$x=-1$ y $x=2$", "$x=1$ y $x=-2$" ], "correcta": 2, "pista": "Resuelve $x^{2}-x-2=0$.", "solucion": "$x+2=x^{2}\\Rightarrow x^{2}-x-2=(x-2)(x+1)=0$, luego $x=-1$ y $x=2$. Comprueba: en $x=2$ ambas valen 4; en $x=-1$ ambas valen 1." }, { "etiqueta": "Cálculo", "nivel": 3, "criterio": "Calcular un área entre curvas (§1)", "enunciado": "El área entre $y=x$ y $y=x^{2}$ en $[0,1]$ es:", "opciones": [ "$\\dfrac{1}{2}$", "$\\dfrac{1}{3}$", "$\\dfrac{5}{6}$", "$\\dfrac{1}{6}$" ], "correcta": 3, "pista": "En $[0,1]$ la recta va arriba: $\\int_{0}^{1}(x-x^{2})dx$.", "solucion": "$\\int_{0}^{1}(x-x^{2})dx=\\Big[\\dfrac{x^{2}}{2}-\\dfrac{x^{3}}{3}\\Big]_{0}^{1}=\\dfrac12-\\dfrac13=\\dfrac16$. Las opciones $\\tfrac12$ y $\\tfrac13$ son las áreas bajo cada curva por separado; el área entre ellas es su diferencia." } ] });
 OVA.quiz({ "destino": "chk2", "titulo": "Modelos de aplicación · 3 preguntas", "items": [ { "etiqueta": "Excedente", "nivel": 3, "criterio": "Calcular el excedente del consumidor (§3)", "enunciado": "Con demanda $D(q)=100-2q$ y equilibrio $q^*=20$, $p^*=60$, el excedente del consumidor es:", "opciones": [ "$800$", "$400$", "$1600$", "$1200$" ], "correcta": 1, "pista": "$EC=\\int_{0}^{20}D(q)\\,dq-p^*q^*$.", "solucion": "$\\int_{0}^{20}(100-2q)dq=1600$ y $p^*q^*=1200$, así que $EC=400$. Como la demanda es una recta, coincide con el triángulo $\\tfrac12\\cdot40\\cdot20$. $1600$ es el valor total que los compradores estaban dispuestos a pagar, no el excedente." }, { "etiqueta": "Promedio", "nivel": 2, "criterio": "Calcular el valor promedio (§4)", "enunciado": "El valor promedio de $f(x)=2x$ en $[0,4]$ es:", "opciones": [ "$4$", "$16$", "$8$", "$2$" ], "correcta": 0, "pista": "$\\dfrac{1}{4}\\int_{0}^{4}2x\\,dx$.", "solucion": "$\\int_{0}^{4}2x\\,dx=\\big[x^{2}\\big]_{0}^{4}=16$, y dividiendo por la longitud $4$: $\\bar f=4$. Es la altura del rectángulo de base 4 con área 16. La opción 16 olvida dividir." }, { "etiqueta": "Gini", "nivel": 3, "criterio": "Calcular el índice de Gini (§5)", "enunciado": "Para la curva de Lorenz $L(x)=x^{2}$, el índice de Gini es:", "opciones": [ "$\\dfrac{2}{3}$", "$1$", "$\\dfrac{1}{3}$", "$\\dfrac{1}{6}$" ], "correcta": 2, "pista": "$G=2\\int_{0}^{1}(x-x^{2})dx$.", "solucion": "$\\int_{0}^{1}(x-x^{2})dx=\\tfrac12-\\tfrac13=\\tfrac16$, y $G=2\\cdot\\tfrac16=\\tfrac13$. El factor 2 normaliza el área bajo la diagonal ($\\tfrac12$) a 1; $\\tfrac16$ es el área sin normalizar." } ] });

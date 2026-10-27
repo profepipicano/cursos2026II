@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260912c">
+<link rel="stylesheet" href="../assets/ova.css?v=20260912g">
 </head>
 <body>
 
@@ -340,8 +340,8 @@ window.MathJax = {
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260912c"></script>
-<script src="../assets/viz-calculo.js?v=20260912c"></script>
+<script src="../assets/ova.js?v=20260912g"></script>
+<script src="../assets/viz-calculo.js?v=20260912g"></script>
 <script>
 OVA.quiz({ "destino": "chk1", "titulo": "Antiderivadas y reglas básicas · 3 preguntas", "items": [ { "etiqueta": "Definición", "nivel": 1, "criterio": "Reconocer una antiderivada (§1)", "enunciado": "$F$ es una antiderivada de $f$ cuando:", "opciones": [ "$F'(x)=f(x)$", "$f'(x)=F(x)$", "$F(x)=f(x)+C$", "$F(x)\\cdot f(x)=1$" ], "correcta": 0, "pista": "Antiderivar deshace la derivada.", "solucion": "Por definición, $F$ es antiderivada de $f$ si al derivar $F$ se obtiene $f$: $F'(x)=f(x)$. La opción $f'=F$ invierte los papeles." }, { "etiqueta": "Potencia", "nivel": 2, "criterio": "Aplicar la regla de la potencia (§2)", "enunciado": "$\\displaystyle\\int x^{4}\\,dx$ es igual a:", "opciones": [ "$\\dfrac{x^{4}}{4}+C$", "$x^{5}+C$", "$\\dfrac{x^{5}}{5}+C$", "$4x^{3}+C$" ], "correcta": 2, "pista": "Sube el exponente en 1 y divide por el nuevo exponente.", "solucion": "$\\int x^{4}dx=\\dfrac{x^{5}}{5}+C$. Comprobación: $\\dfrac{d}{dx}\\dfrac{x^{5}}{5}=x^{4}$. La opción $4x^{3}$ es la derivada, no la antiderivada." }, { "etiqueta": "Constante", "nivel": 2, "criterio": "Explicar la constante de integración (§1)", "enunciado": "¿Por qué toda integral indefinida lleva «$+C$»?", "opciones": [ "Porque la integral siempre vale cero en $x=0$", "Porque $C$ es el valor de la función en $x=1$", "Por convención, pero no cambia nada", "Porque la derivada de una constante es cero: infinitas funciones comparten la misma derivada" ], "correcta": 3, "pista": "¿Qué le pasa a una constante al derivar?", "solucion": "Como $\\dfrac{d}{dx}C=0$, las funciones $F(x)+C$ tienen todas la misma derivada $f(x)$. La antiderivada general debe incluirlas a todas; $C$ se fija solo con una condición inicial." } ] });
 OVA.quiz({ "destino": "chk2", "titulo": "Condición inicial y aplicaciones · 3 preguntas", "items": [ { "etiqueta": "Valor inicial", "nivel": 3, "criterio": "Resolver un problema de valor inicial (§4)", "enunciado": "Si $f'(x)=2x+1$ y $f(0)=3$, entonces $f(x)$ es:", "opciones": [ "$x^{2}+3$", "$x^{2}+x+3$", "$x^{2}+x$", "$2x^{2}+x+3$" ], "correcta": 1, "pista": "Integra y luego usa $f(0)=3$ para hallar $C$.", "solucion": "$f(x)=\\int(2x+1)dx=x^{2}+x+C$. Con $f(0)=0+0+C=3$ resulta $C=3$: $f(x)=x^{2}+x+3$. Comprobación: $f'=2x+1$ ✓." }, { "etiqueta": "Costo total", "nivel": 3, "criterio": "Reconstruir el costo desde el marginal (§5)", "enunciado": "El costo marginal es $C'(q)=6q+4$ y el costo fijo es $200$. El costo total es:", "opciones": [ "$C(q)=3q^{2}+4q+200$", "$C(q)=6q^{2}+4q+200$", "$C(q)=3q^{2}+4q$", "$C(q)=6+200q$" ], "correcta": 0, "pista": "Integra $6q+4$ y usa $C(0)=200$.", "solucion": "$C(q)=\\int(6q+4)dq=3q^{2}+4q+K$. El costo fijo es $C(0)=K=200$, así que $C(q)=3q^{2}+4q+200$. Olvidar el costo fijo daría $3q^{2}+4q$, que es otra curva de la familia." }, { "etiqueta": "Ingreso", "nivel": 2, "criterio": "Elegir la condición inicial del ingreso (§5)", "enunciado": "Al integrar el ingreso marginal $R'(q)$, la constante se determina con:", "opciones": [ "$R(1)=1$", "$R'(0)=0$", "$R(0)=0$: sin ventas no hay ingreso", "$R(0)=$ costo fijo" ], "correcta": 2, "pista": "¿Cuánto se ingresa si no se vende nada?", "solucion": "El ingreso de vender cero unidades es cero, $R(0)=0$. Esa condición inicial fija la constante. El costo fijo es la condición inicial del costo, no del ingreso." } ] });
