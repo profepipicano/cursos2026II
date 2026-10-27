@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 10 · Taller de repaso y simulacro — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912g">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Cálculo Vectorial · Semana 10</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#reglas">Cómo es la evaluación</a>
+    <a href="#t6">Semana 6</a>
+    <a href="#t7">Semana 7</a>
+    <a href="#t8">Semana 8</a>
+    <a href="#t9">Semana 9</a>
+    <a href="#simulacro">Simulacro</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Semana 10 · Corte II · Evaluación</div>
+  <h2>Taller de repaso y simulacro · Corte II</h2>
+  <p>La evaluación del segundo corte reúne los temas de las semanas 6 a 9: derivadas parciales,
+     diferencial total y regla de la cadena; gradiente, derivada direccional y plano tangente;
+     extremos de funciones de dos variables y multiplicadores de Lagrange; integrales iteradas y
+     dobles. Esta guía es tu material de estudio: un taller de 12 ejercicios para resolver en
+     papel y un simulacro autocalificado de 12 preguntas.</p>
+  <div class="chips">
+    <span class="chip">Evaluación individual</span>
+    <span class="chip">Taller · 12 ejercicios</span>
+    <span class="chip">Simulacro · 12 preguntas</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">✎</span>
+  <h3>Resuelve primero, revela después</h3>
+  <p>Cada ejercicio trae un botón «Ver respuesta» con el <strong>resultado final</strong>, no el
+     procedimiento. Úsalo solo para comparar lo que ya resolviste: en la evaluación cuenta cómo
+     llegas al resultado, y eso solo se practica haciéndolo.</p>
+</div>
+
+<section class="card" id="reglas">
+  <h3 class="card-title">Cómo es la evaluación</h3>
+  <ol>
+    <li><strong>Modalidad.</strong> La evaluación del Corte II es <strong>individual</strong> y se
+        presenta mediante un <strong>formulario virtual en la hora de clase</strong>.</li>
+    <li><strong>Temas.</strong> Todo lo trabajado en las guías 6 a 9: derivadas parciales (también
+        de orden superior), diferencial total y regla de la cadena; gradiente, derivada
+        direccional, plano tangente y recta normal; puntos críticos, criterio del Hessiano y
+        Lagrange; integrales iteradas, regiones generales, área y volumen.</li>
+    <li><strong>Cómo prepararte.</strong> Resuelve el taller completo en papel, en orden: los
+        ejercicios van de fácil a desafiante dentro de cada semana. Luego presenta el simulacro
+        sin mirar apuntes y vuelve a la guía de la semana que te falle.</li>
+    <li><strong>Material de apoyo.</strong> Las guías 6 a 9 siguen disponibles en «Todas las
+        sesiones», con sus visualizadores y comprobaciones. Aquí se reutilizan los visualizadores
+        que sirven para comprobar un ejercicio.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>Cómo usar este taller</h3>
+    <p>Cada semana tiene tres ejercicios: <strong>fácil</strong> (un cálculo directo),
+       <strong>medio</strong> (combina dos ideas) y <strong>desafiante</strong> (un problema completo,
+       varios de ellos en contexto de ingeniería). Si el fácil te cuesta, repasa la guía antes de
+       seguir; si el desafiante te sale, estás listo para esa semana.</p>
+  </div>
+</section>
+
+<!-- ═══════════════ SEMANA 6 ═══════════════ -->
+<section class="card" id="t6">
+  <h3 class="card-title">Semana 6 · Derivadas parciales, diferencial y regla de la cadena</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 6. Para $f_x$ trata $y$ como constante (y al revés). $dz=f_x\,dx+f_y\,dy$ y
+    $\dfrac{dz}{dt}=f_x\dfrac{dx}{dt}+f_y\dfrac{dy}{dt}$.</p>
+
+  <div class="ejemplo" id="e1">
+    <h4>Ejercicio 1 · Parciales de primer orden <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Para $f(x,y)=x^{3}y^{2}+3x-2y$, halla $f_x$ y $f_y$ y evalúalas en el punto $(1,2)$.</p>
+      <button class="btn ghost" type="button" data-resp="r1">Ver respuesta</button>
+      <div class="q-sol" id="r1">$f_x=3x^{2}y^{2}+3$ y $f_y=2x^{3}y-2$; en $(1,2)$: $f_x=15$,
+        $f_y=2$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e2">
+    <h4>Ejercicio 2 · Parciales de segundo orden <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p>Para $f(x,y)=x^{2}y^{3}+e^{2x}y$, halla $f_{xx}$, $f_{yy}$, $f_{xy}$ y $f_{yx}$, y
+         comprueba que las dos mixtas coinciden.</p>
+      <button class="btn ghost" type="button" data-resp="r2">Ver respuesta</button>
+      <div class="q-sol" id="r2">$f_{xx}=2y^{3}+4e^{2x}y$, $f_{yy}=6x^{2}y$,
+        $f_{xy}=f_{yx}=6xy^{2}+2e^{2x}$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e3">
+    <h4>Ejercicio 3 · Diferencial total y cadena · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p><strong>a)</strong> La potencia disipada por una resistencia es $P=\dfrac{V^{2}}{R}$. Se
+         mide $V=12$ V con error máximo $0{,}2$ V y $R=4\ \Omega$ con error máximo $0{,}1\ \Omega$.
+         Calcula $P$ y usa el diferencial total para estimar el error máximo en $P$ (toma los
+         valores absolutos de cada aporte) y el error relativo porcentual.</p>
+      <p><strong>b)</strong> La temperatura de una placa es $T(x,y)=x^{2}+y^{2}$ y una partícula
+         recorre la circunferencia $x=2\cos t$, $y=2\sin t$. Usa la regla de la cadena para hallar
+         $\dfrac{dT}{dt}$ e interpreta el resultado.</p>
+      <button class="btn ghost" type="button" data-resp="r3">Ver respuesta</button>
+      <div class="q-sol" id="r3"><strong>a)</strong> $P=36$ W; $P_V=\dfrac{2V}{R}=6$,
+        $P_R=-\dfrac{V^{2}}{R^{2}}=-9$; error máximo $\approx6(0{,}2)+9(0{,}1)=2{,}1$ W, es decir
+        $\approx5{,}8\,\%$. <strong>b)</strong> $\dfrac{dT}{dt}=2x(-2\sin t)+2y(2\cos t)=0$: la
+        partícula se mueve sobre una curva de nivel y su temperatura no cambia.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba las parciales como cortes de la superficie</div>
+  <div class="viz" data-viz="parciales">
+    <div class="viz-controls">
+      <label for="pa-f">Superficie</label>
+      <select id="pa-f">
+        <option value="parab">f = x² + y²</option>
+        <option value="sillabaja">f = x² − y²</option>
+        <option value="prod">f = x·y</option>
+      </select>
+      <label for="pa-x">Punto x</label>
+      <input id="pa-x" class="px" type="range" min="-18" max="18" value="10">
+      <label for="pa-y">Punto y</label>
+      <input id="pa-y" class="py" type="range" min="-18" max="18" value="10">
+      <span class="p-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SEMANA 7 ═══════════════ -->
+<section class="card" id="t7">
+  <h3 class="card-title">Semana 7 · Gradiente, derivada direccional y plano tangente</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 7. $\nabla f=(f_x,f_y)$; $D_{\mathbf u}f=\nabla f\cdot\mathbf u$ con $|\mathbf u|=1$; el
+    gradiente apunta al máximo ascenso y $|\nabla f|$ es la máxima tasa. Plano tangente:
+    $z=f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)$.</p>
+
+  <div class="ejemplo" id="e4">
+    <h4>Ejercicio 4 · Gradiente y derivada direccional <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Para $f(x,y)=x^{2}+y^{2}$ en el punto $(1,1)$: halla $\nabla f$, la máxima tasa de cambio
+         y la derivada direccional en la dirección del vector $\mathbf v=(3,4)$. Compara con el
+         visualizador (campo «$x^{2}+y^{2}$», punto $(1{,}0,\,1{,}0)$).</p>
+      <button class="btn ghost" type="button" data-resp="r4">Ver respuesta</button>
+      <div class="q-sol" id="r4">$\nabla f(1,1)=(2,2)$; máxima tasa $|\nabla f|=2\sqrt2\approx2{,}83$;
+        con $\mathbf u=\left(\tfrac35,\tfrac45\right)$, $D_{\mathbf u}f=\dfrac{14}{5}=2{,}8$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e5">
+    <h4>Ejercicio 5 · Plano tangente y recta normal <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p>Halla la ecuación del plano tangente y de la recta normal a la superficie
+         $z=4-x^{2}-y^{2}$ en el punto $(1,1,2)$.</p>
+      <button class="btn ghost" type="button" data-resp="r5">Ver respuesta</button>
+      <div class="q-sol" id="r5">$f_x(1,1)=f_y(1,1)=-2$. Plano: $z=-2x-2y+6$. Recta normal:
+        $(x,y,z)=(1,1,2)+t\,(-2,-2,-1)$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e6">
+    <h4>Ejercicio 6 · Mapa de temperatura · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p>La temperatura (°C) sobre una placa de circuito es $T(x,y)=80-2x^{2}-y^{2}$, con $x,y$ en
+         cm. Un sensor está en $(2,1)$.</p>
+      <p><strong>a)</strong> Calcula $T(2,1)$ y $\nabla T(2,1)$. <strong>b)</strong> ¿En qué
+         dirección unitaria debe desplazarse un disipador desde $(2,1)$ para que la temperatura
+         <em>baje</em> lo más rápido posible, y a qué tasa (°C/cm)? <strong>c)</strong> Halla la
+         tasa de cambio de $T$ si el sensor se mueve desde $(2,1)$ hacia el origen.</p>
+      <button class="btn ghost" type="button" data-resp="r6">Ver respuesta</button>
+      <div class="q-sol" id="r6"><strong>a)</strong> $T(2,1)=71$ °C, $\nabla T(2,1)=(-8,-2)$.
+        <strong>b)</strong> Dirección de $-\nabla T$: $\mathbf u=\dfrac{(4,1)}{\sqrt{17}}$, con tasa
+        $-|\nabla T|=-2\sqrt{17}\approx-8{,}25$ °C/cm. <strong>c)</strong> Con
+        $\mathbf u=\dfrac{(-2,-1)}{\sqrt5}$: $D_{\mathbf u}T=\dfrac{18}{\sqrt5}\approx8{,}05$ °C/cm
+        (la temperatura sube: el origen es el punto más caliente).</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba el gradiente sobre las curvas de nivel</div>
+  <div class="viz" data-viz="gradiente">
+    <div class="viz-controls">
+      <label for="gr-f">Campo escalar</label>
+      <select id="gr-f">
+        <option value="parab">f = x² + y²</option>
+        <option value="silla">f = x² − y²</option>
+        <option value="onda">f = sen x · cos y</option>
+      </select>
+      <label for="gr-x">Punto x</label>
+      <input id="gr-x" class="gx" type="range" min="-15" max="15" value="10">
+      <label for="gr-y">Punto y</label>
+      <input id="gr-y" class="gy" type="range" min="-15" max="15" value="10">
+      <span class="p-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SEMANA 8 ═══════════════ -->
+<section class="card" id="t8">
+  <h3 class="card-title">Semana 8 · Extremos y multiplicadores de Lagrange</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 8. Críticos: $f_x=f_y=0$. $D=f_{xx}f_{yy}-f_{xy}^{2}$: $D\gt0$ y $f_{xx}\gt0$ mínimo,
+    $D\gt0$ y $f_{xx}\lt0$ máximo, $D\lt0$ silla. Lagrange: $\nabla f=\lambda\nabla g$, $g=c$.</p>
+
+  <div class="ejemplo" id="e7">
+    <h4>Ejercicio 7 · Un punto crítico y su clasificación <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Halla el punto crítico de $f(x,y)=x^{2}+y^{2}-2x-4y+5$, clasifícalo con el criterio del
+         Hessiano y calcula el valor de $f$ allí.</p>
+      <button class="btn ghost" type="button" data-resp="r7">Ver respuesta</button>
+      <div class="q-sol" id="r7">Crítico $(1,2)$; $D=2\cdot2-0=4\gt0$ y $f_{xx}=2\gt0$: mínimo
+        local, con $f(1,2)=0$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e8">
+    <h4>Ejercicio 8 · Dos críticos de distinto tipo <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p>Halla y clasifica todos los puntos críticos de $f(x,y)=x^{3}-3x+y^{2}$. Compara con el
+         visualizador: ¿cuál de las tres superficies se parece a cada punto?</p>
+      <button class="btn ghost" type="button" data-resp="r8">Ver respuesta</button>
+      <div class="q-sol" id="r8">Críticos $(1,0)$ y $(-1,0)$. $D=12x$: en $(1,0)$, $D=12\gt0$ y
+        $f_{xx}=6\gt0$, mínimo local con $f=-2$; en $(-1,0)$, $D=-12\lt0$, punto de silla.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e9">
+    <h4>Ejercicio 9 · Optimización con restricción · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p><strong>a)</strong> Se diseña un tanque rectangular sin tapa de $32\ \text{m}^{3}$ con el
+         mínimo de lámina. Si la base mide $x\times y$ y la altura es $z=\dfrac{32}{xy}$, la
+         superficie es $S(x,y)=xy+\dfrac{64}{x}+\dfrac{64}{y}$. Halla el punto crítico de $S$,
+         verifica que es un mínimo y da las dimensiones y la superficie mínima.</p>
+      <p><strong>b)</strong> Con multiplicadores de Lagrange, maximiza $f(x,y)=xy$ sujeto a
+         $2x+3y=12$.</p>
+      <button class="btn ghost" type="button" data-resp="r9">Ver respuesta</button>
+      <div class="q-sol" id="r9"><strong>a)</strong> $S_x=y-\dfrac{64}{x^{2}}=0$,
+        $S_y=x-\dfrac{64}{y^{2}}=0$ dan $x=y=4$; $D\gt0$ y $S_{xx}\gt0$: mínimo. Dimensiones
+        $4\times4\times2$ m, $S_{\min}=48\ \text{m}^{2}$. <strong>b)</strong> $y=2\lambda$,
+        $x=3\lambda$, $12\lambda=12$: $\lambda=1$, punto $(3,2)$, valor máximo $f=6$.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba los tres tipos de punto crítico</div>
+  <div class="viz" data-viz="extremos">
+    <div class="viz-controls">
+      <label for="ex-f">Superficie</label>
+      <select id="ex-f">
+        <option value="minimo">f = x² + y² (mínimo)</option>
+        <option value="maximo">f = 4 − x² − y² (máximo)</option>
+        <option value="silla">f = x² − y² (silla)</option>
+      </select>
+      <label for="ex-g">Girar</label>
+      <input id="ex-g" class="giro" type="range" min="0" max="628" value="90">
+      <span class="giro-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SEMANA 9 ═══════════════ -->
+<section class="card" id="t9">
+  <h3 class="card-title">Semana 9 · Integrales iteradas y dobles</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Guía 9. Integra de adentro hacia afuera; en regiones generales los límites internos son
+    funciones. $\text{Área}=\iint_R1\,dA$; volumen bajo $z=f(x,y)\ge0$: $\iint_Rf\,dA$.</p>
+
+  <div class="ejemplo" id="e10">
+    <h4>Ejercicio 10 · Integral iterada sobre un rectángulo <span class="tag">Fácil</span></h4>
+    <div class="ejemplo-body">
+      <p>Calcula $\displaystyle\int_{0}^{2}\!\!\int_{0}^{1}(x+2y)\,dy\,dx$.</p>
+      <button class="btn ghost" type="button" data-resp="r10">Ver respuesta</button>
+      <div class="q-sol" id="r10">La integral interna da $x+1$; luego
+        $\displaystyle\int_{0}^{2}(x+1)\,dx=4$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e11">
+    <h4>Ejercicio 11 · Región entre dos curvas <span class="tag">Medio</span></h4>
+    <div class="ejemplo-body">
+      <p>Sea $R$ la región entre $y=x^{2}$ y $y=x$ (para $0\le x\le1$). <strong>a)</strong> Halla
+         el área de $R$ con una integral doble. <strong>b)</strong> Calcula
+         $\displaystyle\iint_R xy\,dA$. Compara el área con el visualizador (región «entre
+         $y=x^{2}$ y $y=x$»).</p>
+      <button class="btn ghost" type="button" data-resp="r11">Ver respuesta</button>
+      <div class="q-sol" id="r11"><strong>a)</strong>
+        $\displaystyle\int_{0}^{1}\!\!\int_{x^{2}}^{x}dy\,dx=\frac{1}{6}$.
+        <strong>b)</strong> $\displaystyle\int_{0}^{1}\!\!\int_{x^{2}}^{x}xy\,dy\,dx=\frac{1}{24}$.</div>
+    </div>
+  </div>
+
+  <div class="ejemplo" id="e12">
+    <h4>Ejercicio 12 · Carga sobre una placa y cambio de orden · Ingeniería <span class="tag">Desafiante</span></h4>
+    <div class="ejemplo-body">
+      <p><strong>a)</strong> Una placa triangular con vértices $(0,0)$, $(2,0)$ y $(0,2)$ (en m)
+         tiene densidad de carga $\sigma(x,y)=2x+y$ en $\mu$C/m². Plantea la integral doble con
+         los límites de la región y calcula la carga total $Q=\iint_R\sigma\,dA$.</p>
+      <p><strong>b)</strong> La integral $\displaystyle\int_{0}^{1}\!\!\int_{x}^{1}e^{y^{2}}\,dy\,dx$
+         no puede hacerse en ese orden. Dibuja la región, invierte el orden de integración y
+         calcula su valor.</p>
+      <button class="btn ghost" type="button" data-resp="r12">Ver respuesta</button>
+      <div class="q-sol" id="r12"><strong>a)</strong>
+        $Q=\displaystyle\int_{0}^{2}\!\!\int_{0}^{2-x}(2x+y)\,dy\,dx=4\ \mu\text{C}$.
+        <strong>b)</strong> $\displaystyle\int_{0}^{1}\!\!\int_{0}^{y}e^{y^{2}}\,dx\,dy=\int_{0}^{1}ye^{y^{2}}dy=\frac{e-1}{2}\approx0{,}859$.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">Comprueba la región y las franjas</div>
+  <div class="viz" data-viz="integraldoble">
+    <div class="viz-controls">
+      <label for="id-r">Región</label>
+      <select id="id-r">
+        <option value="triang">entre y = x² y y = x</option>
+        <option value="cuadr">rectángulo [0,1]×[0,1]</option>
+        <option value="bajocurva">bajo y = 1 − x²</option>
+      </select>
+      <label for="id-f">Franjas</label>
+      <input id="id-f" class="franjas" type="range" min="2" max="40" value="10">
+      <span class="franjas-val" style="font-family:ui-monospace,monospace;font-size:.85rem"></span>
+    </div>
+    <canvas></canvas>
+    <div class="viz-readout"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ SIMULACRO ═══════════════ -->
+<section class="card" id="simulacro">
+  <h3 class="card-title">Simulacro · 12 preguntas de opción múltiple</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">
+    Tres preguntas por semana, de fácil a desafiante. Preséntalo sin apuntes y en una sola
+    sentada; al final verás qué semana conviene repasar.</p>
+  <div id="final"></div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen del corte para llevar</h3>
+  <ul>
+    <li><strong>Parciales</strong>: deriva respecto de una variable con la otra fija; las mixtas coinciden ($f_{xy}=f_{yx}$). $dz=f_x\,dx+f_y\,dy$; cadena $\dfrac{dz}{dt}=f_x x'(t)+f_y y'(t)$.</li>
+    <li><strong>Gradiente</strong> $\nabla f=(f_x,f_y)$: máximo ascenso, $|\nabla f|$ máxima tasa, perpendicular a las curvas de nivel. $D_{\mathbf u}f=\nabla f\cdot\mathbf u$ con $\mathbf u$ unitario.</li>
+    <li><strong>Plano tangente</strong> $z=f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)$; recta normal con dirección $(f_x,f_y,-1)$.</li>
+    <li><strong>Extremos</strong>: críticos con $\nabla f=\mathbf0$; $D=f_{xx}f_{yy}-f_{xy}^{2}$ decide (mínimo, máximo, silla). <strong>Lagrange</strong>: $\nabla f=\lambda\nabla g$ más la restricción.</li>
+    <li><strong>Integrales dobles</strong>: de adentro hacia afuera; dibuja la región para leer límites; $\iint_R1\,dA$ es el área; cambiar el orden puede destrabar una integral.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/5-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
+    <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
+    <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
+  </div>
+</footer>
+
+<script src="../assets/ova.js?v=20260912g"></script>
+<script src="../assets/viz-vectorial.js?v=20260912g"></script>
+<script>
+OVA.quiz({ "destino": "final", "titulo": "Simulacro Corte II · 12 preguntas", "items": [ { "etiqueta": "S6 · Fácil", "nivel": 1, "criterio": "Calcular una derivada parcial (Semana 6)", "enunciado": "Si $f(x,y)=x^{2}y+y^{3}$, entonces $f_y$ es:", "opciones": [ "$x^{2}+3y^{2}$", "$2xy$", "$2xy+3y^{2}$", "$x^{2}+y^{3}$" ], "correcta": 0, "pista": "Deriva respecto de $y$ tratando $x$ como constante.", "solucion": "$f_y=x^{2}\\cdot1+3y^{2}=x^{2}+3y^{2}$. La opción $2xy$ es $f_x$; $2xy+3y^{2}$ mezcla ambas." }, { "etiqueta": "S6 · Medio", "nivel": 2, "criterio": "Calcular una parcial mixta (Semana 6)", "enunciado": "Para $f(x,y)=\\sin(xy)$, la parcial mixta $f_{xy}$ es:", "opciones": [ "$\\cos(xy)$", "$-\\sin(xy)$", "$\\cos(xy)-xy\\sin(xy)$", "$-xy\\sin(xy)$" ], "correcta": 2, "pista": "Primero $f_x=y\\cos(xy)$; luego deriva eso respecto de $y$ con la regla del producto.", "solucion": "$f_x=y\\cos(xy)$ y $f_{xy}=\\cos(xy)+y\\cdot(-\\sin(xy))\\cdot x=\\cos(xy)-xy\\sin(xy)$. Olvidar el producto deja solo uno de los dos términos." }, { "etiqueta": "S6 · Desafiante", "nivel": 3, "criterio": "Aplicar la regla de la cadena de dos variables (Semana 6)", "enunciado": "Si $z=x^{2}y$ con $x=t$ y $y=t^{2}$, entonces $\\dfrac{dz}{dt}$ es:", "opciones": [ "$2t^{3}$", "$t^{4}$", "$4t^{2}$", "$4t^{3}$" ], "correcta": 3, "pista": "$\\dfrac{dz}{dt}=z_x\\dfrac{dx}{dt}+z_y\\dfrac{dy}{dt}$. Comprueba sustituyendo: $z=t^{4}$.", "solucion": "$z_x=2xy=2t^{3}$, $z_y=x^{2}=t^{2}$; $\\dfrac{dz}{dt}=2t^{3}\\cdot1+t^{2}\\cdot2t=4t^{3}$. Sustituyendo directamente, $z=t^{4}$ y $z'=4t^{3}$: coincide. La opción $2t^{3}$ usa solo el camino por $x$." }, { "etiqueta": "S7 · Fácil", "nivel": 1, "criterio": "Calcular el gradiente en un punto (Semana 7)", "enunciado": "El gradiente de $f(x,y)=x^{2}-y^{2}$ en el punto $(1,1)$ es:", "opciones": [ "$(-2,2)$", "$(2,-2)$", "$(2,2)$", "$(1,-1)$" ], "correcta": 1, "pista": "$\\nabla f=(f_x,f_y)=(2x,-2y)$.", "solucion": "$\\nabla f=(2x,-2y)$, que en $(1,1)$ vale $(2,-2)$. La opción $(2,2)$ olvida el signo de $f_y$." }, { "etiqueta": "S7 · Medio", "nivel": 2, "criterio": "Hallar la máxima tasa de cambio (Semana 7)", "enunciado": "La máxima tasa de cambio de $f(x,y)=x^{2}+y^{2}$ en el punto $(3,4)$ es:", "opciones": [ "$10$", "$5$", "$14$", "$2$" ], "correcta": 0, "pista": "Es la magnitud del gradiente, $|\\nabla f|$.", "solucion": "$\\nabla f(3,4)=(6,8)$ y $|\\nabla f|=\\sqrt{36+64}=10$. La opción $14$ suma las componentes y $5$ es $|(3,4)|$, la distancia al origen." }, { "etiqueta": "S7 · Desafiante", "nivel": 3, "criterio": "Escribir el plano tangente (Semana 7)", "enunciado": "El plano tangente a $z=x^{2}+y^{2}$ en el punto $(1,1,2)$ es:", "opciones": [ "$z=2x+2y$", "$z=x+y$", "$z=2x+2y-2$", "$z=2x+2y+2$" ], "correcta": 2, "pista": "$z=f(1,1)+f_x(1,1)(x-1)+f_y(1,1)(y-1)$ y luego simplifica.", "solucion": "$f_x=f_y=2$ en $(1,1)$ y $f(1,1)=2$: $z=2+2(x-1)+2(y-1)=2x+2y-2$. Comprobación: en $(1,1)$ el plano da $z=2$, como la superficie. Las otras opciones no pasan por el punto." }, { "etiqueta": "S8 · Fácil", "nivel": 1, "criterio": "Hallar un punto crítico (Semana 8)", "enunciado": "El punto crítico de $f(x,y)=x^{2}+y^{2}-4x+6y$ es:", "opciones": [ "$(-2,3)$", "$(4,-6)$", "$(2,3)$", "$(2,-3)$" ], "correcta": 3, "pista": "Resuelve $f_x=2x-4=0$ y $f_y=2y+6=0$.", "solucion": "$2x-4=0\\Rightarrow x=2$ y $2y+6=0\\Rightarrow y=-3$: el crítico es $(2,-3)$. Las demás opciones cambian signos o no dividen entre 2." }, { "etiqueta": "S8 · Medio", "nivel": 2, "criterio": "Aplicar el criterio del Hessiano (Semana 8)", "enunciado": "En un punto crítico se tiene $f_{xx}=2$, $f_{yy}=2$ y $f_{xy}=3$. El punto es:", "opciones": [ "no decidible con este criterio", "un punto de silla", "un mínimo local", "un máximo local" ], "correcta": 1, "pista": "Calcula $D=f_{xx}f_{yy}-f_{xy}^{2}$ y mira su signo.", "solucion": "$D=2\\cdot2-3^{2}=-5\\lt0$: punto de silla, sin importar el signo de $f_{xx}$. Sería mínimo solo si $D\\gt0$ con $f_{xx}\\gt0$." }, { "etiqueta": "S8 · Desafiante", "nivel": 3, "criterio": "Resolver un problema de Lagrange (Semana 8)", "enunciado": "El valor máximo de $f(x,y)=xy$ sujeto a $x+y=8$ es:", "opciones": [ "$16$", "$12$", "$15$", "$8$" ], "correcta": 0, "pista": "$\\nabla f=\\lambda\\nabla g$ da $y=\\lambda$ y $x=\\lambda$, así que $x=y$.", "solucion": "De $y=\\lambda$, $x=\\lambda$ y $x+y=8$ sale $x=y=4$ y $f=16$. Las opciones $12$ y $15$ corresponden a $(2,6)$ y $(3,5)$, que cumplen la restricción pero no son el máximo." }, { "etiqueta": "S9 · Fácil", "nivel": 1, "criterio": "Calcular una integral iterada (Semana 9)", "enunciado": "$\\displaystyle\\int_{0}^{1}\\!\\!\\int_{0}^{2}xy\\,dx\\,dy$ es igual a:", "opciones": [ "$\\dfrac{1}{2}$", "$4$", "$1$", "$2$" ], "correcta": 2, "pista": "Primero integra en $x$ (con $y$ constante): $\\left[\\tfrac{x^{2}}{2}y\\right]_{0}^{2}=2y$.", "solucion": "La interna da $2y$; luego $\\displaystyle\\int_{0}^{1}2y\\,dy=1$. La opción $2$ olvida la integral externa." }, { "etiqueta": "S9 · Medio", "nivel": 2, "criterio": "Calcular un área con integral doble (Semana 9)", "enunciado": "El área de la región bajo $y=1-x^{2}$, sobre el eje $x$ y con $0\\le x\\le1$, calculada como $\\iint_R1\\,dA$, es:", "opciones": [ "$\\dfrac{4}{3}$", "$\\dfrac{1}{3}$", "$1$", "$\\dfrac{2}{3}$" ], "correcta": 3, "pista": "$\\displaystyle\\int_{0}^{1}\\!\\!\\int_{0}^{1-x^{2}}dy\\,dx$.", "solucion": "La interna da $1-x^{2}$ y $\\displaystyle\\int_{0}^{1}(1-x^{2})\\,dx=1-\\tfrac13=\\tfrac23$. La opción $\\tfrac43$ es el área completa de $-1$ a $1$." }, { "etiqueta": "S9 · Desafiante", "nivel": 3, "criterio": "Invertir el orden de integración (Semana 9)", "enunciado": "La integral $\\displaystyle\\int_{0}^{1}\\!\\!\\int_{0}^{2x}f(x,y)\\,dy\\,dx$, con el orden invertido, es:", "opciones": [ "$\\displaystyle\\int_{0}^{2}\\!\\!\\int_{2y}^{1}f\\,dx\\,dy$", "$\\displaystyle\\int_{0}^{2}\\!\\!\\int_{y/2}^{1}f\\,dx\\,dy$", "$\\displaystyle\\int_{0}^{2}\\!\\!\\int_{0}^{y/2}f\\,dx\\,dy$", "$\\displaystyle\\int_{0}^{1}\\!\\!\\int_{y/2}^{1}f\\,dx\\,dy$" ], "correcta": 1, "pista": "La región es el triángulo bajo $y=2x$ con $0\\le x\\le1$: dibújala y léela por franjas horizontales.", "solucion": "La región es $0\\le x\\le1$, $0\\le y\\le2x$, es decir, el triángulo de vértices $(0,0)$, $(1,0)$ y $(1,2)$. Por franjas horizontales, $y$ va de $0$ a $2$ y $x$ desde la recta $x=y/2$ hasta $x=1$. Ambas integrales de $f=1$ dan el área $1$." } ] });
+</script>
+<script>
+// Botones «Ver respuesta» del taller (reutilizan el estilo .q-sol del motor de quices)
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest('button[data-resp]');
+  if (!b) return;
+  var caja = document.getElementById(b.getAttribute('data-resp'));
+  var on = caja.classList.toggle('on');
+  b.textContent = on ? 'Ocultar respuesta' : 'Ver respuesta';
+});
+</script>
+</body>
+</html>
