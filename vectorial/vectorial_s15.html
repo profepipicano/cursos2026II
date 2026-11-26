@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 15 · Evaluación final — Cálculo Vectorial · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912h">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Cálculo Vectorial · Semana 15</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#reglas">Cómo es la evaluación</a>
+    <a href="#e1">Ej. 1</a>
+    <a href="#e2">Ej. 2</a>
+    <a href="#e3">Ej. 3</a>
+    <a href="#e4">Ej. 4</a>
+    <a href="#e5">Ej. 5</a>
+    <a href="#e6">Ej. 6</a>
+    <a href="#e7">Ej. 7</a>
+    <a href="#e8">Ej. 8</a>
+    <a href="#e9">Ej. 9</a>
+    <a href="#e10">Ej. 10</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Semana 15 · Corte III · Evaluación final</div>
+  <h2>Evaluación final: resolución y sustentación</h2>
+  <p>La evaluación final reúne <strong>todo el semestre</strong> —curvas, funciones vectoriales y
+     campos escalares; derivadas parciales, gradiente, extremos e integrales dobles; integrales
+     en polares, triples, sus aplicaciones, campos vectoriales e integral de línea— con mayor peso
+     en los temas del Corte III. Son diez ejercicios de nivel medio a desafiante, varios orientados
+     a <strong>Ingeniería de Sistemas y Electrónica</strong>. Se resuelve en grupo y se sustenta
+     en vivo, con la misma metodología de la semana 5.</p>
+  <div class="chips">
+    <span class="chip">Grupos de hasta 4</span>
+    <span class="chip">10 ejercicios · todo el semestre</span>
+    <span class="chip">Sustentación con horario asignado</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">⏱</span>
+  <h3>Lee primero las reglas de la evaluación</h3>
+  <p>El horario, las cámaras y las condiciones de calificación son parte de la nota. Un grupo que
+     llega tarde o hace uso indebido de la IA obtiene <strong>cero</strong>. Revisa la sección de
+     abajo antes de empezar a resolver.</p>
+</div>
+
+<section class="card" id="reglas">
+  <h3 class="card-title">Cómo es la evaluación</h3>
+
+  <ol>
+    <li><strong>Grupos.</strong> Se forman grupos de <strong>hasta 4 estudiantes</strong> para esta
+        actividad.</li>
+    <li><strong>Los ejercicios.</strong> Esta guía contiene <strong>10 ejercicios</strong> sobre los
+        temas de todo el semestre: dos del Corte I (semanas 1–4), tres del Corte II (semanas 6–9) y
+        cinco del Corte III (semanas 11–14). Tres son teóricos de cálculo directo y siete están
+        contextualizados a la ingeniería. El grupo los resuelve <strong>todos</strong>.</li>
+    <li><strong>Nivel.</strong> Los ejercicios son de nivel medio a desafiante: cada uno combina dos
+        o más ideas del curso. Lean el enunciado completo antes de empezar y revisen la guía de la
+        semana correspondiente si algo no se recuerda.</li>
+    <li><strong>Material de apoyo.</strong> Cada grupo debe tener listo algún material para exponer
+        el día de la evaluación: los ejercicios desarrollados a mano y escaneados o fotografiados en
+        un PDF, diapositivas, un documento de Word, o cualquier medio que ayude a presentar.</li>
+    <li><strong>Horario asignado.</strong> A cada grupo se le asigna un horario, con
+        <strong>15 minutos</strong> de diferencia a partir de la hora de inicio de clase. Ingresen
+        unos minutos antes para estar listos <em>a la hora en punto</em>.</li>
+    <li><strong>Puntualidad y cámaras.</strong> Llegada la hora, el grupo debe haber ingresado ya al
+        enlace de clase, con las <strong>cámaras encendidas</strong> y preparado para exponer.</li>
+    <li><strong>Responsabilidad grupal.</strong> Todos los integrantes son responsables de
+        <em>todos</em> los ejercicios. Se puede preguntar a cualquier miembro sobre cualquier
+        ejercicio, y de ahí sale la nota del grupo.</li>
+    <li><strong>Calificación de cero.</strong> Si un grupo no llega a la hora asignada, o se observa
+        <strong>uso indebido de la IA</strong> durante la exposición, la calificación es
+        automáticamente <strong>cero</strong>.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>Qué significa «todos responden por todo»</h3>
+    <p>La nota no es la suma de partes: es una nota de grupo que sale de preguntar a cualquiera sobre
+       cualquier ejercicio. No sirve que cada quien domine solo «su» ejercicio. Repartan el trabajo
+       para resolver, pero <strong>repasen juntos los diez</strong> antes de la sustentación, de
+       modo que cualquiera pueda explicar cualquiera.</p>
+    <p>Y sobre la IA: pueden usarla para <em>estudiar</em> y preparar, pero durante la exposición se
+       evalúa lo que ustedes entienden y saben hacer. Si al preguntarles se nota que están leyendo
+       una respuesta generada en el momento en vez de razonar, eso es uso indebido.</p>
+  </div>
+
+  <div class="nota">
+    <strong>Mapa de los ejercicios.</strong> Corte I: ejercicios 1 y 2. Corte II: ejercicios 3, 4 y
+    5. Corte III: ejercicios 6 a 10. En cada uno se indica la guía que conviene repasar.
+  </div>
+</section>
+
+<!-- ═══════════ CORTE I ═══════════ -->
+<section class="card" id="e1">
+  <h3 class="card-title">Ejercicio 1 · Teórico · Curvas polares y longitud de arco</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte I · guías 2, 3 y 4. Muestra el procedimiento, no solo el resultado.</p>
+
+  <div class="def">
+    <strong>a)</strong> Convierte la curva polar $r=4\operatorname{sen}\theta$ a coordenadas
+    cartesianas e identifica la figura (centro y radio).
+    <br><br>
+    <strong>b)</strong> Para $\mathbf r(t)=\left\langle t,\;t^{2},\;\tfrac23t^{3}\right\rangle$,
+    demuestra que $|\mathbf r'(t)|=1+2t^{2}$ y calcula la longitud de arco para $t\in[0,1]$.
+  </div>
+
+  <div class="nota">
+    <strong>Qué se evalúa.</strong> Multiplicar por $r$ y completar el cuadrado al pasar de polares, y
+    en (b) derivar por componentes y reconocer un cuadrado perfecto dentro de la raíz antes de
+    integrar la rapidez.
+  </div>
+</section>
+
+<section class="card" id="e2">
+  <h3 class="card-title">Ejercicio 2 · Electrónica · Un electrón en un campo magnético</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte I · guías 3 y 4. Un electrón que entra en un campo magnético uniforme describe una
+    hélice: $\mathbf r(t)=\langle2\cos t,\;2\operatorname{sen}t,\;t\rangle$ (unidades
+    arbitrarias).</p>
+
+  <div class="def">
+    <strong>a)</strong> Halla la velocidad $\mathbf v(t)$ y la aceleración $\mathbf a(t)$;
+    demuestra que la rapidez es constante (¿cuánto vale?) y que $\mathbf a$ es siempre
+    perpendicular a $\mathbf v$. ¿Qué dice eso físicamente sobre la fuerza magnética?
+    <br><br>
+    <strong>b)</strong> Calcula la distancia recorrida en una vuelta completa, $t\in[0,2\pi]$, y la
+    curvatura de la trayectoria; explica por qué esta última es constante.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> La fuerza magnética sobre una carga es perpendicular a su velocidad,
+    por eso no cambia la rapidez, solo la dirección: el movimiento resultante es una hélice de
+    curvatura constante. Es el principio del espectrómetro de masas y del tubo de rayos
+    catódicos.
+  </div>
+</section>
+
+<!-- ═══════════ CORTE II ═══════════ -->
+<section class="card" id="e3">
+  <h3 class="card-title">Ejercicio 3 · Teórico · Gradiente, derivada direccional y extremos</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte II · guías 6, 7 y 8.</p>
+
+  <div class="def">
+    <strong>a)</strong> Para $f(x,y)=x^{2}y+e^{xy}$, halla $\nabla f(1,0)$ y la derivada
+    direccional de $f$ en $(1,0)$ en la dirección del vector $\mathbf v=(3,4)$.
+    <br><br>
+    <strong>b)</strong> Halla y clasifica todos los puntos críticos de
+    $g(x,y)=x^{3}-3x+y^{2}-4y$ con el criterio del Hessiano.
+  </div>
+
+  <div class="nota">
+    <strong>Qué se evalúa.</strong> Regla de la cadena dentro de la exponencial y el vector unitario
+    en (a); en (b), resolver el sistema $g_x=g_y=0$ y que el signo de $D=g_{xx}g_{yy}-g_{xy}^{2}$
+    decida entre mínimo, máximo y silla.
+  </div>
+</section>
+
+<section class="card" id="e4">
+  <h3 class="card-title">Ejercicio 4 · Electrónica · Mapa térmico de un chip y Lagrange</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte II · guías 7 y 8. La temperatura sobre la superficie de un chip (en °C, con $x,y$ en
+    cm) es $T(x,y)=200-4x^{2}-y^{2}$.</p>
+
+  <div class="def">
+    <strong>a)</strong> Calcula $T(1,2)$ y $\nabla T(1,2)$. ¿En qué dirección unitaria debe
+    desplazarse un componente sensible al calor desde $(1,2)$ para que la temperatura
+    <em>baje</em> lo más rápido posible, y a qué tasa (°C/cm)?
+    <br><br>
+    <strong>b)</strong> Con multiplicadores de Lagrange, halla el punto más caliente y el más frío
+    del chip sobre el anillo de montaje $x^{2}+y^{2}=4$.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> El gradiente apunta hacia donde la temperatura sube más rápido: hacia
+    allá se lleva el disipador y en sentido contrario se aleja lo que no soporta calor. Lagrange
+    responde la pregunta de diseño: sobre un contorno fijo, ¿dónde está el máximo?
+  </div>
+</section>
+
+<section class="card" id="e5">
+  <h3 class="card-title">Ejercicio 5 · Sistemas · Altura promedio de un terreno (integral doble)</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte II · guías 9 y 13. En un motor de videojuegos, la altura de un terreno sobre una parcela
+    triangular es $z=6-x-2y$, donde la parcela es la región $R$ limitada por $x=0$, $y=0$ y
+    $x+y=2$.</p>
+
+  <div class="def">
+    <strong>a)</strong> Dibuja la región $R$, escribe la integral doble que da el volumen bajo
+    la superficie con los límites en el orden $dy\,dx$ y calcúlala.
+    <br><br>
+    <strong>b)</strong> Calcula la <strong>altura promedio</strong> del terreno sobre la parcela:
+    $\bar z=\dfrac{1}{\text{Área}(R)}\displaystyle\iint_R z\,dA$.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> Un mapa de alturas es una función $z=f(x,y)$ sobre una región; el
+    volumen y la altura promedio salen de la integral doble, y el área de la región es la misma
+    integral con integrando $1$.
+  </div>
+</section>
+
+<!-- ═══════════ CORTE III ═══════════ -->
+<section class="card" id="e6">
+  <h3 class="card-title">Ejercicio 6 · Teórico · Integrales en polares y área de superficie</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte III · guía 11. Recuerda el factor $r$: $dA=r\,dr\,d\theta$.</p>
+
+  <div class="def">
+    <strong>a)</strong> Calcula $\displaystyle\iint_R (x^{2}+y^{2})\,e^{-(x^{2}+y^{2})}\,dA$, donde $R$ es el
+    disco $x^{2}+y^{2}\le4$.
+    <br><br>
+    <strong>b)</strong> Calcula el área de la superficie $z=x^{2}+y^{2}$ sobre el disco
+    $x^{2}+y^{2}\le2$.
+  </div>
+
+  <div class="nota">
+    <strong>Qué se evalúa.</strong> Pasar a polares cuando aparece $x^{2}+y^{2}$ (en (a) hace falta
+    además una integración por partes tras el cambio) y la fórmula del área de superficie
+    $\iint\sqrt{1+f_x^{2}+f_y^{2}}\,dA$, que también se resuelve en polares.
+  </div>
+</section>
+
+<section class="card" id="e7">
+  <h3 class="card-title">Ejercicio 7 · Electrónica · Carga y masa en coordenadas cilíndricas y esféricas</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte III · guía 12.</p>
+
+  <div class="def">
+    <strong>a)</strong> Una pieza cilíndrica de material dieléctrico, de radio $2$ cm y altura
+    $3$ cm, tiene densidad de carga $\delta(r,\theta,z)=3z$ (en $\mu$C/cm³). Calcula la carga
+    total $Q=\displaystyle\iiint\delta\,dV$ en coordenadas cilíndricas.
+    <br><br>
+    <strong>b)</strong> Un sólido ocupa la región entre las esferas $\rho=1$ y $\rho=2$, por
+    encima del cono $\phi=\dfrac{\pi}{4}$ (un «cono de helado» hueco), y su densidad es
+    $\delta=\rho$. Calcula su masa $\displaystyle\iiint\delta\,dV$ en esféricas, explica por qué
+    es el sistema adecuado y qué pasaría si se intentara en cilíndricas.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> Carga total y masa total son integrales triples de una densidad. El
+    sistema de coordenadas correcto convierte límites complicados en constantes: ese es todo el
+    secreto de las cilíndricas y las esféricas.
+  </div>
+</section>
+
+<section class="card" id="e8">
+  <h3 class="card-title">Ejercicio 8 · Sistemas · Centro de masa y cambio de variables</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte III · guía 13. Una pieza plana (lámina) de un robot ocupa el triángulo de vértices
+    $(0,0)$, $(2,0)$ y $(0,2)$ y su densidad es $\delta(x,y)=x+y$.</p>
+
+  <div class="def">
+    <strong>a)</strong> Calcula la masa de la lámina y su centro de masa $(\bar x,\bar y)$.
+    ¿Por qué cabía esperar $\bar x=\bar y$?
+    <br><br>
+    <strong>b)</strong> Para la transformación $u=x+y$, $v=x-y$, despeja $x$ e $y$, calcula el
+    jacobiano $\dfrac{\partial(x,y)}{\partial(u,v)}$ y úsalo para calcular
+    $\displaystyle\iint_R(x+y)\,e^{\,x-y}\,dA$, donde $R$ es el cuadrado limitado por las rectas
+    $x+y=1$, $x+y=3$, $x-y=0$ y $x-y=2$.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> El centro de masa es donde se equilibra la pieza —dato que necesita
+    cualquier simulación física—. El cambio de variables es la versión en dos dimensiones de la
+    sustitución: el jacobiano es el factor de escala del área.
+  </div>
+</section>
+
+<section class="card" id="e9">
+  <h3 class="card-title">Ejercicio 9 · Electrónica · Campo conservativo y campo rotacional</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte III · guía 14.</p>
+
+  <div class="def">
+    <strong>a)</strong> Demuestra que el campo $\mathbf F(x,y)=\langle y^{2},\,2xy\rangle$ es
+    conservativo, halla una función potencial $f$ con $\nabla f=\mathbf F$ y calcula el trabajo
+    $\displaystyle\int_C\mathbf F\cdot d\mathbf r$ que realiza el campo sobre una carga al moverla
+    desde $(0,0)$ hasta $(2,3)$. ¿Por qué no importa el camino?
+    <br><br>
+    <strong>b)</strong> El campo $\mathbf G(x,y)=\langle-y,\,2x\rangle$ modela un campo que gira
+    alrededor del origen. Calcula $\displaystyle\oint_C\mathbf G\cdot d\mathbf r$ sobre la
+    circunferencia $x^{2}+y^{2}=1$ (antihorario) de dos maneras: parametrizando y con el teorema
+    de Green. ¿Es $\mathbf G$ conservativo?
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> Un campo electrostático es conservativo: el trabajo depende solo de
+    los extremos y existe un potencial. Un campo que gira, como $\mathbf G$ (rotacional constante),
+    no lo es: su circulación no es cero, y Green la convierte en una integral doble.
+  </div>
+</section>
+
+<section class="card" id="e10">
+  <h3 class="card-title">Ejercicio 10 · Sistemas · Integrales de línea y teorema de Green</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">
+    Corte III · guía 14 (desafiante).</p>
+
+  <div class="def">
+    <strong>a)</strong> Un algoritmo de visión calcula el área de un polígono con la fórmula de
+    Green $A=\dfrac12\displaystyle\oint_C x\,dy-y\,dx$, recorriendo sus lados. Úsala para hallar
+    el área del cuadrilátero de vértices $(0,0)$, $(4,0)$, $(3,3)$ y $(1,2)$ (en ese orden,
+    antihorario), parametrizando cada lado.
+    <br><br>
+    <strong>b)</strong> Calcula $\displaystyle\oint_C(x^{2}-y^{2})\,dx+(2xy+x)\,dy$, donde $C$ es
+    el borde del cuadrado $[0,1]\times[0,1]$ recorrido en sentido antihorario, usando el teorema
+    de Green. ¿Es conservativo el campo $\langle x^{2}-y^{2},\;2xy+x\rangle$? Relaciona tu
+    respuesta con el valor obtenido.
+  </div>
+
+  <div class="nota">
+    <strong>Contexto.</strong> El área por Green, aplicada lado a lado, es exactamente la fórmula del
+    «lazo» que usan los programas de geometría computacional; y una integral cerrada distinta de
+    cero delata que el campo no es conservativo.
+  </div>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Antes de la sustentación</h3>
+  <ul>
+    <li>Resuelvan los <strong>diez</strong> ejercicios completos, con procedimiento.</li>
+    <li>Preparen el material de apoyo (PDF escaneado, diapositivas o Word) para mostrar durante la exposición.</li>
+    <li>Repasen juntos los diez ejercicios: <strong>cualquiera puede ser preguntado sobre cualquiera</strong>.</li>
+    <li>Confirmen su horario asignado e ingresen al enlace unos minutos antes, con la cámara lista.</li>
+    <li>Tengan a mano cómo llegaron a cada resultado: en la sustentación importa el razonamiento, no solo la respuesta.</li>
+    <li>Si un tema no se recuerda, vuelvan a la guía indicada en cada ejercicio: ahí están la teoría, los ejemplos y los visualizadores.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://openstax.org/books/calculus-volume-3/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Vol. 3</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></div>
+    <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
+    <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
+  </div>
+</footer>
+
+<script src="../assets/ova.js?v=20260912h"></script>
+</body>
+</html>
