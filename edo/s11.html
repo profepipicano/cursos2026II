@@ -11,7 +11,7 @@ window.MathJax = {
 };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<link rel="stylesheet" href="../assets/ova.css?v=20260912f">
+<link rel="stylesheet" href="../assets/ova.css?v=20260912h">
 </head>
 <body>
 
@@ -356,8 +356,8 @@ window.MathJax = {
   </div>
 </footer>
 
-<script src="../assets/ova.js?v=20260912f"></script>
-<script src="../assets/viz-edo.js?v=20260912f"></script>
+<script src="../assets/ova.js?v=20260912h"></script>
+<script src="../assets/viz-edo.js?v=20260912h"></script>
 <script>
 OVA.quiz({ "destino": "chk1", "titulo": "Coeficientes indeterminados · 3 preguntas", "items": [ { "etiqueta": "Forma", "nivel": 1, "criterio": "Proponer la forma de y_p (§2)", "enunciado": "Para $y''+2y'+y=\\sin 3x$, la forma correcta de $y_p$ es:", "opciones": [ "$A\\cos 3x+B\\sin 3x$", "$A\\sin 3x$", "$Ax\\sin 3x$", "$Ae^{3x}$" ], "correcta": 0, "pista": "Las derivadas de un seno producen cosenos.", "solucion": "Aunque $g$ solo tenga seno, al derivar aparecen cosenos: hay que proponer ambos, $A\\cos3x+B\\sin3x$. No hay duplicación porque $y_c=(c_1+c_2x)e^{-x}$ no contiene senos." }, { "etiqueta": "Calcular", "nivel": 3, "criterio": "Hallar y_p por coeficientes indeterminados (§2)", "enunciado": "Para $y''-3y'+2y=4x$, con $y_p=Ax+B$ se obtiene:", "opciones": [ "$y_p=4x+6$", "$y_p=2x-3$", "$y_p=2x+3$", "$y_p=2x$" ], "correcta": 2, "pista": "$-3A+2(Ax+B)=4x$.", "solucion": "Sustituyendo: $2Ax+(2B-3A)=4x$, así que $A=2$ y $2B-6=0\\Rightarrow B=3$: $y_p=2x+3$. Olvidar el término $-3A$ del $y'$ es lo que lleva a $B=0$." }, { "etiqueta": "Exponencial", "nivel": 2, "criterio": "Hallar y_p exponencial (§2)", "enunciado": "Para $y''+y=e^{2x}$, la solución particular es:", "opciones": [ "$y_p=e^{2x}$", "$y_p=\\dfrac{e^{2x}}{3}$", "$y_p=5e^{2x}$", "$y_p=\\dfrac{e^{2x}}{5}$" ], "correcta": 3, "pista": "$y_p=Ae^{2x}$: $4A+A=1$.", "solucion": "$y_p''=4Ae^{2x}$ y $y_p''+y_p=5Ae^{2x}=e^{2x}$ da $A=\\tfrac15$. Comprobación: $\\tfrac45e^{2x}+\\tfrac15e^{2x}=e^{2x}$ ✓." } ] });
 OVA.quiz({ "destino": "chk2", "titulo": "Variación de parámetros y PVI · 3 preguntas", "items": [ { "etiqueta": "Fórmulas", "nivel": 2, "criterio": "Recordar variación de parámetros (§4)", "enunciado": "En variación de parámetros, con $y_p=u_1y_1+u_2y_2$ y Wronskiano $W$:", "opciones": [ "$u_1'=-y_2$, $\\ u_2'=y_1$", "$u_1'=-\\dfrac{y_2f}{W}$, $\\ u_2'=\\dfrac{y_1f}{W}$", "$u_1'=\\dfrac{y_1f}{W}$, $\\ u_2'=\\dfrac{y_2f}{W}$", "$u_1=y_1f$, $\\ u_2=y_2f$" ], "correcta": 1, "pista": "Cada $u'$ lleva la «otra» solución y un signo distinto.", "solucion": "$u_1'=-y_2f/W$ y $u_2'=y_1f/W$ (con el coeficiente de $y''$ normalizado a 1). Los signos y el cruce $y_1\\leftrightarrow y_2$ son esenciales; para $y''+y=\\sec x$ dan $u_1=\\ln|\\cos x|$ y $u_2=x$." }, { "etiqueta": "sec x", "nivel": 3, "criterio": "Aplicar variación de parámetros (§4)", "enunciado": "Para $y''+y=\\sec x$ ($y_1=\\cos x$, $y_2=\\sin x$, $W=1$), la solución particular es:", "opciones": [ "$y_p=\\cos x\\ln|\\cos x|+x\\sin x$", "$y_p=A\\sec x$", "$y_p=x\\cos x$", "$y_p=\\sin x\\ln|\\sin x|$" ], "correcta": 0, "pista": "$u_1'=-\\tan x$, $u_2'=1$.", "solucion": "$u_1=\\int-\\tan x\\,dx=\\ln|\\cos x|$ y $u_2=\\int1\\,dx=x$, luego $y_p=\\cos x\\ln|\\cos x|+x\\sin x$. Coeficientes indeterminados no sirve: $\\sec x$ no está en la tabla." }, { "etiqueta": "PVI", "nivel": 3, "criterio": "Imponer condiciones iniciales a y_c+y_p (§5)", "enunciado": "Para $y''-3y'+2y=4x$ con $y(0)=1$, $y'(0)=0$, la solución es:", "opciones": [ "$y=-2e^{x}+e^{2x}$", "$y=2x+3$", "$y=-2e^{x}+2x+3$", "$y=e^{x}+2x+3$" ], "correcta": 2, "pista": "$c_1+c_2+3=1$ y $c_1+2c_2+2=0$.", "solucion": "De $y=c_1e^{x}+c_2e^{2x}+2x+3$: $c_1+c_2=-2$ y $c_1+2c_2=-2$, luego $c_2=0$, $c_1=-2$. Comprobación: $y(0)=1$ ✓, $y'(0)=-2+2=0$ ✓. Imponer las condiciones solo a $y_c$ daría una respuesta equivocada." } ] });
