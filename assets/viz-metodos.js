@@ -1025,7 +1025,7 @@ var ITERSEL = {   // (antes ITER: colisionaba con el ITER de S02 y rompía «ite
        A: [[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]],
        b: [6, 25, -11, 15], v: ['x', 'y', 'z', 'w'], sol: [1, 2, -1, 1], dom: true },
   b: { n: '4x+y=9 ; x+3y=8', A: [[4, 1], [1, 3]], b: [9, 8],
-       v: ['x', 'y'], sol: [1.857142857, 2.047619048], dom: true },
+       v: ['x', 'y'], sol: [1.727272727, 2.090909091], dom: true },   // 19/11, 23/11 (corregido 2026-10-27: decía 1,857/2,048)
   c: { n: 'x+2y=5 ; 3x+y=5  (NO dominante)', A: [[1, 2], [3, 1]], b: [5, 5],
        v: ['x', 'y'], sol: [1, 2], dom: false }
 };
