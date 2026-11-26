@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 15 · Entrega final del proyecto — Métodos Numéricos · UNIAJC</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="../assets/ova.css?v=20260912h">
+</head>
+<body>
+
+<header id="top">
+  <div class="top-inner">
+    <span class="badge">DCB</span>
+    <div class="top-titles">
+      <h1>Métodos Numéricos · Semana 15</h1>
+      <div class="top-sub">Institución Universitaria Antonio José Camacho · Ciencias Básicas</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn-top" href="./">Todas las sesiones</a>
+      <button class="btn-top" type="button" data-dark-toggle aria-pressed="false">☾ Modo oscuro</button>
+    </div>
+  </div>
+</header>
+
+<nav id="guia-nav" aria-label="Secciones de la guía">
+  <div class="guia-nav-inner">
+    <a href="#entrega">Qué se entrega</a>
+    <a href="#documento">El documento final</a>
+    <a href="#sustentacion">La sustentación</a>
+    <a href="#criterios">Cómo se califica</a>
+    <a href="#autoevaluacion">Autoevaluación</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">Semana 15 · Corte III · Evaluación final</div>
+  <h2>Proyecto de curso: entrega y sustentación final</h2>
+  <p>La evaluación del Corte III es la <strong>entrega del proyecto terminado</strong>: el documento
+     completo, el código final y la demostración del programa funcionando, con sustentación en vivo
+     bajo la misma metodología de la semana 5. Esta página resume lo esencial y te da la plantilla
+     del informe final lista para trabajar.</p>
+  <div class="chips">
+    <span class="chip">Peso: 50 % de la nota del corte</span>
+    <span class="chip">Documento + código + demostración</span>
+    <span class="chip">Sustentación con horario asignado</span>
+  </div>
+</div>
+
+<div class="aviso-borrador" style="border-color:var(--gold-600);background:var(--surface2)">
+  <span class="icono" aria-hidden="true">📄</span>
+  <h3>Descarga la plantilla del informe final</h3>
+  <p>Un archivo de Word con las once secciones del informe final ya creadas —portada APA,
+     integrantes y enlace al código, resumen, introducción, marco de referencia, metodología con la
+     tabla de métodos implementados, resultados, análisis de errores y validación con su tabla de
+     casos de prueba, cumplimiento del cronograma, conclusiones, referencias y declaración de IA—
+     con texto de ayuda en cada apartado. Ábrelo y solo tienes que escribir tu contenido.</p>
+  <div class="acciones">
+    <a class="btn" href="Plantilla_Informe_Final.docx" download>Descargar plantilla (.docx)</a>
+  </div>
+</div>
+
+<div class="nota">
+  <strong>Esta página resume; el documento oficial manda.</strong> La <em>Guía del Proyecto de
+  Curso</em> en PDF que entregó el docente es el documento normativo. Ante cualquier diferencia,
+  vale lo que dice el PDF. La fecha de la sustentación y el medio de entrega se indican en clase
+  y en Teams.
+</div>
+
+<section class="card" id="entrega">
+  <h3 class="card-title">1 · Qué se entrega en la semana 15</h3>
+  <p>El proyecto terminado tiene tres partes, y las tres se evalúan:</p>
+
+  <table class="tbl">
+    <thead><tr><th>Parte</th><th>Qué contiene</th><th>Cómo se entrega</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Documento final</strong></td><td>La versión completa del proyecto: todo lo de la propuesta actualizado, el desarrollo, los resultados, el <strong>análisis de errores y validación</strong> y las conclusiones. No solo lo nuevo desde el avance.</td><td>Archivo Word o PDF, <strong>antes</strong> de la sustentación, por el medio indicado en clase.</td></tr>
+      <tr><td><strong>Código final</strong></td><td>Ordenado y comentado, con los métodos numéricos implementados por el grupo y un archivo o sección que explique cómo ejecutarlo.</td><td>Archivo comprimido o enlace a un repositorio (verifica que abra sin pedir permisos).</td></tr>
+      <tr><td><strong>Demostración</strong></td><td>El programa corriendo en vivo durante la sustentación, con un caso de prueba y la lectura de sus resultados.</td><td>En la sustentación, compartiendo pantalla.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout-dark">
+    <h3>Reglas que vienen desde la semana 5</h3>
+    <p><strong>Grupos de máximo 4</strong>, los mismos de todo el semestre. La nota es
+       <strong>grupal</strong>: todos reciben la misma calificación. <strong>Todos deben conocer el
+       proyecto completo</strong> —problema, métodos, código y resultados—, no solo la parte que
+       implementaron: en la sustentación cualquiera puede recibir preguntas sobre cualquier parte.
+       Los métodos los implementa el grupo; NumPy o SciPy sirven para graficar, leer datos o
+       validar, no para reemplazar la implementación.</p>
+  </div>
+
+  <div class="sub-title">Qué cambia respecto de la semana 10</div>
+  <ul>
+    <li>En el avance se evaluó <em>cumplir lo prometido</em>; ahora se evalúa el <strong>proyecto
+        completo</strong>: que resuelva el problema planteado y que los resultados estén validados.</li>
+    <li>El <strong>análisis de errores y de convergencia</strong> deja de ser opcional: es una
+        sección obligatoria del documento y un tema seguro de preguntas.</li>
+    <li>La sustentación es <strong>en vivo</strong> (no en video): exposición de 10 minutos, 5 de
+        preguntas, todos presentes, con el programa funcionando en pantalla.</li>
+  </ul>
+</section>
+
+<section class="card" id="documento">
+  <h3 class="card-title">2 · El documento final</h3>
+  <p>Debe tener estas secciones, que son exactamente las que trae la plantilla. Cada entrega es una
+     versión mejorada de la anterior: el documento del Corte III <strong>contiene todo el
+     proyecto</strong>.</p>
+
+  <table class="tbl">
+    <thead><tr><th>Sección</th><th>Qué debe contener</th></tr></thead>
+    <tbody>
+      <tr><td>Portada e integrantes</td><td>Formato APA; nombre completo de todos los integrantes y el enlace o archivo del código.</td></tr>
+      <tr><td>Resumen</td><td>Un párrafo: problema, métodos, resultado principal y conclusión más importante.</td></tr>
+      <tr><td>Introducción y planteamiento</td><td>Contexto, planteamiento, justificación y objetivos, traídos de la propuesta y actualizados; si el alcance cambió, se dice y se justifica.</td></tr>
+      <tr><td>Marco de referencia</td><td>El modelo matemático y cada método usado (fórmulas, condiciones de convergencia, orden del error), con citas APA.</td></tr>
+      <tr><td>Metodología e implementación</td><td>Etapas, lenguaje, estructura del programa, datos, responsabilidades; tabla de métodos implementados y dónde está cada uno en el código.</td></tr>
+      <tr><td>Resultados</td><td>Tablas y gráficas numeradas, con título y comentadas en el texto.</td></tr>
+      <tr><td><strong>Análisis de errores, convergencia y validación</strong></td><td>Comparación con casos de solución conocida; errores absolutos y relativos; comportamiento al cambiar paso, tolerancia o iteraciones.</td></tr>
+      <tr><td>Cumplimiento del cronograma</td><td>La tabla de la propuesta con su estado final (cumplido, parcial, no realizado) y los ajustes justificados.</td></tr>
+      <tr><td>Conclusiones</td><td>De 4 a 6, que respondan a los objetivos específicos: qué se logró, qué se aprendió de los métodos, qué se haría distinto.</td></tr>
+      <tr><td>Referencias</td><td>APA 7.ª edición: fuentes del modelo, de los métodos y de los datos.</td></tr>
+      <tr><td>Declaración de uso de IA</td><td>Qué herramientas se usaron, para qué y cómo se verificaron los resultados, en todo el proyecto.</td></tr>
+      <tr><td>Anexos (opcional)</td><td>Instrucciones de ejecución, fragmentos clave del código, datos de entrada.</td></tr>
+    </tbody>
+  </table>
+  <p style="color:var(--muted);font-size:.9rem">Extensión sugerida: entre 12 y 20 páginas, sin
+     contar portada, referencias y anexos.</p>
+
+  <div class="callout-dark">
+    <h3>El error más común: resultados sin validación</h3>
+    <p>Un programa que imprime números no es un proyecto terminado. La pregunta del jurado será
+       siempre la misma: <strong>«¿cómo saben que ese resultado es correcto?»</strong>. La respuesta
+       tiene que estar escrita en la sección de validación: un caso con solución conocida (analítica,
+       datos reales o una librería de referencia), el error medido, y cómo cambia ese error al
+       refinar el paso o la tolerancia. Si el método tiene un orden de convergencia teórico,
+       muestren que el suyo lo cumple.</p>
+  </div>
+</section>
+
+<section class="card" id="sustentacion">
+  <h3 class="card-title">3 · La sustentación</h3>
+  <ol>
+    <li><strong>Horario asignado.</strong> A cada grupo se le asigna un horario, con
+        <strong>15 minutos</strong> de diferencia a partir de la hora de inicio de clase: 10 minutos
+        de exposición y 5 de preguntas. El tiempo es estricto; ensayen antes.</li>
+    <li><strong>Puntualidad y cámaras.</strong> Llegada la hora, el grupo debe haber ingresado ya al
+        enlace de clase, con las <strong>cámaras encendidas</strong> y el programa listo para
+        compartir pantalla.</li>
+    <li><strong>Todos presentes.</strong> Deben asistir todos los integrantes. Cualquiera puede
+        recibir preguntas sobre cualquier parte del proyecto, incluido el código.</li>
+    <li><strong>Qué se presenta.</strong> La solución completa: el problema en una frase, los
+        métodos y por qué esos, el <strong>programa funcionando</strong> con un caso de prueba, los
+        resultados, la validación y las conclusiones.</li>
+    <li><strong>Calificación de cero.</strong> Si un grupo no llega a la hora asignada, o se observa
+        <strong>uso indebido de la IA</strong> durante la exposición (leer respuestas generadas en
+        el momento en vez de razonar), la calificación es automáticamente <strong>cero</strong>.</li>
+  </ol>
+
+  <div class="callout-dark">
+    <h3>Consejos para que los 10 minutos rindan</h3>
+    <p><strong>Empiecen por la demostración.</strong> Lo primero que quiere ver el jurado es el
+       programa corriendo; después vienen las explicaciones. Tengan el caso de prueba cargado antes
+       de la hora, no lo busquen en vivo.</p>
+    <p><strong>Repartan la exposición.</strong> Con cuatro integrantes y diez minutos, cada uno
+       tiene unos dos minutos y medio. Quien explica el código no tiene que ser quien lo escribió.</p>
+    <p><strong>Preparen las preguntas previsibles.</strong> «¿Cómo validaron el resultado?», «¿qué
+       pasa si cambian el paso o la tolerancia?», «¿por qué este método y no otro?», «¿dónde está en
+       el código la iteración del método?», «¿qué parte de lo prometido no se cumplió y por qué?».</p>
+  </div>
+</section>
+
+<section class="card" id="criterios">
+  <h3 class="card-title">4 · Cómo se califica</h3>
+  <p>La nota es grupal y considera el documento, el código y la sustentación. Estos son los
+     criterios de la Guía del Proyecto, aplicados al corte final:</p>
+  <table class="tbl">
+    <thead><tr><th>Criterio</th><th>Qué se mira en el Corte III</th></tr></thead>
+    <tbody>
+      <tr><td>Pertinencia y selección de métodos</td><td>El problema se resuelve con los métodos adecuados del curso, correctamente aplicados, integrando más de una unidad.</td></tr>
+      <tr><td>Calidad del documento</td><td>Claridad, estructura completa, redacción y normas APA; el documento contiene todo el proyecto.</td></tr>
+      <tr><td>Cumplimiento del cronograma</td><td>Lo prometido en la propuesta se cumplió o los cambios están justificados.</td></tr>
+      <tr><td>Implementación y análisis de resultados</td><td>Código propio, ordenado y comentado; resultados validados con análisis de errores y convergencia.</td></tr>
+      <tr><td>Sustentación</td><td>Claridad, dominio del tema por todos los integrantes, manejo del tiempo, demostración en vivo y capacidad de responder preguntas.</td></tr>
+    </tbody>
+  </table>
+  <div class="nota">
+    <strong>Sobre la declaración de IA.</strong> Usar herramientas de IA está permitido siempre que
+    se declare: qué se usó, para qué y cómo se verificó. No declararlo se considera falta de
+    honestidad académica. En todo caso, el grupo es responsable de entender y sustentar todo lo que
+    entrega, incluido el código.
+  </div>
+</section>
+
+<section class="card" id="autoevaluacion">
+  <h3 class="card-title">5 · Antes de entregar: autoevaluación</h3>
+  <p>Revisen el proyecto con esta lista antes de subirlo. Si responden «no» o «no sé» a alguna,
+     hay algo que ajustar.</p>
+
+  <div class="sub-title">Problema y resultados</div>
+  <ul>
+    <li>☐ ¿El programa resuelve el problema que se planteó en la propuesta (o el ajustado y justificado)?</li>
+    <li>☐ ¿Los resultados responden a los objetivos específicos, uno por uno?</li>
+    <li>☐ ¿Hay al menos un caso de prueba con solución conocida, con su error medido?</li>
+    <li>☐ ¿Se muestra cómo cambia el error al refinar el paso, la tolerancia o las iteraciones?</li>
+  </ul>
+  <div class="sub-title">Código</div>
+  <ul>
+    <li>☐ ¿Los métodos numéricos los implementó el grupo (sin delegarlos en una librería)?</li>
+    <li>☐ ¿El código está ordenado, comentado y se puede ejecutar siguiendo las instrucciones del anexo?</li>
+    <li>☐ ¿Cualquier integrante puede señalar en el código dónde está cada método y explicarlo?</li>
+    <li>☐ ¿El enlace al repositorio o el archivo comprimido abre sin pedir permisos?</li>
+  </ul>
+  <div class="sub-title">Documento</div>
+  <ul>
+    <li>☐ ¿Están las once secciones completas y el documento contiene todo el proyecto, no solo lo nuevo?</li>
+    <li>☐ ¿El cronograma trae el estado final de cada compromiso?</li>
+    <li>☐ ¿Las conclusiones responden a los objetivos y no son generalidades?</li>
+    <li>☐ ¿Las referencias siguen APA 7.ª edición e incluyeron la declaración de uso de IA?</li>
+  </ul>
+  <div class="sub-title">Sustentación</div>
+  <ul>
+    <li>☐ ¿Ensayaron con reloj y caben en 10 minutos, empezando por la demostración?</li>
+    <li>☐ ¿Todos los integrantes pueden responder por cualquier parte del proyecto?</li>
+    <li>☐ ¿Confirmaron su horario y tienen el programa y el caso de prueba listos para compartir pantalla?</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h3 class="card-title">Resumen para llevar</h3>
+  <ul>
+    <li>La evaluación del corte es el <strong>proyecto terminado</strong>: documento completo, código final y demostración en vivo; 50 % de la nota.</li>
+    <li>Grupos de máximo 4; nota grupal; <strong>todos responden por todo</strong>, incluido el código.</li>
+    <li>El documento contiene <strong>todo el proyecto</strong>; la plantilla trae las once secciones.</li>
+    <li>La <strong>validación</strong> (casos de prueba, errores, convergencia) es obligatoria y es la pregunta segura del jurado.</li>
+    <li>Sustentación con horario asignado: 10 minutos estrictos + 5 de preguntas, cámaras encendidas, programa corriendo.</li>
+    <li>Llegar tarde o usar indebidamente la IA en la exposición: <strong>cero</strong>.</li>
+    <li>Declara el uso de IA —incluido este OVA— de forma explícita.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="cred-compacto">
+    <div class="recursos">Recursos abiertos: <a href="https://www.python.org/" target="_blank" rel="noopener">Python</a> · <a href="https://numpy.org/" target="_blank" rel="noopener">NumPy (solo para validar)</a> · <a href="https://apastyle.apa.org/" target="_blank" rel="noopener">APA Style</a></div>
+    <span><strong>Felipe Alexander Pipicano Guzmán</strong> · Departamento de Ciencias Básicas · UNIAJC · 2026-2</span>
+    <span><a class="enlace-correo" data-u="fpipicano" data-d="profesores.uniajc.edu.co" data-asunto="OVA — Reporte" role="link" tabindex="0">Reportar un error</a> &nbsp;·&nbsp; <a href="../">Créditos y licencia</a> &nbsp;·&nbsp; CC BY-NC-SA 4.0</span>
+  </div>
+</footer>
+
+<script src="../assets/ova.js?v=20260912h"></script>
+</body>
+</html>
